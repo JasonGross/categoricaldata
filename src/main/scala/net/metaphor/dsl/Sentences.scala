@@ -14,11 +14,7 @@ object Sentences {
 	class SubjectPredicateObject(s: String, p: String, o: String) {
 	  println(s + " " + p + " " + o)
 	}
-}
-
-object SentencesExamples extends App {
-	import Sentences._
 	
-	"a department" >> "has as secretary" >> "an employee"
-
+	def model(contents: SubjectPredicateObject*) { }
 }
+
