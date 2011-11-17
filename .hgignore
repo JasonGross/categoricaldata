@@ -1,3 +1,11 @@
 bin
+
+# dropbox stuff
 .dropbox
 Icon
+
+# temporary eclipse files
+.cache
+
+# OS X files
+.DS_Store
