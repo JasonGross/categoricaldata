@@ -8,5 +8,5 @@ object Sets extends Category[Set, Function] {
 	def compose(first: Function, second: Function) = ???
 }
 
-trait FunctorToSet[O, M <: Morphism] extends HeteroFunctor[O, M, Set, Function]
-trait NaturalTransformationToSet[O, M <: Morphism] extends HeteroNaturalTransformation[O, M, Set, Function]
+//trait FunctorToSet[O, M <: Morphism] extends HeteroFunctor[O, M, Set, Function]
+//trait NaturalTransformationToSet[O, M <: Morphism] extends HeteroNaturalTransformation[O, M, Set, Function]
