@@ -1,12 +1,12 @@
 package net.metaphor.api
 
+// Morphism just exists to provide an upper bound, to disambiguate apply(object) and apply(morphism) after type erasure.
+trait Morphism
+
 trait Category[O, M <: Morphism] {
   def identity(o: O): M
   def compose(m1: M, m2: M): M
 }
-
-// Morphism just exists to provide an upper bound, to disambiguate apply(object) and apply(morphism) after type erasure.
-trait Morphism
 
 trait HeteroFunctor[O1, M1 <: Morphism, O2, M2 <: Morphism] extends Morphism {
   def source: Category[O1, M1]

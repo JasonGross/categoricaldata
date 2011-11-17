@@ -14,6 +14,15 @@ trait TwoCategory[M0, M1 <: Morphism, M2 <: TwoMorphism] {
   def whisker(a1: M1, b2: M2) = compose1(identity1(a1), b2)
 }
 
+trait HeteroTwoFunctor[S0, S1 <: Morphism, S2 <: TwoMorphism, T0, T1 <: Morphism, T2 <: TwoMorphism] {
+  def source: TwoCategory[S0, S1, S2]
+  def target: TwoCategory[T0, T1, T2]
+  
+  def apply(m0: S0): T0
+  def apply(m1: S1): T1
+  def apply(m2: S2): T2
+}
+
 object Categories {
   class CompositeHeteroFunctor[O1, M1 <: Morphism, O2, M2 <: Morphism, O3, M3 <: Morphism](first: HeteroFunctor[O1, M1, O2, M2], second: HeteroFunctor[O2, M2, O3, M3]) extends HeteroFunctor[O1, M1, O3, M3] {
     def source = first.source
