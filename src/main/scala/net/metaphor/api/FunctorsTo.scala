@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait FunctorCategory[SO, SM, TO, TM] extends Category[HeteroFunctor[SO, SM, TO, TM], HeteroNaturalTransformation[SO, SM, TO, TM] with Morphism]
+trait FunctorCategory[SO, SM <: Morphism, TO, TM <: Morphism] extends Category[HeteroFunctor[SO, SM, TO, TM], HeteroNaturalTransformation[SO, SM, TO, TM] with Morphism]
 
 class FunctorsTo[TO, TM <: Morphism](target: Category[TO, TM]) {
   def apply[O, M <: Morphism](source: Category[O, M]): FunctorCategory[O, M, TO, TM] = new FunctorCategory[O, M, TO, TM] {
@@ -12,12 +12,12 @@ class FunctorsTo[TO, TM <: Morphism](target: Category[TO, TM]) {
 object FunctorsToSets extends FunctorsTo(Sets)
 
 object FunctorsTo {
- def apply[O, M <: Morphism, C <: Category[O, M], TO, TM <: Morphism](target: Category[TO, TM])(_source: Categories[O, M, C]): HeteroTwoFunctor[X] = new HeteroTwoFunctor[X] {
-   def source = _source
-   def target = ???
-   
-   def apply(c: C) = FunctorsTo(target)(source)
-   def apply(f: Functor[O, M]) = ???
-   def apply(t: NaturalTransformation[O, M]) = ???
- }
+// def apply[O, M <: Morphism, C <: Category[O, M], TO, TM <: Morphism](target: Category[TO, TM])(_source: Categories[O, M, C]): HeteroTwoFunctor[X] = new HeteroTwoFunctor[X] {
+//   def source = _source
+//   def target = ???
+//   
+//   def apply(c: C) = FunctorsTo(target)(source)
+//   def apply(f: Functor[O, M]) = ???
+//   def apply(t: NaturalTransformation[O, M]) = ???
+// }
 }
