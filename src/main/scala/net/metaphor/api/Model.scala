@@ -12,7 +12,7 @@ trait Arrow {
   def description: String
 }
 
-trait Path extends Morphism {
+trait Path {
   def start: Box
   def end: Box
   def arrows: List[Arrow]

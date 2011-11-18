@@ -1,7 +1,7 @@
 package net.metaphor.api
 
 trait Set
-trait Function extends Morphism
+trait Function
 
 object Sets extends Category[Set, Function] {
 	def identity(set: Set) = ???
