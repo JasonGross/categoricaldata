@@ -48,20 +48,20 @@ trait FPFunctor {
   }
 }
 
-trait FunctorToSet {
+trait FPFunctorToSet {
   val source: FPCategory
-  def precompose(functor: FPFunctor): FunctorToSet
-  def realize: ConcreteFunctorToSet
+  def precompose(functor: FPFunctor): FPFunctorToSet
+  def realize: ConcreteFPFunctorToSet
 }
 
-trait ConcreteFunctorToSet extends FunctorToSet { F =>
+trait ConcreteFPFunctorToSet extends FPFunctorToSet { F =>
   def apply(box: source.Box): List[_]
   def apply(arrow: source.Arrow): List[(_, _)]
 
   def realize = this
 
   // a lazy implementation of precompose
-  override def precompose(G: FPFunctor): ConcreteFunctorToSet = new ConcreteFunctorToSet {
+  override def precompose(G: FPFunctor): ConcreteFPFunctorToSet = new ConcreteFPFunctorToSet {
     require(G.target == F.source)
     val source = G.source
     // we need to coerce source.Box to G.source.Box, and G.target.Box to F.source.Box, because the typer can't know these are the same.
@@ -71,7 +71,7 @@ trait ConcreteFunctorToSet extends FunctorToSet { F =>
   }
 }
 
-abstract class InMemoryFunctorToSet extends ConcreteFunctorToSet {
+abstract class InMemoryFPFunctorToSet extends ConcreteFPFunctorToSet {
   val boxData: Map[source.Box, List[_]]
   val arrowData: Map[source.Arrow, List[(_, _)]]
 

@@ -12,9 +12,9 @@ trait TwoCategory[M0, M1, M2] {
   def whiskerLeft(a1: M1, b2: M2) = compose1(identity1(a1), b2)
 }
 
-trait HeteroTwoFunctor[S0, S1, S2, T0, T1, T2] {
-  def source: TwoCategory[S0, S1, S2]
-  def target: TwoCategory[T0, T1, T2]
+trait HeteroTwoFunctor[S0, S1, S2, S2C <: TwoCategory[S0, S1, S2], T0, T1, T2, T2C <: TwoCategory[T0,T1,T2]] {
+  def source: S2C
+  def target: T2C
   
   final def apply(m0: S0): T0 = onZeroMorphisms(m0)
   final def apply(m1: S1)(implicit d: DummyImplicit): T1 = onOneMorphisms(m1)
@@ -26,14 +26,14 @@ trait HeteroTwoFunctor[S0, S1, S2, T0, T1, T2] {
 }
 
 object Categories {
-  class CompositeHeteroFunctor[O1, M1, O2, M2, O3, M3](first: HeteroFunctor[O1, M1, O2, M2], second: HeteroFunctor[O2, M2, O3, M3]) extends HeteroFunctor[O1, M1, O3, M3] {
+  class CompositeHeteroFunctor[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M2], O3, M3, C3 <: Category[O3, M3]](first: HeteroFunctor[O1, M1, C1, O2, M2, C2], second: HeteroFunctor[O2, M2, C2, O3, M3, C3]) extends HeteroFunctor[O1, M1, C1, O3, M3, C3] {
     def source = first.source
     def target = second.target
 
     def onObjects(o: O1) = second(first(o))
     def onMorphisms(m: M1) = second(first(m))
   }
-  class CompositeFunctor[O, M](first: Functor[O, M], second: Functor[O, M]) extends Functor[O, M] {
+  class CompositeFunctor[O, M, C <: Category[O, M]](first: Functor[O, M, C], second: Functor[O, M, C]) extends Functor[O, M, C] {
     def source = first.source
     def target = second.target
 
@@ -42,15 +42,15 @@ object Categories {
   }
 }
 
-trait Categories[O, M, C <: Category[O, M]] extends TwoCategory[C, Functor[O, M], NaturalTransformation[O, M]] {
-  def identity0(category: C) = new Functor.IdentityFunctor[O, M](category)
-  def identity1(functor: Functor[O, M]) = new NaturalTransformation.IdentityNaturalTransformation(functor)
+trait Categories[O, M, C <: Category[O, M]] extends TwoCategory[C, Functor[O, M, C], NaturalTransformation[O, M, C]] {
+  def identity0(category: C) = new Functor.IdentityFunctor[O, M, C](category)
+  def identity1(functor: Functor[O, M, C]) = new NaturalTransformation.IdentityNaturalTransformation(functor)
 
-  def compose(first: Functor[O, M], second: Functor[O, M]) = new Categories.CompositeFunctor(first, second)
-  def compose1(first: NaturalTransformation[O, M], second: NaturalTransformation[O, M]) = new Composite1NaturalTransformation(first, second)
-  def compose2(first: NaturalTransformation[O, M], second: NaturalTransformation[O, M]) = new Composite2NaturalTransformation(first, second)
+  def compose(first: Functor[O, M, C], second: Functor[O, M, C]) = new Categories.CompositeFunctor(first, second)
+  def compose1(first: NaturalTransformation[O, M, C], second: NaturalTransformation[O, M, C]) = new Composite1NaturalTransformation(first, second)
+  def compose2(first: NaturalTransformation[O, M, C], second: NaturalTransformation[O, M,C]) = new Composite2NaturalTransformation(first, second)
 
-  class Composite1NaturalTransformation(first: NaturalTransformation[O, M], second: NaturalTransformation[O, M]) extends NaturalTransformation[O, M] {
+  class Composite1NaturalTransformation(first: NaturalTransformation[O, M,C], second: NaturalTransformation[O, M,C]) extends NaturalTransformation[O, M,C] {
     def source = compose(first.source, second.source)
     def target = compose(first.target, second.target)
 
@@ -59,10 +59,11 @@ trait Categories[O, M, C <: Category[O, M]] extends TwoCategory[C, Functor[O, M]
      */
     def apply(o: O) = target.target.compose(second.source(first(o)), first(second.target(o)))
   }
-  class Composite2NaturalTransformation(first: NaturalTransformation[O, M], second: NaturalTransformation[O, M]) extends NaturalTransformation[O, M] {
+  class Composite2NaturalTransformation(first: NaturalTransformation[O, M,C], second: NaturalTransformation[O, M,C]) extends NaturalTransformation[O, M,C] {
     def source = first.source
     def target = second.target
 
+    // FIXME code smell; this is duplicated in FunctorCategory.compose
     def apply(o: O) = target.target.compose(first(o), second(o))
   }
 }

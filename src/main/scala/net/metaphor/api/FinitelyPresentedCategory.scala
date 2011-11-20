@@ -11,5 +11,5 @@ trait FinitelyPresentedCategory[O, M] extends FinitelyGeneratedCategory[O, M] {
   def relations: List[M]
 }
 
-trait FinitelyPresentedCategories[O, M] extends Categories[O, M, FinitelyPresentedCategory[O, M]]
+trait FinitelyPresentedCategories[O, M, C <: FinitelyPresentedCategory[O, M]] extends Categories[O, M, C]
 

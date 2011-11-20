@@ -18,7 +18,7 @@ object ExampleFunctor extends FPFunctor {
   verify
 }
 
-object ExampleData extends InMemoryFunctorToSet {
+object ExampleData extends InMemoryFPFunctorToSet {
   val source = ExampleCategory
   val boxData = Map(source.Emp -> List("David", "Scott"), source.Dpt -> List("mathematicians"))
   val arrowData = Map(source.arrows(0) -> List("David" -> "mathematicians", "Scott" -> "mathematicians"), source.arrows(1) -> List("mathematicians" -> "David"))
