@@ -2,6 +2,12 @@ package net.metaphor.api
 
 class FunctorCategory[SO, SM, SC <: Category[SO, SM], TO, TM, TC <: Category[TO, TM]](source: SC, target: TC) extends Category[HeteroFunctor[SO, SM, SC, TO, TM, TC], HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC]] {
   def identity(o: HeteroFunctor[SO, SM, SC, TO, TM, TC]) = new NaturalTransformation.IdentityHeteroNaturalTransformation(o)
+  def source(m: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC]) = {
+    m.source
+  }
+  def target(m: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC]) = {
+    m.target
+  }
   def compose(m1: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC], m2: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC]) = new HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC] {
     def source = m1.source
     def target = m2.target

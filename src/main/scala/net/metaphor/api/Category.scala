@@ -2,6 +2,8 @@ package net.metaphor.api
 
 trait Category[O, M] {
   def identity(o: O): M
+  def source(m: M): O
+  def target(m: M): O
   def compose(m1: M, m2: M): M
 }
 
