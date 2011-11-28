@@ -1,29 +1,28 @@
 package net.metaphor.api
 
-// TODO, Set and Function really should be parametrized types.
-trait Set {
-  def toIterable: Iterable[Any]
+trait Set[A] {
+  def toIterable: Iterable[A]
 }
-trait Function {
-  def toFunction: Any => Any
+trait Function[A, B] {
+  def toFunction: A => B
 }
 
-trait Sets extends Category[Set, Function]
+trait Sets extends Category[Set[Any], Function[Any, Any]]
 
 object Sets extends Sets {
-  def identity(set: Set) = ???
-  def source(f: Function) = ???
-  def target(f: Function) = ???
-  def compose(first: Function, second: Function) = ???
+  override def identity(set: Set[Any]) = ???
+  override def source(f: Function[Any, Any]) = ???
+  override def target(f: Function[Any, Any]) = ???
+  override def compose(first: Function[Any, Any], second: Function[Any, Any]) = ???
 }
 
-trait FunctorToSet[O, M, C <: Category[O, M]] extends HeteroFunctor[O, M, C, Set, Function, Sets]
+trait FunctorToSet[O, M, C <: Category[O, M]] extends HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets]
 
 object Colimit {
   /**
    * returns a pair (s: Set, fs: List[Function]), where s is the colimit, and fs are the functions from the objects of functor.source to the colimit
    */
-  def apply[O, M, C <: FinitelyPresentedCategory[O, M]](functor: FunctorToSet[O, M, C]): (Set, List[Function]) = {
+  def apply[O, M, C <: FinitelyPresentedCategory[O, M]](functor: FunctorToSet[O, M, C]): (Set[_], List[Function[_, _]]) = {
     val diagram = functor.source
 
     /**
@@ -47,11 +46,11 @@ object Colimit {
 
     val clumps = arrows.foldLeft(initialClumps)(combineClumps _)
     
-    val resultSet = new Set {
+    val resultSet = new Set[List[(O, Any)]] {
       def toIterable = clumps
     }
     val resultFunctions = diagram.objects.map { o =>
-      new Function {
+      new Function[Any, List[(O, Any)]] {
         def toFunction = { x => clumps.find(_.contains((o, x))).get }
       }
     }
