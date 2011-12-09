@@ -9,3 +9,8 @@ Icon
 
 # OS X files
 .DS_Store
+
+# sbt stuff
+target
+project/boot
+lib_managed

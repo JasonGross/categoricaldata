@@ -12,6 +12,7 @@ trait HeteroFunctor[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M
   def target: C2
 
   final def apply(o: O1): O2 = onObjects(o)
+  // the dummy implicit argument is a hack to allow overloading of apply
   final def apply(m: M1)(implicit d: DummyImplicit): M2 = onMorphisms(m)
 
   def onObjects(o: O1): O2
