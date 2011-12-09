@@ -2,21 +2,24 @@ package net.metaphor.dsl
 
 object SentencesExample extends App {
   import Sentences._
-  
+
   val C = model(
     // TODO, allow descriptions  
     // "a fusion object" is "a simple object in a unitary tensor category with duals",
-    "a fusion object" --- "has as principal graph" --> "a graph", 
-    "a fusion object"  --- "sits inside" --> "a fusion category",
-    "a fusion category" --- "has as fusion ring" --> "a positive ring"
-  )
+    "a fusion object" --- "has as principal graph" --> "a graph",
+    "a fusion object" --- "sits inside" --> "a fusion category",
+    "a fusion category" --- "has as fusion ring" --> "a positive ring")
+
+  // FIXME
+  val D = C
+  
   // TODO allow relations
   /*
    *  possible examples:
    *  f;g == h
    *  "F" --- "h" --> "G" --- "g" --> "H" equals "F" --- "k" --> "H"
    */
-  
+
   // TODO describe functors!
   /*
    * On objects:
@@ -29,15 +32,12 @@ object SentencesExample extends App {
    * TODO This should 'guess' sources and targets:
    * 	"h" maps to "h2"
    * 
-   * val F = functor(C ==> D)(
-   * 	"F" maps to "F2"
-   * )(
-   * 	"F" --- "h" --> "G" maps to "F2" --- "h2" --> "G2"
-   * )
-   * 
    * Maybe for later: proof obligations for relations.
    */
-  
+
+  // TODO: get this to compile!
+  //    val F = functor(C ==> D)("F" maps to "F2")("F" --- "h" --> "G" maps to "F2" --- "h2" --> "G2")
+
   // TODO describe data!
   /*
    * val i = dataset(C ==> Set)(
@@ -52,5 +52,5 @@ object SentencesExample extends App {
    * 
    * TODO, guess sources and targets?
    */
-  
+
 }
