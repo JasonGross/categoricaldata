@@ -20,7 +20,7 @@ trait FinitelyPresentedCategory[O, M] extends FinitelyGeneratedCategory[O, M] { 
 
   import FinitelyPresentedCategory._
 
-  def withTerminalObject: (FinitelyPresentedCategory[Either[O, Terminal], Either[M, TerminalMorphism[O]]], Terminal) = {
+  def withTerminalObject: (FinitelyPresentedCategory[Either[O, Terminal], Either[M, TerminalMorphism[O]]], Right[O, Terminal]) = {
     object * extends Terminal
 
     val augmentedCategory = new FinitelyPresentedCategory[Either[O, Terminal], Either[M, TerminalMorphism[O]]] {
@@ -49,7 +49,7 @@ trait FinitelyPresentedCategory[O, M] extends FinitelyGeneratedCategory[O, M] { 
       }
     }
 
-    (augmentedCategory, *)
+    (augmentedCategory, Right(*))
   }
 }
 
