@@ -4,11 +4,11 @@ object Sentences {
 	implicit def stringAsSubject(s: String) = new Subject(s)
 	
 	class Subject(s: String) {
-	  def >>(p: String) = new SubjectPredicate(s, p)
+	  def ---(p: String) = new SubjectPredicate(s, p)
 	}
 	
 	class SubjectPredicate(s: String, p: String) {
-	  def >>(o: String) = new SubjectPredicateObject(s, p, o)
+	  def -->(o: String) = new SubjectPredicateObject(s, p, o)
 	}
 	
 	class SubjectPredicateObject(s: String, p: String, o: String) {

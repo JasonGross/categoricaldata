@@ -17,6 +17,7 @@ trait HeteroTwoFunctor[S0, S1, S2, T0, T1, T2] {
   def target: TwoCategory[T0, T1, T2]
   
   final def apply(m0: S0): T0 = onZeroMorphisms(m0)
+  // the dummy implicit arguments is a hack to allow overloading of apply
   final def apply(m1: S1)(implicit d: DummyImplicit): T1 = onOneMorphisms(m1)
   final def apply(m2: S2)(implicit d1: DummyImplicit, d2: DummyImplicit): T2 = onTwoMorphisms(m2)
   
