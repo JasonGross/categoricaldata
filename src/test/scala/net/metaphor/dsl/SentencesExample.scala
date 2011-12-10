@@ -12,7 +12,7 @@ object SentencesExample extends App {
 
   // FIXME
   val D = C
-  
+
   // TODO allow relations
   /*
    *  possible examples:
@@ -20,37 +20,32 @@ object SentencesExample extends App {
    *  "F" --- "h" --> "G" --- "g" --> "H" equals "F" --- "k" --> "H"
    */
 
-  // TODO describe functors!
+  // Functors
   /*
    * On objects:
-   * 	"F" maps to "F2"
+   * 	"F" mapsto "F2"
    * (Maybe you can leave these out, and they'll be inferred?)
    * 
    * On morphisms:
    * Specify them explicitly (in case there are arrows with duplicate names):
-   * 	"F" --- "h" --> "G" maps to "F2" --- "h2" --> "G2"
+   * 	"F" --- "h" --> "G" mapsto "F2" --- "h2" --> "G2"
    * TODO This should 'guess' sources and targets:
-   * 	"h" maps to "h2"
+   * 	"h" mapsto "h2"
+   * 
+   * Note: you can write 'maps to' instead of 'mapsto', but then you need parentheses around the right hand side.
    * 
    * Maybe for later: proof obligations for relations.
    */
 
-  // TODO: get this to compile!
-  //    val F = functor(C ==> D)("F" maps to "F2")("F" --- "h" --> "G" maps to "F2" --- "h2" --> "G2")
+  val F = functor(C ==> D)(
+    "F" mapsto "F2")(
+      "F" --- "h" --> "G" mapsto "F2" --- "h2" --> "G2")
 
-  // TODO describe data!
-  /*
-   * val i = dataset(C ==> Set)(
-   * 	"a fusion object" maps to ("X", "Y"),
-   * 	"a graph" maps to ("G1", "G2")
-   * )(
-   * 	"a fusion object" --- "has as principal graph" --> "a graph" maps to (
-   * 		"X" -> "G1",
-   *    	"Y" -> "G1"
-   *  	)
-   *  )
-   * 
-   * TODO, guess sources and targets?
-   */
+  val i = dataset(C ==> Set)(
+    "a fusion object" maps to("X", "Y"),
+    "a graph" maps to("G1", "G2"))(
+      "a fusion object" --- "has as principal graph" --> "a graph" maps to(
+        "X" -> "G1",
+        "Y" -> "G1"))
 
 }

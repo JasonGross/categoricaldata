@@ -26,6 +26,8 @@ object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology]
 
 trait Translation extends Functor[Box, Path, Ontology]
 
+trait Dataset extends FunctorToSet[Box, Path, Ontology]
+
 trait Model {
   val over: Ontology
 }
