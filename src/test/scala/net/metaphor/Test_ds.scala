@@ -21,7 +21,7 @@ class Test extends FlatSpec with ShouldMatchers {
   val Grph = category(free
       having Objects ("a vertex","an edge")
       having Morphisms(
-          "an edge"---"has as source"-->"a vertex"
+          "an edge"---"has as source"-->"a vertex",
           "an edge"---"has as target"-->"a vertex"
       )
   )
@@ -120,8 +120,17 @@ class Test extends FlatSpec with ShouldMatchers {
       )
   )
   
-  val termCat = Ord[0]
+  val Domain = functor (Ord[0]==>Ord[1])(
+		  onObjects "V0" mapsto "V0"
+		  onMorphisms empty
+      )
+ 
+  val Codomain = functor (Ord[0]==>Ord[1])(
+		  onObjects "V0" mapsto "V1"
+	  )
+	  
   
+      
   val Compose = functor (Ord[1]==>Ord[2])(
       onObjects
       	"V0" mapsto "V0",
@@ -132,9 +141,17 @@ class Test extends FlatSpec with ShouldMatchers {
       )
   )
       	   
+  val terminalCat = Ord[0]
+  
+  /* For any category X, there is a unique functor X==>terminalCat. 
+   * I used the term "obvious" here. Scott can deal with this issue in any way he sees fit.  
+   */
+  
+  val constantX=functor (X==>terminalCat)(
+      obvious)
       
   
-  val PickOutSource = functor (Ord[1] ==> Grph)(
+  val SourceFunction = functor (Ord[1] ==> Grph)(
    	onObjects
    		"V0" mapsto "an edge"
    		"V1" mapsto "a vertex"
@@ -143,7 +160,7 @@ class Test extends FlatSpec with ShouldMatchers {
     	"V0"---"E01"-->"V1" mapsto "an edge"---"has as source"-->"a vertex"
   )
   
-  val PickOutTarget = functor (Ord[1] ==> Grph)(
+  val TargetFunction = functor (Ord[1] ==> Grph)(
    	onObjects
    		"V0" mapsto "an edge"
    		"V1" mapsto "a vertex"
@@ -219,28 +236,91 @@ class Test extends FlatSpec with ShouldMatchers {
       )
   )
   
-  val Section = category(
+  val PointedSets = category(
       having Objects ("a pointed set","an element")
       having Morphisms (
           "an element"---"is in"-->"a pointed set"
           "a pointed set"---"has as chosen"-->"an element")
       having Relations (
-          ("a pointed set"---"has as chosen"-->"an element"---"has"-->"a pointed set") 
+          ("a pointed set"---"has as chosen"-->"an element"---"is in"-->"a pointed set") 
           equivalently as ("a pointed set","a pointed set")
           (path0 ("a pointed set"))
       )
-  ))   
+  )   
   
       
-  val d = ???
-  val e = ??? 
+  val DavidsFunkyFunction = dataset(Ord[1]==>Set) (
+      onObjects (
+         "V0" mapsto rowset ("David","Alex Crujeiras","Scott","UC Berkeley", "MIT")
+      	 "V1" mapsto rowset ("1978","Scott's birthyear", "1868","1861") 
+      	  
+      onMorphisms (
+          "V0"---"E01"-->"V1" mapsto table (
+              "David" -> "1978",
+              "Alex Crujeiras" -> "1978"
+              "Scott" -> "Scott's birthyear",
+              "UC Berkeley" -> "1868",
+              "MIT" -> "1861"
+              )
+  )
   
+  val DavidsFunkySet1 = dataset(Ord[0]==>Set)(
+      onObjects (
+          "V0" mapsto rowset ("David","Scott","UC Berkeley", "MIT")
+      onMorphisms()
+      )
+  
+  val DavidsFunkySet2 = dataset(Ord[0]==>Set)(
+      onObjects (
+          "V0" mapsto rowset ("1978","Scott's birthyear", "1868","1861")
+      onMorphisms()
+      )
+  
+  val Drawers = dataset(Ord[1]==>Set)(
+      onObjects (
+         "V0" mapsto rowset ("Item 1","Item 2","Item 3", "Item 4")
+      	 "V1" mapsto rowset ("Top Drawer","Bottom Drawer") 
+      	  
+      onMorphisms (
+          "V0"---"E01"-->"V1" mapsto table (
+              "Item 1" -> "Top Drawer",
+              "Item 2" -> "Bottom Drawer",
+              "Item 3" -> "Top Drawer",
+              "Item 4" -> "Top Drawer",
+              )
+  )
+  
+  /* Feel free to delete for now. But at some point, it would be cool to somehow encode topological categories.*/
+  
+  val FundGrpdS1 = topologicalCategory(
+	having Objects (for theta in [0,1) "clockhand"<theta> )
+	having Morphisms (
+	    for t in realNumbers
+	    for theta in [0,1)
+         	"clockhand"<theta> ---"duration"<t>-->"clockhand"(<theta>+<t>) )
+    having Relations (
+	    for theta in [0,1)
+        for t1 in realNumbers
+        for t2 in realNumbers
+         		("clockhand"<theta> ---"duration"<t1>-->"clockhand"(<theta>+<t1>)"---"duration"<t2>-->"clockhand"(<theta>+<t1>+<t2>)) 
+	    		equivalently as ("clockhand"<theta>,"clockhand"(<theta>+<t1>+<t2>))
+	    		("clockhand"<theta> ---"duration"(<t1>+<t2>)-->"clockhand"(<theta>+<t1>+<t2>)") 
+	    			
+  )    
+      
+  "pullback" should "work" in {
+    Domain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
+  }
+   "pullback" should "work" in {
+    Codomain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet2)
+  }
+      
   "pushforward" should "work" in {
-    F._*(d) should equal (e)
+    ConstantOrd[1]._*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
   }
   
   "shriek" should "work" in {
-    1+2 should equal (4)
+    ConstantOrd[1]._!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
   		
   
