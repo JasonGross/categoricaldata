@@ -20,7 +20,7 @@ object Sentences {
   // FIXME
   type Path = Arrow
 
-  def model(contents: Arrow*): Ontology = ???
+  def model(objects: List[String], arrows: List[Arrow]): Ontology = ???
 
   case class ObjectMap(source: String, target: String)
   case class MorphismMap(source: Arrow, target: Path)
@@ -52,16 +52,11 @@ object Sentences {
     def mapsto(d: Map[String, String]): MorphismData = MorphismData(s, d)
   }
 
-  implicit def ontologyAsFunctorSource(o: Ontology) = new FunctorSource(o)
   trait Set
   object Set extends Set
-  class FunctorSource(s: Ontology) {
-    def ==>(t: Ontology) = (s, t)
-    def ==>(set: Set) = s
-  }
 
-  def functor(sourceAndTarget: (Ontology, Ontology))(onObjects: ObjectMap*)(onMorphisms: MorphismMap*): Translation = ???
+  def functor(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: Arrow => Path): Translation = ???
 
-  def dataset(source: Ontology)(onObjects: ObjectData*)(onMorphisms: MorphismData*): Dataset = ???
+  def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: Arrow => (String => String)): Dataset = ???
 }
 
