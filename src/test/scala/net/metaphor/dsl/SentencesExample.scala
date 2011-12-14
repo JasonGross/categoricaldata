@@ -5,7 +5,7 @@ object SentencesExample extends App {
 
   // TODO, allow descriptions  
   // "a fusion object" is "a simple object in a unitary tensor category with duals",
-  val C = model(
+  val C = category(
     objects = List("a fusion object", "a graph", "a fusion category", "a positive ring"),
     arrows = List("a fusion object" --- "has as principal graph" --> "a graph",
       "a fusion object" --- "sits inside" --> "a fusion category",

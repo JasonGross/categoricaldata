@@ -1,25 +1,25 @@
 package net.metaphor.api
 
-trait Box {
-  def name: String
-  def description: String
+case class Box(name: String) {
+  def identity = Path(this, Nil)
 }
 
-trait Arrow {
-  def source: Box
-  def target: Box
-  def name: String
-  def description: String
+case class Arrow(source: Box, target: Box, name: String) {
+  def asPath = Path(source, List(this))
 }
 
-trait Path {
-  def start: Box
-  def end: Box
-  def arrows: List[Arrow]
+case class Path(start: Box, arrows: List[Arrow]) {
+  def finish = arrows.last.target
 }
 
 trait Ontology extends FinitelyPresentedCategory[Box, Path] {
-
+  override def compose(m1: Path, m2: Path) = {
+    require(m2.finish == m1.start)
+    Path(m1.start, m1.arrows ::: m2.arrows)
+  }
+  override def source(m: Path) = m.start
+  override def target(m: Path) = m.finish
+  override def identity(o: Box) = o.identity
 }
 
 object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology]
