@@ -17,25 +17,12 @@ object SentencesExample extends App {
 
   // TODO allow relations
   /*
-   *  possible examples:
-   *  f;g == h
+   *  possible example:
    *  "F" --- "h" --> "G" --- "g" --> "H" equals "F" --- "k" --> "H"
    */
 
   // Functors
-  /*
-   * On objects:
-   * 	"F" mapsto "F2"
-   * (Maybe you can leave these out, and they'll be inferred?)
-   * 
-   * On morphisms:
-   * Specify them explicitly (in case there are arrows with duplicate names):
-   * 	"F" --- "h" --> "G" mapsto "F2" --- "h2" --> "G2"
-   * TODO This should 'guess' sources and targets:
-   * 	"h" mapsto "h2"
-   * 
-   * Note: you can write 'maps to' instead of 'mapsto', but then you need parentheses around the right hand side.
-   * 
+  /* 
    * Maybe for later: proof obligations for relations.
    */
 
