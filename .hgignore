@@ -5,6 +5,7 @@ bin
 Icon
 
 # temporary eclipse files
+.classpath
 .cache
 
 # OS X files
