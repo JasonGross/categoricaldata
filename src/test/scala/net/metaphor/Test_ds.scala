@@ -18,7 +18,7 @@ class Test extends FlatSpec with ShouldMatchers {
    * GRAPHS!
    */
   
-  val Grph = category(free
+  val Grph = model(free
       having Objects ("a vertex","an edge")
       having Morphisms(
           "an edge"---"has as source"-->"a vertex",
@@ -26,6 +26,8 @@ class Test extends FlatSpec with ShouldMatchers {
       )
   )
  
+ 
+  
   val termGraph = dataset (Grph==>Set) (
       onObjects
       	"an edge" mapsto rowset ("+1")
