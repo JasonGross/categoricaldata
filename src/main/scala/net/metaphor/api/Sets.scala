@@ -16,8 +16,6 @@ object Sets extends Sets {
   override def compose(first: Function[Any, Any], second: Function[Any, Any]) = ???
 }
 
-trait FunctorToSet[O, M, C <: Category[O, M]] extends HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets]
-
 object Colimit {
   /**
    * returns a pair (s: Set, fs: List[Function]), where s is the colimit, and fs are the functions from the objects of functor.source to the colimit

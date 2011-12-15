@@ -27,46 +27,49 @@ trait HeteroTwoFunctor[S0, S1, S2, S2C <: TwoCategory[S0, S1, S2], T0, T1, T2, T
 }
 
 object Categories {
+  // can we make this private?
   class CompositeHeteroFunctor[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M2], O3, M3, C3 <: Category[O3, M3]](first: HeteroFunctor[O1, M1, C1, O2, M2, C2], second: HeteroFunctor[O2, M2, C2, O3, M3, C3]) extends HeteroFunctor[O1, M1, C1, O3, M3, C3] {
-    def source = first.source
-    def target = second.target
+    override def source = first.source
+    override def target = second.target
 
-    def onObjects(o: O1) = second(first(o))
-    def onMorphisms(m: M1) = second(first(m))
+    override def onObjects(o: O1) = second(first(o))
+    override def onMorphisms(m: M1) = second(first(m))
   }
-  class CompositeFunctor[O, M, C <: Category[O, M]](first: Functor[O, M, C], second: Functor[O, M, C]) extends Functor[O, M, C] {
-    def source = first.source
-    def target = second.target
+  private class CompositeFunctor[O, M, C <: Category[O, M]](first: Functor[O, M, C], second: Functor[O, M, C]) extends Functor[O, M, C] {
+    override def source = first.source
+    override def target = second.target
 
-    def onObjects(o: O) = second(first(o))
-    def onMorphisms(m: M) = second(first(m))
+    override def onObjects(o: O) = second(first(o))
+    override def onMorphisms(m: M) = second(first(m))
   }
 }
 
 trait Categories[O, M, C <: Category[O, M]] extends TwoCategory[C, Functor[O, M, C], NaturalTransformation[O, M, C]] {
-  def identity0(category: C) = new Functor.IdentityFunctor[O, M, C](category)
-  def identity1(functor: Functor[O, M, C]) = new NaturalTransformation.IdentityNaturalTransformation(functor)
+  override def identity0(category: C) = new Functor.IdentityFunctor[O, M, C](category)
+  override def identity1(functor: Functor[O, M, C]) = new NaturalTransformation.IdentityNaturalTransformation(functor)
 
-  def compose(first: Functor[O, M, C], second: Functor[O, M, C]) = new Categories.CompositeFunctor(first, second)
-  def compose1(first: NaturalTransformation[O, M, C], second: NaturalTransformation[O, M, C]) = new Composite1NaturalTransformation(first, second)
-  def compose2(first: NaturalTransformation[O, M, C], second: NaturalTransformation[O, M,C]) = new Composite2NaturalTransformation(first, second)
+  override def compose(first: Functor[O, M, C], second: Functor[O, M, C]): Functor[O, M, C] = new Categories.CompositeFunctor(first, second)
+  override def compose1(first: NaturalTransformation[O, M, C], second: NaturalTransformation[O, M, C]): NaturalTransformation[O, M, C] = new Composite1NaturalTransformation(first, second)
+  override def compose2(first: NaturalTransformation[O, M, C], second: NaturalTransformation[O, M,C]): NaturalTransformation[O, M, C] = new Composite2NaturalTransformation(first, second)
 
-  class Composite1NaturalTransformation(first: NaturalTransformation[O, M,C], second: NaturalTransformation[O, M,C]) extends NaturalTransformation[O, M,C] {
-    def source = compose(first.source, second.source)
-    def target = compose(first.target, second.target)
+  private class Composite1NaturalTransformation(first: NaturalTransformation[O, M,C], second: NaturalTransformation[O, M,C]) extends NaturalTransformation[O, M,C] {
+    override def source = compose(first.source, second.source)
+    override def target = compose(first.target, second.target)
 
     /** 
      * F(G(x)) ---> F(G'(x)) ---> F'(G'(x))
      */
-    def apply(o: O) = target.target.compose(second.source(first(o)), first(second.target(o)))
+    override def apply(o: O) = target.target.compose(second.source(first(o)), first(second.target(o)))
   }
-  class Composite2NaturalTransformation(first: NaturalTransformation[O, M,C], second: NaturalTransformation[O, M,C]) extends NaturalTransformation[O, M,C] {
-    def source = first.source
-    def target = second.target
+  private class Composite2NaturalTransformation(first: NaturalTransformation[O, M,C], second: NaturalTransformation[O, M,C]) extends NaturalTransformation[O, M,C] {
+    override def source = first.source
+    override def target = second.target
 
     // FIXME code smell; this is duplicated in FunctorCategory.compose
-    def apply(o: O) = target.target.compose(first(o), second(o))
+    override def apply(o: O) = target.target.compose(first(o), second(o))
   }
+  
+  def adjoinTerminalObject(category: C, o: O, f: O => M): C with TerminalObject[O, M]
 }
 
 trait RigidTwoCategory[M0, M1, M2] extends TwoCategory[M0, M1, M2] {

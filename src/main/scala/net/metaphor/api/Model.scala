@@ -22,12 +22,51 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path] {
   override def identity(o: Box) = o.identity
 }
 
-object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology]
+object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
+  // hmm, we probably need this to make up 'o' and 'f' internally
+  override def adjoinTerminalObject(category: Ontology, o: Box, f: Box => Path) = {
+    new Ontology with TerminalObject[Box, Path] {
+      def morphismFrom(b: Box) = f(b)
+      val terminalObject = o
+      val objects = o :: category.objects
+      def generators(source: Box, target: Box) = {
+        if (target == o) {
+          List(f(source))
+        } else {
+          category.generators(source, target)
+        }
+      }
+      def relations(source: Box, target: Box) = {
+        if (target == o) {
+          ??? // FIXME
+        } else {
+          category.relations(source, target)
+        }
+      }
+    }
+  }
+
+  // TODO adjoinInitialObject
+}
 
 trait Translation extends Functor[Box, Path, Ontology]
 
 trait Dataset extends FunctorToSet[Box, Path, Ontology] {
   override def target = Sets
+}
+
+class Datasets(source: Ontology) extends FunctorsToSet[Box, Path, Ontology](source) {
+  // how far up can we lift this?
+  def colimit(functor: Dataset) = {
+    new InitialObject[Dataset, TransformationToSet[Box, Path, Ontology]] {
+      def initialObject = ???
+      def morphismTo(other: Dataset) = {
+        // require that the source is (source + terminal object)?
+        // require that it actually extends functor?
+        ???
+      }
+    }
+  }  
 }
 
 trait Model {
