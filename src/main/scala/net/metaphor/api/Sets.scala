@@ -44,7 +44,7 @@ object Colimit {
       x <- functor(s).toIterable
     ) yield List((s, x), (t, functor(m).toFunction(x)))
 
-    val clumps = arrows.foldLeft(initialClumps)(combineClumps _)
+    lazy val clumps = arrows.foldLeft(initialClumps)(combineClumps _)
     
     val resultSet = new Set[List[(O, Any)]] {
       def toIterable = clumps

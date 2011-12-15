@@ -39,7 +39,7 @@ object Sentences {
       Arrow(sb, ob, p)
     }).groupBy(_.source).mapValues(_.groupBy(_.target))
 
-    // Construct a new Ontology object
+    // Construct a new ontology object
     new Ontology {
       override val objects = boxes
       override def generators(source: Box, target: Box) = arrowMap(source)(target).map(_.asPath)
@@ -64,6 +64,7 @@ object Sentences {
         })
     }).toMap
 
+    // construct a new translation object
     new Translation {
       override def source = source_
       override def target = target_
@@ -72,6 +73,13 @@ object Sentences {
     }
   }
 
-  def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): Dataset = ???
+  def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): Dataset = {
+    val source_ = source
+    new Dataset {
+      override def source = source_
+      override def onObjects(o: Box) = ???
+      override def onMorphisms(m: Path) = ???
+    }
+  }
 }
 
