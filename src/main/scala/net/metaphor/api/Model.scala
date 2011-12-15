@@ -55,6 +55,7 @@ trait Dataset extends FunctorToSet[Box, Path, Ontology] {
   override def target = Sets
 }
 
+
 class Datasets(source: Ontology) extends FunctorsToSet[Box, Path, Ontology](source) {
   // how far up can we lift this?
   def colimit(functor: Dataset) = {
