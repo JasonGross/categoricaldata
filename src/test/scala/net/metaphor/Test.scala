@@ -53,6 +53,7 @@ class Test extends FlatSpec with ShouldMatchers {
     		"output" -> "species"))
    )
 
+   // TODO just missing a comma at the end of the first line.
   val initgraph = dataset (source = Grph
     onObjects = Map (
         "an edge" -> Nil,
