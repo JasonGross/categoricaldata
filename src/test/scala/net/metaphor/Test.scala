@@ -22,7 +22,7 @@ class Test extends FlatSpec with ShouldMatchers {
   // NOTE, need commas between lines
   
  
-  val Grph = category (
+  val Grph = ontology (
     objects = List("an edge", "a vertex"),
     arrows = List(
       "an edge" --- "has as source" --> "a vertex",
@@ -87,24 +87,24 @@ class Test extends FlatSpec with ShouldMatchers {
    * Ordinals
    * TO DO: Some kind of schematic for Ord[n].
    */
-  val Ord0 = category(
+  val Ord0 = ontology(
 	objects =List ("V0"),
     arrows = List ()
   )
   
-  val Ord1 = category(
+  val Ord1 = ontology(
     objects = List ("V0","V1"),
     arrows =List ("V0"---"E01"-->"V1")
   )
   
-  val Ord2 = category(
+  val Ord2 = ontology(
     objects = List ("V0","V1","V2"),
     arrows = List (
     		"V0"---"E01"-->"V1",
     		"V1"---"E12"-->"V2")
   )
 
-  val Ord3 = category(
+  val Ord3 = ontology(
     objects = List ("V0","V1","V2","V3"),
     arrows = List (
     		  "V0"---"E01"-->"V1",
@@ -113,7 +113,7 @@ class Test extends FlatSpec with ShouldMatchers {
       
   )
 
-  def Ord(n: Int) = category(
+  def Ord(n: Int) = ontology(
     objects = for (i <- 0 to n) yield "V" + i.toString, //David added the ".toString" here. Correct?
     arrows = for (i <- 0 to n - 1) yield {
       ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
@@ -226,7 +226,7 @@ class Test extends FlatSpec with ShouldMatchers {
   )
   
  
-  val DiscreteDynamicalSystem = category(
+  val DiscreteDynamicalSystem = ontology(
     objects = List ("an element"),
     arrows = List ("an element"---"has as successor"-->"an element")
   )
@@ -265,7 +265,7 @@ class Test extends FlatSpec with ShouldMatchers {
     	("an edge"---"has as target"-->"a vertex") -> (identity("an element")))
   )
   
-   val IntsMod2Group = category(
+   val IntsMod2Group = ontology(
       objects = List ("an element"),
       arrows = List ("an element"---"is married to"-->"an element"),
       relations =List (
@@ -274,7 +274,7 @@ class Test extends FlatSpec with ShouldMatchers {
           ("an element")))
 
   
-  val IntsMod2Groupoid = category(
+  val IntsMod2Groupoid = ontology(
       objects = List ("0","1"),
       arrows = List (
           "0"---"next"-->"1",
@@ -287,7 +287,7 @@ class Test extends FlatSpec with ShouldMatchers {
           equivalently
           ("1"))))
           
-  val PointedSets = category(
+  val PointedSets = ontology(
       objects = List ("a pointed set", "an element"),
       arrows = List (
           "an element"---"is in"-->"a pointed set",

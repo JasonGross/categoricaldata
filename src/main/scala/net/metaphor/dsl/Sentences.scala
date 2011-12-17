@@ -35,7 +35,7 @@ object Sentences {
     }
   }
 
-  def category(objects: Traversable[String], arrows: Traversable[StringArrow]): Ontology = {
+  def ontology(objects: Traversable[String], arrows: Traversable[StringArrow]): Ontology = {
     val boxes = objects.toList map { Box(_) }
 
     val arrowMap = (for (StringArrow(s, p, o) <- arrows.toList) yield {
