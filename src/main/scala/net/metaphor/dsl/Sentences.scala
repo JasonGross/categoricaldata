@@ -30,10 +30,10 @@ object Sentences {
     def ---(p: String) = new IncompleteStringPath(this, p)
   }
 
-  def category(objects: List[String], arrows: List[StringArrow]): Ontology = {
-    val boxes = objects map { Box(_) }
+  def category(objects: Traversable[String], arrows: Traversable[StringArrow]): Ontology = {
+    val boxes = objects.toList map { Box(_) }
 
-    val arrowMap = (for (StringArrow(s, p, o) <- arrows) yield {
+    val arrowMap = (for (StringArrow(s, p, o) <- arrows.toList) yield {
       val sb = boxes.find(_.name == s).get
       val ob = boxes.find(_.name == o).get
       Arrow(sb, ob, p)

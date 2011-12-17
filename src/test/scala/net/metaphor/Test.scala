@@ -112,6 +112,12 @@ class Test extends FlatSpec with ShouldMatchers {
     		  "V2"---"E23"-->"V3")
       
   )
+
+  def Ord(n: Int) = category(
+    objects = for (i <- 0 to n) yield "V" + i,
+    arrows = for (i <- 0 to n - 1) yield {
+      ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
+    })
  
   
   val Domain = functor (
