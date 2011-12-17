@@ -7,27 +7,32 @@ import net.metaphor.api.Arrow
 import net.metaphor.api.Path
 
 object Sentences {
-  implicit def stringAsArrowSource(s: String) = new StringArrowSource(s)
-  implicit def arrowAsPath(a: StringArrow) = new StringPath(List(a))
+  implicit def stringAsPath(s: String) = StringSource(s)
 
-  case class StringArrowSource(s: String) {
-    def ---(p: String) = new PartialStringArrow(p)
-    class PartialStringArrow(p: String) {
-      def -->(o: String) = new StringArrow(s, p, o)
-    }
+  trait StringPath {
+    def source: String
+    def arrows: List[StringArrow]
+    def target: String
   }
-
-  case class StringArrow(s: String, p: String, o: String) {
-    println(s + " " + p + " " + o)
-    def ---(p: String) = new IncompleteStringPath(new StringPath(List(this)), p)
+  case class ConcreteStringPath(source: String, arrows: List[StringArrow]) extends StringPath {
+    def ---(p: String) = IncompleteStringPath(this, p)
+    def target = arrows.lastOption.map(_.target).getOrElse(source)
   }
-
   case class IncompleteStringPath(path: StringPath, p: String) {
-    def -->(o: String) = new StringPath(path.arrows ::: List(new StringArrow(path.arrows.last.o, p, o)))
+    def -->(o: String) = ConcreteStringPath(path.source, path.arrows ::: List(StringArrow(path.target, p, o)))
   }
+  case class StringArrow(source: String, label: String, target: String) extends StringPath {
+    def arrows = List(this)
+    def ---(p: String) = IncompleteStringPath(ConcreteStringPath(source, List(this)), p)
+  }
+  case class StringSource(source: String) extends StringPath {
+    def arrows = Nil
+    def target = source
+    def ---(p: String) = IncompleteStringArrow(p)
 
-  case class StringPath(arrows: List[StringArrow]) {
-    def ---(p: String) = new IncompleteStringPath(this, p)
+    case class IncompleteStringArrow(p: String) {
+      def -->(o: String) = StringArrow(source, p, o)
+    }
   }
 
   def category(objects: Traversable[String], arrows: Traversable[StringArrow]): Ontology = {
