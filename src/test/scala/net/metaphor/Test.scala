@@ -236,11 +236,6 @@ class Test extends FlatSpec with ShouldMatchers {
     	("an edge"---"has as target"-->"a vertex") -> ("an edge"---"has as source"-->"a vertex"))
   )
   
-  /* 
-   * I needed an understanding of paths in GraphToDDS1. 
-   * Specifically, I want to specify that a morphism in Grph maps to an identity morphism in DiscreteDynamicalSystem
-   * I used the following syntax: path0(X)   to mean: the identity morphism on object X
-   */
   
   val GraphToDDS1 = functor (
     source = Grph,
@@ -264,12 +259,114 @@ class Test extends FlatSpec with ShouldMatchers {
     	("an edge"---"has as target"-->"a vertex") -> (identity("an element")))
   )
   
+  val Ord2 = category(
+    objects = List ("V0","V1","V2"),
+    arrows = List (
+    		"V0"---"E01"-->"V1",
+    		"V1"---"E12"-->"V2")
+  )
+  
+   val IntsMod2Group = category(
+      objects = List ("an element"),
+      arrows = List ("an element"---"is married to"-->"an element"),
+      relations =List (
+          ("an element"---"is married to"-->"an element"---"is married to"-->"an element") 
+          equivalently 
+          ("an element")))
+
+  
+  val IntsMod2Groupoid = category(
+      objects = List ("0","1"),
+      arrows = List (
+          "0"---"next"-->"1",
+          "1"---"next"-->"0"),
+      relations (
+          (("0"---"next"-->"1"---"next"-->"0") 
+          equivalently 
+          ("0")),
+          (("1"---"next"-->"0"---"next"-->"1") 
+          equivalently
+          ("1"))))
+          
+  val PointedSets = category(
+      objects = List ("a pointed set", "an element"),
+      arrows = List (
+          "an element"---"is in"-->"a pointed set",
+          "a pointed set"---"has as chosen"-->"an element"),
+      relations = List (
+          ("a pointed set"---"has as chosen"-->"an element"---"is in"-->"a pointed set") 
+          equivalently 
+          ("a pointed set")))
+  
+
+
+      
+  val DavidsFunkyFunction = dataset(source = Ord(1),
+      onObjects = Map (
+         "V0" -> List ("David","Alex Crujeiras","Scott","UC Berkeley", "MIT"),
+      	 "V1" -> List ("1978","Scott's birthyear", "1868","1861")),
+      onMorphisms (
+          "V0"---"E01"-->"V1" -> Map (
+              "David" -> "1978",
+              "Alex Crujeiras" -> "1978"
+              "Scott" -> "Scott's birthyear",
+              "UC Berkeley" -> "1868",
+              "MIT" -> "1861")))
+              
+  val DavidsFunkySet1 = dataset(source = Ord(0),
+      onObjects = Map (
+          "V0" -> List ("David","Scott","UC Berkeley", "MIT")),
+      onMorphisms())
+  
+  val DavidsFunkySet2 = dataset(source = Ord(0),
+      onObjects = Map (
+          "V0" -> List ("1978","Scott's birthyear", "1868","1861")),
+      onMorphisms())
+  
+  val Drawers = dataset(Ord(1),
+      onObjects = Map (
+         "V0" -> List ("Item 1","Item 2","Item 3", "Item 4"),
+      	 "V1" -> List ("Top Drawer","Bottom Drawer")),
+      onMorphisms = Map (
+          "V0"---"E01"-->"V1" -> Map (
+              "Item 1" -> "Top Drawer",
+              "Item 2" -> "Bottom Drawer",
+              "Item 3" -> "Top Drawer",
+              "Item 4" -> "Top Drawer")))
+   
+  // Feel free to delete for now. But at some point, it would be cool to somehow encode topological categories.
+  
+  val FundGrpdS1 = topologicalCategory(
+	having Objects (for theta in [0,1) "clockhand"<theta> )
+	having Morphisms (
+	    for t in realNumbers
+	    for theta in [0,1)
+         	"clockhand"<theta> ---"duration"<t>-->"clockhand"(<theta>+<t>) )
+    having Relations (
+	    for theta in [0,1)
+        for t1 in realNumbers
+        for t2 in realNumbers
+         		("clockhand"<theta> ---"duration"<t1>-->"clockhand"(<theta>+<t1>)"---"duration"<t2>-->"clockhand"(<theta>+<t1>+<t2>)) 
+	    		equivalently as ("clockhand"<theta>,"clockhand"(<theta>+<t1>+<t2>))
+	    		("clockhand"<theta> ---"duration"(<t1>+<t2>)-->"clockhand"(<theta>+<t1>+<t2>)") 
+	    			
+  )    
+      
+  "pullback" should "work" in {
+    Domain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
+  }
+   "pullback" should "work" in {
+    Codomain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet2)
+  }
+      
   "pushforward" should "work" in {
-    //    F._*(d) should equal (e)
+    ConstantOrd[1]._*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
   }
-
+  
   "shriek" should "work" in {
-    1 + 2 should equal(4)
+    ConstantOrd[1]._!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
-
+  		
+  
 }
+
