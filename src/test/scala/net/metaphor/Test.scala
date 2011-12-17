@@ -142,18 +142,18 @@ class Test extends FlatSpec with ShouldMatchers {
           for (i <- 0 to k-1) yield "V" + i.toString + "->" + "V" + i.toString,
           for (i <- k to n) yield "V" + i.toString + "->" + "V" + (i + 1).toString)
       onMorphisms = Map (
-          for (i <- 0 to k-1) yield (
+          for (i <- 0 to k-1) yield {
           	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
           	->
-          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))),
+          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))},
           (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
           ->
           (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) --- ("E" + (k + 1).toString + (k + 2).toString) --> ("V" + (k + 2).toString)),
-          for (i <- k+1 to n-1) yield (
+          for (i <- k+1 to n-1) yield {
             (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
           	->
-          	(("V" + (i+1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))))
-  )
+          	(("V" + (i+1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))}))
+
   
   val Coface(n: Int, k: Int) = Skip (n,k)
 
@@ -164,18 +164,17 @@ class Test extends FlatSpec with ShouldMatchers {
           for (i <- 0 to k) yield "V" + i.toString + "->" + "V" + i.toString,
           for (i <- k+1 to n) yield "V" + i.toString + "->" + "V" + (i - 1).toString)
       onMorphisms = Map (
-          for (i <- 0 to k-1) yield (
+          for (i <- 0 to k-1) yield {
           	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
           	->
-          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))),
+          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))},
           (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
           ->
           ("V" + k.toString),
-          for (i <- k+1 to n-1) yield (
+          for (i <- k+1 to n-1) yield {
             (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
           	->
-          	(("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))))
-  )
+          	(("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))}))
   
   val Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
   
@@ -190,11 +189,17 @@ class Test extends FlatSpec with ShouldMatchers {
 	    ("V0"---"E01"-->"V1") -> ("V0"---"E01"-->"V1"---"E12"-->"V2"))
   )
       	   
-  val terminalCat = Ord0
+  val termCat = Ord0
   
-   /* For any category X, there is a unique functor X==>terminalCat. 
-   * I used the term "obvious" here. Scott can deal with this issue in any way he sees fit.  
-   */
+  def termFunctor(C : Category) = functor (
+      source = C,
+      target = termCat,
+      onObjects = Map(
+    	for (i <- C.objects) yield i.toString -> "V0")
+      onMorphisms = Map(
+    	for (i <- C.arrows) yield i.toString -> "V0"))
+      	
+    
   
   
       
@@ -257,13 +262,6 @@ class Test extends FlatSpec with ShouldMatchers {
     onMorphisms = Map (
     	("an edge"---"has as source"-->"a vertex") -> ("an edge"---"has as target"-->"a vertex"),
     	("an edge"---"has as target"-->"a vertex") -> (identity("an element")))
-  )
-  
-  val Ord2 = category(
-    objects = List ("V0","V1","V2"),
-    arrows = List (
-    		"V0"---"E01"-->"V1",
-    		"V1"---"E12"-->"V2")
   )
   
    val IntsMod2Group = category(
