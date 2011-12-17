@@ -168,7 +168,52 @@ class Test extends FlatSpec with ShouldMatchers {
    	onMorphisms = Map (
     	("V0"---"E01"-->"V1") -> ("an edge"---"has as target"-->"a vertex"))
   )
-
+  
+ 
+  val DiscreteDynamicalSystem = category(
+    objects = List ("an element"),
+    arrows = List ("an element"---"has as successor"-->"an element")
+  )
+  
+  val ReverseGraph = functor (
+    source = Grph,
+    target = Grph,
+	onObjects = Map (
+		"an edge" -> "an edge",
+		"a vertex" -> "a vertex"),
+    onMorphisms = Map (
+    	("an edge"---"has as source"-->"a vertex") -> ("an edge"---"has as target"-->"a vertex"),
+    	("an edge"---"has as target"-->"a vertex") -> ("an edge"---"has as source"-->"a vertex"))
+  )
+  
+  /* 
+   * I needed an understanding of paths in GraphToDDS1. 
+   * Specifically, I want to specify that a morphism in Grph maps to an identity morphism in DiscreteDynamicalSystem
+   * I used the following syntax: path0(X)   to mean: the identity morphism on object X
+   */
+  
+  val GraphToDDS1 = functor (
+    source = Grph,
+    target = DiscreteDynamicalSystem,
+	onObjects = Map (
+		"an edge" -> "an element",
+		"a vertex" -> "an element"),
+    onMorphisms = Map (
+    	("an edge"---"has as source"-->"a vertex") -> (identity("an element")),
+    	("an edge"---"has as target"-->"a vertex") -> ("an element"---"has as successor"-->"an element"))
+  )
+  
+  val GraphToDDS2 = functor (
+    source = Grph, 
+    target = DiscreteDynamicalSystem,
+	onObjects = Map (
+		"an edge" -> "an element",
+		"a vertex" -> "a vertex"),
+    onMorphisms = Map (
+    	("an edge"---"has as source"-->"a vertex") -> ("an edge"---"has as target"-->"a vertex"),
+    	("an edge"---"has as target"-->"a vertex") -> (identity("an element")))
+  )
+  
   "pushforward" should "work" in {
     //    F._*(d) should equal (e)
   }
