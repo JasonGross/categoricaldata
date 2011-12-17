@@ -12,7 +12,7 @@ case class Path(start: Box, arrows: List[Arrow]) {
   def finish = arrows.last.target
 }
 
-trait Ontology extends FinitelyPresentedCategory[Box, Path] {
+trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] {
   override def compose(m1: Path, m2: Path) = {
     require(m2.finish == m1.start)
     Path(m1.start, m1.arrows ::: m2.arrows)
