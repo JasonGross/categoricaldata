@@ -114,7 +114,7 @@ class Test extends FlatSpec with ShouldMatchers {
   )
 
   def Ord(n: Int) = category(
-    objects = for (i <- 0 to n) yield "V" + i,
+    objects = for (i <- 0 to n) yield "V" + i.toString, //David added the ".toString" here. Correct?
     arrows = for (i <- 0 to n - 1) yield {
       ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
     })
@@ -133,9 +133,53 @@ class Test extends FlatSpec with ShouldMatchers {
 	onObjects = Map ("V0" -> "V1"),
 	onMorphisms = Map ()
   )
-	  
   
-      
+  
+  val Skip(n : Int, k : Int) = functor (
+      source = Ord(n),
+      target = Ord(n+1),
+      onObjects = Map ( 
+          for (i <- 0 to k-1) yield "V" + i.toString + "->" + "V" + i.toString,
+          for (i <- k to n) yield "V" + i.toString + "->" + "V" + (i + 1).toString)
+      onMorphisms = Map (
+          for (i <- 0 to k-1) yield (
+          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+          	->
+          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))),
+          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
+          ->
+          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) --- ("E" + (k + 1).toString + (k + 2).toString) --> ("V" + (k + 2).toString)),
+          for (i <- k+1 to n-1) yield (
+            (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+          	->
+          	(("V" + (i+1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))))
+  )
+  
+  val Coface(n: Int, k: Int) = Skip (n,k)
+
+  val Duplicate(n : Int, k : Int) = functor (
+      source = Ord(n),
+      target = Ord(n-1),
+      onObjects = Map ( 
+          for (i <- 0 to k) yield "V" + i.toString + "->" + "V" + i.toString,
+          for (i <- k+1 to n) yield "V" + i.toString + "->" + "V" + (i - 1).toString)
+      onMorphisms = Map (
+          for (i <- 0 to k-1) yield (
+          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+          	->
+          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))),
+          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
+          ->
+          ("V" + k.toString),
+          for (i <- k+1 to n-1) yield (
+            (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+          	->
+          	(("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))))
+  )
+  
+  val Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
+  
+ 
   val Compose = functor (
   	source = Ord1,
     target = Ord2,
