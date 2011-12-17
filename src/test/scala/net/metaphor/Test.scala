@@ -135,6 +135,7 @@ class Test extends FlatSpec with ShouldMatchers {
   )
   
   
+  // these need to be "def" not "val", in order to take parameters
   val Skip(n : Int, k : Int) = functor (
       source = Ord(n),
       target = Ord(n+1),
