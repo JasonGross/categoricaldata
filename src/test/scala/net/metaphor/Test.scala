@@ -270,7 +270,7 @@ class Test extends FlatSpec with ShouldMatchers {
       arrows = List ("an element"---"is married to"-->"an element"),
       relations =List (
           ("an element"---"is married to"-->"an element"---"is married to"-->"an element") 
-          equivalently 
+          === 
           ("an element")))
 
   

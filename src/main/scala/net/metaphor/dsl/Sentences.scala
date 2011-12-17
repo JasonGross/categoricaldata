@@ -13,6 +13,8 @@ object Sentences {
     def source: String
     def arrows: List[StringArrow]
     def target: String
+    
+    def ===(other: StringPath) = StringRelation(this, other)
   }
   case class ConcreteStringPath(source: String, arrows: List[StringArrow]) extends StringPath {
     def ---(p: String) = IncompleteStringPath(this, p)
@@ -35,7 +37,9 @@ object Sentences {
     }
   }
 
-  def ontology(objects: Traversable[String], arrows: Traversable[StringArrow]): Ontology = {
+  case class StringRelation(lhs: StringPath, rhs: StringPath) 
+  
+  def ontology(objects: Traversable[String], arrows: Traversable[StringArrow], relations: Traversable[StringRelation] = Nil): Ontology = {
     val boxes = objects.toList map { Box(_) }
 
     val arrowMap = (for (StringArrow(s, p, o) <- arrows.toList) yield {
