@@ -23,7 +23,7 @@ object Sentences {
   }
 
   case class IncompleteStringPath(path: StringPath, p: String) {
-    def --->(o: String) = new StringPath(path.arrows ::: List(new StringArrow(path.arrows.last.o, p, o)))
+    def -->(o: String) = new StringPath(path.arrows ::: List(new StringArrow(path.arrows.last.o, p, o)))
   }
 
   case class StringPath(arrows: List[StringArrow]) {
