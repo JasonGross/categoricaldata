@@ -141,6 +141,33 @@ class Test extends FlatSpec with ShouldMatchers {
   )
       	   
   val terminalCat = Ord0
+  
+   /* For any category X, there is a unique functor X==>terminalCat. 
+   * I used the term "obvious" here. Scott can deal with this issue in any way he sees fit.  
+   */
+  
+  
+      
+  
+  val SourceFunction = functor (
+    source = Ord1,
+    target = Grph,
+   	onObjects = Map (
+   		"V0" -> "an edge",
+   		"V1" -> "a vertex"),
+    onMorphisms = Map (
+    	("V0"---"E01"-->"V1") -> ("an edge"---"has as source"-->"a vertex"))
+  )
+  
+  val TargetFunction = functor (
+   	source = Ord1,
+   	target = Grph,
+   	onObjects = Map (
+   		"V0" -> "an edge",
+   		"V1" -> "a vertex"),
+   	onMorphisms = Map (
+    	("V0"---"E01"-->"V1") -> ("an edge"---"has as target"-->"a vertex"))
+  )
 
   "pushforward" should "work" in {
     //    F._*(d) should equal (e)
