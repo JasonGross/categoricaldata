@@ -16,12 +16,8 @@ class Test extends FlatSpec with ShouldMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
 
-  /* 
-   * GRAPHS!
-   */
-  // NOTE, need commas between lines
   
- 
+  
   val Grph = ontology (
     objects = List("an edge", "a vertex"),
     arrows = List(
@@ -31,7 +27,7 @@ class Test extends FlatSpec with ShouldMatchers {
 
   
         
-  val terminalGraph = dataset (source = Grph,
+  val TerminalGraph = dataset (source = Grph,
     onObjects = Map(
         "an edge" -> List("+1"),
         "a vertex" -> List("N")),
@@ -40,7 +36,7 @@ class Test extends FlatSpec with ShouldMatchers {
         ("an edge" --- "has as target" --> "a vertex") -> Map ("+1" -> "N"))
   )
 
-  val terminalBigraph = dataset (source = Grph,
+  val TerminalBigraph = dataset (source = Grph,
     onObjects = Map (
     	"an edge" -> List ("input", "output"),
     	"a vertex" -> List ("species", "transition")),
@@ -53,7 +49,7 @@ class Test extends FlatSpec with ShouldMatchers {
     		"output" -> "species"))
    )  
    
-  val initialGraph = dataset (source = Grph,
+  val InitialGraph = dataset (source = Grph,
     onObjects = Map (
         "an edge" -> List(),
         "a vertex" -> List()),
@@ -183,18 +179,37 @@ class Test extends FlatSpec with ShouldMatchers {
 	    ("V0"---"E01"-->"V1") -> ("V0"---"E01"-->"V1"---"E12"-->"V2"))
   )
       	   
-  val terminalCategory = Ord(0)
+  val TerminalCategory = Ord(0)
   
  
-  def terminalFunctor(c : Ontology) = functor (
+  def TerminalFunctor(c : Ontology) = functor (
       source = c,
-      target = terminalCategory, 
-      onObjects = Map( for (b <- c.boxes) yield (b.name -> "V0")),
-      onMorphisms = Map (for (b <- c.arrows) yield (b.source.name --- b.name --> b.target.name)))
+      target = TerminalCategory, 
+      onObjects = Map (for (b <- c.boxes) yield (b.name -> "V0")),
+      onMorphisms = Map (for (a <- c.arrows) yield (a.source.name --- a.name --> a.target.name) -> ("V0")))
       	
-    
+  def TerminalDataset(c : Ontology) =  dataset(
+      source = c;
+      onObjects = Map (for (b <- c.boxes) yield (b.name -> List ("witness" + b.name)))
+      onMorphisms = Map (for (a <- c.arrows) yield {Map ((a.source.name --- a.name --> a.target.name) -> 
+      	Map ("witness" + a.source.name -> "witness" + a.target.name))}))
+      	
+  val InitialCategory = ontology(
+      objects = List (),
+      arrows = List ())
+      
+  val InitialFunctor (c : Ontology) = functor(
+      source = InitialCategory,
+      target = c,
+      onObjects = Map(),
+      onMorphisms = Map())
   
-  
+  val InitialDataset (c : Ontology) = dataset(
+      source = c,
+      onObjects = for (b <- c.boxes) yield Map (b.name -> List ()),
+      onMorphisms = for (a <- c.arrows) yield Map ((a.source.name --- a.name --> a.target.name) -> Map ()))
+      
+     
       
   
   val SourceFunction = functor (
@@ -398,12 +413,12 @@ class Test extends FlatSpec with ShouldMatchers {
    // Unfortunately it seems that _* and _! aren't allowed method names. I've gone with __* and __! for now.
    
    "pushforward" should "work" in {
-	   terminalFunctor(Ord(1)).__*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
+	   TerminalFunctor(Ord(1)).__*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
   }
    
   
    "shriek" should "work" in {
-	   terminalFunctor(Ord(1)).__!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
+	   TerminalFunctor(Ord(1)).__!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
    
    "shriek" should "work" in {
@@ -414,5 +429,32 @@ class Test extends FlatSpec with ShouldMatchers {
 	   GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) should equal (DavidsFunkyDiscreteDynamicalSystem)
    }
 
-
+   // Let 0:C-->Set be the initial dataset and 1:C-->Set the terminal dataset.
+   // For any functor F:C-->D, we have F^*(0)=0, F^*(1)=1, F_!(0)=0, F_*(1)=1.
+   // I chose some random functor from above, TerminalCategoryToFiniteCyclicMonoid(10,7), and did the calculation there.
+   
+   "pullback" should "work" in {
+	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(InitialDataset(FiniteCyclicMonoid)) 
+	   should equal 
+	   (InitialDataset(TerminalCategory))
+   }
+   
+   "pullback" should "work" in {
+	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(TerminalDataset(FiniteCyclicMonoid)) 
+	   should equal 
+	   (TerminalDataset(TerminalCategory))
+   }
+   
+   "pushforward" should "work" in {
+	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
+	   should equal 
+	   (TerminalDataset(FiniteCyclicMonoid(10,7)))
+   }
+   
+   "shriek" should "work" in {
+	   TerminalCategoryToFiniteCyclicMonoid(10,7).__!(InitialDataset(TerminalCategory)) 
+	   should equal 
+	   (InitialDataset(FiniteCyclicMonoid(10,7)))
+   }
+ 
 }
