@@ -1,13 +1,22 @@
 package net.metaphor.api
 
-trait Category[O, M] {
+trait Category[O, M, C <: Category[O, M, C]] { self: C =>
   def identity(o: O): M
   def source(m: M): O
   def target(m: M): O
   def compose(m1: M, m2: M): M
+
+  abstract class FunctorToSet extends net.metaphor.api.FunctorToSet[O, M, C] {
+    override val source = self
+  }
+  abstract class NaturalTransformationToSet extends net.metaphor.api.NaturalTransformationToSet[O, M, C] {
+    def source: FunctorToSet
+    def target: FunctorToSet
+  }
+
 }
 
-trait HeteroFunctor[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M2]] {
+trait HeteroFunctor[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O2, M2, C2]] {
   def source: C1
   def target: C2
 
@@ -19,10 +28,10 @@ trait HeteroFunctor[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M
   def onMorphisms(m: M1): M2
 }
 
-trait Functor[O, M, C <: Category[O, M]] extends HeteroFunctor[O, M, C, O, M, C]
+trait Functor[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, O, M, C]
 
 object Functor {
-  class IdentityFunctor[O, M, C <: Category[O, M]](category: C) extends Functor[O, M, C] {
+  class IdentityFunctor[O, M, C <: Category[O, M, C]](category: C) extends Functor[O, M, C] {
     def source = category
     def target = category
     def onObjects(o: O) = o
@@ -30,24 +39,24 @@ object Functor {
   }
 }
 
-trait HeteroNaturalTransformation[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M2]] {
+trait HeteroNaturalTransformation[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O2, M2, C2]] {
   def source: HeteroFunctor[O1, M1, C1, O2, M2, C2]
   def target: HeteroFunctor[O1, M1, C1, O2, M2, C2]
   def apply(o: O1): M2
 }
 
-trait NaturalTransformation[O, M, C <: Category[O, M]] extends HeteroNaturalTransformation[O, M, C, O, M, C] {
+trait NaturalTransformation[O, M, C <: Category[O, M, C]] extends HeteroNaturalTransformation[O, M, C, O, M, C] {
   def source: Functor[O, M, C]
   def target: Functor[O, M, C]
 }
 
 object NaturalTransformation {
-  class IdentityHeteroNaturalTransformation[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M2]](functor: HeteroFunctor[O1, M1, C1, O2, M2, C2]) extends HeteroNaturalTransformation[O1, M1, C1, O2, M2, C2] {
+  class IdentityHeteroNaturalTransformation[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O2, M2, C2]](functor: HeteroFunctor[O1, M1, C1, O2, M2, C2]) extends HeteroNaturalTransformation[O1, M1, C1, O2, M2, C2] {
     def source = functor
     def target = functor
     def apply(o: O1) = functor.target.identity(functor(o))
   }
-  class IdentityNaturalTransformation[O, M, C <: Category[O, M]](functor: Functor[O, M, C]) extends NaturalTransformation[O, M, C] {
+  class IdentityNaturalTransformation[O, M, C <: Category[O, M, C]](functor: Functor[O, M, C]) extends NaturalTransformation[O, M, C] {
     def source = functor
     def target = functor
     def apply(o: O) = functor.target.identity(functor(o))

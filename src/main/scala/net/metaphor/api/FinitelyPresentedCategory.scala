@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Category[O, M] {
+trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Category[O, M, C] { self: C =>
   def objects: List[O]
   def generators(source: O, target: O): List[M]
   def generators: List[M] = for (s <- objects; t <- objects; g <- generators(s, t)) yield g
@@ -14,12 +14,8 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
     
   def adjoinTerminalObject(o: O): C with TerminalObject[O, M] = ???
     
-  abstract class FunctorToSet extends net.metaphor.api.FunctorToSet[O, M, C] {
-	  override val source = self
-  }
-  abstract class NaturalTransformationToSet extends net.metaphor.api.NaturalTransformationToSet[O, M, C] {
-    def source: FunctorToSet
-    def target: FunctorToSet
+  class FunctorsToSet extends net.metaphor.api.FunctorsToSet[O, M ,C](self) {
+    
   }
 }
 

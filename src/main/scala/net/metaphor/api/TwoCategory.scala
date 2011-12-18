@@ -28,14 +28,14 @@ trait HeteroTwoFunctor[S0, S1, S2, S2C <: TwoCategory[S0, S1, S2], T0, T1, T2, T
 
 object Categories {
   // can we make this private?
-  class CompositeHeteroFunctor[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M2], O3, M3, C3 <: Category[O3, M3]](first: HeteroFunctor[O1, M1, C1, O2, M2, C2], second: HeteroFunctor[O2, M2, C2, O3, M3, C3]) extends HeteroFunctor[O1, M1, C1, O3, M3, C3] {
+  class CompositeHeteroFunctor[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O2, M2, C2], O3, M3, C3 <: Category[O3, M3, C3]](first: HeteroFunctor[O1, M1, C1, O2, M2, C2], second: HeteroFunctor[O2, M2, C2, O3, M3, C3]) extends HeteroFunctor[O1, M1, C1, O3, M3, C3] {
     override def source = first.source
     override def target = second.target
 
     override def onObjects(o: O1) = second(first(o))
     override def onMorphisms(m: M1) = second(first(m))
   }
-  private class CompositeFunctor[O, M, C <: Category[O, M]](first: Functor[O, M, C], second: Functor[O, M, C]) extends Functor[O, M, C] {
+  private class CompositeFunctor[O, M, C <: Category[O, M, C]](first: Functor[O, M, C], second: Functor[O, M, C]) extends Functor[O, M, C] {
     override def source = first.source
     override def target = second.target
 
@@ -44,7 +44,7 @@ object Categories {
   }
 }
 
-trait Categories[O, M, C <: Category[O, M]] extends TwoCategory[C, Functor[O, M, C], NaturalTransformation[O, M, C]] {
+trait Categories[O, M, C <: Category[O, M, C]] extends TwoCategory[C, Functor[O, M, C], NaturalTransformation[O, M, C]] {
   override def identity0(category: C) = new Functor.IdentityFunctor[O, M, C](category)
   override def identity1(functor: Functor[O, M, C]) = new NaturalTransformation.IdentityNaturalTransformation(functor)
 

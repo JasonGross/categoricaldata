@@ -7,7 +7,7 @@ trait Function[A, B] {
   def toFunction: A => B
 }
 
-trait Sets extends Category[Set[Any], Function[Any, Any]]
+trait Sets extends Category[Set[Any], Function[Any, Any], Sets]
 
 object Sets extends Sets {
   override def identity(set: Set[Any]) = ???
