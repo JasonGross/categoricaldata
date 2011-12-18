@@ -140,7 +140,7 @@ class Test extends FlatSpec with ShouldMatchers {
       target = Ord(n+1),
       onObjects = Map ( 
           for (i <- 0 to k-1) yield "V" + i.toString + "->" + "V" + i.toString,
-          for (i <- k to n) yield "V" + i.toString + "->" + "V" + (i + 1).toString)
+          for (i <- k to n) yield "V" + i.toString + "->" + "V" + (i + 1).toString) // TODO (David) comma missing at end of line here
       onMorphisms = Map (
           for (i <- 0 to k-1) yield {
           	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
@@ -162,7 +162,7 @@ class Test extends FlatSpec with ShouldMatchers {
       target = Ord(n-1),
       onObjects = Map ( 
           for (i <- 0 to k) yield "V" + i.toString + "->" + "V" + i.toString,
-          for (i <- k+1 to n) yield "V" + i.toString + "->" + "V" + (i - 1).toString)
+          for (i <- k+1 to n) yield "V" + i.toString + "->" + "V" + (i - 1).toString) // TODO (David) comma missing at end of line here
       onMorphisms = Map (
           for (i <- 0 to k-1) yield {
           	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
@@ -191,11 +191,18 @@ class Test extends FlatSpec with ShouldMatchers {
       	   
   val termCat = Ord0
   
+  /*
+   *  TODO (David) the error here is 'type not found, Ontology'.
+   *  You need to add "import net.metaphor.api.Ontology" at the top of the file, with the other imports.
+   *  If everything else were compiling properly, you could place your cursor inside the word Ontology,
+   *  and hit cmd-1, which would pop up a list of "suggested fixes", probably the only of which would be
+   *  to automatically add the import you need.
+   */
   def terminalFunctor(c : Ontology) = functor (
       source = c,
-      target = terminalCat,
+      target = terminalCat, // TODO (David) need to rename the val termCat above to match.
       onObjects = Map( for (b <- c.boxes) yield (b.name -> "V0")),
-      onMorphisms = Map (for (b <- c.arrows) yield (b.source.name --- b.name --> b.target.name))))
+      onMorphisms = Map (for (b <- c.arrows) yield (b.source.name --- b.name --> b.target.name)))
       	
     
   
@@ -276,7 +283,7 @@ class Test extends FlatSpec with ShouldMatchers {
       arrows = List (
           "0"---"next"-->"1",
           "1"---"next"-->"0"),
-      relations (
+      relations ( // TODO (David) this line should read "relations = List("
           (("0"---"next"-->"1"---"next"-->"0") 
           === 
           ("0")),
@@ -301,7 +308,7 @@ class Test extends FlatSpec with ShouldMatchers {
       onObjects = Map (
          "V0" -> List ("David","Alex Crujeiras","Scott","UC Berkeley", "MIT"),
       	 "V1" -> List ("1978","Scott's birthyear", "1868","1861")),
-      onMorphisms (
+      onMorphisms ( // TODO (David) should be "onMorphisms = Map("
           "V0"---"E01"-->"V1" -> Map (
               "David" -> "1978",
               "Alex Crujeiras" -> "1978",
@@ -312,12 +319,12 @@ class Test extends FlatSpec with ShouldMatchers {
   val DavidsFunkySet1 = dataset(source = Ord(0),
       onObjects = Map (
           "V0" -> List ("David","Scott","UC Berkeley", "MIT")),
-      onMorphisms())
+      onMorphisms()) // TODO (David) should be "onMorphisms = Map())
   
   val DavidsFunkySet2 = dataset(source = Ord(0),
       onObjects = Map (
           "V0" -> List ("1978","Scott's birthyear", "1868","1861")),
-      onMorphisms())
+      onMorphisms()) // TODO (David) the same
   
   val Drawers = dataset(Ord(1),
       onObjects = Map (
@@ -341,14 +348,17 @@ class Test extends FlatSpec with ShouldMatchers {
     Codomain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
       
+   // Unfortunately it seems that _* and _! aren't allowed method names. I've gone with __* and __! for now.
+   
    "pushforward" should "work" in {
-    ConstantOrd[1]._*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
+    /* TODO ConstantOrd[1] isn't defined, what's meant to go here? */ ???.__*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
   }
   
    "shriek" should "work" in {
-    ConstantOrd[1]._!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
+    /* ConstantOrd[1] isn't defined */ ???.__!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
   		
   
 
 
+}
