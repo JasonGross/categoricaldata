@@ -189,8 +189,8 @@ class Test extends FlatSpec with ShouldMatchers {
       onMorphisms = Map (for (a <- c.arrows) yield (a.source.name --- a.name --> a.target.name) -> ("V0")))
       	
   def TerminalDataset(c : Ontology) =  dataset(
-      source = c;
-      onObjects = Map (for (b <- c.boxes) yield (b.name -> List ("witness" + b.name)))
+      source = c,
+      onObjects = Map (for (b <- c.boxes) yield (b.name -> List ("witness" + b.name))),
       onMorphisms = Map (for (a <- c.arrows) yield {Map ((a.source.name --- a.name --> a.target.name) -> 
       	Map ("witness" + a.source.name -> "witness" + a.target.name))}))
       	
@@ -277,6 +277,26 @@ class Test extends FlatSpec with ShouldMatchers {
     	("an edge"---"has as source"-->"a vertex") -> ("an edge"---"has as target"-->"a vertex"),
     	("an edge"---"has as target"-->"a vertex") -> ("an edge"---"has as source"-->"a vertex"))
   )
+  
+  val DavidsFunkyGraphReversed = dataset(source = Grph,
+    onObjects = Map (
+        "an edge" -> List ("f", "g", "h", "i", "j"),
+        "a vertex" -> List ("A", "B", "C", "D")),
+    onMorphisms = Map ( 
+    	("an edge" --- "has as source" --> "a vertex") -> Map (
+    			"f" -> "B",
+        		"g" -> "B",
+        		"h" -> "C",
+        		"i" -> "C",
+        		"j" -> "C"),
+        ("an edge" --- "has as target" --> "a vertex") -> Map (
+        		"f" -> "A",
+    			"g" -> "A",
+    			"h" -> "B",
+    			"i" -> "A",
+    			"j" -> "C")))
+   
+   
   
   
   val GraphToDiscreteDynamicalSystem1 = functor (
@@ -456,5 +476,15 @@ class Test extends FlatSpec with ShouldMatchers {
 	   should equal 
 	   (InitialDataset(FiniteCyclicMonoid(10,7)))
    }
+   
+   "pullback" should "work" in {
+	   ReverseGraph.^*(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
+   
+   "pushforward" should "work" in {
+	   ReverseGraph.__*(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
+   
+   "shriek" should "work" in {
+	   ReverseGraph.__!(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
+  
  
 }
