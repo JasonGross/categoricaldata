@@ -41,8 +41,14 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
         ???
       } else {
         ontology.relations(source, target)
-      }
-    }
+      }}
+    def toString () = {
+      println("Ontology")
+      println("Objects: ")
+      for (i <- objects) println(i)
+      println();println("Arrows: ")
+      for (i <- arrows) println(i)}
+    
   }
   
   trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
