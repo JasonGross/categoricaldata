@@ -31,7 +31,7 @@ class Test extends FlatSpec with ShouldMatchers {
 
   
         
-  val termGraph = dataset (source = Grph,
+  val terminalGraph = dataset (source = Grph,
     onObjects = Map(
         "an edge" -> List("+1"),
         "a vertex" -> List("N")),
@@ -40,7 +40,7 @@ class Test extends FlatSpec with ShouldMatchers {
         ("an edge" --- "has as target" --> "a vertex") -> Map ("+1" -> "N"))
   )
 
-  val termBigraph = dataset (source = Grph,
+  val terminalBigraph = dataset (source = Grph,
     onObjects = Map (
     	"an edge" -> List ("input", "output"),
     	"a vertex" -> List ("species", "transition")),
@@ -53,7 +53,7 @@ class Test extends FlatSpec with ShouldMatchers {
     		"output" -> "species"))
    )  
    
-  val initGraph = dataset (source = Grph,
+  val initialGraph = dataset (source = Grph,
     onObjects = Map (
         "an edge" -> List(),
         "a vertex" -> List()),
@@ -131,12 +131,11 @@ class Test extends FlatSpec with ShouldMatchers {
     source = Ord0,
     target = Ord1,
 	onObjects = Map ("V0" -> "V1"),
-	onMorphisms = Map ()
-  )
+	onMorphisms = Map ())
   
   
   // these need to be "def" not "val", in order to take parameters
-  val Skip(n : Int, k : Int) = functor (
+  def Skip (n : Int, k : Int) = functor (
       source = Ord(n),
       target = Ord(n+1),
       onObjects = Map ( 
@@ -156,9 +155,9 @@ class Test extends FlatSpec with ShouldMatchers {
           	(("V" + (i+1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))}))
 
   
-  val Coface(n: Int, k: Int) = Skip (n,k)
+  def Coface(n: Int, k: Int) = Skip (n,k)
 
-  val Duplicate(n : Int, k : Int) = functor (
+  def Duplicate(n : Int, k : Int) = functor (
       source = Ord(n),
       target = Ord(n-1),
       onObjects = Map ( 
@@ -177,7 +176,7 @@ class Test extends FlatSpec with ShouldMatchers {
           	->
           	(("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))}))
   
-  val Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
+  def Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
   
  
   val Compose = functor (
@@ -192,13 +191,11 @@ class Test extends FlatSpec with ShouldMatchers {
       	   
   val termCat = Ord0
   
-  def termFunctor(C : Category) = functor (
-      source = C,
-      target = termCat,
-      onObjects = Map(
-    	for (i <- C.objects) yield i.toString -> "V0")
-      onMorphisms = Map(
-    	for (i <- C.arrows) yield i.toString -> "V0"))
+  def terminalFunctor(c : Ontology) = functor (
+      source = c,
+      target = terminalCat,
+      onObjects = Map( for (b <- c.boxes) yield (b.name -> "V0")),
+      onMorphisms = Map (for (b <- c.arrows) yield (b.source.name --- b.name --> b.target.name))))
       	
     
   
@@ -281,10 +278,10 @@ class Test extends FlatSpec with ShouldMatchers {
           "1"---"next"-->"0"),
       relations (
           (("0"---"next"-->"1"---"next"-->"0") 
-          equivalently 
+          === 
           ("0")),
           (("1"---"next"-->"0"---"next"-->"1") 
-          equivalently
+          ===
           ("1"))))
           
   val PointedSets = ontology(
@@ -294,7 +291,7 @@ class Test extends FlatSpec with ShouldMatchers {
           "a pointed set"---"has as chosen"-->"an element"),
       relations = List (
           ("a pointed set"---"has as chosen"-->"an element"---"is in"-->"a pointed set") 
-          equivalently 
+          === 
           ("a pointed set")))
   
 
@@ -307,7 +304,7 @@ class Test extends FlatSpec with ShouldMatchers {
       onMorphisms (
           "V0"---"E01"-->"V1" -> Map (
               "David" -> "1978",
-              "Alex Crujeiras" -> "1978"
+              "Alex Crujeiras" -> "1978",
               "Scott" -> "Scott's birthyear",
               "UC Berkeley" -> "1868",
               "MIT" -> "1861")))
@@ -333,39 +330,25 @@ class Test extends FlatSpec with ShouldMatchers {
               "Item 3" -> "Top Drawer",
               "Item 4" -> "Top Drawer")))
    
-  // Feel free to delete for now. But at some point, it would be cool to somehow encode topological categories.
   
-  val FundGrpdS1 = topologicalCategory(
-	having Objects (for theta in [0,1) "clockhand"<theta> )
-	having Morphisms (
-	    for t in realNumbers
-	    for theta in [0,1)
-         	"clockhand"<theta> ---"duration"<t>-->"clockhand"(<theta>+<t>) )
-    having Relations (
-	    for theta in [0,1)
-        for t1 in realNumbers
-        for t2 in realNumbers
-         		("clockhand"<theta> ---"duration"<t1>-->"clockhand"(<theta>+<t1>)"---"duration"<t2>-->"clockhand"(<theta>+<t1>+<t2>)) 
-	    		equivalently as ("clockhand"<theta>,"clockhand"(<theta>+<t1>+<t2>))
-	    		("clockhand"<theta> ---"duration"(<t1>+<t2>)-->"clockhand"(<theta>+<t1>+<t2>)") 
-	    			
-  )    
+  
       
   "pullback" should "work" in {
     Domain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
   }
+  
    "pullback" should "work" in {
     Codomain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
       
-  "pushforward" should "work" in {
+   "pushforward" should "work" in {
     ConstantOrd[1]._*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
   }
   
-  "shriek" should "work" in {
+   "shriek" should "work" in {
     ConstantOrd[1]._!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
   		
   
-}
+
 
