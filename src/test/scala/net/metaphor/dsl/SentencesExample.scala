@@ -44,5 +44,5 @@ object SentencesExample extends App {
         "Y" -> "G1") //
         ) //
         )
-
+        
 }

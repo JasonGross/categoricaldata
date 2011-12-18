@@ -1,26 +1,30 @@
 package net.metaphor.api
 
-trait Set[A] {
-  def toIterable: Iterable[A]
+trait Set {
+  def toIterable: Iterable[Any]
+  def identity: Function = IdentityFunction(this)
 }
-trait Function[A, B] {
-  def toFunction: A => B
+trait Function {
+  def toFunction: Any => Any
+}
+case class IdentityFunction[A](set: Set) extends Function {
+  override def toFunction = { a: Any => a }
 }
 
-trait Sets extends Category[Set[Any], Function[Any, Any], Sets]
+trait Sets extends Category[Set, Function, Sets]
 
 object Sets extends Sets {
-  override def identity(set: Set[Any]) = ???
-  override def source(f: Function[Any, Any]) = ???
-  override def target(f: Function[Any, Any]) = ???
-  override def compose(first: Function[Any, Any], second: Function[Any, Any]) = ???
+  override def identity(set: Set) = ???
+  override def source(f: Function) = ???
+  override def target(f: Function) = ???
+  override def compose(first: Function, second: Function) = ???
 }
 
 object Colimit {
   /**
    * returns a pair (s: Set, fs: List[Function]), where s is the colimit, and fs are the functions from the objects of functor.source to the colimit
    */
-  def apply[O, M, C <: FinitelyPresentedCategory[O, M, C]](functor: FunctorToSet[O, M, C]): (Set[_], List[Function[_, _]]) = {
+  def apply[O, M, C <: FinitelyPresentedCategory[O, M, C]](functor: FunctorToSet[O, M, C]): (Set, List[Function]) = {
     val diagram = functor.source
 
     /**
@@ -44,11 +48,11 @@ object Colimit {
 
     lazy val clumps = arrows.foldLeft(initialClumps)(combineClumps _)
     
-    val resultSet = new Set[List[(O, Any)]] {
+    val resultSet = new Set {
       def toIterable = clumps
     }
     val resultFunctions = diagram.objects.map { o =>
-      new Function[Any, List[(O, Any)]] {
+      new Function {
         def toFunction = { x => clumps.find(_.contains((o, x))).get }
       }
     }

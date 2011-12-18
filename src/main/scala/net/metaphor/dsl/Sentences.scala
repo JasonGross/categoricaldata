@@ -82,7 +82,7 @@ object Sentences {
     }
   }
 
-  def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): Dataset = {
+  def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
     new source.Dataset {
       override def onObjects(o: Box) = ???
       override def onMorphisms(m: Path) = ???

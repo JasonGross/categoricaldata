@@ -17,16 +17,16 @@ class FunctorCategory[SO, SM, SC <: Category[SO, SM, SC], TO, TM, TC <: Category
   }
 }
 
-trait FunctorToSet[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets] {
+trait FunctorToSet[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, Set, Function, Sets] {
   override val target = Sets
 }
-trait NaturalTransformationToSet[O, M, C <: Category[O, M, C]] extends HeteroNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets] {
+trait NaturalTransformationToSet[O, M, C <: Category[O, M, C]] extends HeteroNaturalTransformation[O, M, C, Set, Function, Sets] {
   override def source: FunctorToSet[O, M, C]
   override def target: FunctorToSet[O, M, C]
 }
 
 
-class FunctorsToSet[O, M, C <: Category[O, M, C]](source: C) extends FunctorCategory[O, M, C, Set[Any], Function[Any, Any], Sets](source, Sets)
+class FunctorsToSet[O, M, C <: Category[O, M, C]](source: C) extends FunctorCategory[O, M, C, Set, Function, Sets](source, Sets)
 
 class PullbackFunctor[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O2, M2, C2]](F: Functor[O1, M1, C1], targetCategory: C2) extends Functor[HeteroFunctor[O1, M1, C1, O2, M2, C2], HeteroNaturalTransformation[O1, M1, C1, O2, M2, C2], FunctorCategory[O1, M1, C1, O2, M2, C2]] {
   val source = new FunctorCategory[O1, M1, C1, O2, M2, C2](F.source, targetCategory)
@@ -44,10 +44,10 @@ class PullbackNaturalTransformation[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, 
 
 trait CategoricalTwoFunctor[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O2, M2, C2]] extends HeteroTwoFunctor[C1, Functor[O1, M1, C1], NaturalTransformation[O1, M1, C1], Categories[O1, M1, C1], C2, Functor[O2, M2, C2], NaturalTransformation[O2, M2, C2], Categories[O2, M2, C2]]
 
-class PullbackTwoFunctor[O, M, C <: FinitelyPresentedCategory[O, M, C]](val source: FinitelyPresentedCategories[O, M, C]) extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets], HeteroNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets], FunctorCategory[O, M, C, Set[Any], Function[Any, Any], Sets]] {
+class PullbackTwoFunctor[O, M, C <: FinitelyPresentedCategory[O, M, C]](val source: FinitelyPresentedCategories[O, M, C]) extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] {
   def target = ???
 
   def onZeroMorphisms(m0: C) = new FunctorsToSet[O, M, C](m0)
-  def onOneMorphisms(m1: Functor[O, M, C]): Functor[HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets], HeteroNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets], FunctorCategory[O, M, C, Set[Any], Function[Any, Any], Sets]] = new PullbackFunctor[O, M, C, Set[Any], Function[Any, Any], Sets](m1, Sets)
-  def onTwoMorphisms(m2: NaturalTransformation[O, M, C]): NaturalTransformation[HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets], HeteroNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets], FunctorCategory[O, M, C, Set[Any], Function[Any, Any], Sets]] = new PullbackNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets](m2, Sets)
+  def onOneMorphisms(m1: Functor[O, M, C]): Functor[HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] = new PullbackFunctor[O, M, C, Set, Function, Sets](m1, Sets)
+  def onTwoMorphisms(m2: NaturalTransformation[O, M, C]): NaturalTransformation[HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] = new PullbackNaturalTransformation[O, M, C, Set, Function, Sets](m2, Sets)
 }

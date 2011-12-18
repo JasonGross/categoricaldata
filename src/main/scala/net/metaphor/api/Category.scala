@@ -14,9 +14,7 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
     def target: FunctorToSet
   }
 
-  class FunctorsToSet extends net.metaphor.api.FunctorsToSet[O, M ,C](self) {
-  }
-
+  class FunctorsToSet extends net.metaphor.api.FunctorsToSet[O, M ,C](self)
 }
 
 trait HeteroFunctor[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O2, M2, C2]] {
