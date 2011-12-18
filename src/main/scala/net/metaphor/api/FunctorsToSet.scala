@@ -17,6 +17,15 @@ class FunctorCategory[SO, SM, SC <: Category[SO, SM], TO, TM, TC <: Category[TO,
   }
 }
 
+trait FunctorToSet[O, M, C <: Category[O, M]] extends HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets] {
+  override val target = Sets
+}
+trait NaturalTransformationToSet[O, M, C <: Category[O, M]] extends HeteroNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets] {
+  override def source: FunctorToSet[O, M, C]
+  override def target: FunctorToSet[O, M, C]
+}
+
+
 class FunctorsToSet[O, M, C <: Category[O, M]](source: C) extends FunctorCategory[O, M, C, Set[Any], Function[Any, Any], Sets](source, Sets)
 
 class PullbackFunctor[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M2]](F: Functor[O1, M1, C1], targetCategory: C2) extends Functor[HeteroFunctor[O1, M1, C1, O2, M2, C2], HeteroNaturalTransformation[O1, M1, C1, O2, M2, C2], FunctorCategory[O1, M1, C1, O2, M2, C2]] {
@@ -35,7 +44,7 @@ class PullbackNaturalTransformation[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <
 
 trait CategoricalTwoFunctor[O1, M1, C1 <: Category[O1, M1], O2, M2, C2 <: Category[O2, M2]] extends HeteroTwoFunctor[C1, Functor[O1, M1, C1], NaturalTransformation[O1, M1, C1], Categories[O1, M1, C1], C2, Functor[O2, M2, C2], NaturalTransformation[O2, M2, C2], Categories[O2, M2, C2]]
 
-class PullbackTwoFunctor[O, M, C <: FinitelyPresentedCategory[O, M]](val source: FinitelyPresentedCategories[O, M, C]) extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets], HeteroNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets], FunctorCategory[O, M, C, Set[Any], Function[Any, Any], Sets]] {
+class PullbackTwoFunctor[O, M, C <: FinitelyPresentedCategory[O, M, C]](val source: FinitelyPresentedCategories[O, M, C]) extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets], HeteroNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets], FunctorCategory[O, M, C, Set[Any], Function[Any, Any], Sets]] {
   def target = ???
 
   def onZeroMorphisms(m0: C) = new FunctorsToSet[O, M, C](m0)

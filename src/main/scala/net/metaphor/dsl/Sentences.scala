@@ -1,10 +1,10 @@
 package net.metaphor.dsl
 import net.metaphor.api.Ontology
 import net.metaphor.api.Translation
-import net.metaphor.api.Dataset
 import net.metaphor.api.Box
 import net.metaphor.api.Arrow
 import net.metaphor.api.Path
+import net.metaphor.api.Dataset
 
 object Sentences {
   implicit def stringAsPath(s: String) = StringSource(s)
@@ -83,9 +83,7 @@ object Sentences {
   }
 
   def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): Dataset = {
-    val source_ = source
-    new Dataset {
-      override def source = source_
+    new source.Dataset {
       override def onObjects(o: Box) = ???
       override def onMorphisms(m: Path) = ???
     }

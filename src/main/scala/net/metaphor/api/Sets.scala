@@ -20,7 +20,7 @@ object Colimit {
   /**
    * returns a pair (s: Set, fs: List[Function]), where s is the colimit, and fs are the functions from the objects of functor.source to the colimit
    */
-  def apply[O, M, C <: FinitelyPresentedCategory[O, M]](functor: FunctorToSet[O, M, C]): (Set[_], List[Function[_, _]]) = {
+  def apply[O, M, C <: FinitelyPresentedCategory[O, M, C]](functor: FunctorToSet[O, M, C]): (Set[_], List[Function[_, _]]) = {
     val diagram = functor.source
 
     /**

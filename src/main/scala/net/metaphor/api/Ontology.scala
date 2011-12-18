@@ -12,7 +12,10 @@ case class Path(start: Box, arrows: List[Arrow]) {
   def finish = arrows.last.target
 }
 
-trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] {
+trait Dataset extends FunctorToSet[Box, Path, Ontology]
+trait Datamap extends NaturalTransformationToSet[Box, Path, Ontology]
+
+trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology =>
   override def compose(m1: Path, m2: Path) = {
     require(m2.finish == m1.start)
     Path(m1.start, m1.arrows ::: m2.arrows)
@@ -20,6 +23,23 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] {
   override def source(m: Path) = m.start
   override def target(m: Path) = m.finish
   override def identity(o: Box) = o.identity
+
+  trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
+  trait Datamap extends NaturalTransformationToSet with net.metaphor.api.Datamap
+  
+  class Datasets extends FunctorsToSet[Box, Path, Ontology](ontology) {
+    // how far up can we lift this?
+    def colimit(functor: Dataset) = {
+      new InitialObject[Dataset, Datamap] {
+        def initialObject = ???
+        def morphismTo(other: Dataset) = {
+          // require that the source is (source + terminal object)?
+          // require that it actually extends functor?
+          ???
+        }
+      }
+    }
+  }
 }
 
 object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
@@ -50,26 +70,3 @@ object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
 }
 
 trait Translation extends Functor[Box, Path, Ontology]
-
-trait Dataset extends FunctorToSet[Box, Path, Ontology] {
-  override def target = Sets
-}
-
-
-class Datasets(source: Ontology) extends FunctorsToSet[Box, Path, Ontology](source) {
-  // how far up can we lift this?
-  def colimit(functor: Dataset) = {
-    new InitialObject[Dataset, TransformationToSet[Box, Path, Ontology]] {
-      def initialObject = ???
-      def morphismTo(other: Dataset) = {
-        // require that the source is (source + terminal object)?
-        // require that it actually extends functor?
-        ???
-      }
-    }
-  }  
-}
-
-trait Model {
-  val over: Ontology
-}

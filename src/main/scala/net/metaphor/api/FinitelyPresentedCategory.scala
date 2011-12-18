@@ -8,15 +8,18 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
 
 trait FinitelyGeneratedCategories[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Categories[O, M, C]
 
-trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategory[O, M, C] { self =>
+trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategory[O, M, C] { self: C =>
   def relations(source: O, target: O): List[M]
   def relations: List[M] = for (s <- objects; t <- objects; r <- relations(s, t)) yield r
     
-  def adjoinTerminalObject(o: O): C with TerminalObject[O, M]
+  def adjoinTerminalObject(o: O): C with TerminalObject[O, M] = ???
     
-  class FunctorToSet extends net.metaphor.api.FunctorToSet[O, M, C] {
-	  val source = self
-	  val target = Sets
+  abstract class FunctorToSet extends net.metaphor.api.FunctorToSet[O, M, C] {
+	  override val source = self
+  }
+  abstract class NaturalTransformationToSet extends net.metaphor.api.NaturalTransformationToSet[O, M, C] {
+    def source: FunctorToSet
+    def target: FunctorToSet
   }
 }
 
