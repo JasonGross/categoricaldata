@@ -19,8 +19,6 @@ class FunctorCategory[SO, SM, SC <: Category[SO, SM, SC], TO, TM, TC <: Category
 
 trait FunctorToSet[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, Set[Any], Function[Any, Any], Sets] {
   override val target = Sets
-  
-  class ExtensionToTerminalObject
 }
 trait NaturalTransformationToSet[O, M, C <: Category[O, M, C]] extends HeteroNaturalTransformation[O, M, C, Set[Any], Function[Any, Any], Sets] {
   override def source: FunctorToSet[O, M, C]

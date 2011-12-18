@@ -27,19 +27,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
   trait Datamap extends NaturalTransformationToSet with net.metaphor.api.Datamap
   
-  object Datasets extends FunctorsToSet {
-    // how far up can we lift this?
-    def colimit(functor: Dataset) = {
-      new InitialObject[Dataset, Datamap] {
-        def initialObject = ???
-        def morphismTo(other: Dataset) = {
-          // require that the source is (source + terminal object)?
-          // require that it actually extends functor?
-          ???
-        }
-      }
-    }
-  }
+  object Datasets extends FunctorsToSet
 }
 
 object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
