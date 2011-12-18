@@ -4,8 +4,8 @@ import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-
 import scala.math._
+import net.metaphor.api.Ontology
 
 /*
  * Currently no expectation that this code compiles.
@@ -72,21 +72,16 @@ class Test extends FlatSpec with ShouldMatchers {
     			"g" -> "A",
     			"h" -> "B",
     			"i" -> "A",
-    			"j" -> "C",
-    			"k" -> "C"),
+    			"j" -> "C"),
         ("an edge" --- "has as target" --> "a vertex") -> Map (
         		"f" -> "B",
         		"g" -> "B",
         		"h" -> "C",
         		"i" -> "C",
-        		"j" -> "C",
-        		"k" -> "C"))
+        		"j" -> "C"))
    )
    
-  /* 
-   * Ordinals
-   * TO DO: Some kind of schematic for Ord[n].
-   */
+  
   val Ord0 = ontology(
 	objects =List ("V0"),
     arrows = List ()
@@ -133,14 +128,13 @@ class Test extends FlatSpec with ShouldMatchers {
 	onObjects = Map ("V0" -> "V1"),
 	onMorphisms = Map ())
   
-  
-  // these need to be "def" not "val", in order to take parameters
+   
   def Skip (n : Int, k : Int) = functor (
       source = Ord(n),
       target = Ord(n+1),
       onObjects = Map ( 
           for (i <- 0 to k-1) yield "V" + i.toString + "->" + "V" + i.toString,
-          for (i <- k to n) yield "V" + i.toString + "->" + "V" + (i + 1).toString) // TODO (David) comma missing at end of line here
+          for (i <- k to n) yield "V" + i.toString + "->" + "V" + (i + 1).toString),
       onMorphisms = Map (
           for (i <- 0 to k-1) yield {
           	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
@@ -162,7 +156,7 @@ class Test extends FlatSpec with ShouldMatchers {
       target = Ord(n-1),
       onObjects = Map ( 
           for (i <- 0 to k) yield "V" + i.toString + "->" + "V" + i.toString,
-          for (i <- k+1 to n) yield "V" + i.toString + "->" + "V" + (i - 1).toString) // TODO (David) comma missing at end of line here
+          for (i <- k+1 to n) yield "V" + i.toString + "->" + "V" + (i - 1).toString),
       onMorphisms = Map (
           for (i <- 0 to k-1) yield {
           	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
@@ -189,18 +183,12 @@ class Test extends FlatSpec with ShouldMatchers {
 	    ("V0"---"E01"-->"V1") -> ("V0"---"E01"-->"V1"---"E12"-->"V2"))
   )
       	   
-  val termCat = Ord0
+  val terminalCategory = Ord(0)
   
-  /*
-   *  TODO (David) the error here is 'type not found, Ontology'.
-   *  You need to add "import net.metaphor.api.Ontology" at the top of the file, with the other imports.
-   *  If everything else were compiling properly, you could place your cursor inside the word Ontology,
-   *  and hit cmd-1, which would pop up a list of "suggested fixes", probably the only of which would be
-   *  to automatically add the import you need.
-   */
+ 
   def terminalFunctor(c : Ontology) = functor (
       source = c,
-      target = terminalCat, // TODO (David) need to rename the val termCat above to match.
+      target = terminalCategory, 
       onObjects = Map( for (b <- c.boxes) yield (b.name -> "V0")),
       onMorphisms = Map (for (b <- c.arrows) yield (b.source.name --- b.name --> b.target.name)))
       	
@@ -235,6 +223,35 @@ class Test extends FlatSpec with ShouldMatchers {
     arrows = List ("an element"---"has as successor"-->"an element")
   )
   
+  val DavidsFunkyDiscreteDynamicalSystem = dataset (source = DiscreteDynamicalSystem,
+    onObjects = Map (
+        "an element" -> List ("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar")),
+    onMorphisms = Map ( 
+    	("an element"---"has as successor"-->"an element") -> Map (
+    			"fhjbar" -> "hjbar",
+    			"ghjbar" -> "hjbar",
+    			"ijbar" -> "jbar",
+    			"hjbar" -> "jbar",
+    			"jbar" -> "jbar")))
+    			
+  val GraphFromDavidsFunkyDiscreteDynamicalSystem = dataset (source = Grph,
+      onObjects = Map (
+          "a vertex" -> List ("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar"),
+          "an edge" -> List ("f", "g", "h", "i", "j")),
+      onMorphisms = Map(
+          ("an edge" --- "has as source" --> "a vertex") -> Map(
+              "f" -> "fhjbar",
+              "g" -> "ghjbar",
+              "h" -> "hjbar",
+              "i" -> "ijbar",
+              "j" -> "jbar"),
+          ("an edge" --- "has as target" --> "a vertex") -> Map(
+              "f" -> "hjbar",
+              "g" -> "hjbar",
+              "h" -> "jbar",
+              "i" -> "jbar",
+              "j" -> "jbar")))
+  
   val ReverseGraph = functor (
     source = Grph,
     target = Grph,
@@ -247,7 +264,7 @@ class Test extends FlatSpec with ShouldMatchers {
   )
   
   
-  val GraphToDDS1 = functor (
+  val GraphToDiscreteDynamicalSystem1 = functor (
     source = Grph,
     target = DiscreteDynamicalSystem,
 	onObjects = Map (
@@ -258,7 +275,7 @@ class Test extends FlatSpec with ShouldMatchers {
     	("an edge"---"has as target"-->"a vertex") -> ("an element"---"has as successor"-->"an element"))
   )
   
-  val GraphToDDS2 = functor (
+  val GraphToDiscreteDynamicalSystem2 = functor (
     source = Grph, 
     target = DiscreteDynamicalSystem,
 	onObjects = Map (
@@ -269,21 +286,48 @@ class Test extends FlatSpec with ShouldMatchers {
     	("an edge"---"has as target"-->"a vertex") -> (identity("an element")))
   )
   
-   val IntsMod2Group = ontology(
+   val IntegersMod2Group = ontology(
       objects = List ("an element"),
       arrows = List ("an element"---"is married to"-->"an element"),
-      relations =List (
+      relations = List (
           ("an element"---"is married to"-->"an element"---"is married to"-->"an element") 
           === 
           ("an element")))
+          
+   def FiniteCyclicMonoid (n : Int, k : Int) = ontology (//should have k < n. When k = 0, this is the cyclic group of order n.
+       objects = List ("an element"),
+       arrows = List ("an element" --- "has as successor" --> "an element"),
+       relations = List (
+           (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
+           ===
+           (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")
+           
+   def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = functor(
+       source = TerminalCategory,
+       target = FiniteCyclicMonoid(n, k),
+       onObjects = Map ("V0" -> "an element"),
+       onMorphisms = Map ())
+           
+   val DavidsFunkyFiniteCyclicMonoid = dataset (
+       source = FiniteCyclicMonoid(2,1),
+       onObjects = Map ("an element" -> List ("David","Scott","UC Berkeley", "MIT","succDavid","succScott","succUC Berkeley", "succMIT")),
+       onMorphisms = Map ("an element" --- "has as successor" --> "an element" -> Map (
+           "David" -> "succDavid",
+           "Scott" -> "succScott",
+           "UC Berkeley" -> "succUC Berkeley",
+           "MIT" -> "succMIT",
+           "succDavid" -> "succDavid",
+           "succScott" -> "succScott",
+           "succUC Berkeley" -> "succUC Berkeley", 
+           "succMIT" -> "succMIT")))
+           
 
-  
-  val IntsMod2Groupoid = ontology(
+  val IntegersMod2Groupoid = ontology(
       objects = List ("0","1"),
       arrows = List (
           "0"---"next"-->"1",
           "1"---"next"-->"0"),
-      relations ( // TODO (David) this line should read "relations = List("
+      relations = List (
           (("0"---"next"-->"1"---"next"-->"0") 
           === 
           ("0")),
@@ -306,25 +350,24 @@ class Test extends FlatSpec with ShouldMatchers {
       
   val DavidsFunkyFunction = dataset(source = Ord(1),
       onObjects = Map (
-         "V0" -> List ("David","Alex Crujeiras","Scott","UC Berkeley", "MIT"),
+         "V0" -> List ("David","Scott","UC Berkeley", "MIT"),
       	 "V1" -> List ("1978","Scott's birthyear", "1868","1861")),
-      onMorphisms ( // TODO (David) should be "onMorphisms = Map("
-          "V0"---"E01"-->"V1" -> Map (
-              "David" -> "1978",
-              "Alex Crujeiras" -> "1978",
-              "Scott" -> "Scott's birthyear",
-              "UC Berkeley" -> "1868",
-              "MIT" -> "1861")))
+      onMorphisms = Map(
+    	 "V0"---"E01"-->"V1" -> Map (
+    			 "David" -> "1978",
+    			 "Scott" -> "Scott's birthyear",
+    			 "UC Berkeley" -> "1868",
+    			 "MIT" -> "1861")))
               
   val DavidsFunkySet1 = dataset(source = Ord(0),
       onObjects = Map (
           "V0" -> List ("David","Scott","UC Berkeley", "MIT")),
-      onMorphisms()) // TODO (David) should be "onMorphisms = Map())
-  
+      onMorphisms = Map ())
+      
   val DavidsFunkySet2 = dataset(source = Ord(0),
       onObjects = Map (
           "V0" -> List ("1978","Scott's birthyear", "1868","1861")),
-      onMorphisms()) // TODO (David) the same
+      onMorphisms = Map ())
   
   val Drawers = dataset(Ord(1),
       onObjects = Map (
@@ -341,24 +384,35 @@ class Test extends FlatSpec with ShouldMatchers {
   
       
   "pullback" should "work" in {
-    Domain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
+       Domain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
   }
   
    "pullback" should "work" in {
-    Codomain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet2)
+	   Codomain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
+   
+   "pullback" should "work" in {
+	   GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal (GraphFromDavidsFunkyDiscreteDynamicalSystem)
+   }
       
    // Unfortunately it seems that _* and _! aren't allowed method names. I've gone with __* and __! for now.
    
    "pushforward" should "work" in {
-    /* TODO ConstantOrd[1] isn't defined, what's meant to go here? */ ???.__*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
+	   terminalFunctor(Ord(1)).__*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
   }
+   
   
    "shriek" should "work" in {
-    /* ConstantOrd[1] isn't defined */ ???.__!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
+	   terminalFunctor(Ord(1)).__!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
   }
+   
+   "shriek" should "work" in {
+	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
+   }
   		
-  
+   "pushforward" should "work" in {
+	   GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) should equal (DavidsFunkyDiscreteDynamicalSystem)
+   }
 
 
 }
