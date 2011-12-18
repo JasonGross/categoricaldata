@@ -335,7 +335,7 @@ class Test extends FlatSpec with ShouldMatchers {
        relations = List (
            (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
            ===
-           (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")
+           (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
            
    def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = functor(
        source = TerminalCategory,
