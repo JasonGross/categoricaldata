@@ -198,13 +198,13 @@ class Test extends FlatSpec with ShouldMatchers {
       objects = List (),
       arrows = List ())
       
-  val InitialFunctor (c : Ontology) = functor(
+  def InitialFunctor (c : Ontology) = functor(
       source = InitialCategory,
       target = c,
       onObjects = Map(),
       onMorphisms = Map())
   
-  val InitialDataset (c : Ontology) = dataset(
+  def InitialDataset (c : Ontology) = dataset(
       source = c,
       onObjects = for (b <- c.boxes) yield Map (b.name -> List ()),
       onMorphisms = for (a <- c.arrows) yield Map ((a.source.name --- a.name --> a.target.name) -> Map ()))
