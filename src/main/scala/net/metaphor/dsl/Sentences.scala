@@ -46,12 +46,14 @@ object Sentences {
       val sb = boxes.find(_.name == s).get
       val ob = boxes.find(_.name == o).get
       Arrow(sb, ob, p)
-    }).groupBy(_.source).mapValues(_.groupBy(_.target))
+    }).groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
 
+    
+    
     // Construct a new ontology object
     new Ontology {
       override val objects = boxes
-      override def generators(source: Box, target: Box) = arrowMap(source)(target).map(_.asPath)
+      override def generators(source: Box, target: Box) = arrowMap(source, target).map(_.asPath)
       override def relations(source: Box, target: Box) = Nil // FIXME
     }
   }
@@ -65,11 +67,11 @@ object Sentences {
       s -> t
     }).toMap
     val morphismMap = (for (
-      p @ Path(sb, List(s)) <- source.generators
+      p @ Path(sb, List(s)) <- source.allGenerators
     ) yield {
       s -> Path(start = objectMap(sb),
         arrows = for (StringArrow(ts, tp, to) <- onMorphisms(StringArrow(s.source.name, s.name, s.target.name)).arrows) yield {
-          target.generators.map(_.arrows.head).find(a => a.source.name == ts && a.name == tp && a.target.name == to).get
+          target.allGenerators.map(_.arrows.head).find(a => a.source.name == ts && a.name == tp && a.target.name == to).get
         })
     }).toMap
 
@@ -83,9 +85,20 @@ object Sentences {
   }
 
   def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
+    
+    val objectMap = (for(s <- source.objects) yield {
+      s -> net.metaphor.api.Set(onObjects(s.name))
+    }).toMap
+    val morphismMap = (for(
+      Path(sb, List(s)) <- source.allGenerators
+    ) yield {
+      s -> net.metaphor.api.Function(onMorphisms(StringArrow(s.source.name, s.name, s.target.name)))
+    }
+      ).toMap
+    
     new source.Dataset {
-      override def onObjects(o: Box) = ???
-      override def onMorphisms(m: Path) = ???
+      override def onObjects(o: Box) = objectMap(o)
+      override def onMorphisms(m: Path) = m.arrows.map(morphismMap(_)).reduce(_.andThen(_))
     }
   }
 }

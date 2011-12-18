@@ -3,17 +3,21 @@ package net.metaphor.api
 trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Category[O, M, C] { self: C =>
   def objects: List[O]
   def generators(source: O, target: O): List[M]
-  def generators: List[M] = for (s <- objects; t <- objects; g <- generators(s, t)) yield g
+  def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
+  def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g
+  def allGenerators: List[M] = for (source <- objects; target <- objects; g <- generators(source, target)) yield g
 }
 
 trait FinitelyGeneratedCategories[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Categories[O, M, C]
 
 trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategory[O, M, C] { self: C =>
   def relations(source: O, target: O): List[M]
-  def relations: List[M] = for (s <- objects; t <- objects; r <- relations(s, t)) yield r
+  def relationsFrom(source: O) = for (target <- objects; r <- relations(source, target)) yield r
+  def relationsTo(target: O) = for (source <- objects; r <- relations(source, target)) yield r
+  def allRelations: List[M] = for (source <- objects; target <- objects; r <- relations(source, target)) yield r
 
   trait WithTerminalObject extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
-  def adjoinTerminalObject(o: O): WithTerminalObject = ???
+  def adjoinTerminalObject(o: O): WithTerminalObject
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
     class TerminalExtensions(val terminal: WithTerminalObject) { terminalExtensions =>
@@ -21,14 +25,26 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
         def terminalSet: Set
         def mapToTerminalSet(o: O): Function
 
-        override def onObjects(o: O): Set = ???
-        override def onMorphisms(m: M): Function = ???
+        override def onObjects(o: O): Set = {
+          if (o == terminal.terminalObject) {
+            terminalSet
+          } else {
+            functorToSet(o)
+          }
+        }
+        override def onMorphisms(m: M): Function = {
+          if(self.target(m) == terminal.terminalObject) {
+            mapToTerminalSet(self.source(m))
+          } else {
+            functorToSet(m)
+          }
+        }
       }
       trait NaturalTransformationToSet extends terminal.NaturalTransformationToSet {
         def terminalMap: Function
-        
+
         override def apply(o: O) = {
-          if(o == terminal.terminalObject) {
+          if (o == terminal.terminalObject) {
             terminalMap
           } else {
             functorToSet(o).identity
@@ -72,7 +88,7 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
         x <- functor(o).toIterable
       ) yield List((o, x))
       val arrows = for (
-        m <- self.generators;
+        m <- self.allGenerators;
         s = self.source(m);
         t = self.target(m);
         x <- functor(s).toIterable
@@ -81,18 +97,18 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
       lazy val clumps = arrows.foldLeft(initialClumps)(combineClumps _)
 
       val resultSet = new Set {
-        override def toIterable = clumps
+        override def toIterable = clumps.map(_.toString)
       }
       val resultFunctions: (O => Function) = { o: O =>
         new Function {
-          override def toFunction = { x => clumps.find(_.contains((o, x))).get }
+          override def toFunction = { x => clumps.find(_.contains((o, x))).get.toString }
         }
       }
 
       new InitialObject[extensions.FunctorToSet, extensions.NaturalTransformationToSet] {
         def initialObject = new extensions.FunctorToSet {
           override def terminalSet = resultSet
-          override def mapToTerminalSet(o: O) = resultFunctions(o) 
+          override def mapToTerminalSet(o: O) = resultFunctions(o)
         }
         def morphismTo(other: extensions.FunctorToSet) = {
           new extensions.NaturalTransformationToSet {

@@ -24,6 +24,27 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override def target(m: Path) = m.finish
   override def identity(o: Box) = o.identity
 
+  override def adjoinTerminalObject(b: Box) = new Ontology with WithTerminalObject {
+    val terminalObject = b
+    def morphismFrom(o: Box) = ???
+    
+    def objects = b :: ontology.objects
+    def generators(source: Box, target: Box) = {
+      if(target == b) {
+        List(Arrow(source, target, "*").asPath)
+      } else {
+        ontology.generators(source, target)
+      }
+    }
+    def relations(source: Box, target: Box) = {
+      if(target == b) {
+        ???
+      } else {
+        ontology.relations(source, target)
+      }
+    }
+  }
+  
   trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
   trait Datamap extends NaturalTransformationToSet with net.metaphor.api.Datamap
   
