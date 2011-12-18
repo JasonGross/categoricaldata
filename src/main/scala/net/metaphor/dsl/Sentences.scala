@@ -77,8 +77,8 @@ object Sentences {
 
     // construct a new translation object
     new Translation {
-      override def source = source_
-      override def target = target_
+      override val source = source_
+      override val target = target_
       override def onObjects(o: Box) = objectMap(o)
       override def onMorphisms(m: Path) = Path(objectMap(m.start), m.arrows.map(morphismMap(_)).map(_.arrows).flatten)
     }

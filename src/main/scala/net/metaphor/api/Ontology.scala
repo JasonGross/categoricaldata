@@ -51,31 +51,11 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   object Datasets extends FunctorsToSet
 }
 
-object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
-  // hmm, we probably need this to make up 'o' and 'f' internally
-  override def adjoinTerminalObject(category: Ontology, o: Box, f: Box => Path) = {
-    new Ontology with TerminalObject[Box, Path] {
-      def morphismFrom(b: Box) = f(b)
-      val terminalObject = o
-      val objects = o :: category.objects
-      def generators(source: Box, target: Box) = {
-        if (target == o) {
-          List(f(source))
-        } else {
-          category.generators(source, target)
-        }
-      }
-      def relations(source: Box, target: Box) = {
-        if (target == o) {
-          ??? // FIXME
-        } else {
-          category.relations(source, target)
-        }
-      }
-    }
-  }
+object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology]
 
-  // TODO adjoinInitialObject
+trait Translation extends Functor[Box, Path, Ontology] {
+  val source: Ontology
+  val target: Ontology
+  // FIXME, not compiling yet
+//  def pullback: HeteroFunctor[source.FunctorToSet, source.NaturalTransformationToSet, source.FunctorsToSet, target.FunctorToSet, target.NaturalTransformationToSet, target.FunctorsToSet] = ???
 }
-
-trait Translation extends Functor[Box, Path, Ontology]

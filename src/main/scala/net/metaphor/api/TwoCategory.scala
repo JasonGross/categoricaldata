@@ -68,8 +68,6 @@ trait Categories[O, M, C <: Category[O, M, C]] extends TwoCategory[C, Functor[O,
     // FIXME code smell; this is duplicated in FunctorCategory.compose
     override def apply(o: O) = target.target.compose(first(o), second(o))
   }
-  
-  def adjoinTerminalObject(category: C, o: O, f: O => M): C with TerminalObject[O, M]
 }
 
 trait RigidTwoCategory[M0, M1, M2] extends TwoCategory[M0, M1, M2] {
