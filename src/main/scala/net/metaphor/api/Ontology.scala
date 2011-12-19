@@ -92,4 +92,9 @@ trait Translation extends Functor[Box, Path, Ontology] {
   val target: Ontology
   // FIXME, not compiling yet
 //  def pullback: HeteroFunctor[source.FunctorToSet, source.NaturalTransformationToSet, source.FunctorsToSet, target.FunctorToSet, target.NaturalTransformationToSet, target.FunctorsToSet] = ???
+  
+  
+  def ^* = { x: Any => ??? }
+  def __! = { x: Any => ??? }
+  def __* = { x: Any => ??? }
 }

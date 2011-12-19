@@ -105,7 +105,7 @@ class Test extends FlatSpec with ShouldMatchers {
   )
 
   def Ord(n: Int) = ontology(
-    objects = for (i <- 0 to n) yield "V" + i.toString, //David added the ".toString" here. Correct?
+    objects = for (i <- 0 to n) yield "V" + i.toString, //David added the ".toString" here. Correct? // Yes ---S
     arrows = for (i <- 0 to n - 1) yield {
       ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
     })
