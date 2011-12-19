@@ -125,49 +125,49 @@ class Test extends FlatSpec with ShouldMatchers {
 	onMorphisms = Map ())
   
    
-  def Skip (n : Int, k : Int) = functor (
-      source = Ord(n),
-      target = Ord(n+1),
-      onObjects = Map ( 
-          for (i <- 0 to k-1) yield "V" + i.toString + "->" + "V" + i.toString,
-          for (i <- k to n) yield "V" + i.toString + "->" + "V" + (i + 1).toString),
-      onMorphisms = Map (
-          for (i <- 0 to k-1) yield {
-          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-          	->
-          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))},
-          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
-          ->
-          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) --- ("E" + (k + 1).toString + (k + 2).toString) --> ("V" + (k + 2).toString)),
-          for (i <- k+1 to n-1) yield {
-            (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-          	->
-          	(("V" + (i+1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))}))
+//  def Skip (n : Int, k : Int) = functor (
+//      source = Ord(n),
+//      target = Ord(n+1),
+//      onObjects =
+//          (for (i <- 0 to k-1) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
+//          (for (i <- k to n) yield ("V" + i.toString) -> ("V" + (i + 1).toString)).toMap,
+//      onMorphisms = 
+//          (for (i <- 0 to k-1) yield {
+//          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+//          	->
+//          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))}).toMap ++
+//          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
+//          ->
+//          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) --- ("E" + (k + 1).toString + (k + 2).toString) --> ("V" + (k + 2).toString))
+//          (for (i <- k+1 to n-1) yield {
+//            (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+//          	->
+//          	(("V" + (i+1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))}).toMap)
 
   
-  def Coface(n: Int, k: Int) = Skip (n,k)
-
-  def Duplicate(n : Int, k : Int) = functor (
-      source = Ord(n),
-      target = Ord(n-1),
-      onObjects = Map ( 
-          for (i <- 0 to k) yield "V" + i.toString + "->" + "V" + i.toString,
-          for (i <- k+1 to n) yield "V" + i.toString + "->" + "V" + (i - 1).toString),
-      onMorphisms = Map (
-          for (i <- 0 to k-1) yield {
-          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-          	->
-          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))},
-          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
-          ->
-          ("V" + k.toString),
-          for (i <- k+1 to n-1) yield {
-            (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-          	->
-          	(("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))}))
-  
-  def Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
-  
+//  def Coface(n: Int, k: Int) = Skip (n,k)
+//
+//  def Duplicate(n : Int, k : Int) = functor (
+//      source = Ord(n),
+//      target = Ord(n-1),
+//      onObjects = 
+//          (for (i <- 0 to k) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
+//          (for (i <- k+1 to n) yield ("V" + i.toString) -> ("V" + (i - 1).toString)).toMap,
+//      onMorphisms = Map (
+//          for (i <- 0 to k-1) yield {
+//          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+//          	->
+//          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))},
+//          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
+//          ->
+//          ("V" + k.toString),
+//          for (i <- k+1 to n-1) yield {
+//            (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+//          	->
+//          	(("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))}))
+//  
+//  def Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
+//  
  
   val Compose = functor (
   	source = Ord1,
@@ -182,18 +182,18 @@ class Test extends FlatSpec with ShouldMatchers {
   val TerminalCategory = Ord(0)
   
  
-  def TerminalFunctor(c : Ontology) = functor (
-      source = c,
-      target = TerminalCategory, 
-      onObjects = Map (for (b <- c.boxes) yield (b.name -> "V0")),
-      onMorphisms = Map (for (a <- c.arrows) yield (a.source.name --- a.name --> a.target.name) -> ("V0")))
-      	
-  def TerminalDataset(c : Ontology) =  dataset(
-      source = c,
-      onObjects = Map (for (b <- c.boxes) yield (b.name -> List ("witness" + b.name))),
-      onMorphisms = Map (for (a <- c.arrows) yield {Map ((a.source.name --- a.name --> a.target.name) -> 
-      	Map ("witness" + a.source.name -> "witness" + a.target.name))}))
-      	
+//  def TerminalFunctor(c : Ontology) = functor (
+//      source = c,
+//      target = TerminalCategory, 
+//      onObjects = Map (for (b <- c.boxes) yield (b.name -> "V0")),
+//      onMorphisms = Map (for (a <- c.arrows) yield (a.source.name --- a.name --> a.target.name) -> ("V0")))
+//      	
+//  def TerminalDataset(c : Ontology) =  dataset(
+//      source = c,
+//      onObjects = Map (for (b <- c.boxes) yield (b.name -> List ("witness" + b.name))),
+//      onMorphisms = Map (for (a <- c.arrows) yield {Map ((a.source.name --- a.name --> a.target.name) -> 
+//      	Map ("witness" + a.source.name -> "witness" + a.target.name))}))
+//      	
   val InitialCategory = ontology(
       objects = List (),
       arrows = List ())
@@ -204,11 +204,11 @@ class Test extends FlatSpec with ShouldMatchers {
       onObjects = Map(),
       onMorphisms = Map())
   
-  def InitialDataset (c : Ontology) = dataset(
-      source = c,
-      onObjects = for (b <- c.boxes) yield Map (b.name -> List ()),
-      onMorphisms = for (a <- c.arrows) yield Map ((a.source.name --- a.name --> a.target.name) -> Map ()))
-      
+//  def InitialDataset (c : Ontology) = dataset(
+//      source = c,
+//      onObjects = for (b <- c.boxes) yield Map (b.name -> List ()),
+//      onMorphisms = for (a <- c.arrows) yield Map ((a.source.name --- a.name --> a.target.name) -> Map ()))
+//      
      
       
   
@@ -329,33 +329,33 @@ class Test extends FlatSpec with ShouldMatchers {
           === 
           ("an element")))
           
-   def FiniteCyclicMonoid (n : Int, k : Int) = ontology (//should have k < n. When k = 0, this is the cyclic group of order n.
-       objects = List ("an element"),
-       arrows = List ("an element" --- "has as successor" --> "an element"),
-       relations = List (
-           (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
-           ===
-           (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
-           
-   def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = functor(
-       source = TerminalCategory,
-       target = FiniteCyclicMonoid(n, k),
-       onObjects = Map ("V0" -> "an element"),
-       onMorphisms = Map ())
-           
-   val DavidsFunkyFiniteCyclicMonoid = dataset (
-       source = FiniteCyclicMonoid(2,1),
-       onObjects = Map ("an element" -> List ("David","Scott","UC Berkeley", "MIT","succDavid","succScott","succUC Berkeley", "succMIT")),
-       onMorphisms = Map ("an element" --- "has as successor" --> "an element" -> Map (
-           "David" -> "succDavid",
-           "Scott" -> "succScott",
-           "UC Berkeley" -> "succUC Berkeley",
-           "MIT" -> "succMIT",
-           "succDavid" -> "succDavid",
-           "succScott" -> "succScott",
-           "succUC Berkeley" -> "succUC Berkeley", 
-           "succMIT" -> "succMIT")))
-           
+//   def FiniteCyclicMonoid (n : Int, k : Int) = ontology (//should have k < n. When k = 0, this is the cyclic group of order n.
+//       objects = List ("an element"),
+//       arrows = List ("an element" --- "has as successor" --> "an element"),
+//       relations = List (
+//           (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
+//           ===
+//           (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
+//           
+//   def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = functor(
+//       source = TerminalCategory,
+//       target = FiniteCyclicMonoid(n, k),
+//       onObjects = Map ("V0" -> "an element"),
+//       onMorphisms = Map ())
+//           
+//   val DavidsFunkyFiniteCyclicMonoid = dataset (
+//       source = FiniteCyclicMonoid(2,1),
+//       onObjects = Map ("an element" -> List ("David","Scott","UC Berkeley", "MIT","succDavid","succScott","succUC Berkeley", "succMIT")),
+//       onMorphisms = Map ("an element" --- "has as successor" --> "an element" -> Map (
+//           "David" -> "succDavid",
+//           "Scott" -> "succScott",
+//           "UC Berkeley" -> "succUC Berkeley",
+//           "MIT" -> "succMIT",
+//           "succDavid" -> "succDavid",
+//           "succScott" -> "succScott",
+//           "succUC Berkeley" -> "succUC Berkeley", 
+//           "succMIT" -> "succMIT")))
+//           
 
   val IntegersMod2Groupoid = ontology(
       objects = List ("0","1"),
@@ -418,73 +418,73 @@ class Test extends FlatSpec with ShouldMatchers {
   
   
       
-  "pullback" should "work" in {
-       Domain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
-  }
-  
-   "pullback" should "work" in {
-	   Codomain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet2)
-  }
-   
-   "pullback" should "work" in {
-	   GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal (GraphFromDavidsFunkyDiscreteDynamicalSystem)
-   }
-      
-   // Unfortunately it seems that _* and _! aren't allowed method names. I've gone with __* and __! for now.
-   
-   "pushforward" should "work" in {
-	   TerminalFunctor(Ord(1)).__*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
-  }
-   
-  
-   "shriek" should "work" in {
-	   TerminalFunctor(Ord(1)).__!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
-  }
-   
-   "shriek" should "work" in {
-	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
-   }
-  		
-   "pushforward" should "work" in {
-	   GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) should equal (DavidsFunkyDiscreteDynamicalSystem)
-   }
-
-   // Let 0:C-->Set be the initial dataset and 1:C-->Set the terminal dataset.
-   // For any functor F:C-->D, we have F^*(0)=0, F^*(1)=1, F_!(0)=0, F_*(1)=1.
-   // I chose some random functor from above, TerminalCategoryToFiniteCyclicMonoid(10,7), and did the calculation there.
-   
-   "pullback" should "work" in {
-	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(InitialDataset(FiniteCyclicMonoid)) 
-	   should equal 
-	   (InitialDataset(TerminalCategory))
-   }
-   
-   "pullback" should "work" in {
-	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(TerminalDataset(FiniteCyclicMonoid)) 
-	   should equal 
-	   (TerminalDataset(TerminalCategory))
-   }
-   
-   "pushforward" should "work" in {
-	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
-	   should equal 
-	   (TerminalDataset(FiniteCyclicMonoid(10,7)))
-   }
-   
-   "shriek" should "work" in {
-	   TerminalCategoryToFiniteCyclicMonoid(10,7).__!(InitialDataset(TerminalCategory)) 
-	   should equal 
-	   (InitialDataset(FiniteCyclicMonoid(10,7)))
-   }
-   
-   "pullback" should "work" in {
-	   ReverseGraph.^*(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
-   
-   "pushforward" should "work" in {
-	   ReverseGraph.__*(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
-   
-   "shriek" should "work" in {
-	   ReverseGraph.__!(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
-  
- 
+//  "pullback" should "work" in {
+//       Domain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
+//  }
+//  
+//   "pullback" should "work" in {
+//	   Codomain.^*(DavidsFunkyFunction) should equal (DavidsFunkySet2)
+//  }
+//   
+//   "pullback" should "work" in {
+//	   GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal (GraphFromDavidsFunkyDiscreteDynamicalSystem)
+//   }
+//      
+//   // Unfortunately it seems that _* and _! aren't allowed method names. I've gone with __* and __! for now.
+//   
+//   "pushforward" should "work" in {
+//	   TerminalFunctor(Ord(1)).__*(DavidsFunkyFunction) should equal (DavidsFunkySet1)
+//  }
+//   
+//  
+//   "shriek" should "work" in {
+//	   TerminalFunctor(Ord(1)).__!(DavidsFunkyFunction) should equal (DavidsFunkySet2)
+//  }
+//   
+//   "shriek" should "work" in {
+//	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
+//   }
+//  		
+//   "pushforward" should "work" in {
+//	   GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) should equal (DavidsFunkyDiscreteDynamicalSystem)
+//   }
+//
+//   // Let 0:C-->Set be the initial dataset and 1:C-->Set the terminal dataset.
+//   // For any functor F:C-->D, we have F^*(0)=0, F^*(1)=1, F_!(0)=0, F_*(1)=1.
+//   // I chose some random functor from above, TerminalCategoryToFiniteCyclicMonoid(10,7), and did the calculation there.
+//   
+//   "pullback" should "work" in {
+//	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(InitialDataset(FiniteCyclicMonoid)) 
+//	   should equal 
+//	   (InitialDataset(TerminalCategory))
+//   }
+//   
+//   "pullback" should "work" in {
+//	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(TerminalDataset(FiniteCyclicMonoid)) 
+//	   should equal 
+//	   (TerminalDataset(TerminalCategory))
+//   }
+//   
+//   "pushforward" should "work" in {
+//	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
+//	   should equal 
+//	   (TerminalDataset(FiniteCyclicMonoid(10,7)))
+//   }
+//   
+//   "shriek" should "work" in {
+//	   TerminalCategoryToFiniteCyclicMonoid(10,7).__!(InitialDataset(TerminalCategory)) 
+//	   should equal 
+//	   (InitialDataset(FiniteCyclicMonoid(10,7)))
+//   }
+//   
+//   "pullback" should "work" in {
+//	   ReverseGraph.^*(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
+//   
+//   "pushforward" should "work" in {
+//	   ReverseGraph.__*(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
+//   
+//   "shriek" should "work" in {
+//	   ReverseGraph.__!(DavidsFunkyGraph) should equal (DavidsFunkyGraphReversed)}
+//  
+// 
 }
