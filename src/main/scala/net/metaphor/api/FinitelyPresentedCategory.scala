@@ -17,65 +17,65 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
   def relationsTo(target: O) = for (source <- objects; r <- relations(source, target)) yield r
   def allRelations: List[M] = for (source <- objects; target <- objects; r <- relations(source, target)) yield r
 
+  // FIXME implement toString, hashcode, equals
+
+  // TODO  
+  def wordsOfLength(k: Int)(source: O, target: O) = ???
+  def reducedWordsOfLength(k: Int)(source: O, target: O) = ???
+
   trait WithTerminalObject extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
-  def adjoinTerminalObject(o: O): WithTerminalObject
+  val adjoinTerminalObject: WithTerminalObject
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    class TerminalExtensions(val terminal: WithTerminalObject) { terminalExtensions =>
-      trait FunctorToSet extends terminal.FunctorToSet {
-        def terminalSet: Set
-        def mapToTerminalSet(o: O): Function
-
-        override def onObjects(o: O): Set = {
-          if (o == terminal.terminalObject) {
-            terminalSet
-          } else {
-            functorToSet(o)
-          }
-        }
-        override def onMorphisms(m: M): Function = {
-          if (self.target(m) == terminal.terminalObject) {
-            mapToTerminalSet(self.source(m))
-          } else {
-            functorToSet(m)
-          }
-        }
-      }
-      trait NaturalTransformationToSet extends terminal.NaturalTransformationToSet {
-        def terminalMap: Function
-
-        override def apply(o: O) = {
-          if (o == terminal.terminalObject) {
-            terminalMap
-          } else {
-            functorToSet(o).identity
-          }
-        }
-      }
-
-      //      def unchecked(functor: net.metaphor.api.FunctorToSet[O, M, C]): terminalExtensions.FunctorToSet = {
-      //        new terminalExtensions.FunctorToSet {
-      //          def onObjects(o: O) = functor.onObjects(o)
-      //          def onMorphisms(m: M) = functor.onMorphisms(m)
-      //        }
-      //      }
+    def colimit = functorsToSet.colimit(functorToSet).initialObject.asInstanceOf[adjoinTerminalObject.FunctorToSet]
+    def colimitSet = {
+      val c = colimit
+      c(c.source.asInstanceOf[TerminalObject[O, M]].terminalObject)
     }
+
+    trait CoCone extends adjoinTerminalObject.FunctorToSet {
+      def terminalSet: Set
+      def mapToTerminalSet(o: O): Function
+
+      override def onObjects(o: O): Set = {
+        if (o == adjoinTerminalObject.terminalObject) {
+          terminalSet
+        } else {
+          functorToSet(o)
+        }
+      }
+      override def onMorphisms(m: M): Function = {
+        if (self.target(m) == adjoinTerminalObject.terminalObject) {
+          mapToTerminalSet(self.source(m))
+        } else {
+          functorToSet(m)
+        }
+      }
+    }
+    trait CoConeMap extends adjoinTerminalObject.NaturalTransformationToSet {
+      def terminalMap: Function
+
+      override def apply(o: O) = {
+        if (o == adjoinTerminalObject.terminalObject) {
+          terminalMap
+        } else {
+          functorToSet(o).identity
+        }
+      }
+    }
+
   }
 
-  case class TerminalExtensionsOfFunctorToSet()
+  def morphismsFrom(s: O): FunctorToSet = new FunctorToSet {
+    def onObjects(t: O) = ???
+    def onMorphisms(m: M) = ???
+  }
+  
+  val functorsToSet: FunctorsToSet
 
   class FunctorsToSet extends super.FunctorsToSet {
-    //    def colimit(functor: self.FunctorToSet, o: O): InitialObject[net.metaphor.api.FunctorToSet[O, M, C], net.metaphor.api.NaturalTransformationToSet[O, M, C]] = {
-    //      val extensions = new functor.TerminalExtensions(adjoinTerminalObject(o))
-    //      val honestAnswer = colimit(functor)(extensions = extensions)
-    //      // now we do some 'widening', just pretending that every net.metaphor.api.FunctorToSet is actually an instance of extensions.FunctorToSet
-    //      new InitialObject[net.metaphor.api.FunctorToSet[O, M, C], net.metaphor.api.NaturalTransformationToSet[O, M, C]] {
-    //        def initialObject = honestAnswer.initialObject
-    //        def morphismTo(o: net.metaphor.api.FunctorToSet[O, M, C]) = honestAnswer.morphismTo(extensions.unchecked(o))
-    //      }
-    //    }
 
-    def colimit(functor: self.FunctorToSet)(extensions: functor.TerminalExtensions): InitialObject[extensions.FunctorToSet, extensions.NaturalTransformationToSet] = {
+    def colimit(functor: self.FunctorToSet): InitialObject[functor.CoCone, functor.CoConeMap] = {
       /**
        * finds all the clumps containing an element of slice, and smushes them together
        */
@@ -106,13 +106,13 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
         }
       }
 
-      new InitialObject[extensions.FunctorToSet, extensions.NaturalTransformationToSet] {
-        def initialObject = new extensions.FunctorToSet {
+      new InitialObject[functor.CoCone, functor.CoConeMap] {
+        def initialObject = new functor.CoCone {
           override def terminalSet = resultSet
           override def mapToTerminalSet(o: O) = resultFunctions(o)
         }
-        def morphismTo(other: extensions.FunctorToSet) = {
-          new extensions.NaturalTransformationToSet {
+        def morphismTo(other: functor.CoCone) = {
+          new functor.CoConeMap {
             override def source = initialObject
             override def target = other
             override def terminalMap = ???
@@ -124,8 +124,16 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
   }
 }
 
+trait TerminalFinitelyGeneratedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C =>
+  override def objects = List(terminalObject)
+  override def generators(source: O, target: O) = List(morphismFrom(terminalObject))
+}
+trait TerminalFinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends TerminalFinitelyGeneratedCategory[O, M, C] { self: C =>
+  override def relations(source: O, target: O) = Nil
+}
+
 trait FinitelyPresentedCategories[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategories[O, M, C] { FPCAT =>
-    class PullbackTwoFunctor extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] {
+  class PullbackTwoFunctor extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] {
     def source = FPCAT
     def target = ???
 

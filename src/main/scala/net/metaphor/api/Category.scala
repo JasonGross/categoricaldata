@@ -6,12 +6,20 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
   def target(m: M): O
   def compose(m1: M, m2: M): M
 
-  abstract class FunctorToSet extends net.metaphor.api.FunctorToSet[O, M, C] {
+  abstract class FunctorFrom[OT, MT, CT <: Category[OT, MT, CT]] extends net.metaphor.api.HeteroFunctor[O, M, C, OT, MT, CT] {
     override val source = self
   }
-  abstract class NaturalTransformationToSet extends net.metaphor.api.NaturalTransformationToSet[O, M, C] {
-    def source: FunctorToSet
-    def target: FunctorToSet
+  abstract class NaturalTransformationFrom[OT, MT, CT <: Category[OT, MT, CT]] extends net.metaphor.api.HeteroNaturalTransformation[O, M, C, OT, MT, CT] {
+    override def source: FunctorFrom[OT, MT, CT]
+    override def target: FunctorFrom[OT, MT, CT]
+  }
+  
+  abstract class FunctorToSet extends FunctorFrom[Set, Function, Sets] with net.metaphor.api.FunctorToSet[O, M, C] {
+    override val source = self
+  }
+  abstract class NaturalTransformationToSet extends NaturalTransformationFrom[Set, Function, Sets] with net.metaphor.api.NaturalTransformationToSet[O, M, C] {
+    override def source: FunctorToSet
+    override def target: FunctorToSet
   }
 
   class FunctorsToSet extends net.metaphor.api.FunctorsToSet[O, M ,C](self)

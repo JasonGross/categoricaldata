@@ -69,7 +69,7 @@ object Sentences {
     val morphismMap = (for (
       p @ Path(sb, List(s)) <- source.allGenerators
     ) yield {
-      s -> Path(start = objectMap(sb),
+      s -> Path(source = objectMap(sb),
         arrows = for (StringArrow(ts, tp, to) <- onMorphisms(StringArrow(s.source.name, s.name, s.target.name)).arrows) yield {
           target.allGenerators.map(_.arrows.head).find(a => a.source.name == ts && a.name == tp && a.target.name == to).get
         })
@@ -80,7 +80,7 @@ object Sentences {
       override val source = source_
       override val target = target_
       override def onObjects(o: Box) = objectMap(o)
-      override def onMorphisms(m: Path) = Path(objectMap(m.start), m.arrows.map(morphismMap(_)).map(_.arrows).flatten)
+      override def onMorphisms(m: Path) = Path(objectMap(m.source), m.arrows.map(morphismMap(_)).map(_.arrows).flatten)
     }
   }
 
