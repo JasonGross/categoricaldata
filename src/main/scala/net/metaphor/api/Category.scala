@@ -1,5 +1,6 @@
 package net.metaphor.api
 
+
 trait Category[O, M, C <: Category[O, M, C]] { self: C =>
   def identity(o: O): M
   def source(m: M): O
@@ -13,16 +14,15 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
     override def source: FunctorFrom[OT, MT, CT]
     override def target: FunctorFrom[OT, MT, CT]
   }
-  
-  abstract class FunctorToSet extends FunctorFrom[Set, Function, Sets] with net.metaphor.api.FunctorToSet[O, M, C] {
-    override val source = self
-  }
+
+  abstract class FunctorToSet extends FunctorFrom[Set, Function, Sets] with net.metaphor.api.FunctorToSet[O, M, C] 
+
   abstract class NaturalTransformationToSet extends NaturalTransformationFrom[Set, Function, Sets] with net.metaphor.api.NaturalTransformationToSet[O, M, C] {
     override def source: FunctorToSet
     override def target: FunctorToSet
   }
 
-  class FunctorsToSet extends net.metaphor.api.FunctorsToSet[O, M ,C](self)
+  class FunctorsToSet extends net.metaphor.api.FunctorsToSet[O, M, C](self)
 }
 
 trait HeteroFunctor[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O2, M2, C2]] {
