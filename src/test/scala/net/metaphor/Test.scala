@@ -329,7 +329,7 @@ class Test extends FlatSpec with ShouldMatchers {
   //           "succMIT" -> "succMIT")))
   //           
 
-  val IntegersMod2Groupoid = ontology(
+  val Isomorphism = ontology(
     objects = List("0", "1"),
     arrows = List(
       "0" --- "next" --> "1",
