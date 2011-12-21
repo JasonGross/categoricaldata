@@ -76,33 +76,35 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
   class FunctorsToSet extends super.FunctorsToSet {
 
     def colimit(functor: self.FunctorToSet): InitialObject[functor.CoCone, functor.CoConeMap] = {
-      /**
-       * finds all the clumps containing an element of slice, and smushes them together
-       */
-      def combineClumps[A](clumps: List[List[A]], slice: List[A]): List[List[A]] = {
-        val (toCombine, toLeave) = clumps.partition(_.find(a => slice.contains(a)).nonEmpty)
-        toCombine.flatten :: toLeave
+
+      def concreteColimit[A](objects: Iterable[O], sets: O => Iterable[A], functions: O => (O => (A => Iterable[A]))): (Iterable[List[(O, A)]], O => (A => List[(O, A)])) = {
+        /**
+         * finds all the clumps containing an element of slice, and smushes them together
+         */
+        def combineClumps[B](clumps: Iterable[List[B]], slice: List[B]): Iterable[List[B]] = {
+          val (toCombine, toLeave) = clumps.partition(_.find(a => slice.contains(a)).nonEmpty)
+          toLeave ++ List(toCombine.flatten.toList)
+        }
+        val initialClumps = for (o <- objects; x <- sets(o)) yield List((o, x))
+        val arrows = for (s <- objects; x <- sets(s); t <- objects; y <- functions(s)(t)(x)) yield List((s, x), (t, y))
+
+        val resultClumps = arrows.foldLeft(initialClumps)(combineClumps _)
+        def resultFunctions(o: O)(a: A) = resultClumps.find(_.contains((o, a))).get
+
+        (resultClumps, resultFunctions _)
       }
 
-      val initialClumps = for (
-        o <- self.objects;
-        x <- functor(o).toIterable
-      ) yield List((o, x))
-      val arrows = for (
-        m <- self.allGenerators;
-        s = self.source(m);
-        t = self.target(m);
-        x <- functor(s).toIterable
-      ) yield List((s, x), (t, functor(m).toFunction(x)))
-
-      lazy val clumps = arrows.foldLeft(initialClumps)(combineClumps _)
+      val (clumps, functions) = concreteColimit(
+        objects,
+        { o: O => functor(o).toIterable },
+        { s: O => { t: O => { a: String => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
 
       val resultSet = new Set {
         override def toIterable = clumps.map(_.toString)
       }
       val resultFunctions: (O => Function) = { o: O =>
         new Function {
-          override def toFunction = { x => clumps.find(_.contains((o, x))).get.toString }
+          override def toFunction = functions(o) andThen { _.toString }
         }
       }
 
