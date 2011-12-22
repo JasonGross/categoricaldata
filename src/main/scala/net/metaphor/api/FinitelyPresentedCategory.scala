@@ -1,25 +1,6 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Category[O, M, C] { self: C =>
-  def objects: List[O]
-  def generators(source: O, target: O): List[M]
-  def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
-  def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g
-  def allGenerators: List[M] = for (source <- objects; target <- objects; g <- generators(source, target)) yield g
-
-  def wordsOfLength(k: Int)(source: O, target: O): List[M] = {
-    k match {
-      case 0 => List(identity(source))
-      case 1 => generators(source, target)
-      case _ => for (other <- objects; g <- generators(other, target); w <- wordsOfLength(k - 1)(source, other)) yield compose(w, g)
-    }
-  }
-  def words(source: O, target: O) = (for (k <- NonStrictNaturalNumbers) yield wordsOfLength(k)(source, target)).takeWhile(_.nonEmpty).flatten
-}
-
-//trait FinitelyGeneratedCategories[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Categories[O, M, C] { fgCAT =>
-//}
 
 trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategory[O, M, C] { self: C =>
   def relations(source: O, target: O): List[M]
@@ -145,13 +126,6 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
   }
 }
 
-trait TerminalFinitelyGeneratedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C =>
-  override def objects = List(terminalObject)
-  override def generators(source: O, target: O) = List(morphismFrom(terminalObject))
-}
-trait TerminalFinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends TerminalFinitelyGeneratedCategory[O, M, C] { self: C =>
-  override def relations(source: O, target: O) = Nil
-}
 
 //trait FinitelyPresentedCategories[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategories[O, M, C] { FPCAT =>
 //  //  class PullbackTwoFunctor extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] {

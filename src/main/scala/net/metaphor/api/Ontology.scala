@@ -14,35 +14,6 @@ case class Path(source: Box, arrows: List[Arrow]) {
   override def toString = source.name + (for (a <- arrows) yield " --- " + a.name + " ---> " + a.target).mkString
 }
 
-trait Dataset extends FunctorToSet[Box, Path, Ontology] {
-  override def equals(other: Any): Boolean = {
-    other match {
-      case other: Dataset => {
-        if (source != other.source) return false
-        for (o <- source.objects) if (this(o) != other(o)) return false
-        for (
-          g <- source.allGenerators;
-          g1 = this(g).toFunction;
-          g2 = other(g).toFunction;
-          x <- this(g.source).toIterable
-        ) {
-          if (g1(x) != g2(x)) return false
-        }
-        true
-      }
-      case _ => false
-    }
-  }
-
-  override def toString = {
-    "Dataset(\n" +
-      "  source = " + source + ", \n" +
-      "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
-      "  onMorphisms = Map(\n" + (for (g <- source.allGenerators; g1 = this(g).toFunction) yield "    " + g.toString + " -> " + (g + (for (x <- this(g.source).toIterable) yield x -> g1(x)).toMap.toString)).mkString("\n") + "  )\n)"
-  }
-}
-trait Datamap[F <: Dataset] extends NaturalTransformationToSet[Box, Path, Ontology, F]
-
 trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology =>
   override def compose(m1: Path, m2: Path) = {
     require(m2.target == m1.source)
@@ -158,11 +129,35 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   }
 }
 
-// TODO implement InitialOntology similarly
-object TerminalOntology extends TerminalFinitelyPresentedCategory[Box, Path, Ontology] with Ontology {
-  val terminalObject = Box("*")
-  def morphismFrom(o: Box) = terminalObject.identity
+trait Dataset extends FunctorToSet[Box, Path, Ontology] {
+  override def equals(other: Any): Boolean = {
+    other match {
+      case other: Dataset => {
+        if (source != other.source) return false
+        for (o <- source.objects) if (this(o) != other(o)) return false
+        for (
+          g <- source.allGenerators;
+          g1 = this(g).toFunction;
+          g2 = other(g).toFunction;
+          x <- this(g.source).toIterable
+        ) {
+          if (g1(x) != g2(x)) return false
+        }
+        true
+      }
+      case _ => false
+    }
+  }
+
+  override def toString = {
+    "Dataset(\n" +
+      "  source = " + source + ", \n" +
+      "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
+      "  onMorphisms = Map(\n" + (for (g <- source.allGenerators; g1 = this(g).toFunction) yield "    " + g.toString + " -> " + (g + (for (x <- this(g.source).toIterable) yield x -> g1(x)).toMap.toString)).mkString("\n") + "  )\n)"
+  }
 }
+trait Datamap[F <: Dataset] extends NaturalTransformationToSet[Box, Path, Ontology, F]
+
 
 //object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology]
 
