@@ -63,7 +63,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
 
   override def toString = {
     // TODO relations
-    "ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
+    "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
   }
 
   /* TODO (David) toString needs to *return* a string, not print one.

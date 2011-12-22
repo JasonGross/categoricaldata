@@ -39,7 +39,7 @@ object Sentences {
 
   case class StringRelation(lhs: StringPath, rhs: StringPath) 
   
-  def ontology(objects: Traversable[String], arrows: Traversable[StringArrow], relations: Traversable[StringRelation] = Nil): Ontology = {
+  def Ontology(objects: Traversable[String], arrows: Traversable[StringArrow], relations: Traversable[StringRelation] = Nil): Ontology = {
     val boxes = objects.toList map { Box(_) }
 
     val arrowMap = (for (StringArrow(s, p, o) <- arrows.toList) yield {
@@ -58,7 +58,7 @@ object Sentences {
     }
   }
 
-  def functor(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = { 
+  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = { 
     val source_ = source
     val target_ = target
 
@@ -84,7 +84,7 @@ object Sentences {
     }
   }
 
-  def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
+  def Dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
     
     val objectMap = (for(s <- source.objects) yield {
       s -> onObjects(s.name)

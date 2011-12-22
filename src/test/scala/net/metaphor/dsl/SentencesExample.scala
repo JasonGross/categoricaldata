@@ -5,7 +5,7 @@ object SentencesExample extends App {
 
   // TODO, allow descriptions  
   // "a fusion object" is "a simple object in a unitary tensor category with duals",
-  val C = ontology(
+  val C = Ontology(
     objects = List("a fusion object", "a graph", "a fusion category", "a positive ring"),
     arrows = List("a fusion object" --- "has as principal graph" --> "a graph",
       "a fusion object" --- "sits inside" --> "a fusion category",
@@ -26,14 +26,14 @@ object SentencesExample extends App {
    * Maybe for later: proof obligations for relations.
    */
 
-  val F = functor(
+  val F = Translation(
     source = C,
     target = D,
     onObjects = Map("F" -> "F2"),
     onMorphisms = Map(("F" --- "h" --> "G") -> ("F2" --- "h2" --> "G2")) //
     )
 
-  val i = dataset(source = C,
+  val i = Dataset(source = C,
     onObjects = Map(
       "a fusion object" -> List("X", "Y"),
       "a graph" -> List("G1", "G2") //

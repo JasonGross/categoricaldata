@@ -17,13 +17,13 @@ class Test extends FlatSpec with ShouldMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
 
-  val Grph = ontology(
+  val Grph = Ontology(
     objects = List("an edge", "a vertex"),
     arrows = List(
       "an edge" --- "has as source" --> "a vertex",
       "an edge" --- "has as target" --> "a vertex"))
 
-  val TerminalGraph = dataset(source = Grph,
+  val TerminalGraph = Dataset(source = Grph,
     onObjects = Map(
       "an edge" -> List("+1"),
       "a vertex" -> List("N")),
@@ -31,7 +31,7 @@ class Test extends FlatSpec with ShouldMatchers {
       ("an edge" --- "has as source" --> "a vertex") -> Map("+1" -> "N"),
       ("an edge" --- "has as target" --> "a vertex") -> Map("+1" -> "N")))
 
-  val TerminalBigraph = dataset(source = Grph,
+  val TerminalBigraph = Dataset(source = Grph,
     onObjects = Map(
       "an edge" -> List("input", "output"),
       "a vertex" -> List("species", "transition")),
@@ -43,7 +43,7 @@ class Test extends FlatSpec with ShouldMatchers {
         "input" -> "transition",
         "output" -> "species")))
 
-  val InitialGraph = dataset(source = Grph,
+  val InitialGraph = Dataset(source = Grph,
     onObjects = Map(
       "an edge" -> List(),
       "a vertex" -> List()),
@@ -51,7 +51,7 @@ class Test extends FlatSpec with ShouldMatchers {
       ("an edge" --- "has as source" --> "a vertex") -> Map(),
       ("an edge" --- "has as target" --> "a vertex") -> Map()))
 
-  val DavidsFunkyGraph = dataset(source = Grph,
+  val DavidsFunkyGraph = Dataset(source = Grph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
       "a vertex" -> List("A", "B", "C", "D")),
@@ -69,40 +69,40 @@ class Test extends FlatSpec with ShouldMatchers {
         "i" -> "C",
         "j" -> "C")))
 
-  val Ord0 = ontology(
+  val Ord0 = Ontology(
     objects = List("V0"),
     arrows = List())
 
-  val Ord1 = ontology(
+  val Ord1 = Ontology(
     objects = List("V0", "V1"),
     arrows = List("V0" --- "E01" --> "V1"))
 
-  val Ord2 = ontology(
+  val Ord2 = Ontology(
     objects = List("V0", "V1", "V2"),
     arrows = List(
       "V0" --- "E01" --> "V1",
       "V1" --- "E12" --> "V2"))
 
-  val Ord3 = ontology(
+  val Ord3 = Ontology(
     objects = List("V0", "V1", "V2", "V3"),
     arrows = List(
       "V0" --- "E01" --> "V1",
       "V1" --- "E12" --> "V2",
       "V2" --- "E23" --> "V3"))
 
-  def Ord(n: Int) = ontology(
+  def Ord(n: Int) = Ontology(
     objects = for (i <- 0 to n) yield "V" + i.toString, //David added the ".toString" here. Correct? // Yes ---S
     arrows = for (i <- 0 to n - 1) yield {
       ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
     })
 
-  val Domain = functor(
+  val Domain = Translation(
     source = Ord0,
     target = Ord1,
     onObjects = Map("V0" -> "V0"),
     onMorphisms = Map())
 
-  val Codomain = functor(
+  val Codomain = Translation(
     source = Ord0,
     target = Ord1,
     onObjects = Map("V0" -> "V1"),
@@ -151,7 +151,7 @@ class Test extends FlatSpec with ShouldMatchers {
   //  def Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
   //  
 
-  val Compose = functor(
+  val Compose = Translation(
     source = Ord1,
     target = Ord2,
     onObjects = Map(
@@ -163,14 +163,14 @@ class Test extends FlatSpec with ShouldMatchers {
   val TerminalCategory = Ord(0)
 
   // I fixed this up, but we need to talk about this in some detail!
-  def TerminalFunctor(c: Ontology) = functor(
+  def TerminalFunctor(c: Ontology) = Translation(
     source = c,
     target = TerminalCategory,
     onObjects = (for (b <- c.objects) yield (b.name -> "V0")).toMap,
     onMorphisms = (for (Path(_, List(a)) <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) -> stringAsPath("V0")).toMap //
     )
 
-//  def TerminalDataset(c: Ontology) = dataset(
+//  def TerminalDataset(c: Ontology) = Dataset(
 //    source = c,
 //    onObjects = Map(for (b <- c.boxes) yield (b.name -> List("witness" + b.name))),
 //    onMorphisms = Map(for (a <- c.arrows) yield {
@@ -178,23 +178,23 @@ class Test extends FlatSpec with ShouldMatchers {
 //        Map("witness" + a.source.name -> "witness" + a.target.name))
 //    }))
 
-  val InitialCategory = ontology(
+  val InitialCategory = Ontology(
     objects = List(),
     arrows = List())
 
-  def InitialFunctor(c: Ontology) = functor(
+  def InitialFunctor(c: Ontology) = Translation(
     source = InitialCategory,
     target = c,
     onObjects = Map(),
     onMorphisms = Map())
 
-  //  def InitialDataset (c : Ontology) = dataset(
+  //  def InitialDataset (c : Ontology) = Dataset(
   //      source = c,
   //      onObjects = for (b <- c.boxes) yield Map (b.name -> List ()),
   //      onMorphisms = for (a <- c.arrows) yield Map ((a.source.name --- a.name --> a.target.name) -> Map ()))
   //      
 
-  val SourceFunction = functor(
+  val SourceFunction = Translation(
     source = Ord1,
     target = Grph,
     onObjects = Map(
@@ -203,7 +203,7 @@ class Test extends FlatSpec with ShouldMatchers {
     onMorphisms = Map(
       ("V0" --- "E01" --> "V1") -> ("an edge" --- "has as source" --> "a vertex")))
 
-  val TargetFunction = functor(
+  val TargetFunction = Translation(
     source = Ord1,
     target = Grph,
     onObjects = Map(
@@ -212,11 +212,11 @@ class Test extends FlatSpec with ShouldMatchers {
     onMorphisms = Map(
       ("V0" --- "E01" --> "V1") -> ("an edge" --- "has as target" --> "a vertex")))
 
-  val DiscreteDynamicalSystem = ontology(
+  val DiscreteDynamicalSystem = Ontology(
     objects = List("an element"),
     arrows = List("an element" --- "has as successor" --> "an element"))
 
-  val DavidsFunkyDiscreteDynamicalSystem = dataset(source = DiscreteDynamicalSystem,
+  val DavidsFunkyDiscreteDynamicalSystem = Dataset(source = DiscreteDynamicalSystem,
     onObjects = Map(
       "an element" -> List("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar")),
     onMorphisms = Map(
@@ -227,7 +227,7 @@ class Test extends FlatSpec with ShouldMatchers {
         "hjbar" -> "jbar",
         "jbar" -> "jbar")))
 
-  val GraphFromDavidsFunkyDiscreteDynamicalSystem = dataset(source = Grph,
+  val GraphFromDavidsFunkyDiscreteDynamicalSystem = Dataset(source = Grph,
     onObjects = Map(
       "a vertex" -> List("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar"),
       "an edge" -> List("f", "g", "h", "i", "j")),
@@ -245,7 +245,7 @@ class Test extends FlatSpec with ShouldMatchers {
         "i" -> "jbar",
         "j" -> "jbar")))
 
-  val ReverseGraph = functor(
+  val ReverseGraph = Translation(
     source = Grph,
     target = Grph,
     onObjects = Map(
@@ -255,7 +255,7 @@ class Test extends FlatSpec with ShouldMatchers {
       ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
       ("an edge" --- "has as target" --> "a vertex") -> ("an edge" --- "has as source" --> "a vertex")))
 
-  val DavidsFunkyGraphReversed = dataset(source = Grph,
+  val DavidsFunkyGraphReversed = Dataset(source = Grph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
       "a vertex" -> List("A", "B", "C", "D")),
@@ -273,7 +273,7 @@ class Test extends FlatSpec with ShouldMatchers {
         "i" -> "A",
         "j" -> "C")))
 
-  val GraphToDiscreteDynamicalSystem1 = functor(
+  val GraphToDiscreteDynamicalSystem1 = Translation(
     source = Grph,
     target = DiscreteDynamicalSystem,
     onObjects = Map(
@@ -284,7 +284,7 @@ class Test extends FlatSpec with ShouldMatchers {
       ("an edge" --- "has as target" --> "a vertex") -> ("an element" --- "has as successor" --> "an element")))
 
       // TODO (David) this is broken; there's no object in DiscreteDynamicalSystem called "a vertex"
-//  val GraphToDiscreteDynamicalSystem2 = functor(
+//  val GraphToDiscreteDynamicalSystem2 = Translation(
 //    source = Grph,
 //    target = DiscreteDynamicalSystem,
 //    onObjects = Map(
@@ -294,7 +294,7 @@ class Test extends FlatSpec with ShouldMatchers {
 //      ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
 //      ("an edge" --- "has as target" --> "a vertex") -> ("an element")))
 
-  val IntegersMod2Group = ontology(
+  val IntegersMod2Group = Ontology(
     objects = List("an element"),
     arrows = List("an element" --- "is married to" --> "an element"),
     relations = List(
@@ -310,7 +310,7 @@ class Test extends FlatSpec with ShouldMatchers {
   //           ===
   //           (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
   //           
-  //   def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = functor(
+  //   def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(
   //       source = TerminalCategory,
   //       target = FiniteCyclicMonoid(n, k),
   //       onObjects = Map ("V0" -> "an element"),
@@ -330,7 +330,7 @@ class Test extends FlatSpec with ShouldMatchers {
   //           "succMIT" -> "succMIT")))
   //           
 
-  val IntegersMod2Groupoid = ontology(
+  val IntegersMod2Groupoid = Ontology(
     objects = List("0", "1"),
     arrows = List(
       "0" --- "next" --> "1",
@@ -343,7 +343,7 @@ class Test extends FlatSpec with ShouldMatchers {
         ===
         ("1"))))
 
-  val PointedSets = ontology(
+  val PointedSets = Ontology(
     objects = List("a pointed set", "an element"),
     arrows = List(
       "an element" --- "is in" --> "a pointed set",
@@ -353,7 +353,7 @@ class Test extends FlatSpec with ShouldMatchers {
         ===
         ("a pointed set")))
 
-  val DavidsFunkyFunction = dataset(source = Ord1,
+  val DavidsFunkyFunction = Dataset(source = Ord1,
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
       "V1" -> List("1978", "Scott's birthyear", "1868", "1861")),
@@ -364,17 +364,17 @@ class Test extends FlatSpec with ShouldMatchers {
         "UC Berkeley" -> "1868",
         "MIT" -> "1861")))
 
-  val DavidsFunkySet1 = dataset(source = Ord(0),
+  val DavidsFunkySet1 = Dataset(source = Ord(0),
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
     onMorphisms = Map())
 
-  val DavidsFunkySet2 = dataset(source = Ord(0),
+  val DavidsFunkySet2 = Dataset(source = Ord(0),
     onObjects = Map(
       "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
     onMorphisms = Map())
 
-  val Drawers = dataset(Ord(1),
+  val Drawers = Dataset(Ord(1),
     onObjects = Map(
       "V0" -> List("Item 1", "Item 2", "Item 3", "Item 4"),
       "V1" -> List("Top Drawer", "Bottom Drawer")),
