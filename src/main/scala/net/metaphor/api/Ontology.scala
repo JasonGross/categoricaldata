@@ -118,6 +118,9 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   type T = Datamap
   override type CSets = Datasets
 
+  override def lift(f: FunctorToSet): Dataset = ???
+  override def lift(t: NaturalTransformationToSet[F]): Datamap = ???
+  
   override val functorsToSet = Datasets
   sealed trait Datasets extends FunctorsToSet[Dataset, Datamap, Datasets]
   object Datasets extends Datasets {

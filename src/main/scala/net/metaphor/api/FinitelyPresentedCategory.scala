@@ -59,6 +59,9 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
   type T <: NaturalTransformationToSet[F]
   type CSets <: FunctorsToSet[F, T, CSets]
 
+  def lift(f: FunctorToSet): F
+  def lift(t: NaturalTransformationToSet[F]): T
+  
   val functorsToSet: CSets
 
   abstract class FunctorsToSet[F <: FunctorToSet, T <: NaturalTransformationToSet[F], FC <: FunctorsToSet[F, T, FC]] extends super.FunctorsToSet[F, T, FC] { functorsToSet: FC =>
