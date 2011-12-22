@@ -1,7 +1,6 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-
 trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategory[O, M, C] { self: C =>
   def relations(source: O, target: O): List[M]
   def relationsFrom(source: O) = for (target <- objects; r <- relations(source, target)) yield r
@@ -9,20 +8,6 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
   def allRelations: List[M] = for (source <- objects; target <- objects; r <- relations(source, target)) yield r
 
   // FIXME implement toString, hashcode, equals
-
-  def normalWordsOfLength(k: Int)(source: O, target: O): List[M] = {
-    // FIXME
-    require(allRelations.isEmpty)
-    wordsOfLength(k)(source, target)
-  }
-
-  // FIXME Is this correct? can there be no normal words of length k, but some of length k+1? Of course...
-  def normalWords(source: O, target: O) = (for (k <- NonStrictNaturalNumbers) yield normalWordsOfLength(k)(source, target)).takeWhile(_.nonEmpty).flatten
-
-  def yoneda(s: O) = new FunctorToSet {
-    override def onObjects(t: O) = normalWords(s, t)
-    override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
-  }
 
   trait WithTerminalObject extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
   val adjoinTerminalObject: WithTerminalObject
