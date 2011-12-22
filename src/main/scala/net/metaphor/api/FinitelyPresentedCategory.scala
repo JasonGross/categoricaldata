@@ -1,4 +1,5 @@
 package net.metaphor.api
+import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
 trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Category[O, M, C] { self: C =>
   def objects: List[O]
@@ -6,10 +7,19 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
   def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
   def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g
   def allGenerators: List[M] = for (source <- objects; target <- objects; g <- generators(source, target)) yield g
+
+  def wordsOfLength(k: Int)(source: O, target: O): List[M] = {
+    k match {
+      case 0 => List(identity(source))
+      case 1 => generators(source, target)
+      case _ => for (other <- objects; g <- generators(other, target); w <- wordsOfLength(k - 1)(source, other)) yield compose(w, g)
+    }
+  }
+  def words(source: O, target: O) = (for (k <- NonStrictNaturalNumbers) yield wordsOfLength(k)(source, target)).takeWhile(_.nonEmpty).flatten
 }
 
-trait FinitelyGeneratedCategories[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Categories[O, M, C] { fgCAT =>
-}
+//trait FinitelyGeneratedCategories[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Categories[O, M, C] { fgCAT =>
+//}
 
 trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategory[O, M, C] { self: C =>
   def relations(source: O, target: O): List[M]
@@ -19,9 +29,19 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
 
   // FIXME implement toString, hashcode, equals
 
-  // TODO  
-  def wordsOfLength(k: Int)(source: O, target: O) = ???
-  def reducedWordsOfLength(k: Int)(source: O, target: O) = ???
+  def normalWordsOfLength(k: Int)(source: O, target: O): List[M] = {
+    // FIXME
+    require(allRelations.isEmpty)
+    wordsOfLength(k)(source, target)
+  }
+
+  // FIXME Is this correct? can there be no normal words of length k, but some of length k+1? Of course...
+  def normalWords(source: O, target: O) = (for (k <- NonStrictNaturalNumbers) yield normalWordsOfLength(k)(source, target)).takeWhile(_.nonEmpty).flatten
+
+  def yoneda(s: O) = new FunctorToSet {
+    override def onObjects(t: O) = normalWords(s, t)
+    override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
+  }
 
   trait WithTerminalObject extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
   val adjoinTerminalObject: WithTerminalObject
@@ -52,7 +72,7 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
         }
       }
     }
-    trait CoConeMap extends adjoinTerminalObject.NaturalTransformationToSet {
+    trait CoConeMap extends adjoinTerminalObject.NaturalTransformationToSet[CoCone] {
       def terminalMap: Function
 
       override def apply(o: O) = {
@@ -66,14 +86,13 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
 
   }
 
-  def morphismsFrom(s: O): FunctorToSet = new FunctorToSet {
-    def onObjects(t: O) = ???
-    def onMorphisms(m: M) = ???
-  }
-  
-  val functorsToSet: FunctorsToSet
+  type F <: FunctorToSet
+  type T <: NaturalTransformationToSet[F]
+  type CSets <: FunctorsToSet[F, T, CSets]
 
-  class FunctorsToSet extends super.FunctorsToSet {
+  val functorsToSet: CSets
+
+  abstract class FunctorsToSet[F <: FunctorToSet, T <: NaturalTransformationToSet[F], FC <: FunctorsToSet[F, T, FC]] extends super.FunctorsToSet[F, T, FC] { functorsToSet: FC =>
 
     def colimit(functor: self.FunctorToSet): InitialObject[functor.CoCone, functor.CoConeMap] = {
 
@@ -97,14 +116,14 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
       val (clumps, functions) = concreteColimit(
         objects,
         { o: O => functor(o).toIterable },
-        { s: O => { t: O => { a: String => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
+        { s: O => { t: O => { a: Any => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
 
       val resultSet = new Set {
-        override def toIterable = clumps.map(_.toString)
+        override def toIterable = clumps
       }
       val resultFunctions: (O => Function) = { o: O =>
         new Function {
-          override def toFunction = functions(o) andThen { _.toString }
+          override def toFunction = functions(o)
         }
       }
 
@@ -134,15 +153,14 @@ trait TerminalFinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, 
   override def relations(source: O, target: O) = Nil
 }
 
-trait FinitelyPresentedCategories[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategories[O, M, C] { FPCAT =>
-  class PullbackTwoFunctor extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] {
-    def source = FPCAT
-    def target = ???
-
-    def onZeroMorphisms(m0: C) = new FunctorsToSet[O, M, C](m0)
-    def onOneMorphisms(m1: Functor[O, M, C]): Functor[HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] = new PullbackFunctor[O, M, C, Set, Function, Sets](m1, Sets)
-    def onTwoMorphisms(m2: NaturalTransformation[O, M, C]): NaturalTransformation[HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] = new PullbackNaturalTransformation[O, M, C, Set, Function, Sets](m2, Sets)
-  }
-
-}
-
+//trait FinitelyPresentedCategories[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategories[O, M, C] { FPCAT =>
+//  //  class PullbackTwoFunctor extends CategoricalTwoFunctor[O, M, C, HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] {
+//  //    def source = FPCAT
+//  //    def target = ???
+//  //
+//  //    def onZeroMorphisms(m0: C) = new FunctorsToSet[O, M, C](m0)
+//  //    def onOneMorphisms(m1: Functor[O, M, C]): Functor[HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] = new PullbackFunctor[O, M, C, Set, Function, Sets](m1, Sets)
+//  //    def onTwoMorphisms(m2: NaturalTransformation[O, M, C]): NaturalTransformation[HeteroFunctor[O, M, C, Set, Function, Sets], HeteroNaturalTransformation[O, M, C, Set, Function, Sets], FunctorCategory[O, M, C, Set, Function, Sets]] = new PullbackNaturalTransformation[O, M, C, Set, Function, Sets](m2, Sets)
+//  //  }
+//}
+//

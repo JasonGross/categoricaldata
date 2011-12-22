@@ -58,7 +58,7 @@ object Sentences {
     }
   }
 
-  def functor(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
+  def functor(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = { 
     val source_ = source
     val target_ = target
 
@@ -87,12 +87,12 @@ object Sentences {
   def dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
     
     val objectMap = (for(s <- source.objects) yield {
-      s -> net.metaphor.api.Set(onObjects(s.name))
+      s -> onObjects(s.name)
     }).toMap
     val morphismMap = (for(
       Path(sb, List(s)) <- source.allGenerators
     ) yield {
-      s -> net.metaphor.api.Function(onMorphisms(StringArrow(s.source.name, s.name, s.target.name)))
+      s -> onMorphisms(StringArrow(s.source.name, s.name, s.target.name)).asInstanceOf[Any => Any]
     }
       ).toMap
     

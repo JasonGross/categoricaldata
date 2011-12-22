@@ -10,8 +10,8 @@ trait Categories { CAT =>
   }
   def identity1(functor: Functor): NaturalTransformation = new NaturalTransformation {
     val sourceAndTargetCategories = new Functors {
-      val source = functor.source
-      val target = functor.target
+      override val source = functor.source
+      override val target = functor.target
     }
     val internalFunctor = sourceAndTargetCategories.Functor(functor)
     val source = internalFunctor
@@ -27,7 +27,7 @@ trait Categories { CAT =>
   }
   def compose1(first: NaturalTransformation, second: NaturalTransformation): NaturalTransformation = ???
   def compose2(first: NaturalTransformation, second: NaturalTransformation): NaturalTransformation = ???
-
+  
   // a category of type C
   trait Category extends net.metaphor.api2.Category { c: C =>
     type C = CAT.C
@@ -37,6 +37,9 @@ trait Categories { CAT =>
       override val source = c
       override val target = c
       trait EndoFunctor extends Functor
+    }
+    object FunctorsToSet extends CAT.FunctorsToSet {
+      override val source = c
     }
   }
 
@@ -49,25 +52,22 @@ trait Categories { CAT =>
   // all functors from a particular source to another category of the same type
   trait FunctorsFrom extends net.metaphor.api2.FunctorsFrom { ff =>
     override type SC = C
-    val source: C
-
-    trait FunctorFrom extends Functor {
-      override val source = ff.source
-    }
   }
 
   // all functors to a particular target from another category of the same type
   trait FunctorsTo extends net.metaphor.api2.FunctorsTo { ft =>
     override type TC = C
-    val target: C
-
-    trait FunctorTo extends Functor {
-      override val target = ft.target
-    }
   }
 
   // all functors between a specified source and target
   trait Functors extends FunctorsFrom with FunctorsTo with net.metaphor.api2.Functors
+
+  trait FunctorsToSet extends FunctorsFrom { functors =>
+    trait Functor extends super.Functor {
+      type TC = CategoriesOfSets.Sets
+      override val target = CategoriesOfSets.Sets
+    }
+  }
 
   trait NaturalTransformation extends net.metaphor.api2.NaturalTransformation {
     //    override type SC = C

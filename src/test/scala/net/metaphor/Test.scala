@@ -283,15 +283,16 @@ class Test extends FlatSpec with ShouldMatchers {
       ("an edge" --- "has as source" --> "a vertex") -> ("an element"),
       ("an edge" --- "has as target" --> "a vertex") -> ("an element" --- "has as successor" --> "an element")))
 
-  val GraphToDiscreteDynamicalSystem2 = functor(
-    source = Grph,
-    target = DiscreteDynamicalSystem,
-    onObjects = Map(
-      "an edge" -> "an element",
-      "a vertex" -> "a vertex"),
-    onMorphisms = Map(
-      ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
-      ("an edge" --- "has as target" --> "a vertex") -> (identity("an element"))))
+      // TODO (David) this is broken; there's no object in DiscreteDynamicalSystem called "a vertex"
+//  val GraphToDiscreteDynamicalSystem2 = functor(
+//    source = Grph,
+//    target = DiscreteDynamicalSystem,
+//    onObjects = Map(
+//      "an edge" -> "an element",
+//      "a vertex" -> "a vertex"),
+//    onMorphisms = Map(
+//      ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
+//      ("an edge" --- "has as target" --> "a vertex") -> ("an element")))
 
   val IntegersMod2Group = ontology(
     objects = List("an element"),
@@ -352,7 +353,7 @@ class Test extends FlatSpec with ShouldMatchers {
         ===
         ("a pointed set")))
 
-  val DavidsFunkyFunction = dataset(source = Ord(1),
+  val DavidsFunkyFunction = dataset(source = Ord1,
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
       "V1" -> List("1978", "Scott's birthyear", "1868", "1861")),
@@ -384,33 +385,33 @@ class Test extends FlatSpec with ShouldMatchers {
         "Item 3" -> "Top Drawer",
         "Item 4" -> "Top Drawer")))
 
-  "pullback" should "work" in {
+  "pullback" should "work (1)" in {
     Domain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet1)
   }
 
-  "pullback" should "work" in {
+  "pullback" should "work (2)" in {
     Codomain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet2)
   }
 
-  "pullback" should "work" in {
+  "pullback" should "work (3)" in {
     GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
   }
 
   // Unfortunately it seems that _* and _! aren't allowed method names. I've gone with __* and __! for now.
 
-  "pushforward" should "work" in {
+  "pushforward" should "work (1)" in {
     TerminalFunctor(Ord(1)).__*(DavidsFunkyFunction) should equal(DavidsFunkySet1)
   }
 
-  "shriek" should "work" in {
+  "shriek" should "work (1)" in {
     TerminalFunctor(Ord(1)).__!(DavidsFunkyFunction) should equal(DavidsFunkySet2)
   }
 
-  //   "shriek" should "work" in {
+  //   "shriek" should "work (1)" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
   //   }
 
-  "pushforward" should "work" in {
+  "pushforward" should "work (2)" in {
     GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) should equal(DavidsFunkyDiscreteDynamicalSystem)
   }
 
@@ -442,15 +443,15 @@ class Test extends FlatSpec with ShouldMatchers {
   //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
   //   }
 
-  "pullback" should "work" in {
+  "pullback" should "work (4)" in {
     ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
 
-  "pushforward" should "work" in {
+  "pushforward" should "work (3)" in {
     ReverseGraph.__*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
 
-  "shriek" should "work" in {
+  "shriek" should "work (2)" in {
     ReverseGraph.__!(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
 

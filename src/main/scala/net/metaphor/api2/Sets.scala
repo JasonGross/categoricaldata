@@ -6,7 +6,7 @@ object CategoriesOfSets extends Categories {
     type O = Set[String]
     type M[X <: O, Y <: O] = Function[X, Y]
     
-    case class Function[X <: O, Y <: O](source: X, target: Y, function: X => Y)
+    case class Function[X <: O, Y <: O](source: X, target: Y, function: String => String)
     
     def identity[X <: O](o: X): M[X, X] = Function(o, o, { x => x })
     def source[X <: O, Y <: O](m: M[X, Y]): X = m.source

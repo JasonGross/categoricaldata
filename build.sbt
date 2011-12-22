@@ -17,7 +17,8 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
 	"junit" % "junit" % "4.8" % "test",
-	"org.scalatest" %% "scalatest" % "1.6.1" % "test"
+	"org.scalatest" %% "scalatest" % "1.6.1" % "test",
+	"net.tqft.toolkit" %% "toolkit" % "1.0-SNAPSHOT"
 )
 
 publishTo := Some(Resolver.sftp("toolkit.tqft.net Maven repository", "tqft.net", "tqft.net/releases") as ("scottmorrison", new java.io.File("/Users/scott/.ssh/id_rsa")))
