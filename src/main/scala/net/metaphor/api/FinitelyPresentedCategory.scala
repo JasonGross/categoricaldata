@@ -67,6 +67,8 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
 
   }
 
+  // TODO Lift these higher? Tried once, and ran into some trouble; making functor categories have these types gets confusing fast.
+  // Alternatively, we should drop FunctorToSet stuff down below the most general Category level.
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet[F]
   type CSets <: FunctorsToSet[F, T, CSets]
@@ -77,6 +79,7 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
 
     def colimit(functor: self.FunctorToSet): InitialObject[functor.CoCone, functor.CoConeMap] = {
 
+      // This is where all the work happens.
       def concreteColimit[A](objects: Iterable[O], sets: O => Iterable[A], functions: O => (O => (A => Iterable[A]))): (Iterable[List[(O, A)]], O => (A => List[(O, A)])) = {
         /**
          * finds all the clumps containing an element of slice, and smushes them together
