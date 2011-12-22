@@ -9,6 +9,21 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
 
   // FIXME implement toString, hashcode, equals
 
+  trait Opposite { opposite: C =>
+    override def objects = self.objects
+    override def generators(source: O, target: O) = self.generators(target, source)
+    override def relations(source: O, target: O) = self.relations(target, source)
+    
+    override def source(m: M) = self.target(m)
+    override def target(m: M) = self.source(m)
+    override def compose(m1: M, m2: M) = self.compose(m2, m1)
+  }
+  
+  /**
+   * Implementing opposite should be easy; generally just write "def opposite = new C with Opposite", replacing C as appropriate.
+   */
+  def opposite: C
+  
   trait WithTerminalObject extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
   val adjoinTerminalObject: WithTerminalObject
 

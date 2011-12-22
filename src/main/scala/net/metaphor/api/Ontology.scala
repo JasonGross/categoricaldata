@@ -31,7 +31,9 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
       case _ => false
     }
   }
-
+  
+  def opposite = new Ontology with Opposite
+  
   override def toString = {
     // TODO relations
     "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"

@@ -18,9 +18,7 @@ trait FiniteMorphisms[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends Sol
   def maximalWordLength(source: O, target: O): Int
   def normalWords(source: O, target: O) = (for (k <- 0 to maximalWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
 
-  // Before doing slice and coslice categories, let's do Yoneda nicely.
-
-  val yoneda = new HeteroFunctor[O, M, C, F, T, CSets] {
+  lazy val yoneda = new HeteroFunctor[O, M, C, F, T, CSets] {
     override def source = self
     override def target = functorsToSet
     override def onObjects(s: O) = lift(new FunctorToSet {
@@ -33,6 +31,19 @@ trait FiniteMorphisms[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends Sol
       override def apply(o: O) = ???
     })
   }
+  
+//  lazy val slice = new HeteroFunctor[O, M, C, _, _ ,_] {
+//    override def source = self
+//    override def target = functorsOver
+//    override def onObjects(s: O) = ???
+//    override def onMorphisms(m: M) = ???
+//  }
+//  lazy val coslice = new HeteroFunctor[O, M, C, _, _ ,_] {
+//    override def source = opposite
+//    override def target = functorsOver
+//    override def onObjects(s: O) = ???
+//    override def onMorphisms(m: M) = ???
+//  }
 }
 
 trait Acyclic[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FiniteMorphisms[O, M, C] { self: C =>
