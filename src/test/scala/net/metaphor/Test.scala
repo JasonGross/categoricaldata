@@ -21,7 +21,7 @@ class Test extends FlatSpec with ShouldMatchers {
     objects = List("an edge", "a vertex"),
     arrows = List(
       "an edge" --- "has as source" --> "a vertex",
-      "an edge" --- "has as target" --> "a vertex"))
+      "an edge" --- "has as target" --> "a vertex")).assertAcyclic.assertGraph 
 
   val TerminalGraph = Dataset(source = Grph,
     onObjects = Map(

@@ -16,7 +16,7 @@ case class Path(source: Box, arrows: List[Arrow]) {
 
 trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology =>
   override def compose(m1: Path, m2: Path) = {
-    require(m2.target == m1.source)
+    require(m2.source == m1.target)
     Path(m1.source, m1.arrows ::: m2.arrows)
   }
   override def source(m: Path) = m.source
@@ -127,7 +127,29 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
       def apply(o: Box) = t(o)
     }
   }
+
+  def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic
+  def assertGraph: Ontology with Ontologies.Graph = new OntologyWrapper(this) with Ontologies.Graph
 }
 
-//object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology]
+private class OntologyWrapper(o: Ontology) extends Ontology {
+  def objects = o.objects
+  def generators(s: Box, t: Box) = o.generators(s, t)
+  def relations(s: Box, t: Box) = o.relations(s, t)
+}
+
+object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
+  trait Acyclic extends net.metaphor.api.Acyclic[Box, Path, Ontology] { self: Ontology =>
+    override def assertAcyclic = this
+    override def assertGraph: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
+  }
+  trait Graph extends net.metaphor.api.Graph[Box, Path, Ontology] { self: Ontology =>   
+    override def assertAcyclic: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
+    override def assertGraph = this
+  }
+  trait AcyclicGraph extends net.metaphor.api.AcyclicGraph[Box, Path, Ontology] with Acyclic with Graph { self: Ontology => 
+    override def assertAcyclic = this
+    override def assertGraph = this
+  }
+}
 
