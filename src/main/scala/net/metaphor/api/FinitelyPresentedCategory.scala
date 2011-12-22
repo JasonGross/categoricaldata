@@ -13,9 +13,10 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
   val adjoinTerminalObject: WithTerminalObject
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    def colimit = functorsToSet.colimit(functorToSet).initialObject.asInstanceOf[adjoinTerminalObject.FunctorToSet]
+    def colimit = functorsToSet.colimit(functorToSet)
+    def colimitFunctor = colimit.initialObject.asInstanceOf[adjoinTerminalObject.FunctorToSet]
     def colimitSet = {
-      val c = colimit
+      val c = colimitFunctor
       c(c.source.asInstanceOf[TerminalObject[O, M]].terminalObject)
     }
 

@@ -16,7 +16,7 @@ class ColimitTest extends FlatSpec with ShouldMatchers {
     onMorphisms = Map(("authorship" --- "by" --> "author") -> (_.drop(1)), ("authorship" --- "has title" --> "article") -> (_.take(1))))
 
   "colimit" should "correctly find two connected components of the authorship graph (1)" in {
-    val colimit = i.colimit(C.adjoinTerminalObject.terminalObject)
+    val colimit = i.colimitFunctor(C.adjoinTerminalObject.terminalObject)
     // or just
     //     val colimit = i.colimit(Box("*"))
 
