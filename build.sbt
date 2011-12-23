@@ -21,4 +21,6 @@ libraryDependencies ++= Seq(
 	"net.tqft.toolkit" %% "toolkit" % "1.0-SNAPSHOT"
 )
 
+scalacOptions ++= Seq("-Xexperimental")
+
 publishTo := Some(Resolver.sftp("toolkit.tqft.net Maven repository", "tqft.net", "tqft.net/releases") as ("scottmorrison", new java.io.File("/Users/scott/.ssh/id_rsa")))
