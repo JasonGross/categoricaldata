@@ -8,7 +8,7 @@ trait Translation extends SmallFunctor[Box, Path, Ontology] { translation =>
     // TODO pull up? this trait could vanish.
     // the following two 'apply' methods are convenience methods, allowing us to act on a Dataset or Datamap which is not an inner type.
     def apply(i: Ontology#Dataset) = {
-      super.apply(translation.target.Dataset(i))
+      super.apply(translation.target.liftFunctorToSet(i))
     }
     def apply(m: Ontology#Datamap) = {
       super.apply(translation.target.Datamap(m))
@@ -20,7 +20,7 @@ trait Translation extends SmallFunctor[Box, Path, Ontology] { translation =>
 
     // the following two 'apply' methods are convenience methods, allowing us to act on a Dataset or Datamap which is not an inner type.
     def apply(i: Ontology#Dataset) = {
-      super.apply(translation.source.Dataset(i))
+      super.apply(translation.source.liftFunctorToSet(i))
     }
     def apply(m: Ontology#Datamap) = {
       super.apply(translation.source.Datamap(m))
@@ -29,19 +29,8 @@ trait Translation extends SmallFunctor[Box, Path, Ontology] { translation =>
 
   trait Pullback extends ContravariantDataFunctor with super.Pullback
 
-  override def pullback: Pullback = new Pullback {
-    def onObjects(i: translation.target.Dataset) = new translation.source.Dataset {
-      def onObjects(o: Box) = i(translation(o))
-      def onMorphisms(m: Path) = i(translation(m))
-    }
-    def onMorphisms(m: translation.target.Datamap) = new translation.source.Datamap {
-      def source = onObjects(m.source)
-      def target = onObjects(m.target)
-      def apply(o: Box) = m(translation(o))
-    }
-  }
-
-  def ^* = pullback
+  override def pullback: Pullback = new Pullback { }
+  override def ^* = pullback
 
   def assertFiniteTarget: Translation with FiniteTarget = ???
 }

@@ -14,30 +14,32 @@ trait HeteroFunctor[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O
 
 trait Functor[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, O, M, C] { functor => }
 
-trait SmallFunctor[O, M, C <: SmallCategory[O, M, C]] extends Functor[O, M, C] {functor =>
+trait SmallFunctor[O, M, C <: SmallCategory[O, M, C]] extends Functor[O, M, C] { functor =>
   val source: C
   val target: C
-  
+
   trait ContravariantDataFunctor extends HeteroFunctor[target.F, target.T, target.CSets, source.F, source.T, source.CSets] {
     val source = functor.target.functorsToSet
     val target = functor.source.functorsToSet
-    
+
     // TODO convenience methods for widening the scope.
   }
-  
-    trait Pullback extends ContravariantDataFunctor
 
-  def pullback: Pullback = new Pullback {
-    def onObjects(i: functor.target.F) = functor.source.lift(new functor.source.FunctorToSet {
+  trait Pullback extends ContravariantDataFunctor {
+    def onObjects(i: functor.target.F) = functor.source.liftFunctorToSet(new functor.source.FunctorToSet {
       def onObjects(o: O) = i(functor(o))
       def onMorphisms(m: M) = i(functor(m))
     })
-    def onMorphisms(m: functor.target.T) = functor.source.lift(new functor.source.NaturalTransformationToSet[functor.source.F] {
+    def onMorphisms(m: functor.target.T) = functor.source.liftNaturalTransformationToSet(new functor.source.NaturalTransformationToSet[functor.source.F] {
       def source = onObjects(m.source)
       def target = onObjects(m.target)
       def apply(o: O) = m(functor(o))
     })
-  }  
+  }
+
+  def pullback: Pullback = new Pullback {}
+
+  def ^* = pullback
 }
 
 object Functor {

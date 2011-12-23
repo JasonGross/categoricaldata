@@ -21,11 +21,11 @@ trait FiniteMorphisms[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends Sol
   lazy val yoneda = new HeteroFunctor[O, M, C, F, T, CSets] {
     override def source = self
     override def target = functorsToSet
-    override def onObjects(s: O) = lift(new FunctorToSet {
+    override def onObjects(s: O) = liftFunctorToSet(new FunctorToSet {
       override def onObjects(t: O) = normalWords(s, t)
       override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
     })
-   override def onMorphisms(m: M) = lift(new NaturalTransformationToSet[F] {
+   override def onMorphisms(m: M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
       override def source = onObjects(self.source(m))
       override def target = onObjects(self.target(m))
       override def apply(o: O) = ???

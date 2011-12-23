@@ -53,8 +53,8 @@ trait SmallCategory[O, M, C <: SmallCategory[O, M, C]] extends Category[O, M, C]
   type T <: NaturalTransformationToSet[F]
   type CSets <: FunctorsToSet
 
-  def lift(f: net.metaphor.api.FunctorToSet[O, M, C]): F
-  def lift(t: net.metaphor.api.NaturalTransformationToSet[O, M, C, F]): T
+  def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[O, M, C]): F
+  def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[O, M, C, F]): T
 
   def functorsToSet: CSets
 

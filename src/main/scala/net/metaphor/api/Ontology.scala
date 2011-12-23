@@ -35,7 +35,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   }
 
   override def hashCode = ???
-  
+
   override def toString = {
     // TODO relations in Ontology.toString
     "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
@@ -79,7 +79,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
 
     val minimumLevel = ontology.minimumLevel
     val maximumLevel = ontology.maximumLevel + 1
-    def objectsAtLevel(k: Int) = if(k == maximumLevel) {
+    def objectsAtLevel(k: Int) = if (k == maximumLevel) {
       List(terminalObject)
     } else {
       ontology.objectsAtLevel(k)
@@ -128,12 +128,21 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override type T = Datamap
   override type CSets = Datasets
 
-  override def lift(f: net.metaphor.api.FunctorToSet[Box, Path, Ontology]): F = ???
-  override def lift(t: net.metaphor.api.NaturalTransformationToSet[Box, Path, Ontology, Dataset]): T = ???
+  override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[Box, Path, Ontology]): Dataset = {
+    f match {
+      case f: Dataset => f
+      case _ =>
+        new Dataset {
+          def onObjects(o: Box) = f(o)
+          def onMorphisms(m: Path) = f(m)
+        }
+    }
+  }
+  override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[Box, Path, Ontology, Dataset]): Datamap = ???
 
   override val functorsToSet = Datasets
-  sealed trait Datasets extends FunctorsToSet 
-  
+  sealed trait Datasets extends FunctorsToSet
+
   // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
   object Datasets extends Datasets {
     override def lift(t: HeteroNaturalTransformation[Box, Path, Ontology, Set, Function, Sets, Dataset]) = new Datamap {
