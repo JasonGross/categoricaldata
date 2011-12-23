@@ -29,4 +29,8 @@ object Sets extends Sets {
   override def source(f: Function) = ???
   override def target(f: Function) = ???
   override def compose(first: Function, second: Function) = first andThen second
+
+  type F = FunctorToSet
+  type T = NaturalTransformationToSet[F]
+  type CSets = FunctorsToSet
 }

@@ -38,6 +38,10 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
     override def compose(m1: FO, m2: FO): FO = lift(m1.source, m2.target, new Functor.CompositeFunctor(m1.functor, m2.functor))
     
     def lift(source: CO, target: CO, f: Functor[SO, SM, SC]): FO
+
+    type F = FunctorToSet
+    type T = NaturalTransformationToSet[F]
+    type CSets = FunctorsToSet
   }
   
   trait FunctorToSet extends FunctorFrom[Set, Function, Sets] with net.metaphor.api.FunctorToSet[O, M, C] 
@@ -47,5 +51,10 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
     override def target: F
   }
 
-  abstract class FunctorsToSet[F <: FunctorToSet, T <: NaturalTransformationToSet[F], FC <: FunctorsToSet[F, T, FC]] extends net.metaphor.api.FunctorsToSet[O, M, C, F, T, FC](self) { functorsToSet: FC => }
+    type F <: FunctorToSet
+  type T <: NaturalTransformationToSet[F]
+  type CSets <: FunctorsToSet
+
+  
+  abstract class FunctorsToSet extends net.metaphor.api.FunctorsToSet[O, M, C, F, T, CSets](self) { functorsToSet: CSets => }
 }

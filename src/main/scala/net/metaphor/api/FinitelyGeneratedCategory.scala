@@ -100,18 +100,16 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
 
   }
 
-    // TODO Lift these higher? Tried once, and ran into some trouble; making functor categories have these types gets confusing fast.
-  // Alternatively, we should drop FunctorToSet stuff down below the most general Category level.
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet[F]
-  type CSets <: FunctorsToSet[F, T, CSets]
+  type CSets <: FunctorsToSet
 
   def lift(f: FunctorToSet): F
   def lift(t: NaturalTransformationToSet[F]): T
 
   val functorsToSet: CSets
 
-  abstract class FunctorsToSet[F <: FunctorToSet, T <: NaturalTransformationToSet[F], FC <: FunctorsToSet[F, T, FC]] extends super.FunctorsToSet[F, T, FC] { functorsToSet: FC =>
+  abstract class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
 
     def colimit(functor: self.FunctorToSet): InitialObject[functor.CoCone, functor.CoConeMap] = {
 

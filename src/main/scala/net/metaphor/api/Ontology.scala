@@ -132,8 +132,8 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override def lift(t: NaturalTransformationToSet[F]): Datamap = ???
 
   override val functorsToSet = Datasets
-  sealed trait Datasets extends FunctorsToSet[Dataset, Datamap, Datasets]
-
+  sealed trait Datasets extends FunctorsToSet 
+  
   // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
   object Datasets extends Datasets {
     override def lift(t: HeteroNaturalTransformation[Box, Path, Ontology, Set, Function, Sets, Dataset]) = new Datamap {
@@ -170,7 +170,6 @@ object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
       }
     }
     override val categoriesOver = CategoriesOver
-
   }
 
   trait Acyclic extends net.metaphor.api.Acyclic[Box, Path, Ontology] with Finite { self: Ontology =>
