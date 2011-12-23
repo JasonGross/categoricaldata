@@ -9,22 +9,6 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
 
   // FIXME implement toString, hashcode, equals
 
-  trait Opposite { opposite: C =>
-    override val maximumLevel = self.maximumLevel
-    override def objectsAtLevel(k: Int) = self.objectsAtLevel(k)
-    override def generators(source: O, target: O) = self.generators(target, source)
-    override def relations(source: O, target: O) = self.relations(target, source)
-    
-    override def source(m: M) = self.target(m)
-    override def target(m: M) = self.source(m)
-    override def compose(m1: M, m2: M) = self.compose(m2, m1)
-  }
-  
-  /**
-   * Implementing opposite should be easy; generally just write "def opposite = new C with Opposite", replacing C as appropriate.
-   */
-  def opposite: C
-  
   trait WithTerminalObject extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
   val adjoinTerminalObject: WithTerminalObject
 
@@ -77,7 +61,7 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
 
   def lift(f: FunctorToSet): F
   def lift(t: NaturalTransformationToSet[F]): T
-  
+
   val functorsToSet: CSets
 
   abstract class FunctorsToSet[F <: FunctorToSet, T <: NaturalTransformationToSet[F], FC <: FunctorsToSet[F, T, FC]] extends super.FunctorsToSet[F, T, FC] { functorsToSet: FC =>
@@ -132,8 +116,12 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
     }
 
   }
-}
 
+  trait Opposite extends super.Opposite { opposite: C =>
+    override def relations(source: O, target: O) = self.relations(target, source)
+  }
+
+}
 
 trait FinitelyPresentedCategories[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyGeneratedCategories[O, M, C] { FPCAT =>
 }

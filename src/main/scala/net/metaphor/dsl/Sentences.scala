@@ -53,6 +53,7 @@ object Sentences {
       Arrow(sb, ob, p)
     }).groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
 
+    val minimumLevel = 0
     val maximumLevel = 0
     def objectsAtLevel(k: Int) = if(k ==0)boxes else Nil
     override def generators(source: Box, target: Box) = arrowMap(source, target).map(_.asPath)

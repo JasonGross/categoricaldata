@@ -12,7 +12,6 @@ abstract class FunctorCategory[SO, SM, SC <: Category[SO, SM, SC], TO, TM, TC <:
     def source = m1.source
     def target = m2.target
 
-    // FIXME code smell; this is duplicated in Composite2NaturalTransformation.apply
     def apply(o: SO) = target.target.compose(m1(o), m2(o))
   })
   

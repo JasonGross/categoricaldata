@@ -20,6 +20,8 @@ trait Dataset extends FunctorToSet[Box, Path, Ontology] {
     }
   }
 
+  override def hashCode = ???
+  
   override def toString = {
     "Dataset(\n" +
       "  source = " + source + ", \n" +

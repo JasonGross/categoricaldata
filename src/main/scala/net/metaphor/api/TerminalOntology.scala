@@ -1,6 +1,7 @@
 package net.metaphor.api
 
 trait TerminalFinitelyGeneratedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FinitelyPresentedCategory[O, M, C] with TerminalObject[O, M] { self: C =>
+  val minimumLevel = 0
   val maximumLevel = 0
   def objectsAtLevel(k: Int) = if(k == 0) List(terminalObject) else Nil
   override def generators(source: O, target: O) = List(morphismFrom(terminalObject))
