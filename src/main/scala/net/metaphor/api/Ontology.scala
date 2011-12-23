@@ -75,7 +75,12 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
     val terminalObject = Box("*")
     def morphismFrom(o: Box) = ???
 
-    def objects = terminalObject :: ontology.objects
+    val maximumLevel = ontology.maximumLevel + 1
+    def objectsAtLevel(k: Int) = if(k == maximumLevel) {
+      List(terminalObject)
+    } else {
+      ontology.objectsAtLevel(k)
+    }
     def generators(source: Box, target: Box) = {
       if (target == terminalObject) {
         List(Arrow(source, target, "*").asPath)
@@ -140,7 +145,8 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
 }
 
 private class OntologyWrapper(o: Ontology) extends Ontology {
-  def objects = o.objects
+  val maximumLevel = o.maximumLevel
+  def objectsAtLevel(k: Int) = o.objectsAtLevel(k)
   def generators(s: Box, t: Box) = o.generators(s, t)
   def relations(s: Box, t: Box) = o.relations(s, t)
 }

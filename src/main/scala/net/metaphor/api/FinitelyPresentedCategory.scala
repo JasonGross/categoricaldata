@@ -10,7 +10,8 @@ trait FinitelyPresentedCategory[O, M, C <: FinitelyPresentedCategory[O, M, C]] e
   // FIXME implement toString, hashcode, equals
 
   trait Opposite { opposite: C =>
-    override def objects = self.objects
+    override val maximumLevel = self.maximumLevel
+    override def objectsAtLevel(k: Int) = self.objectsAtLevel(k)
     override def generators(source: O, target: O) = self.generators(target, source)
     override def relations(source: O, target: O) = self.relations(target, source)
     

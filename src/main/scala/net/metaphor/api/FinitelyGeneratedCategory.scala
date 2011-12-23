@@ -1,8 +1,14 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends Category[O, M, C] { self: C =>
-  def objects: List[O]
+trait LocallyFinitelyGeneratedCategory[O, M, C <: LocallyFinitelyGeneratedCategory[O, M, C]] extends Category[O, M, C] { self: C =>
+  def objectsAtLevel(k: Int): List[O]
+}
+
+trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends LocallyFinitelyGeneratedCategory[O, M, C] { self: C =>
+  val maximumLevel: Int
+  
+  def objects: List[O] = for(k <- (0 to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
   def generators(source: O, target: O): List[M]
   def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
   def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g
