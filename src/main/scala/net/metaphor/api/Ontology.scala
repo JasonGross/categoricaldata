@@ -37,7 +37,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override def hashCode = ???
   
   override def toString = {
-    // TODO relations
+    // TODO relations in Ontology.toString
     "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
   }
 
@@ -128,8 +128,8 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override type T = Datamap
   override type CSets = Datasets
 
-  override def lift(f: FunctorToSet): Dataset = ???
-  override def lift(t: NaturalTransformationToSet[F]): Datamap = ???
+   def lift(f: FunctorToSet): Dataset = ???
+   def lift(t: NaturalTransformationToSet[F]): Datamap = ???
 
   override val functorsToSet = Datasets
   sealed trait Datasets extends FunctorsToSet 
@@ -141,6 +141,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
       def target = t.target
       def apply(o: Box) = t(o)
     }
+    override def functorsToSet = ???
   }
 
   def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic

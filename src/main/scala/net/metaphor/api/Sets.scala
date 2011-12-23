@@ -22,15 +22,11 @@ case class IdentityFunction[A](set: Set) extends Function {
   override def toFunction = { a: Any => a }
 }
 
-trait Sets extends Category[Set, Function, Sets]
+trait Sets extends Category[Set, Function, Sets] with StandardFunctorsToSet[Set, Function, Sets]
 
 object Sets extends Sets {
   override def identity(set: Set) = set.identity
   override def source(f: Function) = ???
   override def target(f: Function) = ???
   override def compose(first: Function, second: Function) = first andThen second
-
-  type F = FunctorToSet
-  type T = NaturalTransformationToSet[F]
-  type CSets = FunctorsToSet
 }

@@ -12,7 +12,7 @@ trait SolvableWordProblem[O, M, C <: FinitelyPresentedCategory[O, M, C]] { self:
 }
 
 trait FiniteMorphisms[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends SolvableWordProblem[O, M, C] { self: C =>
-  // TODO How could we ever come across instances of these, but which aren't acyclic?
+  // TODO How would instances arise, which aren't acyclic?
   // We'd need a proof there are only finitely many loops/relations
 
   def maximalWordLength(source: O, target: O): Int

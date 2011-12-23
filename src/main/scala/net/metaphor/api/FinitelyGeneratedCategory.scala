@@ -55,7 +55,7 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
     override val minimumLevel = self.minimumLevel
     override val maximumLevel = self.maximumLevel
   }
-  
+
   trait WithTerminalObject extends FinitelyGeneratedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
   val adjoinTerminalObject: WithTerminalObject
 
@@ -100,14 +100,15 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
 
   }
 
+  // Contrary to appearance, these definitions are *not* redundant with those in Category.
+  // Since then, we've further specialized FunctorToSet, etc., and these definitions further constrain F, T and CSets.
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet[F]
   type CSets <: FunctorsToSet
-
-  def lift(f: FunctorToSet): F
+  val functorsToSet: CSets
+      def lift(f: FunctorToSet): F
   def lift(t: NaturalTransformationToSet[F]): T
 
-  val functorsToSet: CSets
 
   abstract class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
 
