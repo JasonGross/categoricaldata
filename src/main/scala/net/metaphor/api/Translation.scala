@@ -49,20 +49,22 @@ trait Translation extends Functor[Box, Path, Ontology] { translation =>
 }
 
 trait FiniteTarget extends Translation { translation =>
-   override val target: Ontologies.Finite
+  override val target: Ontologies.Finite
 
-  lazy val slice = new HeteroFunctor[Box, Path, Ontology, target.CO, target.FO, target.CsO] {
-    override def source = translation.target
+  trait CommaFunctor extends HeteroFunctor[Box, Path, Ontology, target.CO, target.FO, target.CsO] {
     override def target = translation.target.categoriesOver
+  }
+
+  lazy val slice = new CommaFunctor {
+    override def source = translation.target
     override def onObjects(s: Box) = ???
     override def onMorphisms(m: Path) = ???
   }
-  //  lazy val coslice = new HeteroFunctor[O, M, C, _, _ ,_] {
-  //    override def source = opposite
-  //    override def target = functorsOver
-  //    override def onObjects(s: O) = ???
-  //    override def onMorphisms(m: M) = ???
-  //  }
+  lazy val coslice = new CommaFunctor {
+    override def source = translation.target.opposite
+    override def onObjects(s: Box) = ???
+    override def onMorphisms(m: Path) = ???
+  }
 
   trait Pushforward extends CovariantDataFunctor
   trait Shriek extends CovariantDataFunctor
