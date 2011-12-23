@@ -27,17 +27,17 @@ trait SmallFunctor[O, M, C <: SmallCategory[O, M, C]] extends Functor[O, M, C] {
   
     trait Pullback extends ContravariantDataFunctor
 
-//  def pullback: Pullback = new Pullback {
-//    def onObjects(i: functor.target.F) = functor.source.lift(new functor.source.FunctorToSet {
-//      def onObjects(o: O) = i(functor(o))
-//      def onMorphisms(m: M) = i(functor(m))
-//    })
-//    def onMorphisms(m: functor.target.T) = functor.source.lift(new functor.source.NaturalTransformationToSet[functor.source.F] {
-//      def source = onObjects(m.source)
-//      def target = onObjects(m.target)
-//      def apply(o: O) = m(functor(o))
-//    })
-//  }  
+  def pullback: Pullback = new Pullback {
+    def onObjects(i: functor.target.F) = functor.source.lift(new functor.source.FunctorToSet {
+      def onObjects(o: O) = i(functor(o))
+      def onMorphisms(m: M) = i(functor(m))
+    })
+    def onMorphisms(m: functor.target.T) = functor.source.lift(new functor.source.NaturalTransformationToSet[functor.source.F] {
+      def source = onObjects(m.source)
+      def target = onObjects(m.target)
+      def apply(o: O) = m(functor(o))
+    })
+  }  
 }
 
 object Functor {

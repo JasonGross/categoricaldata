@@ -46,7 +46,6 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
     override def source: F
     override def target: F
   }
-
 }
 
 trait SmallCategory[O, M, C <: SmallCategory[O, M, C]] extends Category[O, M, C] { self: C => 

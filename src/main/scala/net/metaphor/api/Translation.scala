@@ -27,9 +27,9 @@ trait Translation extends SmallFunctor[Box, Path, Ontology] { translation =>
     }
   }
 
-  trait Pullback extends ContravariantDataFunctor
+  trait Pullback extends ContravariantDataFunctor with super.Pullback
 
-  def pullback: Pullback = new Pullback {
+  override def pullback: Pullback = new Pullback {
     def onObjects(i: translation.target.Dataset) = new translation.source.Dataset {
       def onObjects(o: Box) = i(translation(o))
       def onMorphisms(m: Path) = i(translation(m))
