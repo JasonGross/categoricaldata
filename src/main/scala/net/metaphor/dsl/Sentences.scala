@@ -6,6 +6,8 @@ import net.metaphor.api.Arrow
 import net.metaphor.api.Path
 import net.metaphor.api.Dataset
 import net.metaphor.api.Ontologies
+import net.metaphor.api.FiniteMorphisms
+import net.metaphor.api.FiniteTarget
 
 object Sentences {
   implicit def stringAsPath(s: String) = StringSource(s)
@@ -33,6 +35,8 @@ object Sentences {
     def target = source
     def ---(p: String) = IncompleteStringArrow(p)
 
+    def identity = ConcreteStringPath(source, Nil)
+
     case class IncompleteStringArrow(p: String) {
       def -->(o: String) = StringArrow(source, p, o)
     }
@@ -59,15 +63,12 @@ object Sentences {
     new ConcreteOntology(objects, arrows, relations)
   }
 
-  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
-    val source_ = source
-    val target_ = target
-
-    val objectMap = (for (s <- source.objects) yield {
+  class ConcreteTranslation(val source: Ontology, val target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath) extends Translation {
+    private val objectMap: Map[Box, Box] = (for (s <- source.objects) yield {
       val t = target.objects.find(_.name == onObjects(s.name)).get
       s -> t
     }).toMap
-    val morphismMap = (for (
+    private val morphismMap: Map[Arrow, Path] = (for (
       p @ Path(sb, List(s)) <- source.allGenerators
     ) yield {
       s -> Path(source = objectMap(sb),
@@ -76,13 +77,18 @@ object Sentences {
         })
     }).toMap
 
+    override def onObjects(o: Box) = objectMap(o)
+    override def onMorphisms(m: Path) = Path(objectMap(m.source), m.arrows.map(morphismMap(_)).map(_.arrows).flatten)
+
+  }
+
+//  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
+//    // construct a new translation object
+//    new ConcreteTranslation(source, target, onObjects, onMorphisms)
+//  }
+  def Translation(source: Ontology, target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation with FiniteTarget = {
     // construct a new translation object
-    new Translation {
-      override val source = source_
-      override val target = target_
-      override def onObjects(o: Box) = objectMap(o)
-      override def onMorphisms(m: Path) = Path(objectMap(m.source), m.arrows.map(morphismMap(_)).map(_.arrows).flatten)
-    }
+    new ConcreteTranslation(source, target, onObjects, onMorphisms) with FiniteTarget
   }
 
   def Dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {

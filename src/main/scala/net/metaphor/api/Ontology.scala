@@ -146,7 +146,9 @@ private class OntologyWrapper(o: Ontology) extends Ontology {
 }
 
 object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
-  trait Acyclic extends net.metaphor.api.Acyclic[Box, Path, Ontology] with Ontology { self =>
+  trait Finite extends net.metaphor.api.FiniteMorphisms[Box, Path, Ontology] { self: Ontology => }
+  
+  trait Acyclic extends net.metaphor.api.Acyclic[Box, Path, Ontology] with Finite with Ontology { self =>
     override def assertAcyclic = this
     override def assertGraph: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
 

@@ -10,7 +10,7 @@ object SentencesExample extends App {
     arrows = List("a fusion object" --- "has as principal graph" --> "a graph",
       "a fusion object" --- "sits inside" --> "a fusion category",
       "a fusion category" --- "has as fusion ring" --> "a positive ring") //
-      )
+      ).assertAcyclic
 
   // FIXME
   val D = C
