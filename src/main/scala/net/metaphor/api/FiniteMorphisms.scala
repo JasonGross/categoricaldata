@@ -38,18 +38,6 @@ trait FiniteMorphisms[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends Sol
 
   def categoriesOver: CsO
   
-  lazy val slice = new HeteroFunctor[O, M, C, CO, FO, CsO] {
-    override def source = self
-    override def target = categoriesOver
-    override def onObjects(s: O) = ???
-    override def onMorphisms(m: M) = ???
-  }
-//  lazy val coslice = new HeteroFunctor[O, M, C, _, _ ,_] {
-//    override def source = opposite
-//    override def target = functorsOver
-//    override def onObjects(s: O) = ???
-//    override def onMorphisms(m: M) = ???
-//  }
 }
 
 trait Acyclic[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FiniteMorphisms[O, M, C] { self: C =>

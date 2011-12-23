@@ -7,7 +7,7 @@ trait Translation extends Functor[Box, Path, Ontology] { translation =>
   trait ContravariantDataFunctor extends HeteroFunctor[target.Dataset, target.Datamap, target.Datasets, source.Dataset, source.Datamap, source.Datasets] {
     val source = translation.target.Datasets
     val target = translation.source.Datasets
-    
+
     // the following two 'apply' methods are convenience methods, allowing us to act on a Dataset or Datamap which is not an inner type.
     def apply(i: Ontology#Dataset) = {
       super.apply(translation.target.Dataset(i))
@@ -44,19 +44,32 @@ trait Translation extends Functor[Box, Path, Ontology] { translation =>
   }
 
   def ^* = pullback
-  
+
   def assertFiniteTarget: Translation with FiniteTarget = ???
 }
 
-trait FiniteTarget { translation: Translation => 
-  override val target: Ontology with FiniteMorphisms[Box, Path, Ontology]
-  
+trait FiniteTarget extends Translation { translation =>
+   override val target: Ontologies.Finite
+
+  lazy val slice = new HeteroFunctor[Box, Path, Ontology, target.CO, target.FO, target.CsO] {
+    override def source = translation.target
+    override def target = translation.target.categoriesOver
+    override def onObjects(s: Box) = ???
+    override def onMorphisms(m: Path) = ???
+  }
+  //  lazy val coslice = new HeteroFunctor[O, M, C, _, _ ,_] {
+  //    override def source = opposite
+  //    override def target = functorsOver
+  //    override def onObjects(s: O) = ???
+  //    override def onMorphisms(m: M) = ???
+  //  }
+
   trait Pushforward extends CovariantDataFunctor
   trait Shriek extends CovariantDataFunctor
 
   def pushforward: Pushforward = new Pushforward {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
-      def onObjects(o: Box) = ???
+      def onObjects(o: Box) = ??? // here's the rough idea: slice(o).functor.pullback(i).limitSet
       def onMorphisms(m: Path) = ???
     }
     def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
@@ -76,7 +89,7 @@ trait FiniteTarget { translation: Translation =>
       def apply(o: Box) = ???
     }
   }
-  
+
   def __! = shriek
   def __* = pushforward
 }
