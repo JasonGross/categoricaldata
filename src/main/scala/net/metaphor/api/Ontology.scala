@@ -31,9 +31,9 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
       case _ => false
     }
   }
-  
+
   def opposite = new Ontology with Opposite
-  
+
   override def toString = {
     // TODO relations
     "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
@@ -116,16 +116,18 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
     }
   }
 
-  type F = Dataset
-  type T = Datamap
+  override type F = Dataset
+  override type T = Datamap
   override type CSets = Datasets
 
   override def lift(f: FunctorToSet): Dataset = ???
   override def lift(t: NaturalTransformationToSet[F]): Datamap = ???
-  
+
   override val functorsToSet = Datasets
   sealed trait Datasets extends FunctorsToSet[Dataset, Datamap, Datasets]
-  object Datasets extends Datasets {
+  
+  // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
+  object Datasets extends Datasets  {
     override def lift(t: HeteroNaturalTransformation[Box, Path, Ontology, Set, Function, Sets, Dataset]) = new Datamap {
       def source = t.source
       def target = t.target
@@ -144,15 +146,30 @@ private class OntologyWrapper(o: Ontology) extends Ontology {
 }
 
 object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
-  trait Acyclic extends net.metaphor.api.Acyclic[Box, Path, Ontology] { self: Ontology =>
+  trait Acyclic extends net.metaphor.api.Acyclic[Box, Path, Ontology] with Ontology { self =>
     override def assertAcyclic = this
     override def assertGraph: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
+
+    override type CO = CategoryOver[Box, Path, Ontology, FunctorTo[Box, Path, Ontology]]
+    override type FO = FunctorOver[Box, Path, Ontology, Functor[Box, Path, Ontology], FunctorTo[Box, Path, Ontology], CO]
+    override type CsO = CategoriesOver
+
+    sealed trait CategoriesOver extends super.CategoriesOver[Box, Path, Ontology, Functor[Box, Path, Ontology], FunctorTo[Box, Path, Ontology], CO, FO, CategoriesOver]
+    object CategoriesOver extends CategoriesOver {
+      override def lift(_source: CO, _target: CO, f: Functor[Box, Path, Ontology]) = new FO {
+        def source = _source
+        def target = _target
+        def functor = f
+      }
+    }
+    override val categoriesOver = CategoriesOver
+
   }
-  trait Graph extends net.metaphor.api.Graph[Box, Path, Ontology] { self: Ontology =>   
+  trait Graph extends net.metaphor.api.Graph[Box, Path, Ontology] { self: Ontology =>
     override def assertAcyclic: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
     override def assertGraph = this
   }
-  trait AcyclicGraph extends net.metaphor.api.AcyclicGraph[Box, Path, Ontology] with Acyclic with Graph { self: Ontology => 
+  trait AcyclicGraph extends net.metaphor.api.AcyclicGraph[Box, Path, Ontology] with Acyclic with Graph { self: Ontology =>
     override def assertAcyclic = this
     override def assertGraph = this
   }

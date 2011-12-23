@@ -21,12 +21,12 @@ object Functor {
     def onObjects(o: O) = o
     def onMorphisms(m: M) = m
   }
-  
-  class CompositeFunctor[O, M, C <: Category[O, M, C]](functor1: Functor[O,M,C], functor2: Functor[O,M,C]) extends Functor[O,M,C] {
+
+  class CompositeFunctor[O, M, C <: Category[O, M, C]](functor1: Functor[O, M, C], functor2: Functor[O, M, C]) extends Functor[O, M, C] {
     def source = functor1.source
     def target = functor2.source
     def onObjects(o: O) = functor2(functor1(o))
     def onMorphisms(m: M) = functor2(functor1(m))
-    
+
   }
 }

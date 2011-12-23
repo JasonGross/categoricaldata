@@ -31,13 +31,13 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
     def functor: F1
   }
   
-  abstract class CategoriesOver[SO, SM, SC <: Category[SO, SM, SC], F1 <: Functor[SO, SM, SC], F2 <: FunctorTo[SO,SM,SC], CO <: CategoryOver[SO, SM, SC, F2], FO <: FunctorOver[SO, SM, SC, F1, F2, CO], D <: CategoriesOver[SO, SM, SC, F1, F2,  CO, FO, D]] extends Category[CO, FO, D] { categoriesOver: D =>
-    override def identity(f: CO) = lift(new Functor.IdentityFunctor(f.category))
+  trait CategoriesOver[SO, SM, SC <: Category[SO, SM, SC], F1 <: Functor[SO, SM, SC], F2 <: FunctorTo[SO,SM,SC], CO <: CategoryOver[SO, SM, SC, F2], FO <: FunctorOver[SO, SM, SC, F1, F2, CO], CsO <: CategoriesOver[SO, SM, SC, F1, F2,  CO, FO, CsO]] extends Category[CO, FO, CsO] { categoriesOver: CsO =>
+    override def identity(f: CO) = lift(f, f, new Functor.IdentityFunctor(f.category))
     override def source(t: FO) = t.source
     override def target(t: FO) = t.target
-    override def compose(m1: FO, m2: FO): FO = lift(new Functor.CompositeFunctor(m1.functor, m2.functor))
+    override def compose(m1: FO, m2: FO): FO = lift(m1.source, m2.target, new Functor.CompositeFunctor(m1.functor, m2.functor))
     
-    def lift(f: Functor[SO, SM, SC]): FO
+    def lift(source: CO, target: CO, f: Functor[SO, SM, SC]): FO
   }
   
   trait FunctorToSet extends FunctorFrom[Set, Function, Sets] with net.metaphor.api.FunctorToSet[O, M, C] 
