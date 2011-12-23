@@ -22,7 +22,7 @@ case class IdentityFunction[A](set: Set) extends Function {
   override def toFunction = { a: Any => a }
 }
 
-trait Sets extends Category[Set, Function, Sets] with StandardFunctorsToSet[Set, Function, Sets]
+trait Sets extends LargeCategory[Set, Function, Sets]
 
 object Sets extends Sets {
   override def identity(set: Set) = set.identity

@@ -128,8 +128,8 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override type T = Datamap
   override type CSets = Datasets
 
-   def lift(f: FunctorToSet): Dataset = ???
-   def lift(t: NaturalTransformationToSet[F]): Datamap = ???
+  override def lift(f: net.metaphor.api.FunctorToSet[Box, Path, Ontology]): F = ???
+  override def lift(t: net.metaphor.api.NaturalTransformationToSet[Box, Path, Ontology, Dataset]): T = ???
 
   override val functorsToSet = Datasets
   sealed trait Datasets extends FunctorsToSet 
@@ -141,7 +141,6 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
       def target = t.target
       def apply(o: Box) = t(o)
     }
-    override def functorsToSet = ???
   }
 
   def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic

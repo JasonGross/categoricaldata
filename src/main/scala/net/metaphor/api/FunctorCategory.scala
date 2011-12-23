@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-abstract class FunctorCategory[SO, SM, SC <: Category[SO, SM, SC], TO, TM, TC <: Category[TO, TM, TC], FF <: HeteroFunctor[SO, SM, SC, TO, TM, TC], TT <: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC, FF], FC <: FunctorCategory[SO, SM, SC, TO, TM, TC, FF, TT, FC]](source: SC, target: TC) extends Category[FF, TT, FC] { self: FC =>
+abstract class FunctorCategory[SO, SM, SC <: Category[SO, SM, SC], TO, TM, TC <: Category[TO, TM, TC], FF <: HeteroFunctor[SO, SM, SC, TO, TM, TC], TT <: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC, FF], FC <: FunctorCategory[SO, SM, SC, TO, TM, TC, FF, TT, FC]](source: SC, target: TC) extends LargeCategory[FF, TT, FC] { self: FC =>
   override def identity(o: FF) = lift(new NaturalTransformation.IdentityHeteroNaturalTransformation(o))
   override def source(m: TT) = {
     m.source
@@ -15,10 +15,5 @@ abstract class FunctorCategory[SO, SM, SC <: Category[SO, SM, SC], TO, TM, TC <:
     def apply(o: SO) = target.target.compose(m1(o), m2(o))
   })
 
-  def lift(t: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC, FF]): TT
-  
-      type F = FunctorToSet
-  type T = NaturalTransformationToSet[F]
-    type CSets = FunctorsToSet
-
+  def lift(t: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC, FF]): TT  
 }

@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait Translation extends Functor[Box, Path, Ontology] { translation =>
+trait Translation extends SmallFunctor[Box, Path, Ontology] { translation =>
   val source: Ontology
   val target: Ontology
 

@@ -12,10 +12,12 @@ trait HeteroFunctor[O1, M1, C1 <: Category[O1, M1, C1], O2, M2, C2 <: Category[O
   def onMorphisms(m: M1): M2
 }
 
-trait Functor[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, O, M, C] { functor =>
+trait Functor[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, O, M, C] { functor => }
+
+trait SmallFunctor[O, M, C <: SmallCategory[O, M, C]] extends Functor[O, M, C] {functor =>
   val source: C
   val target: C
-
+  
   trait ContravariantDataFunctor extends HeteroFunctor[target.F, target.T, target.CSets, source.F, source.T, source.CSets] {
     val source = functor.target.functorsToSet
     val target = functor.source.functorsToSet
@@ -35,9 +37,7 @@ trait Functor[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, O, M,
 //      def target = onObjects(m.target)
 //      def apply(o: O) = m(functor(o))
 //    })
-//  }
-
-
+//  }  
 }
 
 object Functor {

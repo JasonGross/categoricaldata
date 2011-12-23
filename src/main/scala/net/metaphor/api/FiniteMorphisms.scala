@@ -37,7 +37,6 @@ trait FiniteMorphisms[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends Sol
   type CsO <: CategoriesOver[O, M, C, Functor[O, M, C], FunctorTo[O, M, C], CO, FO, CsO]
 
   def categoriesOver: CsO
-  
 }
 
 trait Acyclic[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FiniteMorphisms[O, M, C] { self: C =>

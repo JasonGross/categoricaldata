@@ -31,7 +31,7 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
     def functor: F1
   }
 
-  trait CategoriesOver[SO, SM, SC <: Category[SO, SM, SC], F1 <: Functor[SO, SM, SC], F2 <: FunctorTo[SO, SM, SC], CO <: CategoryOver[SO, SM, SC, F2], FO <: FunctorOver[SO, SM, SC, F1, F2, CO], CsO <: CategoriesOver[SO, SM, SC, F1, F2, CO, FO, CsO]] extends Category[CO, FO, CsO] with StandardFunctorsToSet[CO, FO, CsO] { categoriesOver: CsO =>
+  trait CategoriesOver[SO, SM, SC <: Category[SO, SM, SC], F1 <: Functor[SO, SM, SC], F2 <: FunctorTo[SO, SM, SC], CO <: CategoryOver[SO, SM, SC, F2], FO <: FunctorOver[SO, SM, SC, F1, F2, CO], CsO <: CategoriesOver[SO, SM, SC, F1, F2, CO, FO, CsO]] extends LargeCategory[CO, FO, CsO] { categoriesOver: CsO =>
     override def identity(f: CO) = lift(f, f, new Functor.IdentityFunctor(f.category))
     override def source(t: FO) = t.source
     override def target(t: FO) = t.target
@@ -47,23 +47,18 @@ trait Category[O, M, C <: Category[O, M, C]] { self: C =>
     override def target: F
   }
 
+}
+
+trait SmallCategory[O, M, C <: SmallCategory[O, M, C]] extends Category[O, M, C] { self: C => 
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet[F]
   type CSets <: FunctorsToSet
 
+  def lift(f: net.metaphor.api.FunctorToSet[O, M, C]): F
+  def lift(t: net.metaphor.api.NaturalTransformationToSet[O, M, C, F]): T
+
   def functorsToSet: CSets
-  
-//    def lift(f: FunctorToSet): F
-//  def lift(t: NaturalTransformationToSet[F]): T
-
-
 
   abstract class FunctorsToSet extends net.metaphor.api.FunctorsToSet[O, M, C, F, T, CSets](self) { functorsToSet: CSets => }
 }
-
-trait StandardFunctorsToSet[O, M, C <: Category[O, M, C]] { self: Category[O, M, C] => 
-  type F = FunctorToSet
-  type T = NaturalTransformationToSet[F]
-  type CSets = FunctorsToSet
-  def functorsToSet = ???
- }
+trait LargeCategory[O, M, C <: LargeCategory[O, M, C]] extends Category[O, M, C] { self: C => }

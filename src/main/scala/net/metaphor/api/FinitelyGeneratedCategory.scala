@@ -1,7 +1,7 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-trait LocallyFinitelyGeneratedCategory[O, M, C <: LocallyFinitelyGeneratedCategory[O, M, C]] extends Category[O, M, C] { self: C =>
+trait LocallyFinitelyGeneratedCategory[O, M, C <: LocallyFinitelyGeneratedCategory[O, M, C]] extends SmallCategory[O, M, C] { self: C =>
   def objectsAtLevel(k: Int): List[O]
 
   def generators(source: O, target: O): List[M]
@@ -100,15 +100,14 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
 
   }
 
-  // Contrary to appearance, these definitions are *not* redundant with those in Category.
+  // Contrary to appearance, these definitions are *not* redundant with those in SmallCategory.
   // Since then, we've further specialized FunctorToSet, etc., and these definitions further constrain F, T and CSets.
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet[F]
   type CSets <: FunctorsToSet
   val functorsToSet: CSets
-      def lift(f: FunctorToSet): F
-  def lift(t: NaturalTransformationToSet[F]): T
-
+//  override def lift(f: super.FunctorToSet): F
+//  override def lift(t: super.NaturalTransformationToSet[F]): T
 
   abstract class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
 
