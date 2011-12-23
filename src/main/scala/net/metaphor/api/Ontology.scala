@@ -23,6 +23,8 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override def target(m: Path) = m.target
   override def identity(o: Box) = o.identity
 
+  def opposite = new Ontology with Opposite
+
   override def equals(other: Any) = {
     other match {
       case other: Ontology => {
@@ -32,8 +34,8 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
     }
   }
 
-  def opposite = new Ontology with Opposite
-
+  override def hashCode = ???
+  
   override def toString = {
     // TODO relations
     "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
