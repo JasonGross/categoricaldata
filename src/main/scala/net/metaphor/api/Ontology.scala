@@ -146,7 +146,7 @@ private class OntologyWrapper(o: Ontology) extends Ontology {
 }
 
 object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
-  trait Finite extends net.metaphor.api.FiniteMorphisms[Box, Path, Ontology] with Ontology{ self=>
+  trait Finite extends net.metaphor.api.FiniteMorphisms[Box, Path, Ontology] with Ontology { self =>
     override type CO = CategoryOver[Box, Path, Ontology, FunctorTo[Box, Path, Ontology]]
     override type FO = FunctorOver[Box, Path, Ontology, Functor[Box, Path, Ontology], FunctorTo[Box, Path, Ontology], CO]
     override type CsO = CategoriesOver

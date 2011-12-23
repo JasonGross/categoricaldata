@@ -56,9 +56,19 @@ trait FiniteTarget extends Translation { translation =>
   }
 
   lazy val slice = new CommaFunctor {
+    class SliceCategoryOver(s: Box) extends translation.target.CO {
+      val functor: translation.target.FunctorTo[Box, Path, Ontology] = ???
+      val category: Ontology = ???
+    }
+    class SliceFunctorOver(m: Path) extends translation.target.FO {
+      def source = new SliceCategoryOver(translation.target.source(m))
+      def target = new SliceCategoryOver(translation.target.target(m))
+      def functor = ???
+    }
+    
     override def source = translation.target
-    override def onObjects(s: Box) = ???
-    override def onMorphisms(m: Path) = ???
+    override def onObjects(s: Box): translation.target.CO = new SliceCategoryOver(s)
+    override def onMorphisms(m: Path): translation.target.FO = new SliceFunctorOver(m)
   }
   lazy val coslice = new CommaFunctor {
     override def source = translation.target.opposite
