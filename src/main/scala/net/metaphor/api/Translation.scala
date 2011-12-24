@@ -28,9 +28,11 @@ trait FiniteTarget extends Translation { translation =>
       }
 
       def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
-        for(l <- (0 to k).toList; 
-        		left <- translation.source.objectsAtLevel(l);
-        		path <- translation.target.wordsOfLength(k - l)(left, translation(onRight))) yield ObjectLeftOf(left, path) 
+        for (
+          l <- (0 to k).toList;
+          left <- translation.source.objectsAtLevel(l);
+          path <- translation.target.wordsOfLength(k - l)(left, translation(onRight))
+        ) yield ObjectLeftOf(left, path)
       }
       val minimumLevel: Int = 0
       val maximumLevel: Int = ???
