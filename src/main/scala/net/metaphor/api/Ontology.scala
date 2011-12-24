@@ -18,6 +18,10 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override type O = Box
   override type M = Path
 
+  //  def copy(o: Ontology#O): O = Box(o.name)
+  //  def copy(a: Ontology#Arrow): Arrow = Arrow(copy(a.source), copy(a.target), a.name)
+  //  def copy(m: Ontology#M): M = Path(copy(m.source), m.arrows.map(copy(_)))
+
   override def compose(m1: Path, m2: Path) = {
     require(m2.source == m1.target)
     Path(m1.source, m1.arrows ::: m2.arrows)
@@ -78,12 +82,12 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
 
   override lazy val adjoinTerminalObject: WithTerminalObject = new Ontology with WithTerminalObject {
     val terminalObject = Box("*")
-    def morphismFrom(o: Box) = Arrow(o, terminalObject, "*").asPath
+    def morphismFrom(o: O) = Arrow(o, terminalObject, "*").asPath
 
   }
   override lazy val adjoinInitialObject: WithInitialObject = new Ontology with WithInitialObject {
     val initialObject = Box(".")
-    def morphismTo(o: Box) = Arrow(initialObject, o, ".").asPath
+    def morphismTo(o: O) = Arrow(initialObject, o, ".").asPath
   }
 
   trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
@@ -99,8 +103,8 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
       case _ => {
         require(f.source == ontology)
         new Dataset {
-          def onObjects(o: Box) = f(o)
-          def onMorphisms(m: Path) = f(m)
+          def onObjects(o: O) = f(o)
+          def onMorphisms(m: M) = f(m)
         }
       }
     }
@@ -136,11 +140,14 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
 }
 
 private class OntologyWrapper(val o: Ontology) extends Ontology {
+  override type O = o.O
+  override type M = o.M
+
   val minimumLevel = o.minimumLevel
   val maximumLevel = o.maximumLevel
   def objectsAtLevel(k: Int) = o.objectsAtLevel(k)
-  def generators(s: Box, t: Box) = o.generators(s, t)
-  def relations(s: Box, t: Box) = o.relations(s, t)
+  def generators(s: O, t: O) = o.generators(s, t)
+  def relations(s: O, t: O) = o.relations(s, t)
 }
 
 object Ontologies extends FinitelyPresentedCategories[Ontology] {

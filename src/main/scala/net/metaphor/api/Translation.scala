@@ -24,10 +24,15 @@ trait FiniteTarget extends Translation { translation =>
       case class ObjectLeftOfMap(source: ObjectLeftOf, target: ObjectLeftOf, path: translation.source.M) {
         require(path.source == source.left)
         require(path.target == target.left)
+        require(translation.target.compose(translation(path), target.path) == source.path)
       }
 
-      def objectsAtLevel(k: Int): List[ObjectLeftOf] = ???
-      val minimumLevel: Int = ???
+      def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
+        for(l <- (0 to k).toList; 
+        		left <- translation.source.objectsAtLevel(l);
+        		path <- translation.target.wordsOfLength(k - l)(left, translation(onRight))) yield ObjectLeftOf(left, path) 
+      }
+      val minimumLevel: Int = 0
       val maximumLevel: Int = ???
 
       def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = ???
