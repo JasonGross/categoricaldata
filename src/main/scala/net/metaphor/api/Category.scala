@@ -75,5 +75,12 @@ trait SmallCategory[C <: SmallCategory[C]] extends Category[C] { self: C =>
 
     def lift(source: CO, target: CO, f: Functor[SC]): FO
   }
+  
+  type CO <: CategoryOver[C, FunctorTo[C]]
+  type FO <: FunctorOver[C, Functor[C], FunctorTo[C], CO]
+  type CsO <: CategoriesOver[C, Functor[C], FunctorTo[C], CO, FO, CsO]
+
+  def categoriesOver: CsO
+
 }
 trait LargeCategory[C <: LargeCategory[C]] extends Category[C] { self: C => }

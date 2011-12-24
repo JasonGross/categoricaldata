@@ -15,28 +15,23 @@ trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends SolvableWordPro
   // TODO How would instances arise, which aren't acyclic?
   // We'd need a proof there are only finitely many loops/relations
 
-  def maximalWordLength(source: self.O, target: self.O): Int
-  def normalWords(source: self.O, target: self.O) = (for (k <- 0 to maximalWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
+  def maximumWordLength(source: self.O, target: self.O): Int
+  def maximumWordLength: Int = (for (s <- objects; t <- objects) yield maximumWordLength(s, t)).max
+  def normalWords(source: self.O, target: self.O) = (for (k <- 0 to maximumWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
 
-//  lazy val yoneda = new HeteroFunctor[C, CSets] {
-//    override def source = self
-//    override def target = functorsToSet
-//    override def onObjects(s: self.O) = liftFunctorToSet(new FunctorToSet {
-//      override def onObjects(t: O) = normalWords(s, t)
-//      override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
-//    })
-//   override def onMorphisms(m: self.M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
-//      override def source = onObjects(self.source(m))
-//      override def target = onObjects(self.target(m))
-//      override def apply(o: O) = ???
-//    })
-//  }
-  
-  type CO <: CategoryOver[C, FunctorTo[C]]
-  type FO <: FunctorOver[C, Functor[C], FunctorTo[C], CO]
-  type CsO <: CategoriesOver[C, Functor[C], FunctorTo[C], CO, FO, CsO]
-
-  def categoriesOver: CsO
+  //  lazy val yoneda = new HeteroFunctor[C, CSets] {
+  //    override def source = self
+  //    override def target = functorsToSet
+  //    override def onObjects(s: self.O) = liftFunctorToSet(new FunctorToSet {
+  //      override def onObjects(t: O) = normalWords(s, t)
+  //      override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
+  //    })
+  //   override def onMorphisms(m: self.M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
+  //      override def source = onObjects(self.source(m))
+  //      override def target = onObjects(self.target(m))
+  //      override def apply(o: O) = ???
+  //    })
+  //  }
 }
 
 trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { self: C =>
@@ -49,7 +44,7 @@ trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { se
 
   require(verifyAcyclicity)
 
-  override def maximalWordLength(source: O, target: O): Int = ???
+  override def maximumWordLength(source: O, target: O): Int = ???
   override def normalForm(m: M): M = ???
 }
 

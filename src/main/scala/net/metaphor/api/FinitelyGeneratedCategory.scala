@@ -55,8 +55,8 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
   trait Opposite extends super.Opposite { opposite: C =>
-    override val minimumLevel = self.minimumLevel
-    override val maximumLevel = self.maximumLevel
+    override val minimumLevel = self.maximumLevel
+    override val maximumLevel = self.minimumLevel
   }
 
   trait WithTerminalObject extends FinitelyGeneratedCategory[C] with TerminalObject[O, M] { terminal: C =>

@@ -12,7 +12,7 @@ trait HeteroFunctor[C1 <: Category[C1], C2 <: Category[C2]] {
   def onMorphisms(m: source.M): target.M
 }
 
-trait SmallHeteroFunctor[C1 <: SmallCategory[C1], C2 <: SmallCategory[C2]] extends HeteroFunctor[C1, C2]{ functor =>
+trait SmallHeteroFunctor[C1 <: SmallCategory[C1], C2 <: SmallCategory[C2]] extends HeteroFunctor[C1, C2] { functor =>
   trait ContravariantDataFunctor extends HeteroFunctor[target.CSets, source.CSets] {
     val source = functor.target.functorsToSet
     val target = functor.source.functorsToSet
@@ -21,7 +21,7 @@ trait SmallHeteroFunctor[C1 <: SmallCategory[C1], C2 <: SmallCategory[C2]] exten
     def apply(m: C2#T) = {
       // FIXME this will almost certainly break at runtime. :-(
       super.apply(functor.target.liftNaturalTransformationToSet(m.asInstanceOf[net.metaphor.api.NaturalTransformationToSet[C2, functor.target.F]]))
-    }    
+    }
   }
   trait CovariantDataFunctor extends HeteroFunctor[source.CSets, target.CSets] {
     val source = functor.source.functorsToSet
@@ -31,7 +31,7 @@ trait SmallHeteroFunctor[C1 <: SmallCategory[C1], C2 <: SmallCategory[C2]] exten
     def apply(m: C1#T) = {
       // FIXME this will almost certainly break at runtime. :-(
       super.apply(functor.source.liftNaturalTransformationToSet(m.asInstanceOf[net.metaphor.api.NaturalTransformationToSet[C1, functor.source.F]]))
-    }    
+    }
   }
 
   trait Pullback extends ContravariantDataFunctor {
@@ -56,7 +56,70 @@ trait SmallHeteroFunctor[C1 <: SmallCategory[C1], C2 <: SmallCategory[C2]] exten
 
 trait Functor[C <: Category[C]] extends HeteroFunctor[C, C] { functor => }
 
-trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFunctor[C, C] { functor => }
+trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFunctor[C, C] { functor =>
+  abstract class CommaFunctor extends HeteroFunctor[C, target.CsO] {
+    override val target = functor.target.categoriesOver
+    
+    type SC <: SliceCategory
+    
+    abstract class SliceCategory(onRight: functor.target.O) extends SmallCategory[SC] { sliceCategory: SC =>
+      override type O = ObjectLeftOf
+      override type M = ObjectLeftOfMap
+
+      case class ObjectLeftOf(left: functor.source.O, path: functor.target.M) {
+        require(functor.target.source(path) == functor.apply(left))
+        require(functor.target.target(path) == onRight)
+      }
+      case class ObjectLeftOfMap(source: ObjectLeftOf, target: ObjectLeftOf, path: functor.source.M) {
+        require(functor.source.source(path) == source.left)
+        require(functor.source.target(path) == target.left)
+        require(functor.target.compose(functor.apply(path), target.path) == source.path)
+      }
+
+      def identity(o: ObjectLeftOf) = ObjectLeftOfMap(o, o, functor.source.identity(o.left))
+      def source(m: ObjectLeftOfMap) = m.source
+      def target(m: ObjectLeftOfMap) = m.target
+      def compose(m1: ObjectLeftOfMap, m2: ObjectLeftOfMap) = ObjectLeftOfMap(m1.source, m2.target, functor.source.compose(m1.path, m2.path))
+
+      def opposite = ??? // new SliceCategory(onRight) with Opposite
+
+      val functorsToSet = ???
+      val adjoinInitialObject = ???
+      val adjoinTerminalObject = ???
+//      type CSets = sliceCategory.FunctorsToSet
+
+      override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[SC]): F = ???
+      override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[SC, F]): T = ???
+    }
+  }
+}
+
+trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallFunctor[C] { functor =>
+  abstract class CommaFunctor extends super.CommaFunctor {
+    override type SC <: SliceCategory
+    
+    abstract class SliceCategory(onRight: functor.target.O) extends super.SliceCategory(onRight) with FinitelyGeneratedCategory[SC] { sliceCategory: SC =>
+      override type O = super.O
+      override type M = super.M
+
+      def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
+        for (
+          l <- (0 to k).toList;
+          left <- functor.source.objectsAtLevel(l);
+          path <- functor.target.wordsOfLength(k - l)(functor.apply(left), onRight)
+        ) yield ObjectLeftOf(left, path)
+      }
+      val minimumLevel: Int = 0
+      val maximumLevel: Int = ??? // functor.source.maximumLevel + functor.target.maximumWordLength
+      def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
+        for (g <- functor.source.generators(source.left, target.left); if functor.target.compose(functor.apply(g), target.path) == source.path) yield {
+          ObjectLeftOfMap(source, target, g)
+        }
+      }
+
+    }
+  }
+}
 
 object Functor {
   class IdentityFunctor[C <: Category[C]](val category: C) extends Functor[C] {
