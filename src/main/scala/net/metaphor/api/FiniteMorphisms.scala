@@ -1,45 +1,45 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-trait SolvableWordProblem[O, M, C <: FinitelyPresentedCategory[O, M, C]] { self: C =>
-  def normalForm(m: M): M
+trait SolvableWordProblem[C <: FinitelyPresentedCategory[C]] { self: C =>
+  def normalForm(m: self.M): self.M
 
-  def normalWordsOfLength(k: Int)(source: O, target: O): List[M] = {
+  def normalWordsOfLength(k: Int)(source: self.O, target: self.O): List[self.M] = {
     wordsOfLength(k)(source, target).filter(inNormalForm _)
   }
 
-  def inNormalForm(m: M) = m == normalForm(m)
+  def inNormalForm(m: self.M) = m == normalForm(m)
 }
 
-trait FiniteMorphisms[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends SolvableWordProblem[O, M, C] { self: C =>
+trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends SolvableWordProblem[C] { self: C =>
   // TODO How would instances arise, which aren't acyclic?
   // We'd need a proof there are only finitely many loops/relations
 
-  def maximalWordLength(source: O, target: O): Int
-  def normalWords(source: O, target: O) = (for (k <- 0 to maximalWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
+  def maximalWordLength(source: self.O, target: self.O): Int
+  def normalWords(source: self.O, target: self.O) = (for (k <- 0 to maximalWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
 
-  lazy val yoneda = new HeteroFunctor[O, M, C, F, T, CSets] {
-    override def source = self
-    override def target = functorsToSet
-    override def onObjects(s: O) = liftFunctorToSet(new FunctorToSet {
-      override def onObjects(t: O) = normalWords(s, t)
-      override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
-    })
-   override def onMorphisms(m: M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
-      override def source = onObjects(self.source(m))
-      override def target = onObjects(self.target(m))
-      override def apply(o: O) = ???
-    })
-  }
+//  lazy val yoneda = new HeteroFunctor[C, CSets] {
+//    override def source = self
+//    override def target = functorsToSet
+//    override def onObjects(s: self.O) = liftFunctorToSet(new FunctorToSet {
+//      override def onObjects(t: O) = normalWords(s, t)
+//      override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
+//    })
+//   override def onMorphisms(m: self.M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
+//      override def source = onObjects(self.source(m))
+//      override def target = onObjects(self.target(m))
+//      override def apply(o: O) = ???
+//    })
+//  }
   
-  type CO <: CategoryOver[O, M, C, FunctorTo[O, M, C]]
-  type FO <: FunctorOver[O, M, C, Functor[O, M, C], FunctorTo[O, M, C], CO]
-  type CsO <: CategoriesOver[O, M, C, Functor[O, M, C], FunctorTo[O, M, C], CO, FO, CsO]
+  type CO <: CategoryOver[C, FunctorTo[C]]
+  type FO <: FunctorOver[C, Functor[C], FunctorTo[C], CO]
+  type CsO <: CategoriesOver[C, Functor[C], FunctorTo[C], CO, FO, CsO]
 
   def categoriesOver: CsO
 }
 
-trait Acyclic[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FiniteMorphisms[O, M, C] { self: C =>
+trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { self: C =>
   def verifyAcyclicity: Boolean = {
     for (w <- allNontrivialWords) {
       if (source(w) == target(w)) return false
@@ -53,10 +53,10 @@ trait Acyclic[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends FiniteMorph
   override def normalForm(m: M): M = ???
 }
 
-trait Graph[O, M, C <: FinitelyPresentedCategory[O, M, C]] { self: C =>
+trait Graph[C <: FinitelyPresentedCategory[C]] { self: C =>
   require(allRelations.isEmpty)
 }
 
-trait AcyclicGraph[O, M, C <: FinitelyPresentedCategory[O, M, C]] extends Graph[O, M, C] with Acyclic[O, M, C] { self: C =>
+trait AcyclicGraph[C <: FinitelyPresentedCategory[C]] extends Graph[C] with Acyclic[C] { self: C =>
   override def normalForm(m: M) = m
 }

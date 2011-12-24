@@ -1,7 +1,7 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-trait LocallyFinitelyGeneratedCategory[O, M, C <: LocallyFinitelyGeneratedCategory[O, M, C]] extends SmallCategory[O, M, C] { self: C =>
+trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]] extends SmallCategory[C] { self: C =>
   def objectsAtLevel(k: Int): List[O]
 
   def generators(source: O, target: O): List[M]
@@ -17,6 +17,9 @@ trait LocallyFinitelyGeneratedCategory[O, M, C <: LocallyFinitelyGeneratedCatego
   }
 
   trait Opposite { opposite: C =>
+    override type O = self.O
+    override type M = self.M
+
     // reverse all the levels!
     override def objectsAtLevel(k: Int) = self.objectsAtLevel(-k)
     override def generators(source: O, target: O) = self.generators(target, source)
@@ -32,7 +35,7 @@ trait LocallyFinitelyGeneratedCategory[O, M, C <: LocallyFinitelyGeneratedCatego
   def opposite: C
 }
 
-trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] extends LocallyFinitelyGeneratedCategory[O, M, C] { self: C =>
+trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends LocallyFinitelyGeneratedCategory[C] { self: C =>
   // TODO, maybe minimumLevel actually belongs one level up; we could insist everything is bounded below.
   // In that case, we'd have to pull opposite down.
   val minimumLevel: Int
@@ -56,9 +59,15 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
     override val maximumLevel = self.maximumLevel
   }
 
-  trait WithTerminalObject extends FinitelyGeneratedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
+  trait WithTerminalObject extends FinitelyGeneratedCategory[C] with TerminalObject[O, M] { terminal: C =>
+    override type O = self.O
+    override type M = self.M
+  }
   val adjoinTerminalObject: WithTerminalObject
-  trait WithInitialObject extends FinitelyGeneratedCategory[O, M, C] with InitialObject[O, M] { self: C => }
+  trait WithInitialObject extends FinitelyGeneratedCategory[C] with InitialObject[O, M] { initial: C =>
+    override type O = self.O
+    override type M = self.M
+  }
   val adjoinInitialObject: WithInitialObject
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
@@ -144,17 +153,17 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
   type T <: NaturalTransformationToSet[F]
   type CSets <: FunctorsToSet
   val functorsToSet: CSets
-//  override def lift(f: super.FunctorToSet): F
-//  override def lift(t: super.NaturalTransformationToSet[F]): T
+  //  override def lift(f: super.FunctorToSet): F
+  //  override def lift(t: super.NaturalTransformationToSet[F]): T
 
   abstract class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
 
     def limit(functor: self.FunctorToSet): TerminalObject[functor.Cone, functor.ConeMap] = ???
-    
+
     def colimit(functor: self.FunctorToSet): InitialObject[functor.CoCone, functor.CoConeMap] = {
 
       // This is where all the work happens.
-      def concreteColimit[A](objects: Iterable[O], sets: O => Iterable[A], functions: O => (O => (A => Iterable[A]))): (Iterable[List[(O, A)]], O => (A => List[(O, A)])) = {
+      def concreteColimit[A](objects: Iterable[self.O], sets: self.O => Iterable[A], functions: self.O => (self.O => (A => Iterable[A]))): (Iterable[List[(self.O, A)]], self.O => (A => List[(self.O, A)])) = {
         /**
          * finds all the clumps containing an element of slice, and smushes them together
          */
@@ -166,20 +175,20 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
         val arrows = for (s <- objects; x <- sets(s); t <- objects; y <- functions(s)(t)(x)) yield List((s, x), (t, y))
 
         val resultClumps = arrows.foldLeft(initialClumps)(combineClumps _)
-        def resultFunctions(o: O)(a: A) = resultClumps.find(_.contains((o, a))).get
+        def resultFunctions(o: self.O)(a: A) = resultClumps.find(_.contains((o, a))).get
 
         (resultClumps, resultFunctions _)
       }
 
       val (clumps, functions) = concreteColimit(
         objects,
-        { o: O => functor(o).toIterable },
-        { s: O => { t: O => { a: Any => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
+        { o: self.O => functor(o).toIterable },
+        { s: self.O => { t: self.O => { a: Any => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
 
       val resultSet = new Set {
         override def toIterable = clumps
       }
-      val resultFunctions: (O => Function) = { o: O =>
+      val resultFunctions: (self.O => Function) = { o: self.O =>
         new Function {
           override def toFunction = functions(o)
         }
@@ -188,12 +197,12 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
       new InitialObject[functor.CoCone, functor.CoConeMap] {
         def initialObject = new functor.CoCone {
           override def terminalSet = resultSet
-          override def mapToTerminalSet(o: O) = resultFunctions(o)
+          override def mapToTerminalSet(o: self.O) = resultFunctions(o)
         }
         def morphismTo(other: functor.CoCone) = {
           new functor.CoConeMap {
-            override def source = initialObject
-            override def target = other
+            override val source = initialObject
+            override val target = other
             override def terminalMap = ???
           }
         }
@@ -204,5 +213,5 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
 
 }
 
-trait FinitelyGeneratedCategories[O, M, C <: FinitelyGeneratedCategory[O, M, C]] /* extends Categories[O, M, C] */ { FGCAT =>
+trait FinitelyGeneratedCategories[C <: FinitelyGeneratedCategory[C]] /* extends Categories[O, M, C] */ { FGCAT =>
 }

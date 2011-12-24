@@ -1,6 +1,8 @@
 package net.metaphor.api
 
-abstract class FunctorCategory[SO, SM, SC <: Category[SO, SM, SC], TO, TM, TC <: Category[TO, TM, TC], FF <: HeteroFunctor[SO, SM, SC, TO, TM, TC], TT <: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC, FF], FC <: FunctorCategory[SO, SM, SC, TO, TM, TC, FF, TT, FC]](source: SC, target: TC) extends LargeCategory[FF, TT, FC] { self: FC =>
+abstract class FunctorCategory[SC <: Category[SC], TC <: Category[TC], FF <: HeteroFunctor[SC, TC], TT <: HeteroNaturalTransformation[SC, TC, FF], FC <: FunctorCategory[SC, TC, FF, TT, FC]](source: SC, target: TC) extends LargeCategory[FC] { self: FC =>
+  type O = FF
+  type M = TT
   override def identity(o: FF) = lift(new NaturalTransformation.IdentityHeteroNaturalTransformation(o))
   override def source(m: TT) = {
     m.source
@@ -8,12 +10,14 @@ abstract class FunctorCategory[SO, SM, SC <: Category[SO, SM, SC], TO, TM, TC <:
   override def target(m: TT) = {
     m.target
   }
-  override def compose(m1: TT, m2: TT) = lift(new HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC, FF] {
-    def source = m1.source
-    def target = m2.target
+  override def compose(m1: TT, m2: TT) = lift(new HeteroNaturalTransformation[SC, TC, FF] {
+    val source = m1.source
+    val target = m2.target
 
-    def apply(o: SO) = target.target.compose(m1(o), m2(o))
+    def apply(o: sourceCategory.O) = target.target.compose(
+        m1(o.asInstanceOf[m1.sourceCategory.O]).asInstanceOf[this.target.target.M],
+        m2(o.asInstanceOf[m2.sourceCategory.O]).asInstanceOf[this.target.target.M]).asInstanceOf[targetCategory.M]
   })
 
-  def lift(t: HeteroNaturalTransformation[SO, SM, SC, TO, TM, TC, FF]): TT  
+  def lift(t: HeteroNaturalTransformation[SC, TC, FF]): TT  
 }

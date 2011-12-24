@@ -1,11 +1,11 @@
 package net.metaphor.api
 
-trait FunctorToSet[O, M, C <: Category[O, M, C]] extends HeteroFunctor[O, M, C, Set, Function, Sets] {
-  override val target = Sets
+trait FunctorToSet[C <: Category[C]] extends HeteroFunctor[C, Sets] {
+  override val target: Sets.type = Sets
 }
-trait NaturalTransformationToSet[O, M, C <: Category[O, M, C], F <: FunctorToSet[O, M, C]] extends HeteroNaturalTransformation[O, M, C, Set, Function, Sets, F] {
-  override def source: F
-  override def target: F
+trait NaturalTransformationToSet[C <: Category[C], F <: FunctorToSet[C]] extends HeteroNaturalTransformation[C, Sets, F] {
+  override val source: F
+  override val target: F
 }
 
-abstract class FunctorsToSet[O, M, C <: Category[O, M, C], F <: C#FunctorToSet, T <: C#NaturalTransformationToSet[F], FC <: FunctorsToSet[O, M, C, F, T, FC]](source: C) extends FunctorCategory[O, M, C, Set, Function, Sets, F, T, FC](source, Sets) { self: FC => }
+abstract class FunctorsToSet[C <: Category[C], F <: C#FunctorToSet, T <: C#NaturalTransformationToSet[F], FC <: FunctorsToSet[C, F, T, FC]](source: C) extends FunctorCategory[C, Sets, F, T, FC](source, Sets) { self: FC => }

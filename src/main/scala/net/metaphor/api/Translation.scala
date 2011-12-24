@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait Translation extends SmallFunctor[Box, Path, Ontology] { translation =>
+trait Translation extends SmallFunctor[Ontology] { translation =>
   val source: Ontology
   val target: Ontology
 
@@ -10,8 +10,8 @@ trait Translation extends SmallFunctor[Box, Path, Ontology] { translation =>
 trait FiniteTarget extends Translation { translation =>
   override val target: Ontologies.Finite
 
-  trait CommaFunctor extends HeteroFunctor[Box, Path, Ontology, target.CO, target.FO, target.CsO] {
-    override def target = translation.target.categoriesOver
+  trait CommaFunctor extends HeteroFunctor[Ontology, target.CsO] {
+    override val target = translation.target.categoriesOver
 
     case class ObjectLeftOf(left: Box, path: Path, of: Box) {
       require(path.source == left)
@@ -22,7 +22,10 @@ trait FiniteTarget extends Translation { translation =>
       require(path.target == target.left)
     }
 
-    class SliceCategory(s: Box) extends FinitelyGeneratedCategory[ObjectLeftOf, ObjectLeftOfMap, SliceCategory] {
+    class SliceCategory(s: Box) extends FinitelyGeneratedCategory[SliceCategory] {
+      override type O = ObjectLeftOf
+      override type M = ObjectLeftOfMap
+      
       def objectsAtLevel(k: Int): List[ObjectLeftOf] = ???
       val minimumLevel: Int = ???
       val maximumLevel: Int = ???
@@ -41,15 +44,15 @@ trait FiniteTarget extends Translation { translation =>
       val adjoinTerminalObject = ???
       type CSets = FunctorsToSet
 
-      override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[ObjectLeftOf, ObjectLeftOfMap, SliceCategory]): F = ???
-      override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[ObjectLeftOf, ObjectLeftOfMap, SliceCategory, F]): T = ???
+      override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[SliceCategory]): F = ???
+      override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[SliceCategory, F]): T = ???
 
     }
   }
 
   lazy val slice: CommaFunctor = new CommaFunctor {
     class SliceCategoryOver(s: Box) extends translation.target.CO { sliceCategory =>
-      val functor: translation.target.FunctorTo[Box, Path, Ontology] = new translation.target.FunctorTo[Box, Path, Ontology] {
+      val functor: translation.target.FunctorTo[Ontology] = new translation.target.FunctorTo[Ontology] {
         val source = sliceCategory.category
         def onObjects(o: Box) = ???
         def onMorphisms(m: Path) = ???
@@ -65,7 +68,7 @@ trait FiniteTarget extends Translation { translation =>
       def functor = ???
     }
 
-    override def source = translation.target
+    override val source = translation.target
     override def onObjects(s: Box): translation.target.CO = new SliceCategoryOver(s)
     override def onMorphisms(m: Path): translation.target.FO = new SliceFunctorOver(m)
   }
@@ -87,23 +90,29 @@ trait FiniteTarget extends Translation { translation =>
 
   trait Pushforward extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
-      def onObjects(o: Box) = slice(o).functor.pullback(i).limitSet
+      def onObjects(o: Box) = {
+      //slice(o).functor.pullback(i).limitSet
+        ???
+      }
       def onMorphisms(m: Path) = ???
     }
     def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
-      def source = onObjects(m.source)
-      def target = onObjects(m.target)
+      val source = onObjects(m.source)
+      val target = onObjects(m.target)
       def apply(o: Box) = ???
     }
   }
   trait Shriek extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
-      def onObjects(o: Box) = coslice(o).functor.pullback(i).colimitSet
+      def onObjects(o: Box) = {
+//      coslice(o).functor.pullback(i).colimitSet
+      ???
+      }
       def onMorphisms(m: Path) = ???
     }
     def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
-      def source = onObjects(m.source)
-      def target = onObjects(m.target)
+      val source = onObjects(m.source)
+      val target = onObjects(m.target)
       def apply(o: Box) = ???
     }
   }

@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait Dataset extends FunctorToSet[Box, Path, Ontology] {
+trait Dataset extends FunctorToSet[Ontology] {
   override def equals(other: Any): Boolean = {
     other match {
       case other: Dataset => {

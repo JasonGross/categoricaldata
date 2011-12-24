@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait Datamap[F <: Dataset] extends NaturalTransformationToSet[Box, Path, Ontology, F] {
+trait Datamap[F <: Dataset] extends NaturalTransformationToSet[Ontology, F] {
     override def equals(other: Any): Boolean = {
       ???
     }

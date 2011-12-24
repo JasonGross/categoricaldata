@@ -14,7 +14,10 @@ case class Path(source: Box, arrows: List[Arrow]) {
   override def toString = source.name + (for (a <- arrows) yield " --- " + a.name + " ---> " + a.target).mkString
 }
 
-trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology =>
+trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
+  override type O = Box
+  override type M = Path
+  
   override def compose(m1: Path, m2: Path) = {
     require(m2.source == m1.target)
     Path(m1.source, m1.arrows ::: m2.arrows)
@@ -143,8 +146,8 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
     def apply(datamap: Ontology#Datamap): Datamap = {
       require(datamap.sourceCategory == ontology)
       new Datamap {
-        def source = Dataset(datamap.source)
-        def target = Dataset(datamap.target)
+        val source = Dataset(datamap.source)
+        val target = Dataset(datamap.target)
         def apply(o: Box) = datamap(o)
       }
     }
@@ -154,7 +157,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override type T = Datamap
   override type CSets = Datasets
 
-  override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[Box, Path, Ontology]): Dataset = {
+  override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[Ontology]): Dataset = {
     f match {
       case f: Dataset => f
       case _ => {
@@ -166,7 +169,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
       }
     }
   }
-  override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[Box, Path, Ontology, Dataset]): Datamap = {
+  override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[Ontology, Dataset]): Datamap = {
     t match {
       case t: Datamap => t
       case _ => {
@@ -185,9 +188,9 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
 
   // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
   object Datasets extends Datasets {
-    override def lift(t: HeteroNaturalTransformation[Box, Path, Ontology, Set, Function, Sets, Dataset]) = new Datamap {
-      def source = t.source
-      def target = t.target
+    override def lift(t: HeteroNaturalTransformation[Ontology, Sets, Dataset]) = new Datamap {
+      val source = t.source
+      val target = t.target
       def apply(o: Box) = t(o)
     }
   }
@@ -196,7 +199,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   def assertGraph: Ontology with Ontologies.Graph = new OntologyWrapper(this) with Ontologies.Graph
 }
 
-private class OntologyWrapper(o: Ontology) extends Ontology {
+private class OntologyWrapper(val o: Ontology) extends Ontology {
   val minimumLevel = o.minimumLevel
   val maximumLevel = o.maximumLevel
   def objectsAtLevel(k: Int) = o.objectsAtLevel(k)
@@ -204,15 +207,15 @@ private class OntologyWrapper(o: Ontology) extends Ontology {
   def relations(s: Box, t: Box) = o.relations(s, t)
 }
 
-object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
-  trait Finite extends net.metaphor.api.FiniteMorphisms[Box, Path, Ontology] with Ontology { self =>
-    override type CO = CategoryOver[Box, Path, Ontology, FunctorTo[Box, Path, Ontology]]
-    override type FO = FunctorOver[Box, Path, Ontology, Functor[Box, Path, Ontology], FunctorTo[Box, Path, Ontology], CO]
+object Ontologies extends FinitelyPresentedCategories[Ontology] {
+  trait Finite extends net.metaphor.api.FiniteMorphisms[Ontology] with Ontology { self =>
+    override type CO = CategoryOver[Ontology, FunctorTo[Ontology]]
+    override type FO = FunctorOver[Ontology, Functor[Ontology], FunctorTo[Ontology], CO]
     override type CsO = CategoriesOver
 
-    sealed trait CategoriesOver extends super.CategoriesOver[Box, Path, Ontology, Functor[Box, Path, Ontology], FunctorTo[Box, Path, Ontology], CO, FO, CategoriesOver]
+    sealed trait CategoriesOver extends super.CategoriesOver[Ontology, Functor[Ontology], FunctorTo[Ontology], CO, FO, CategoriesOver]
     object CategoriesOver extends CategoriesOver {
-      override def lift(_source: CO, _target: CO, f: Functor[Box, Path, Ontology]) = new FO {
+      override def lift(_source: CO, _target: CO, f: Functor[Ontology]) = new FO {
         def source = _source
         def target = _target
         def functor = f
@@ -221,16 +224,16 @@ object Ontologies extends FinitelyPresentedCategories[Box, Path, Ontology] {
     override val categoriesOver = CategoriesOver
   }
 
-  trait Acyclic extends net.metaphor.api.Acyclic[Box, Path, Ontology] with Finite { self: Ontology =>
+  trait Acyclic extends net.metaphor.api.Acyclic[Ontology] with Finite { self: Ontology =>
     override def assertAcyclic = this
     override def assertGraph: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
 
   }
-  trait Graph extends net.metaphor.api.Graph[Box, Path, Ontology] { self: Ontology =>
+  trait Graph extends net.metaphor.api.Graph[Ontology] { self: Ontology =>
     override def assertAcyclic: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
     override def assertGraph = this
   }
-  trait AcyclicGraph extends net.metaphor.api.AcyclicGraph[Box, Path, Ontology] with Acyclic with Graph { self: Ontology =>
+  trait AcyclicGraph extends net.metaphor.api.AcyclicGraph[Ontology] with Acyclic with Graph { self: Ontology =>
     override def assertAcyclic = this
     override def assertGraph = this
   }
