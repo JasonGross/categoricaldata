@@ -75,7 +75,7 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
 
   override lazy val adjoinTerminalObject: WithTerminalObject = new Ontology with WithTerminalObject { ato =>
     val terminalObject = Box("*")
-    def morphismFrom(o: Box) = ???
+    def morphismFrom(o: Box) = Arrow(o, terminalObject, "*").asPath
 
     val minimumLevel = ontology.minimumLevel
     val maximumLevel = ontology.maximumLevel + 1
@@ -86,13 +86,39 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
     }
     def generators(source: Box, target: Box) = {
       if (target == terminalObject) {
-        List(Arrow(source, target, "*").asPath)
+        List(morphismFrom(source))
       } else {
         ontology.generators(source, target)
       }
     }
     def relations(source: Box, target: Box) = {
       if (target == terminalObject) {
+        ???
+      } else {
+        ontology.relations(source, target)
+      }
+    }
+  }
+  override lazy val adjoinInitialObject: WithInitialObject = new Ontology with WithInitialObject { aio =>
+    val initialObject = Box(".")
+    def morphismTo(o: Box) = Arrow(initialObject, o, "*").asPath
+
+    val minimumLevel = ontology.minimumLevel - 1
+    val maximumLevel = ontology.maximumLevel
+    def objectsAtLevel(k: Int) = if (k == minimumLevel) {
+      List(initialObject)
+    } else {
+      ontology.objectsAtLevel(k)
+    }
+    def generators(source: Box, target: Box) = {
+      if (source == initialObject) {
+        List(morphismTo(target))
+      } else {
+        ontology.generators(source, target)
+      }
+    }
+    def relations(source: Box, target: Box) = {
+      if (source == initialObject) {
         ???
       } else {
         ontology.relations(source, target)

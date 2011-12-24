@@ -14,7 +14,7 @@ trait FiniteTarget extends Translation { translation =>
     override def target = translation.target.categoriesOver
   }
 
-  lazy val slice = new CommaFunctor {
+  lazy val slice: CommaFunctor = new CommaFunctor {
     class SliceCategoryOver(s: Box) extends translation.target.CO {
       val functor: translation.target.FunctorTo[Box, Path, Ontology] = ???
       val category: Ontology = ???
@@ -29,7 +29,7 @@ trait FiniteTarget extends Translation { translation =>
     override def onObjects(s: Box): translation.target.CO = new SliceCategoryOver(s)
     override def onMorphisms(m: Path): translation.target.FO = new SliceFunctorOver(m)
   }
-  lazy val coslice = new CommaFunctor {
+  lazy val coslice: CommaFunctor = new CommaFunctor {
     override val source = translation.target.opposite
     override def onObjects(s: Box) = ???
     override def onMorphisms(m: Path) = ???
@@ -37,11 +37,7 @@ trait FiniteTarget extends Translation { translation =>
 
   trait Pushforward extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
-      def onObjects(o: Box) = {
-        // here's the rough idea: 
-//         slice(o).functor.pullback(i).limitSet
-        ???
-      }
+      def onObjects(o: Box) = slice(o).functor.pullback(i).limitSet
       def onMorphisms(m: Path) = ???
     }
     def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
@@ -52,7 +48,7 @@ trait FiniteTarget extends Translation { translation =>
   }
   trait Shriek extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
-      def onObjects(o: Box) = ???
+      def onObjects(o: Box) = coslice(o).functor.pullback(i).colimitSet
       def onMorphisms(m: Path) = ???
     }
     def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {

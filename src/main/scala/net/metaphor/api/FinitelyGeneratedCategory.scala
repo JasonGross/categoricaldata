@@ -58,6 +58,8 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
 
   trait WithTerminalObject extends FinitelyGeneratedCategory[O, M, C] with TerminalObject[O, M] { self: C => }
   val adjoinTerminalObject: WithTerminalObject
+  trait WithInitialObject extends FinitelyGeneratedCategory[O, M, C] with InitialObject[O, M] { self: C => }
+  val adjoinInitialObject: WithInitialObject
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
     def colimit = functorsToSet.colimit(functorToSet)
@@ -65,6 +67,12 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
     def colimitSet = {
       val c = colimitFunctor
       c(c.source.asInstanceOf[TerminalObject[O, M]].terminalObject)
+    }
+    def limit = functorsToSet.limit(functorToSet)
+    def limitFunctor = limit.terminalObject.asInstanceOf[adjoinInitialObject.FunctorToSet]
+    def limitSet = {
+      val c = limitFunctor
+      c(c.source.asInstanceOf[InitialObject[O, M]].initialObject)
     }
 
     trait CoCone extends adjoinTerminalObject.FunctorToSet {
@@ -97,6 +105,36 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
         }
       }
     }
+    trait Cone extends adjoinInitialObject.FunctorToSet {
+      def initialSet: Set
+      def mapToInitialSet(o: O): Function
+
+      override def onObjects(o: O): Set = {
+        if (o == adjoinInitialObject.initialObject) {
+          initialSet
+        } else {
+          functorToSet(o)
+        }
+      }
+      override def onMorphisms(m: M): Function = {
+        if (self.target(m) == adjoinInitialObject.initialObject) {
+          mapToInitialSet(self.source(m))
+        } else {
+          functorToSet(m)
+        }
+      }
+    }
+    trait ConeMap extends adjoinInitialObject.NaturalTransformationToSet[Cone] {
+      def initialMap: Function
+
+      override def apply(o: O) = {
+        if (o == adjoinInitialObject.initialObject) {
+          initialMap
+        } else {
+          functorToSet(o).identity
+        }
+      }
+    }
 
   }
 
@@ -111,6 +149,8 @@ trait FinitelyGeneratedCategory[O, M, C <: FinitelyGeneratedCategory[O, M, C]] e
 
   abstract class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
 
+    def limit(functor: self.FunctorToSet): TerminalObject[functor.Cone, functor.ConeMap] = ???
+    
     def colimit(functor: self.FunctorToSet): InitialObject[functor.CoCone, functor.CoConeMap] = {
 
       // This is where all the work happens.
