@@ -59,9 +59,10 @@ trait Functor[C <: Category[C]] extends HeteroFunctor[C, C] { functor => }
 trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFunctor[C, C] { functor =>
   abstract class CommaFunctor extends HeteroFunctor[C, target.CsO] {
     override val target = functor.target.categoriesOver
-    
+
     type SC <: SliceCategory
-    
+    type cSC <: CosliceCategory
+
     abstract class SliceCategory(onRight: functor.target.O) extends SmallCategory[SC] { sliceCategory: SC =>
       override type O = ObjectLeftOf
       override type M = ObjectLeftOfMap
@@ -86,18 +87,50 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
       val functorsToSet = ???
       val adjoinInitialObject = ???
       val adjoinTerminalObject = ???
-//      type CSets = sliceCategory.FunctorsToSet
+      //      type CSets = sliceCategory.FunctorsToSet
 
       override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[SC]): F = ???
       override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[SC, F]): T = ???
     }
+
+    abstract class CosliceCategory(onLeft: functor.target.O) extends SmallCategory[cSC] { cosliceCategory: cSC =>
+      override type O = ObjectRightOf
+      override type M = ObjectRightOfMap
+
+      case class ObjectRightOf(right: functor.source.O, path: functor.target.M) {
+        require(functor.target.source(path) == onLeft)
+        require(functor.target.target(path) == functor.apply(right))
+      }
+      case class ObjectRightOfMap(source: ObjectRightOf, target: ObjectRightOf, path: functor.source.M) {
+        require(functor.source.source(path) == source.right)
+        require(functor.source.target(path) == target.right)
+        require(functor.target.compose(source.path, functor.apply(path)) == target.path)
+      }
+
+      def identity(o: ObjectRightOf) = ObjectRightOfMap(o, o, functor.source.identity(o.right))
+      def source(m: ObjectRightOfMap) = m.source
+      def target(m: ObjectRightOfMap) = m.target
+      def compose(m1: ObjectRightOfMap, m2: ObjectRightOfMap) = ObjectRightOfMap(m1.source, m2.target, functor.source.compose(m1.path, m2.path))
+
+      def opposite = ??? // new CosliceCategory(onLeft) with Opposite
+
+      val functorsToSet = ???
+      val adjoinInitialObject = ???
+      val adjoinTerminalObject = ???
+      //        type CSets = FunctorsToSet
+
+      override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[cSC]): F = ???
+      override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[cSC, F]): T = ???
+    }
+
   }
 }
 
 trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallFunctor[C] { functor =>
   abstract class CommaFunctor extends super.CommaFunctor {
     override type SC <: SliceCategory
-    
+    override type cSC <: CosliceCategory
+
     abstract class SliceCategory(onRight: functor.target.O) extends super.SliceCategory(onRight) with FinitelyGeneratedCategory[SC] { sliceCategory: SC =>
       override type O = super.O
       override type M = super.M
@@ -114,6 +147,27 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
       def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
         for (g <- functor.source.generators(source.left, target.left); if functor.target.compose(functor.apply(g), target.path) == source.path) yield {
           ObjectLeftOfMap(source, target, g)
+        }
+      }
+
+    }
+    abstract class CosliceCategory(onLeft: functor.target.O) extends super.CosliceCategory(onLeft) with FinitelyGeneratedCategory[cSC] { cosliceCategory: cSC =>
+      override type O = super.O
+      override type M = super.M
+
+      def objectsAtLevel(k: Int): List[ObjectRightOf] = {
+        for (
+          l <- (functor.source.minimumLevel to k).toList;
+          right <- functor.source.objectsAtLevel(l);
+          path <- functor.target.wordsOfLength(k - l)(onLeft, functor.apply(right))
+        ) yield ObjectRightOf(right, path)
+      }
+      val minimumLevel: Int = 0
+      val maximumLevel: Int = ??? // functor.source.maximumLevel + functor.target.maximumWordLength
+
+      def generators(source: ObjectRightOf, target: ObjectRightOf): List[ObjectRightOfMap] = {
+        for (g <- functor.source.generators(source.right, target.right); if functor.target.compose(source.path, functor.apply(g)) == target.path) yield {
+          ObjectRightOfMap(source, target, g)
         }
       }
 
