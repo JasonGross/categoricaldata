@@ -62,11 +62,48 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   trait WithTerminalObject extends FinitelyGeneratedCategory[C] with TerminalObject[O, M] { terminal: C =>
     override type O = self.O
     override type M = self.M
+
+    def terminalObject: O
+    def morphismFrom(o: O): M
+
+    val minimumLevel = self.minimumLevel
+    val maximumLevel = self.maximumLevel + 1
+    def objectsAtLevel(k: Int) = if (k == maximumLevel) {
+      List(terminalObject)
+    } else {
+      self.objectsAtLevel(k)
+    }
+    def generators(source: O, target: O) = {
+      if (target == terminalObject) {
+        List(morphismFrom(source))
+      } else {
+        self.generators(source, target)
+      }
+    }
+
   }
   val adjoinTerminalObject: WithTerminalObject
   trait WithInitialObject extends FinitelyGeneratedCategory[C] with InitialObject[O, M] { initial: C =>
     override type O = self.O
     override type M = self.M
+    
+    def initialObject: O
+    def morphismTo(o: O): M
+    
+        val minimumLevel = self.minimumLevel - 1
+    val maximumLevel = self.maximumLevel
+    def objectsAtLevel(k: Int) = if (k == minimumLevel) {
+      List(initialObject)
+    } else {
+      self.objectsAtLevel(k)
+    }
+    def generators(source: O, target: O) = {
+      if (source == initialObject) {
+        List(morphismTo(target))
+      } else {
+        self.generators(source, target)
+      }
+    }
   }
   val adjoinInitialObject: WithInitialObject
 
