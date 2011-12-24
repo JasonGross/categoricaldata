@@ -13,19 +13,19 @@ trait FiniteTarget extends Translation { translation =>
   trait CommaFunctor extends HeteroFunctor[Ontology, target.CsO] {
     override val target = translation.target.categoriesOver
 
-    case class ObjectLeftOf(left: Box, path: Path, of: Box) {
-      require(path.source == left)
-      require(path.target == translation(of))
-    }
-    case class ObjectLeftOfMap(source: ObjectLeftOf, target: ObjectLeftOf, path: Path) {
-      require(path.source == source.left)
-      require(path.target == target.left)
-    }
-
-    class SliceCategory(s: Box) extends FinitelyGeneratedCategory[SliceCategory] {
+    class SliceCategory(onRight: translation.target.O) extends FinitelyGeneratedCategory[SliceCategory] {
       override type O = ObjectLeftOf
       override type M = ObjectLeftOfMap
-      
+
+      case class ObjectLeftOf(left: translation.source.O, path: translation.target.M) {
+        require(path.source == left)
+        require(path.target == translation(onRight))
+      }
+      case class ObjectLeftOfMap(source: ObjectLeftOf, target: ObjectLeftOf, path: translation.source.M) {
+        require(path.source == source.left)
+        require(path.target == target.left)
+      }
+
       def objectsAtLevel(k: Int): List[ObjectLeftOf] = ???
       val minimumLevel: Int = ???
       val maximumLevel: Int = ???
@@ -37,7 +37,7 @@ trait FiniteTarget extends Translation { translation =>
       def target(m: ObjectLeftOfMap) = m.target
       def compose(m1: ObjectLeftOfMap, m2: ObjectLeftOfMap) = ObjectLeftOfMap(m1.source, m2.target, translation.source.compose(m1.path, m2.path))
 
-      def opposite = new SliceCategory(s) with Opposite
+      def opposite = ??? // new SliceCategory(onRight) with Opposite
 
       val functorsToSet = ???
       val adjoinInitialObject = ???
@@ -91,7 +91,7 @@ trait FiniteTarget extends Translation { translation =>
   trait Pushforward extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = {
-      //slice(o).functor.pullback(i).limitSet
+        //slice(o).functor.pullback(i).limitSet
         ???
       }
       def onMorphisms(m: Path) = ???
@@ -105,8 +105,8 @@ trait FiniteTarget extends Translation { translation =>
   trait Shriek extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = {
-//      coslice(o).functor.pullback(i).colimitSet
-      ???
+        //      coslice(o).functor.pullback(i).colimitSet
+        ???
       }
       def onMorphisms(m: Path) = ???
     }
