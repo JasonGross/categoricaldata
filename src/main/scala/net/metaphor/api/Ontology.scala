@@ -18,10 +18,6 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override type O = Box
   override type M = Path
 
-  //  def copy(o: Ontology#O): O = Box(o.name)
-  //  def copy(a: Ontology#Arrow): Arrow = Arrow(copy(a.source), copy(a.target), a.name)
-  //  def copy(m: Ontology#M): M = Path(copy(m.source), m.arrows.map(copy(_)))
-
   override def compose(m1: Path, m2: Path) = {
     require(m2.source == m1.target)
     Path(m1.source, m1.arrows ::: m2.arrows)
@@ -137,20 +133,6 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
 
   def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic
   def assertGraph: Ontology with Ontologies.Graph = new OntologyWrapper(this) with Ontologies.Graph
-
-//  override type CO = CategoryOver[Ontology, FunctorTo[Ontology]]
-//  override type FO = FunctorOver[Ontology, Functor[Ontology], FunctorTo[Ontology], CO]
-//  override type CsO = CategoriesOver
-//
-//  sealed trait CategoriesOver extends super.CategoriesOver[Ontology, Functor[Ontology], FunctorTo[Ontology], CO, FO, CategoriesOver]
-//  object CategoriesOver extends CategoriesOver {
-//    override def lift(_source: CO, _target: CO, f: Functor[Ontology]) = new FO {
-//      def source = _source
-//      def target = _target
-//      def functor = f
-//    }
-//  }
-//  override val categoriesOver = CategoriesOver
 }
 
 private class OntologyWrapper(val o: Ontology) extends Ontology {

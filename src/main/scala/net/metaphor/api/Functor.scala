@@ -95,12 +95,12 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
 
   abstract class SliceFunctor extends CommaFunctor { sliceFunctor =>
     override val source: smallFunctor.target.type = smallFunctor.target
-    override def onObjects(s: source.O): target.O = ??? //new SliceCategoryOver(s)
+    override def onObjects(s: source.O): target.O = ??? // FIXME // new SliceCategoryOver(s)
     override def onMorphisms(m: smallFunctor.target.M): target.M = ??? //new SliceFunctorOver(m)
 
-    class SliceCategoryOver(onRight: smallFunctor.target.O) { sliceCategory: smallFunctor.target.CategoriesOver[SC] =>
+    class SliceCategoryOver(onRight: smallFunctor.target.O) extends smallFunctor.target.CategoriesOver[SC] {
       val functor: smallFunctor.target.FunctorTo[SC] = new smallFunctor.target.FunctorTo[SC] {
-        override val source = sliceCategory.category
+        override val source = category
         override def onObjects(o: source.O) = ???
         override def onMorphisms(m: source.M) = ???
       }

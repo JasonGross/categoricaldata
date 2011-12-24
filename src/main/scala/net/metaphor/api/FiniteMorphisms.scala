@@ -20,19 +20,19 @@ trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends SolvableWordPro
   def normalWords(source: self.O, target: self.O) = (for (k <- 0 to maximumWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
 
   // FIXME uncomment this!
-  //  lazy val yoneda = new HeteroFunctor[C, CSets] {
-  //    override def source = self
-  //    override def target = functorsToSet
-  //    override def onObjects(s: self.O) = liftFunctorToSet(new FunctorToSet {
-  //      override def onObjects(t: O) = normalWords(s, t)
-  //      override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
-  //    })
-  //   override def onMorphisms(m: self.M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
-  //      override def source = onObjects(self.source(m))
-  //      override def target = onObjects(self.target(m))
-  //      override def apply(o: O) = ???
-  //    })
-  //  }
+//    lazy val yoneda = new HeteroFunctor[C, CSets] {
+//      override def source = self
+//      override def target = functorsToSet
+//      override def onObjects(s: self.O) = liftFunctorToSet(new FunctorToSet {
+//        override def onObjects(t: O) = normalWords(s, t)
+//        override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
+//      })
+//     override def onMorphisms(m: self.M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
+//        override def source = onObjects(self.source(m))
+//        override def target = onObjects(self.target(m))
+//        override def apply(o: O) = ???
+//      })
+//    }
 }
 
 trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { self: C =>

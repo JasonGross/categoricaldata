@@ -16,13 +16,12 @@ trait FiniteTarget extends Translation { translation =>
   class SliceFunctor extends super.SliceFunctor {
     override def buildSliceCategory(onRight: Box) = new SliceCategory(onRight)
   }
-  //  abstract class CosliceFunctor extends super.CosliceFunctor {
-  //    override type cSC = CosliceCategory
-  //    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft) { }
-  //  }
+  abstract class CosliceFunctor extends super.CosliceFunctor {
+//    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft)
+  }
 
   lazy val slice: SliceFunctor = new SliceFunctor
-  //  lazy val coslice: CosliceFunctor = new CosliceFunctor
+//  lazy val coslice: CosliceFunctor = new CosliceFunctor
 
   trait Pushforward extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
