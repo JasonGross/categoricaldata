@@ -59,9 +59,10 @@ trait Functor[C <: Category[C]] extends HeteroFunctor[C, C] { functor => }
 trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFunctor[C, C] { functor =>
   abstract class CommaFunctor extends HeteroFunctor[C, target.CsO] {
     override val target = functor.target.categoriesOver
-
+  }
+  
+  abstract class SliceFunctor extends CommaFunctor {
     type SC <: SliceCategory
-    type cSC <: CosliceCategory
 
     abstract class SliceCategory(onRight: functor.target.O) extends SmallCategory[SC] { sliceCategory: SC =>
       override type O = ObjectLeftOf
@@ -92,7 +93,11 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
       override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[SC]): F = ???
       override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[SC, F]): T = ???
     }
-
+  }
+  
+  abstract class CosliceFunctor extends CommaFunctor {
+     type cSC <: CosliceCategory
+   
     abstract class CosliceCategory(onLeft: functor.target.O) extends SmallCategory[cSC] { cosliceCategory: cSC =>
       override type O = ObjectRightOf
       override type M = ObjectRightOfMap
@@ -127,9 +132,8 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
 }
 
 trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallFunctor[C] { functor =>
-  abstract class CommaFunctor extends super.CommaFunctor {
+  abstract class SliceFunctor extends super.SliceFunctor {
     override type SC <: SliceCategory
-    override type cSC <: CosliceCategory
 
     abstract class SliceCategory(onRight: functor.target.O) extends super.SliceCategory(onRight) with FinitelyGeneratedCategory[SC] { sliceCategory: SC =>
       override type O = super.O
@@ -151,7 +155,10 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
       }
 
     }
-    abstract class CosliceCategory(onLeft: functor.target.O) extends super.CosliceCategory(onLeft) with FinitelyGeneratedCategory[cSC] { cosliceCategory: cSC =>
+  }
+  abstract class CosliceFunctor extends super.CosliceFunctor {
+      override type cSC <: CosliceCategory
+  abstract class CosliceCategory(onLeft: functor.target.O) extends super.CosliceCategory(onLeft) with FinitelyGeneratedCategory[cSC] { cosliceCategory: cSC =>
       override type O = super.O
       override type M = super.M
 

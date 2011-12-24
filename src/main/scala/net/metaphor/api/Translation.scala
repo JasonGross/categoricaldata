@@ -9,13 +9,15 @@ trait Translation extends FinitelyGeneratedFunctor[Ontology] { translation =>
 
 trait FiniteTarget extends Translation { translation =>
   override val target: Ontologies.Finite
-  abstract class CommaFunctor extends super.CommaFunctor {
+  abstract class SliceFunctor extends super.SliceFunctor {
     override type SC = SliceCategory
+  }
+  abstract class CosliceFunctor extends super.CosliceFunctor {
     override type cSC = CosliceCategory
   }
 
 
-  lazy val slice: CommaFunctor = new CommaFunctor {
+  lazy val slice: SliceFunctor = new SliceFunctor {
     class SliceCategoryOver(s: Box) extends translation.target.CO { sliceCategory =>
       val functor: translation.target.FunctorTo[Ontology] = new translation.target.FunctorTo[Ontology] {
         val source = sliceCategory.category
@@ -37,7 +39,7 @@ trait FiniteTarget extends Translation { translation =>
     override def onObjects(s: Box): translation.target.CO = new SliceCategoryOver(s)
     override def onMorphisms(m: Path): translation.target.FO = new SliceFunctorOver(m)
   }
-  lazy val coslice: CommaFunctor = new CommaFunctor {
+  lazy val coslice: CosliceFunctor = new CosliceFunctor {
     class CosliceCategoryOver(s: Box) extends translation.target.CO { cosliceCategory =>
       val functor = ???
       val category = ???
