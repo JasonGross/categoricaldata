@@ -9,7 +9,7 @@ trait NaturalTransformationToSet[C <: Category[C], F <: FunctorToSet[C]] extends
   override val target: F
 }
 
-abstract class FunctorsToSet[C <: Category[C], F <: C#FunctorToSet, T <: C#NaturalTransformationToSet[F], FC <: FunctorsToSet[C, F, T, FC]](source: C) extends FunctorCategory[C, Sets, FC](source, Sets) { self: FC =>
-  override type O = F
-  override type M = T
+abstract class FunctorsToSet[C <: Category[C], FC <: FunctorsToSet[C, FC]](source: C) extends FunctorCategory[C, Sets, FC](source, Sets) { self: FC =>
+  override type O <: C#FunctorToSet
+  override type M <: C#NaturalTransformationToSet[O]
 }

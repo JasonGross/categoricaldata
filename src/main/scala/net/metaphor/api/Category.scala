@@ -32,7 +32,7 @@ trait Category[C <: Category[C]] { self: C =>
   }
 }
 
-trait SmallCategory[C <: SmallCategory[C]] extends Category[C] { self: C => 
+trait SmallCategory[C <: SmallCategory[C]] extends Category[C] { self: C =>
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet[F]
   type CSets <: FunctorsToSet
@@ -42,7 +42,10 @@ trait SmallCategory[C <: SmallCategory[C]] extends Category[C] { self: C =>
 
   def functorsToSet: CSets
 
-  abstract class FunctorsToSet extends net.metaphor.api.FunctorsToSet[C, F, T, CSets](self) { functorsToSet: CSets => }
+  abstract class FunctorsToSet extends net.metaphor.api.FunctorsToSet[C, CSets](self) { functorsToSet: CSets =>
+    override type O = self.F
+    override type M = self.T
+  }
 
   trait FunctorTo[SC <: SmallCategory[SC]] extends SmallHeteroFunctor[SC, C] {
     override val target = self
