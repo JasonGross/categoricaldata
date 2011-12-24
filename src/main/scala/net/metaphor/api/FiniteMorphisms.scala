@@ -19,6 +19,7 @@ trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends SolvableWordPro
   def maximumWordLength: Int = (for (s <- objects; t <- objects) yield maximumWordLength(s, t)).max
   def normalWords(source: self.O, target: self.O) = (for (k <- 0 to maximumWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
 
+  // FIXME uncomment this!
   //  lazy val yoneda = new HeteroFunctor[C, CSets] {
   //    override def source = self
   //    override def target = functorsToSet

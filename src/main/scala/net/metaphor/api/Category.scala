@@ -55,32 +55,35 @@ trait SmallCategory[C <: SmallCategory[C]] extends Category[C] { self: C =>
     override val target: F
   }
 
-  trait CategoryOver[SC <: SmallCategory[SC], F <: FunctorTo[SC]] {
+  trait CategoryOver[SC <: SmallCategory[SC]] {
     def category: SC
-    def functor: F
+    def functor: FunctorTo[SC]
   }
-  trait FunctorOver[SC <: SmallCategory[SC], F1 <: Functor[SC], F2 <: FunctorTo[SC], CO <: CategoryOver[SC, F2]] {
-    def source: CO
-    def target: CO
-    def functor: F1
+  trait FunctorOver[SC <: SmallCategory[SC]] {
+    def source: CategoryOver[SC]
+    def target: CategoryOver[SC]
+    def functor: Functor[SC]
   }
 
-  trait CategoriesOver[SC <: SmallCategory[SC], F1 <: Functor[SC], F2 <: FunctorTo[SC], CO <: CategoryOver[SC, F2], FO <: FunctorOver[SC, F1, F2, CO], CsO <: CategoriesOver[SC, F1, F2, CO, FO, CsO]] extends LargeCategory[CsO] { categoriesOver: CsO =>
-    override type O = CO
-    override type M = FO
-    override def identity(f: CO) = lift(f, f, new Functor.IdentityFunctor(f.category))
-    override def source(t: FO) = t.source
-    override def target(t: FO) = t.target
-    override def compose(m1: FO, m2: FO): FO = lift(m1.source, m2.target, new Functor.CompositeFunctor(m1.functor, m2.functor))
-
-    def lift(source: CO, target: CO, f: Functor[SC]): FO
+  trait CategoriesOver[SC <: SmallCategory[SC]] extends LargeCategory[CategoriesOver[SC]] { categoriesOver =>
+    override type O = CategoryOver[SC]
+    override type M = FunctorOver[SC]
+    override def identity(f: O) = new FunctorOver[SC]{
+      val source =f
+      val target = f
+      var functor= new Functor.IdentityFunctor(f.category)
+    }
+    override def source(t: M) = t.source
+    override def target(t: M) = t.target
+    override def compose(m1: M, m2: M): M = new FunctorOver[SC] {
+      val source = m1.source
+      val target = m2.target
+      val functor = new Functor.CompositeFunctor(m1.functor, m2.functor)
+    }
   }
   
-  type CO <: CategoryOver[C, FunctorTo[C]]
-  type FO <: FunctorOver[C, Functor[C], FunctorTo[C], CO]
-  type CsO <: CategoriesOver[C, Functor[C], FunctorTo[C], CO, FO, CsO]
-
-  def categoriesOver: CsO
-
+  def categoriesOver[SC <: SmallCategory[SC]] = new CategoriesOver[SC] { }
 }
+
+
 trait LargeCategory[C <: LargeCategory[C]] extends Category[C] { self: C => }
