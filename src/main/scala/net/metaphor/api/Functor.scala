@@ -22,7 +22,21 @@ trait SmallFunctor[O, M, C <: SmallCategory[O, M, C]] extends Functor[O, M, C] {
     val source = functor.target.functorsToSet
     val target = functor.source.functorsToSet
 
-    // TODO convenience methods for widening the scope.
+    def apply(i: C#F) = super.apply(functor.target.liftFunctorToSet(i))
+    def apply(m: C#T) = {
+      // FIXME this will almost certainly break at runtime. :-(
+      super.apply(functor.target.liftNaturalTransformationToSet(m.asInstanceOf[net.metaphor.api.NaturalTransformationToSet[O, M, C, functor.target.F]]))
+    }    
+  }
+  trait CovariantDataFunctor extends HeteroFunctor[source.F, source.T, source.CSets,target.F, target.T, target.CSets] {
+    val source = functor.source.functorsToSet
+    val target = functor.target.functorsToSet
+
+    def apply(i: C#F) = super.apply(functor.source.liftFunctorToSet(i))
+    def apply(m: C#T) = {
+      // FIXME this will almost certainly break at runtime. :-(
+      super.apply(functor.source.liftNaturalTransformationToSet(m.asInstanceOf[net.metaphor.api.NaturalTransformationToSet[O, M, C, functor.source.F]]))
+    }    
   }
 
   trait Pullback extends ContravariantDataFunctor {

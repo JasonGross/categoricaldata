@@ -131,14 +131,28 @@ trait Ontology extends FinitelyPresentedCategory[Box, Path, Ontology] { ontology
   override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[Box, Path, Ontology]): Dataset = {
     f match {
       case f: Dataset => f
-      case _ =>
+      case _ => {
+        require(f.source == ontology)
         new Dataset {
           def onObjects(o: Box) = f(o)
           def onMorphisms(m: Path) = f(m)
         }
+      }
     }
   }
-  override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[Box, Path, Ontology, Dataset]): Datamap = ???
+  override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[Box, Path, Ontology, Dataset]): Datamap = {
+    t match {
+      case t: Datamap => t
+      case _ => {
+        require(t.sourceCategory == ontology)
+        new Datamap {
+          val source = liftFunctorToSet(t.source)
+          val target = liftFunctorToSet(t.target)
+          def apply(o: Box) = t(o)
+        }
+      }
+    }
+  }
 
   override val functorsToSet = Datasets
   sealed trait Datasets extends FunctorsToSet

@@ -4,34 +4,6 @@ trait Translation extends SmallFunctor[Box, Path, Ontology] { translation =>
   val source: Ontology
   val target: Ontology
 
-  trait ContravariantDataFunctor extends super.ContravariantDataFunctor {
-    // TODO pull up? this trait could vanish.
-    // the following two 'apply' methods are convenience methods, allowing us to act on a Dataset or Datamap which is not an inner type.
-    def apply(i: Ontology#Dataset) = {
-      super.apply(translation.target.liftFunctorToSet(i))
-    }
-    def apply(m: Ontology#Datamap) = {
-      super.apply(translation.target.Datamap(m))
-    }
-  }
-  trait CovariantDataFunctor extends HeteroFunctor[source.Dataset, source.Datamap, source.Datasets, target.Dataset, target.Datamap, target.Datasets] {
-    val source = translation.source.Datasets
-    val target = translation.target.Datasets
-
-    // the following two 'apply' methods are convenience methods, allowing us to act on a Dataset or Datamap which is not an inner type.
-    def apply(i: Ontology#Dataset) = {
-      super.apply(translation.source.liftFunctorToSet(i))
-    }
-    def apply(m: Ontology#Datamap) = {
-      super.apply(translation.source.Datamap(m))
-    }
-  }
-
-  trait Pullback extends ContravariantDataFunctor with super.Pullback
-
-  override def pullback: Pullback = new Pullback { }
-  override def ^* = pullback
-
   def assertFiniteTarget: Translation with FiniteTarget = ???
 }
 
@@ -63,14 +35,11 @@ trait FiniteTarget extends Translation { translation =>
     override def onMorphisms(m: Path) = ???
   }
 
-  trait Pushforward extends CovariantDataFunctor
-  trait Shriek extends CovariantDataFunctor
-
-  def pushforward: Pushforward = new Pushforward {
+  trait Pushforward extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = {
         // here's the rough idea: 
-//            		  slice(o).functor.pullback(i).limitSet
+//         slice(o).functor.pullback(i).limitSet
         ???
       }
       def onMorphisms(m: Path) = ???
@@ -81,7 +50,7 @@ trait FiniteTarget extends Translation { translation =>
       def apply(o: Box) = ???
     }
   }
-  def shriek: Shriek = new Shriek {
+  trait Shriek extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = ???
       def onMorphisms(m: Path) = ???
@@ -93,6 +62,8 @@ trait FiniteTarget extends Translation { translation =>
     }
   }
 
+  def pushforward: Pushforward = new Pushforward {}
+  def shriek: Shriek = new Shriek {}
   def __! = shriek
   def __* = pushforward
 }
