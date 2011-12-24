@@ -86,11 +86,11 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   trait WithInitialObject extends FinitelyGeneratedCategory[C] with InitialObject[O, M] { initial: C =>
     override type O = self.O
     override type M = self.M
-    
+
     def initialObject: O
     def morphismTo(o: O): M
-    
-        val minimumLevel = self.minimumLevel - 1
+
+    val minimumLevel = self.minimumLevel - 1
     val maximumLevel = self.maximumLevel
     def objectsAtLevel(k: Int) = if (k == minimumLevel) {
       List(initialObject)

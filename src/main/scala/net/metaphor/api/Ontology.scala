@@ -17,7 +17,7 @@ case class Path(source: Box, arrows: List[Arrow]) {
 trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override type O = Box
   override type M = Path
-  
+
   override def compose(m1: Path, m2: Path) = {
     require(m2.source == m1.target)
     Path(m1.source, m1.arrows ::: m2.arrows)
@@ -77,9 +77,9 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   //    }
 
   override lazy val adjoinTerminalObject: WithTerminalObject = new Ontology with WithTerminalObject {
-    	val terminalObject = Box("*")
-    	def morphismFrom(o: Box) = Arrow(o, terminalObject, "*").asPath
-  
+    val terminalObject = Box("*")
+    def morphismFrom(o: Box) = Arrow(o, terminalObject, "*").asPath
+
   }
   override lazy val adjoinInitialObject: WithInitialObject = new Ontology with WithInitialObject {
     val initialObject = Box(".")
@@ -88,27 +88,6 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
 
   trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
   trait Datamap extends NaturalTransformationToSet[Dataset] with net.metaphor.api.Datamap[Dataset]
-
-  object Dataset {
-    // yoink an arbitrary Dataset into one living on this Ontology
-    def apply(dataset: Ontology#Dataset): Dataset = {
-      require(dataset.source == ontology)
-      new Dataset {
-        override def onObjects(o: Box) = dataset.onObjects(o)
-        override def onMorphisms(m: Path) = dataset.onMorphisms(m)
-      }
-    }
-  }
-  object Datamap {
-    def apply(datamap: Ontology#Datamap): Datamap = {
-      require(datamap.sourceCategory == ontology)
-      new Datamap {
-        val source = Dataset(datamap.source)
-        val target = Dataset(datamap.target)
-        def apply(o: Box) = datamap(o)
-      }
-    }
-  }
 
   override type F = Dataset
   override type T = Datamap
