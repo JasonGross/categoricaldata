@@ -55,7 +55,7 @@ trait SmallCategory[C <: SmallCategory[C]] extends Category[C] { self: C =>
   }
 
   trait FunctorTo[SC <: SmallCategory[SC]] extends SmallHeteroFunctor[SC, C] {
-    override val target = self
+    override val target: self.type = self
   }
   trait NaturalTransformationTo[SC <: SmallCategory[SC], F <: FunctorTo[SC]] extends HeteroNaturalTransformation[SC, C, F] {
     override val source: F

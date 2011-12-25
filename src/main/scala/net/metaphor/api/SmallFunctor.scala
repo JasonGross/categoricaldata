@@ -65,8 +65,8 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
     class SliceCategoryOver(onRight: smallFunctor.target.O) extends smallFunctor.source.CategoryOver[SC] {
       override val functor: smallFunctor.source.FunctorTo[SC] = new smallFunctor.source.FunctorTo[SC] {
         override val source = buildSliceCategory(onRight)
-        override def onObjects(o: source.ObjectLeftOf) = ???
-        override def onMorphisms(m: source.ObjectLeftOfMap) = ???
+        override def onObjects(o: source.ObjectLeftOf) = o.left
+        override def onMorphisms(m: source.ObjectLeftOfMap) = m.path
       }
     }
     class SliceFunctorOver(m: smallFunctor.target.M) extends smallFunctor.source.FunctorOver[SC] {
@@ -88,8 +88,8 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
     class CosliceCategoryOver(onLeft: smallFunctor.target.O) extends smallFunctor.source.CategoryOver[cSC] {
       override val functor: smallFunctor.source.FunctorTo[cSC] = new smallFunctor.source.FunctorTo[cSC] {
         override val source = buildCosliceCategory(onLeft)
-        override def onObjects(o: source.ObjectRightOf) = ???
-        override def onMorphisms(m: source.ObjectRightOfMap) = ???
+        override def onObjects(o: source.ObjectRightOf) = o.right
+        override def onMorphisms(m: source.ObjectRightOfMap) = m.path
       }
     }
     class CosliceFunctorOver(m: smallFunctor.target.M) extends smallFunctor.source.FunctorOver[cSC] {
