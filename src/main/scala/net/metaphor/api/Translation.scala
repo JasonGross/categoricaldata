@@ -16,19 +16,17 @@ trait FiniteTarget extends Translation { translation =>
   class SliceFunctor extends super.SliceFunctor {
     override def buildSliceCategory(onRight: Box) = new SliceCategory(onRight)
   }
-  abstract class CosliceFunctor extends super.CosliceFunctor {
-//    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft)
+  class CosliceFunctor extends super.CosliceFunctor {
+    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft)
   }
 
   lazy val slice: SliceFunctor = new SliceFunctor
-//  lazy val coslice: CosliceFunctor = new CosliceFunctor
+  lazy val coslice: CosliceFunctor = new CosliceFunctor
 
   trait Pushforward extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = {
-        val foo = slice(o).functor.pullback(i)
-        //        slice(o).functor.pullback(i).limitSet
-        ???
+        slice(o).functor.pullback(i).limitSet
       }
       def onMorphisms(m: Path) = ???
     }
@@ -41,8 +39,7 @@ trait FiniteTarget extends Translation { translation =>
   trait Shriek extends CovariantDataFunctor {
     def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = {
-        //        coslice(o).functor.pullback(i).colimitSet
-        ???
+        coslice(o).functor.pullback(i).colimitSet
       }
       def onMorphisms(m: Path) = ???
     }

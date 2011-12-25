@@ -9,7 +9,7 @@ case class Arrow(source: Box, target: Box, name: String) {
 }
 
 case class Path(source: Box, arrows: List[Arrow]) {
-  def target = arrows.last.target
+  def target = arrows.lastOption.map(_.target).getOrElse(source)
 
   override def toString = source.name + (for (a <- arrows) yield " --- " + a.name + " ---> " + a.target).mkString
 }

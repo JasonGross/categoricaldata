@@ -5,16 +5,6 @@ trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]]
   def objectsAtLevel(k: Int): List[O]
 
   def generators(source: O, target: O): List[M]
-  def generatorsFrom(source: O): List[M]
-  def generatorsTo(source: O): List[M]
-
-  def wordsOfLength(k: Int)(source: O, target: O): List[M] = {
-    k match {
-      case 0 => List(identity(source))
-      case 1 => generators(source, target)
-      case _ => for (g <- generatorsTo(target); w <- wordsOfLength(k - 1)(source, self.source(g))) yield compose(w, g)
-    }
-  }
 
   trait Opposite { opposite: C =>
     override type O = self.O
@@ -42,6 +32,14 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   val maximumLevel: Int
 
   def objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
+
+  def wordsOfLength(k: Int)(source: O, target: O): List[M] = {
+    k match {
+      case 0 => List(identity(source))
+      case 1 => generators(source, target)
+      case _ => for (g <- generatorsTo(target); w <- wordsOfLength(k - 1)(source, self.source(g))) yield compose(w, g)
+    }
+  }
 
   def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
   def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g
@@ -153,7 +151,7 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
     }
     trait Cone extends adjoinInitialObject.FunctorToSet {
       def initialSet: Set
-      def mapToInitialSet(o: O): Function
+      def mapFromInitialSet(o: O): Function
 
       override def onObjects(o: O): Set = {
         if (o == adjoinInitialObject.initialObject) {
@@ -164,7 +162,7 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
       }
       override def onMorphisms(m: M): Function = {
         if (self.target(m) == adjoinInitialObject.initialObject) {
-          mapToInitialSet(self.source(m))
+          mapFromInitialSet(self.source(m))
         } else {
           functorToSet(m)
         }
@@ -186,16 +184,53 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
 
   // Contrary to appearance, these definitions are *not* redundant with those in SmallCategory.
   // Since then, we've further specialized FunctorToSet, etc., and these definitions further constrain F, T and CSets.
-  type F <: FunctorToSet
-  type T <: NaturalTransformationToSet[F]
-  type CSets <: FunctorsToSet
+  override type F <: FunctorToSet
+  override type T <: NaturalTransformationToSet[F]
+  override type CSets <: FunctorsToSet
   val functorsToSet: CSets
-  //  override def lift(f: super.FunctorToSet): F
-  //  override def lift(t: super.NaturalTransformationToSet[F]): T
 
-  abstract class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
+  class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
 
-    def limit(functor: self.FunctorToSet): TerminalObject[functor.Cone, functor.ConeMap] = ???
+    def limit(functor: self.FunctorToSet): TerminalObject[functor.Cone, functor.ConeMap] = {
+      
+      // this is where all the work happens.
+      def concreteLimit[A](objects: Iterable[self.O], sets: self.O => Iterable[A], functions: self.O => (self.O => (A => Iterable[A]))): (Iterable[self.O => A], self.O => ((self.O => A) => A)) = {
+    
+        val resultMaps = ???
+        def resultFunctions(o: self.O)(map: self.O => A) = map(o)
+        
+        (resultMaps, resultFunctions _)
+      }
+      
+      val (maps, functions) = concreteLimit(
+          objects,
+         { o: self.O => functor(o).toIterable },
+        { s: self.O => { t: self.O => { a: Any => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
+      
+            val resultSet = new Set {
+        override def toIterable = maps
+      }
+      val resultFunctions: (self.O => Function) = { o: self.O =>
+        new Function {
+          override def toFunction = functions(o).asInstanceOf[Any => Any]
+        }
+      }
+
+      new TerminalObject[functor.Cone, functor.ConeMap] {
+        def terminalObject = new functor.Cone {
+          override def initialSet = resultSet
+          override def mapFromInitialSet(o: self.O) = resultFunctions(o)
+        }
+        def morphismFrom(other: functor.Cone) = {
+          new functor.ConeMap {
+            override val source = other
+            override val target = terminalObject
+            override def initialMap = ???
+          }
+        }
+      }
+
+    }
 
     def colimit(functor: self.FunctorToSet): InitialObject[functor.CoCone, functor.CoConeMap] = {
 

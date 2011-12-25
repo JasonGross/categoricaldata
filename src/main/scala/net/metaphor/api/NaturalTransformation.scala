@@ -3,8 +3,8 @@ package net.metaphor.api
 trait HeteroNaturalTransformation[C1 <: Category[C1], C2 <: Category[C2], F <: HeteroFunctor[C1, C2]] {
   val source: F
   val target: F
-  val sourceCategory = source.source
-  val targetCategory = source.target
+  val sourceCategory: source.source.type = source.source
+  val targetCategory: source.target.type = source.target
   def apply(o: sourceCategory.O): targetCategory.M
 }
 
