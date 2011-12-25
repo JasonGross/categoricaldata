@@ -38,6 +38,9 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
       override def apply(o: sourceCategory.O) = t(o)
     }
 
+    lazy val adjoinInitialObject = ???
+    lazy val adjoinTerminalObject = ??? // probably never used
+
   }
 
   class CosliceCategory(onLeft: functor.target.O) extends super.CosliceCategory(onLeft) with FinitelyGeneratedCategory[cSC] { cosliceCategory: cSC =>
@@ -74,5 +77,9 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
       override def apply(o: sourceCategory.O) = t(o)
     }
 
+    lazy val adjoinInitialObject = ??? // probably never used
+    lazy val adjoinTerminalObject = ???
   }
+  
+  def adjoinTerminalObject = ???
 }

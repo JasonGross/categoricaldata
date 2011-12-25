@@ -26,7 +26,7 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override def target(m: Path) = m.target
   override def identity(o: Box) = o.identity
 
-  def opposite = new Ontology with Opposite
+//  def opposite = new Ontology with Opposite
 
   override def equals(other: Any) = {
     other match {

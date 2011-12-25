@@ -6,23 +6,23 @@ trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]]
 
   def generators(source: O, target: O): List[M]
 
-  trait Opposite { opposite: C =>
-    override type O = self.O
-    override type M = self.M
-
-    // reverse all the levels!
-    override def objectsAtLevel(k: Int) = self.objectsAtLevel(-k)
-    override def generators(source: O, target: O) = self.generators(target, source)
-
-    override def source(m: M) = self.target(m)
-    override def target(m: M) = self.source(m)
-    override def compose(m1: M, m2: M) = self.compose(m2, m1)
-  }
+//  trait Opposite { opposite: C =>
+//    override type O = self.O
+//    override type M = self.M
+//
+//    // reverse all the levels!
+//    override def objectsAtLevel(k: Int) = self.objectsAtLevel(-k)
+//    override def generators(source: O, target: O) = self.generators(target, source)
+//
+//    override def source(m: M) = self.target(m)
+//    override def target(m: M) = self.source(m)
+//    override def compose(m1: M, m2: M) = self.compose(m2, m1)
+//  }
 
   /**
    * Implementing opposite should be easy; generally just write "def opposite = new C with Opposite", replacing C as appropriate.
    */
-  def opposite: C
+//  def opposite: C
 }
 
 trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends LocallyFinitelyGeneratedCategory[C] { self: C =>
@@ -52,10 +52,10 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
-  trait Opposite extends super.Opposite { opposite: C =>
-    override val minimumLevel = self.maximumLevel
-    override val maximumLevel = self.minimumLevel
-  }
+//  trait Opposite extends super.Opposite { opposite: C =>
+//    override val minimumLevel = self.maximumLevel
+//    override val maximumLevel = self.minimumLevel
+//  }
 
   trait WithTerminalObject extends FinitelyGeneratedCategory[C] with TerminalObject[O, M] { terminal: C =>
     override type O = self.O

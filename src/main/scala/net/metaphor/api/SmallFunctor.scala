@@ -26,9 +26,6 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
 
     def opposite = ??? // new SliceCategory(onRight) with Opposite
 
-    lazy val adjoinInitialObject = ???
-    lazy val adjoinTerminalObject = ???
-
   }
 
   abstract class CosliceCategory(onLeft: smallFunctor.target.O) extends LocallyFinitelyGeneratedCategory[cSC] { cosliceCategory: cSC =>
@@ -52,8 +49,6 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
 
     def opposite = ??? // new CosliceCategory(onLeft) with Opposite
 
-    lazy val adjoinInitialObject = ???
-    lazy val adjoinTerminalObject = ???
   }
 
   abstract class SliceFunctor extends HeteroFunctor[C, source.CategoriesOver[SC]] { sliceFunctor =>
