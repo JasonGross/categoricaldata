@@ -56,20 +56,20 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
     lazy val adjoinTerminalObject = ???
   }
 
-  abstract class SliceFunctor extends HeteroFunctor[C, target.CategoriesOver[SC]] { sliceFunctor =>
+  abstract class SliceFunctor extends HeteroFunctor[C, source.CategoriesOver[SC]] { sliceFunctor =>
     override val source: smallFunctor.target.type = smallFunctor.target
-    override val target = smallFunctor.target.categoriesOver[SC]
+    override val target = smallFunctor.source.categoriesOver[SC]
     override def onObjects(s: source.O): target.O = new SliceCategoryOver(s)
     override def onMorphisms(m: source.M): target.M = new SliceFunctorOver(m)
 
-    class SliceCategoryOver(onRight: smallFunctor.target.O) extends smallFunctor.target.CategoryOver[SC] {
-      override val functor: smallFunctor.target.FunctorTo[SC] = new smallFunctor.target.FunctorTo[SC] {
+    class SliceCategoryOver(onRight: smallFunctor.target.O) extends smallFunctor.source.CategoryOver[SC] {
+      override val functor: smallFunctor.source.FunctorTo[SC] = new smallFunctor.source.FunctorTo[SC] {
         override val source = buildSliceCategory(onRight)
-        override def onObjects(o: source.O) = ???
-        override def onMorphisms(m: source.M) = ???
+        override def onObjects(o: source.ObjectLeftOf) = ???
+        override def onMorphisms(m: source.ObjectLeftOfMap) = ???
       }
     }
-    class SliceFunctorOver(m: smallFunctor.target.M) extends smallFunctor.target.FunctorOver[SC] {
+    class SliceFunctorOver(m: smallFunctor.target.M) extends smallFunctor.source.FunctorOver[SC] {
       override def source = onObjects(smallFunctor.target.source(m))
       override def target = onObjects(smallFunctor.target.target(m))
       override def functor = ???
@@ -79,20 +79,20 @@ trait SmallFunctor[C <: SmallCategory[C]] extends Functor[C] with SmallHeteroFun
 
   }
 
-  abstract class CosliceFunctor extends HeteroFunctor[C, target.CategoriesOver[cSC]] { cosliceFunctor =>
+  abstract class CosliceFunctor extends HeteroFunctor[C, source.CategoriesOver[cSC]] { cosliceFunctor =>
     override val source: smallFunctor.target.type = smallFunctor.target
-    override val target = smallFunctor.target.categoriesOver[cSC]
+    override val target = smallFunctor.source.categoriesOver[cSC]
     override def onObjects(s: source.O): target.O = new CosliceCategoryOver(s)
     override def onMorphisms(m: source.M): target.M = new CosliceFunctorOver(m)
 
-    class CosliceCategoryOver(onLeft: smallFunctor.target.O) extends smallFunctor.target.CategoryOver[cSC] {
-      override val functor: smallFunctor.target.FunctorTo[cSC] = new smallFunctor.target.FunctorTo[cSC] {
+    class CosliceCategoryOver(onLeft: smallFunctor.target.O) extends smallFunctor.source.CategoryOver[cSC] {
+      override val functor: smallFunctor.source.FunctorTo[cSC] = new smallFunctor.source.FunctorTo[cSC] {
         override val source = buildCosliceCategory(onLeft)
-        override def onObjects(o: source.O) = ???
-        override def onMorphisms(m: source.M) = ???
+        override def onObjects(o: source.ObjectRightOf) = ???
+        override def onMorphisms(m: source.ObjectRightOfMap) = ???
       }
     }
-    class CosliceFunctorOver(m: smallFunctor.target.M) extends smallFunctor.target.FunctorOver[cSC] {
+    class CosliceFunctorOver(m: smallFunctor.target.M) extends smallFunctor.source.FunctorOver[cSC] {
       override def source = onObjects(smallFunctor.target.source(m))
       override def target = onObjects(smallFunctor.target.target(m))
       override def functor = ???
