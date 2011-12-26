@@ -304,7 +304,6 @@ class Test extends FlatSpec with ShouldMatchers {
 //
 
   val Isomorphism = Ontology(
-
     objects = List("0", "1"),
     arrows = List(
       "0" --- "E01" --> "1",
@@ -315,7 +314,7 @@ class Test extends FlatSpec with ShouldMatchers {
         ("0")),
       (("1" --- "E10" --> "0" --- "E01" --> "1")
         ===
-        ("1"))))
+        ("1")))).assertFinite
 
   val PointedSet = Ontology(
     objects = List ("an element", "a pointed set"),
@@ -325,7 +324,7 @@ class Test extends FlatSpec with ShouldMatchers {
     relations = List (
       ("a pointed set" --- "has as chosen" --> "an element" --- "is in" --> "a pointed set")
         ===
-        ("a pointed set")))
+        ("a pointed set"))).assertFinite
   
   val E2 = Ontology( 
 	objects = List ("0", "1"),

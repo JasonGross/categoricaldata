@@ -133,7 +133,11 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
  //TODO: Change assertGraph to assertFree
   def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic
   def assertGraph: Ontology with Ontologies.Graph = new OntologyWrapper(this) with Ontologies.Graph
-}
+  def assertFinite: Ontology with Ontologies.Finite = new OntologyWrapper(this) with Ontologies.Finite {
+    def maximumWordLength(s: O, t:O) = ???
+    def normalForm(m: M) = ???
+  }
+ }
 
 private class OntologyWrapper(val o: Ontology) extends Ontology {
   override type O = o.O
@@ -148,6 +152,7 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
 
 object Ontologies extends FinitelyPresentedCategories[Ontology] {
   trait Finite extends net.metaphor.api.FiniteMorphisms[Ontology] with Ontology { self =>
+    // FIXME check that we're actually finite
   }
 
   trait Acyclic extends net.metaphor.api.Acyclic[Ontology] with Finite { self: Ontology =>
