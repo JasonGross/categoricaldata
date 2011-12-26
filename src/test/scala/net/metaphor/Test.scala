@@ -175,8 +175,8 @@ class Test extends FlatSpec with ShouldMatchers {
 
 //  def TerminalDataset(c: Ontology) = Dataset(
 //    source = c,
-//    onObjects = Map(for (b <- c.boxes) yield (b.name -> List("witness" + b.name))),
-//    onMorphisms = Map(for (a <- c.arrows) yield {
+//    onObjects = (for (b <- c.objects) yield (b.name -> List("witness" + b.name))).toMap,
+//    onMorphisms = (for (a <- c.arrows) yield {
 //      Map((a.source.name --- a.name --> a.target.name) ->
 //        Map("witness" + a.source.name -> "witness" + a.target.name))
 //    }))
@@ -335,7 +335,9 @@ class Test extends FlatSpec with ShouldMatchers {
   //           "succMIT" -> "succMIT")))
   //           
 
-  val IntegersMod2Groupoid = Ontology(
+
+  val Isomorphism = ontology(
+
     objects = List("0", "1"),
     arrows = List(
       "0" --- "next" --> "1",
