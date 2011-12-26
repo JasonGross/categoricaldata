@@ -1,17 +1,20 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-trait SolvableWordProblem[C <: FinitelyPresentedCategory[C]] { self: C =>
-  def normalForm(m: self.M): self.M
+trait NormalForm[C <: FinitelyPresentedCategory[C]] { self: C =>
+  def normalForm(p: self.Path): self.Path
 
-  def normalWordsOfLength(k: Int)(source: self.O, target: self.O): List[self.M] = {
+  def normalWordsOfLength(k: Int)(source: self.O, target: self.O): List[self.Path] = {
     wordsOfLength(k)(source, target).filter(inNormalForm _)
   }
 
-  def inNormalForm(m: self.M) = m == normalForm(m)
+  def inNormalForm(p: self.Path) = p == normalForm(p)
+  override def pathEquality (p1:self.Path, p2:self.Path) = { 
+    normalForm(p1)==normalForm(p2)
+  }
 }
 
-trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends SolvableWordProblem[C] { self: C =>
+trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends NormalForm[C] { self: C =>
   // TODO How would instances arise, which aren't acyclic?
   // We'd need a proof there are only finitely many loops/relations
 
@@ -38,7 +41,7 @@ trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends SolvableWordPro
 trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { self: C =>
   def verifyAcyclicity: Boolean = {
     for (w <- allNontrivialWords) {
-      if (source(w) == target(w)) return false
+      if (w.source == w.target) return false
     }
     return true
   }

@@ -1,33 +1,25 @@
 package net.metaphor.api
 
 case class Box(name: String) {
-  def identity = Path(this, Nil)
 }
 
 case class Arrow(source: Box, target: Box, name: String) {
-  def asPath = Path(source, List(this))
 }
 
-case class Path(source: Box, arrows: List[Arrow]) {
-  def target = arrows.lastOption.map(_.target).getOrElse(source)
-
-  override def toString = source.name + (for (a <- arrows) yield " --- " + a.name + " ---> " + a.target).mkString
-}
+//case class Path(source: Box, arrows: List[Arrow]) {
+//  def target = arrows.lastOption.map(_.target).getOrElse(source)
+//
+//  override def toString = source.name + (for (a <- arrows) yield " --- " + a.name + " --> " + a.target).mkString
+//}
 
 trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override type O = Box
-  override type M = Path
+  override type G = Arrow
 
-  override def compose(m1: Path, m2: Path) = {
-    require(m2.source == m1.target)
-    Path(m1.source, m1.arrows ::: m2.arrows)
-  }
-  override def source(m: Path) = m.source
-  override def target(m: Path) = m.target
-  override def identity(o: Box) = o.identity
 
 //  def opposite = new Ontology with Opposite
 
+  // TODO pull this up
   override def equals(other: Any) = {
     other match {
       case other: Ontology => {
@@ -78,12 +70,12 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
 
   override lazy val adjoinTerminalObject: TerminalObjectAdjoined = new Ontology with TerminalObjectAdjoined {
     val terminalObject = Box("*")
-    def morphismFrom(o: O) = Arrow(o, terminalObject, "*").asPath
+    def morphismFrom(o: O) = Arrow(o, terminalObject, "*")
 
   }
   override lazy val adjoinInitialObject: InitialObjectAdjoined = new Ontology with InitialObjectAdjoined {
     val initialObject = Box(".")
-    def morphismTo(o: O) = Arrow(initialObject, o, ".").asPath
+    def morphismTo(o: O) = Arrow(initialObject, o, ".")
   }
 
   trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
