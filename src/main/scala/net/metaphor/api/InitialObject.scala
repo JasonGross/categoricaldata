@@ -1,8 +1,8 @@
 package net.metaphor.api
 
-object InitialObject {
-  implicit def InitialObjectToObject[O, M](i: InitialObject[O, M]) = i.initialObject
-}
+//object InitialObject {
+//  implicit def InitialObjectToObject[O, M](i: InitialObject[O, M]) = i.initialObject
+//}
 object TerminalObject {
   implicit def TerminalObjectToObject[O, M](i: TerminalObject[O, M]) = i.terminalObject
 }

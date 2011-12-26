@@ -12,9 +12,9 @@ trait FinitelyPresentedCategory[C <: FinitelyPresentedCategory[C]] extends Finit
   override def hashCode: Int = ???
   override def equals(other: Any): Boolean = ???
 
-  trait Opposite extends super.Opposite { opposite: C =>
-    override def relations(source: O, target: O) = self.relations(target, source)
-  }
+//  trait Opposite extends super.Opposite { opposite: C =>
+//    override def relations(source: O, target: O) = self.relations(target, source)
+//  }
 
   trait WithTerminalObject extends super.WithTerminalObject { terminal: C =>
     def relations(source: O, target: O) = {

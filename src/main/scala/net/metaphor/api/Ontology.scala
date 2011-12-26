@@ -9,7 +9,7 @@ case class Arrow(source: Box, target: Box, name: String) {
 }
 
 case class Path(source: Box, arrows: List[Arrow]) {
-  def target = arrows.last.target
+  def target = arrows.lastOption.map(_.target).getOrElse(source)
 
   override def toString = source.name + (for (a <- arrows) yield " --- " + a.name + " ---> " + a.target).mkString
 }
@@ -26,7 +26,7 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override def target(m: Path) = m.target
   override def identity(o: Box) = o.identity
 
-  def opposite = new Ontology with Opposite
+//  def opposite = new Ontology with Opposite
 
   override def equals(other: Any) = {
     other match {
