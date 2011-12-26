@@ -19,6 +19,9 @@ import net.metaphor.api.Ontologies
 class Test extends FlatSpec with ShouldMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
+  
+  		 
+      
 
   val Grph = Ontology(
     objects = List("an edge", "a vertex"),
@@ -165,7 +168,9 @@ class Test extends FlatSpec with ShouldMatchers {
 
   val TerminalCategory = Ord(0)
 
-  // I fixed this up, but we need to talk about this in some detail!
+  // Scott says: I fixed this up, but we need to talk about this in some detail!
+  // David says: Yes, we should. I don't understand what's going on with Path(_, List(a)).
+  
   def TerminalFunctor(c: Ontology) = Translation(
     source = c,
     target = TerminalCategory,
@@ -197,6 +202,17 @@ class Test extends FlatSpec with ShouldMatchers {
   //      onMorphisms = for (a <- c.arrows) yield Map ((a.source.name --- a.name --> a.target.name) -> Map ()))
   //      
 
+//    def OppositeOntology (c: Ontology) = Ontology ( 
+//		  objects = c.objects
+//		  arrows = for (a <- c.arrows) yield {a.target --- a.name --> a.source} 
+//		  relations = ???)
+		  
+//def OppositeFunctor (f:Functor) = Functor( 
+//    source = OppositeOntology(f.source)
+//    target = OppositeOntology(f.target)
+//    onObjects = f.onObjects
+//    onMorphisms = for (???))
+    
   val SourceFunction = Translation(
     source = Ord1,
     target = Grph,
