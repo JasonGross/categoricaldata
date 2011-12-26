@@ -310,10 +310,10 @@ class Test extends FlatSpec with ShouldMatchers {
 //    target = DiscreteDynamicalSystem,
 //    onObjects = Map(
 //      "an edge" -> "an element",
-//      "a vertex" -> "a vertex"),
+//      "a vertex" -> "an element"),
 //    onMorphisms = Map(
-//      ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
-//      ("an edge" --- "has as target" --> "a vertex") -> ("an element")))
+//      ("an edge" --- "has as source" --> "a vertex") -> ("an element" --- "has as successor" --> "an element"),
+//      ("an edge" --- "has as target" --> "a vertex") -> ("an element".identity)))
 
   val IntegersMod2Group = Ontology(
     objects = List("an element"),
