@@ -28,4 +28,8 @@ trait Dataset extends FunctorToSet[Ontology] {
       "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
       "  onMorphisms = Map(\n" + (for (g <- source.allGenerators; g1 = this(g).toFunction) yield "    " + g.toString + " -> " + (g + (for (x <- this(g.source).toIterable) yield x -> g1(x)).toMap.toString)).mkString("\n") + "  )\n)"
   }
+  
+  // TODO define this recursively, and provide some way to let the user help out. 
+  def findIsomorphismsTo(other: Dataset): Iterable[Dataset] = ???
+  def isIsomorphicTo(other:Dataset) = findIsomorphismsTo(other).nonEmpty
 }

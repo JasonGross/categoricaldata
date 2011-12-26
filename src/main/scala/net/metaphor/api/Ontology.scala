@@ -130,7 +130,7 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
       def apply(o: Box) = t(o)
     }
   }
-
+ //TODO: Change assertGraph to assertFree
   def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic
   def assertGraph: Ontology with Ontologies.Graph = new OntologyWrapper(this) with Ontologies.Graph
 }

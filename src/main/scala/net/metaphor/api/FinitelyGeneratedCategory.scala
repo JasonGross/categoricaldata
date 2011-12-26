@@ -57,8 +57,10 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   //    override val maximumLevel = self.minimumLevel
   //  }
 
-  val adjoinTerminalObject: TerminalObjectAdjoined
-  val adjoinInitialObject: InitialObjectAdjoined
+  //TODO: relax the return type.
+  
+  val adjoinTerminalObject: TerminalObjectAdjoined// FinitelyGeneratedCategory[C] with TerminalObject[O, M]
+  val adjoinInitialObject: InitialObjectAdjoined//FinitelyGeneratedCategory[C] with InitialObject[O, M]
 
   trait TerminalObjectAdjoined extends FinitelyGeneratedCategory[C] with TerminalObject[O, M] { terminal: C =>
     override type O = self.O
@@ -179,7 +181,6 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
         }
       }
     }
-
   }
 
   // Contrary to appearance, these definitions are *not* redundant with those in SmallCategory.

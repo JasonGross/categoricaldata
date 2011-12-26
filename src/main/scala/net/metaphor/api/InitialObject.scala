@@ -16,3 +16,9 @@ trait TerminalObject[O, M] {
 	def morphismFrom(o: O): M
 }
 
+
+// TODO one day, TerminalObject should look like this:
+//trait TerminalObject[C <: Category[C]] { category: Category[C] => 
+//  def terminalObject: category.O
+//  def morphismFrom(o: category.O): category.M
+//}
