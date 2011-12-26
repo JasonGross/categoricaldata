@@ -39,6 +39,11 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
     }
 
     lazy val adjoinInitialObject = ???
+    // FIXME, get something like this to work?
+//      new ConcreteFinitelyGeneratedCategory with WithInitialObject[ConcreteFinitelyGeneratedCategory] {
+//      val initialObject = ???
+//      def morphismTo(o: O) = ???
+//    }
     lazy val adjoinTerminalObject = ??? // probably never used
 
   }
@@ -80,6 +85,4 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
     lazy val adjoinInitialObject = ??? // probably never used
     lazy val adjoinTerminalObject = ???
   }
-  
-  def adjoinTerminalObject = ???
 }

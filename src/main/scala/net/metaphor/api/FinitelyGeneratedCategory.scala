@@ -6,23 +6,23 @@ trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]]
 
   def generators(source: O, target: O): List[M]
 
-//  trait Opposite { opposite: C =>
-//    override type O = self.O
-//    override type M = self.M
-//
-//    // reverse all the levels!
-//    override def objectsAtLevel(k: Int) = self.objectsAtLevel(-k)
-//    override def generators(source: O, target: O) = self.generators(target, source)
-//
-//    override def source(m: M) = self.target(m)
-//    override def target(m: M) = self.source(m)
-//    override def compose(m1: M, m2: M) = self.compose(m2, m1)
-//  }
+  //  trait Opposite { opposite: C =>
+  //    override type O = self.O
+  //    override type M = self.M
+  //
+  //    // reverse all the levels!
+  //    override def objectsAtLevel(k: Int) = self.objectsAtLevel(-k)
+  //    override def generators(source: O, target: O) = self.generators(target, source)
+  //
+  //    override def source(m: M) = self.target(m)
+  //    override def target(m: M) = self.source(m)
+  //    override def compose(m1: M, m2: M) = self.compose(m2, m1)
+  //  }
 
   /**
    * Implementing opposite should be easy; generally just write "def opposite = new C with Opposite", replacing C as appropriate.
    */
-//  def opposite: C
+  //  def opposite: C
 }
 
 trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends LocallyFinitelyGeneratedCategory[C] { self: C =>
@@ -52,26 +52,29 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
-//  trait Opposite extends super.Opposite { opposite: C =>
-//    override val minimumLevel = self.maximumLevel
-//    override val maximumLevel = self.minimumLevel
-//  }
+  //  trait Opposite extends super.Opposite { opposite: C =>
+  //    override val minimumLevel = self.maximumLevel
+  //    override val maximumLevel = self.minimumLevel
+  //  }
 
-  trait WithTerminalObject extends FinitelyGeneratedCategory[C] with TerminalObject[O, M] { terminal: C =>
+  val adjoinTerminalObject: WithTerminalObject[C]
+  val adjoinInitialObject: WithInitialObject[C]
+
+  trait WithTerminalObject[D <: FinitelyGeneratedCategory[D]] extends FinitelyGeneratedCategory[D] with TerminalObject[O, M] { terminal: D =>
     override type O = self.O
     override type M = self.M
 
     def terminalObject: O
     def morphismFrom(o: O): M
 
-    val minimumLevel = self.minimumLevel
-    val maximumLevel = self.maximumLevel + 1
-    def objectsAtLevel(k: Int) = if (k == maximumLevel) {
+    override val minimumLevel = self.minimumLevel
+    override val maximumLevel = self.maximumLevel + 1
+    override def objectsAtLevel(k: Int) = if (k == maximumLevel) {
       List(terminalObject)
     } else {
       self.objectsAtLevel(k)
     }
-    def generators(source: O, target: O) = {
+    override def generators(source: O, target: O) = {
       if (target == terminalObject) {
         List(morphismFrom(source))
       } else {
@@ -80,22 +83,21 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
     }
 
   }
-  val adjoinTerminalObject: WithTerminalObject
-  trait WithInitialObject extends FinitelyGeneratedCategory[C] with InitialObject[O, M] { initial: C =>
+  trait WithInitialObject[D <: FinitelyGeneratedCategory[D]] extends FinitelyGeneratedCategory[D] with InitialObject[O, M] { initial: D =>
     override type O = self.O
     override type M = self.M
 
     def initialObject: O
     def morphismTo(o: O): M
 
-    val minimumLevel = self.minimumLevel - 1
-    val maximumLevel = self.maximumLevel
-    def objectsAtLevel(k: Int) = if (k == minimumLevel) {
+    override val minimumLevel = self.minimumLevel - 1
+    override val maximumLevel = self.maximumLevel
+    override def objectsAtLevel(k: Int) = if (k == minimumLevel) {
       List(initialObject)
     } else {
       self.objectsAtLevel(k)
     }
-    def generators(source: O, target: O) = {
+    override def generators(source: O, target: O) = {
       if (source == initialObject) {
         List(morphismTo(target))
       } else {
@@ -103,7 +105,6 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
       }
     }
   }
-  val adjoinInitialObject: WithInitialObject
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
     def colimit = functorsToSet.colimit(functorToSet)
@@ -192,22 +193,22 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
 
     def limit(functor: self.FunctorToSet): TerminalObject[functor.Cone, functor.ConeMap] = {
-      
+
       // this is where all the work happens.
       def concreteLimit[A](objects: Iterable[self.O], sets: self.O => Iterable[A], functions: self.O => (self.O => (A => Iterable[A]))): (Iterable[self.O => A], self.O => ((self.O => A) => A)) = {
-    
+
         val resultMaps = ???
         def resultFunctions(o: self.O)(map: self.O => A) = map(o)
-        
+
         (resultMaps, resultFunctions _)
       }
-      
+
       val (maps, functions) = concreteLimit(
-          objects,
-         { o: self.O => functor(o).toIterable },
+        objects,
+        { o: self.O => functor(o).toIterable },
         { s: self.O => { t: self.O => { a: Any => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
-      
-            val resultSet = new Set {
+
+      val resultSet = new Set {
         override def toIterable = maps
       }
       val resultFunctions: (self.O => Function) = { o: self.O =>
@@ -283,6 +284,42 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
 
   }
 
+}
+
+trait ConcreteFinitelyGeneratedCategory extends FinitelyGeneratedCategory[ConcreteFinitelyGeneratedCategory] {
+  type F = FunctorToSet
+  type T = NaturalTransformationToSet[FunctorToSet]
+  type CSets = FunctorsToSet
+  lazy val functorsToSet = ???
+  lazy val adjoinInitialObject = ???
+  lazy val adjoinTerminalObject = ???
+
+  override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[ConcreteFinitelyGeneratedCategory]): FunctorToSet = {
+    new FunctorToSet {
+      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
+      def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
+    }
+  }
+  override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[ConcreteFinitelyGeneratedCategory, FunctorToSet]): NaturalTransformationToSet[FunctorToSet] = {
+    new NaturalTransformationToSet[FunctorToSet] {
+      val source = liftFunctorToSet(t.source)
+      val target = liftFunctorToSet(t.target)
+      def apply(o: O) = t(o)
+    }
+  }
+}
+
+class FinitelyGeneratedCategoryWrapper[C <: FinitelyGeneratedCategory[C]](val c: FinitelyGeneratedCategory[C]) extends ConcreteFinitelyGeneratedCategory {
+  override type O = c.O
+  override type M = c.M
+  val maximumLevel = c.maximumLevel
+  val minimumLevel = c.minimumLevel
+  def objectsAtLevel(k: Int) = c.objectsAtLevel(k)
+  def generators(s: O, t: O) = c.generators(s, t)
+  def identity(o: O) = c.identity(o)
+  def source(m: M) = c.source(m)
+  def target(m: M) = c.target(m)
+  def compose(m1: M, m2: M) = c.compose(m1, m2)
 }
 
 trait FinitelyGeneratedCategories[C <: FinitelyGeneratedCategory[C]] /* extends Categories[O, M, C] */ { FGCAT =>

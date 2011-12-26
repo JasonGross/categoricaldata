@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-abstract class FunctorCategory[SC <: Category[SC], TC <: Category[TC], FC <: FunctorCategory[SC, TC, FC]](source: SC, target: TC) extends LargeCategory[FC] { self: FC =>
+abstract class FunctorCategory[SC <: Category[SC], TC <: Category[TC], FC <: FunctorCategory[SC, TC, FC]](source: SC, target: TC) extends Category[FC] { self: FC =>
   override type O <: HeteroFunctor[SC, TC]
   override type M <: HeteroNaturalTransformation[SC, TC, O]
   override def identity(o: O) = lift(new NaturalTransformation.IdentityHeteroNaturalTransformation(o))
