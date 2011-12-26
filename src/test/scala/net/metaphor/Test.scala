@@ -408,15 +408,15 @@ class Test extends FlatSpec with ShouldMatchers {
         "Item 3" -> "Top Drawer",
         "Item 4" -> "Top Drawer")))
 
-  "pullback" should "work (1)" in {
+  "pullback" should "work with the domain inclusion" in {
     Domain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet1)
   }
 
-  "pullback" should "work (2)" in {
+  "pullback" should "work with the codomain inclusion" in {
     Codomain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet2)
   }
 
-//  "pullback" should "work (3)" in {
+//  "pullback" should "work with the GraphToDiscreteDynamicalSystem1 functor" in {
 //    GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
 //  }
 
@@ -430,10 +430,10 @@ class Test extends FlatSpec with ShouldMatchers {
     TerminalFunctor(Ord(1)).__!(DavidsFunkyFunction) should equal(DavidsFunkySet2)
   }
 
-  //   "shriek" should "work (1)" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
-  //   }
-
+//   "shriek" should "work (1)" in {
+//	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
+//   }
+//
 //  "pushforward" should "work (2)" in {
 //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) should equal(DavidsFunkyDiscreteDynamicalSystem)
 //  }
@@ -442,25 +442,25 @@ class Test extends FlatSpec with ShouldMatchers {
   // For any functor F:C-->D, we have F^*(0)=0, F^*(1)=1, F_!(0)=0, F_*(1)=1.
   // I chose some random functor from above, TerminalCategoryToFiniteCyclicMonoid(10,7), and did the calculation there.
 
-  //   "pullback" should "work" in {
+  //   "pullback" should "preserve the initial dataset" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(InitialDataset(FiniteCyclicMonoid)) 
   //	   should equal 
   //	   (InitialDataset(TerminalCategory))
   //   }
   //   
-  //   "pullback" should "work" in {
+  //   "pullback" should "preserve the terminal dataset" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(TerminalDataset(FiniteCyclicMonoid)) 
   //	   should equal 
   //	   (TerminalDataset(TerminalCategory))
   //   }
   //   
-  //   "pushforward" should "work" in {
+  //   "pushforward" should "preserve the terminal dataset" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
   //	   should equal 
   //	   (TerminalDataset(FiniteCyclicMonoid(10,7)))
   //   }
   //   
-  //   "shriek" should "work" in {
+  //   "shriek" should "preserve the initialdataset" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__!(InitialDataset(TerminalCategory)) 
   //	   should equal 
   //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
