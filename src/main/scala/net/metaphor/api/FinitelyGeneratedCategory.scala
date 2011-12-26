@@ -57,10 +57,10 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   //    override val maximumLevel = self.minimumLevel
   //  }
 
-  val adjoinTerminalObject: WithTerminalObject[C]
-  val adjoinInitialObject: WithInitialObject[C]
+  val adjoinTerminalObject: TerminalObjectAdjoined[C]
+  val adjoinInitialObject: InitialObjectAdjoined[C]
 
-  trait WithTerminalObject[D <: FinitelyGeneratedCategory[D]] extends FinitelyGeneratedCategory[D] with TerminalObject[O, M] { terminal: D =>
+  trait TerminalObjectAdjoined[D <: FinitelyGeneratedCategory[D]] extends FinitelyGeneratedCategory[D] with TerminalObject[O, M] { terminal: D =>
     override type O = self.O
     override type M = self.M
 
@@ -82,7 +82,7 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
       }
     }
   }
-  trait WithInitialObject[D <: FinitelyGeneratedCategory[D]] extends FinitelyGeneratedCategory[D] with InitialObject[O, M] { initial: D =>
+  trait InitialObjectAdjoined[D <: FinitelyGeneratedCategory[D]] extends FinitelyGeneratedCategory[D] with InitialObject[O, M] { initial: D =>
     override type O = self.O
     override type M = self.M
 

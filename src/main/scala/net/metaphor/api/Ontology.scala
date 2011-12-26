@@ -76,12 +76,12 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   //      ???
   //    }
 
-  override lazy val adjoinTerminalObject: WithTerminalObject[Ontology] = new Ontology with WithTerminalObject[Ontology] {
+  override lazy val adjoinTerminalObject: TerminalObjectAdjoined[Ontology] = new Ontology with TerminalObjectAdjoined[Ontology] {
     val terminalObject = Box("*")
     def morphismFrom(o: O) = Arrow(o, terminalObject, "*").asPath
 
   }
-  override lazy val adjoinInitialObject: WithInitialObject[Ontology] = new Ontology with WithInitialObject[Ontology] {
+  override lazy val adjoinInitialObject: InitialObjectAdjoined[Ontology] = new Ontology with InitialObjectAdjoined[Ontology] {
     val initialObject = Box(".")
     def morphismTo(o: O) = Arrow(initialObject, o, ".").asPath
   }

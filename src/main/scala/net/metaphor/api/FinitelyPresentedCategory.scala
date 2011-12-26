@@ -16,7 +16,7 @@ trait FinitelyPresentedCategory[C <: FinitelyPresentedCategory[C]] extends Finit
 //    override def relations(source: O, target: O) = self.relations(target, source)
 //  }
 
-  trait WithTerminalObject[D <: FinitelyPresentedCategory[D]] extends super.WithTerminalObject[D] { terminal: D =>
+  trait TerminalObjectAdjoined[D <: FinitelyPresentedCategory[D]] extends super.TerminalObjectAdjoined[D] { terminal: D =>
     def relations(source: O, target: O) = {
       if (target == terminalObject) {
         ???
@@ -25,7 +25,7 @@ trait FinitelyPresentedCategory[C <: FinitelyPresentedCategory[C]] extends Finit
       }
     }
   }
-  trait WithInitialObject[D <: FinitelyPresentedCategory[D]] extends super.WithInitialObject[D] { initial: D =>
+  trait InitialObjectAdjoined[D <: FinitelyPresentedCategory[D]] extends super.InitialObjectAdjoined[D] { initial: D =>
     def relations(source: O, target: O) = {
       if (source == initialObject) {
         ???
