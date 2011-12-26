@@ -81,7 +81,6 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
         self.generators(source, target)
       }
     }
-
   }
   trait WithInitialObject[D <: FinitelyGeneratedCategory[D]] extends FinitelyGeneratedCategory[D] with InitialObject[O, M] { initial: D =>
     override type O = self.O
