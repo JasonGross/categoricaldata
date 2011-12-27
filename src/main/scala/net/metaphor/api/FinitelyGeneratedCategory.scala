@@ -1,5 +1,8 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
+import net.tqft.toolkit.collections.NonStrictIterable
+
+case class Path[O, G](source: O, target: O, morphisms: List[G])
 
 /**
  * A LocallyFinitelyGeneratedCategory may have infinitely many objects, but each object sits at some integer level,
@@ -12,32 +15,29 @@ import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
 trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]] extends SmallCategory[C] { self: C =>
   override type M = PathEquivalenceClass
+  type G
+
+  type Path = net.metaphor.api.Path[O, G]
 
   def objectsAtLevel(k: Int): List[O]
-
-  type G
 
   def source(g: G): O
   def target(g: G): O
   def generators(source: O, target: O): List[G]
 
-  implicit def generatorAsMorphism(g: G): M = PathEquivalenceClass(generatorAsPath(g))
-  implicit def generatorAsPath(g: G) = Path(source(g), List(g))
+  implicit def generatorAsPath(g: G) = Path(source(g), target(g), List(g))
+  implicit def pathAsMorphism(p: Path) = PathEquivalenceClass(p)
+  implicit def generatorAsMorphism(g: G): M = pathAsMorphism(generatorAsPath(g))
 
   override def compose(m1: M, m2: M) = {
     val p1 = m1.representative
     val p2 = m2.representative
     require(p1.target == p2.source)
-    PathEquivalenceClass(Path(p1.source, p1.morphisms ::: p2.morphisms))
+    PathEquivalenceClass(Path(p1.source, p2.target, p1.morphisms ::: p2.morphisms))
   }
   override def source(m: M): O = m.representative.source
   override def target(m: M): O = m.representative.target
-  override def identity(o: O) = PathEquivalenceClass(Path(o, Nil))
-
-  case class Path(source: O, morphisms: List[G]) {
-    def asMorphism = PathEquivalenceClass(this)
-    def target = morphisms.lastOption.map(self.target _).getOrElse(source)
-  }
+  override def identity(o: O) = PathEquivalenceClass(Path(o, o, Nil))
 
   case class PathEquivalenceClass(representative: Path) {
     override def equals(other: Any) {
@@ -85,9 +85,9 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
    */
   def wordsOfLength(k: Int)(source: O, target: O): List[Path] = {
     k match {
-      case 0 => List(Path(source, Nil))
+      case 0 => List(Path(source, source, Nil))
       case 1 => generators(source, target).map(generatorAsPath _)
-      case _ => for (g <- generatorsFrom(source); Path(_, morphisms) <- wordsOfLength(k - 1)(self.target(g), target)) yield Path(source, g :: morphisms)
+      case _ => for (g <- generatorsFrom(source); Path(_, _, morphisms) <- wordsOfLength(k - 1)(self.target(g), target)) yield Path(source, target, g :: morphisms)
     }
   }
 
@@ -160,6 +160,10 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   }
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
+    def onGenerator(g: G): Function
+    override def onMorphism(m: M) = m
+    
+    
     def colimit = functorsToSet.colimit(functorToSet)
     def colimitFunctor = colimit.initialObject.asInstanceOf[adjoinTerminalObject.FunctorToSet]
     def colimitSet = {
@@ -247,6 +251,14 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
     def limit(functor: self.FunctorToSet): TerminalObject[functor.Cone, functor.ConeMap] = {
       // this is where all the work happens.
       def concreteLimit[A](objects: Iterable[self.O], sets: self.O => Iterable[A], functions: self.O => (self.O => (A => Iterable[A]))): (Iterable[self.O => A], self.O => ((self.O => A) => A)) = {
+
+        //        def checkMapsOutOfObject(s: self.O)(map: Map[self.O, A]) = {
+        //          for(t <- map.keys)
+        //        }
+        //        
+        //        val successiveProducts = objects.scanLeft(NonStrictIterable(Map.empty[self.O, A]))({
+        //          (i,o) => for (m <- i; a <- sets(o)) yield m + (o -> a)
+        //        })
 
         val resultMaps = ???
         def resultFunctions(o: self.O)(map: self.O => A) = map(o)
