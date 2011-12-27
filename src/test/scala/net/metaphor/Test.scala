@@ -46,7 +46,7 @@ class Test extends FlatSpec with ShouldMatchers {
  
 
  
-  val DavidsFunkyDiscreteDynamicalSystem = Dataset(source = DiscreteDynamicalSystem,
+  val DavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
       "an element" -> List("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar")),
     onMorphisms = Map(
@@ -103,36 +103,6 @@ class Test extends FlatSpec with ShouldMatchers {
         "i" -> "A",
         "j" -> "C")))
 
-        // FIXME (Scott) Allow translations with infinite targets.
-  // Hmm, I've commented this out for now, as I'm only allowing Translations with finite targets.
-//  val GraphToDiscreteDynamicalSystem1 = Translation(
-//    source = Grph,
-//    target = DiscreteDynamicalSystem,
-//    onObjects = Map(
-//      "an edge" -> "an element",
-//      "a vertex" -> "an element"),
-//    onMorphisms = Map(
-//      ("an edge" --- "has as source" --> "a vertex") -> ("an element".identity),
-//      ("an edge" --- "has as target" --> "a vertex") -> ("an element" --- "has as successor" --> "an element")))
-
-      // TODO (David) this is broken; there's no object in DiscreteDynamicalSystem called "a vertex"
-//  val GraphToDiscreteDynamicalSystem2 = Translation(
-//    source = Grph,
-//    target = DiscreteDynamicalSystem,
-//    onObjects = Map(
-//      "an edge" -> "an element",
-//      "a vertex" -> "an element"),
-//    onMorphisms = Map(
-//      ("an edge" --- "has as source" --> "a vertex") -> ("an element" --- "has as successor" --> "an element"),
-//      ("an edge" --- "has as target" --> "a vertex") -> ("an element".identity)))
-
-  val IntegersMod2Group = Ontology(
-    objects = List("an element"),
-    arrows = List("an element" --- "is married to" --> "an element"),
-    relations = List(
-      ("an element" --- "is married to" --> "an element" --- "is married to" --> "an element")
-        ===
-        ("an element")))
 
         
         //TODO: Explain to David why FiniteCyclicMonoid is no good:
