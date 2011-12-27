@@ -30,48 +30,6 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
     "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
   }
 
-  /* TODO (David) toString needs to *return* a string, not print one.
-     */
-
-  /*
-     *  Here you're actually "overriding" an existing method (every Scala object comes with a predefined toString method,
-     *  but by default it isn't very useful). Whenever you override, it's good practice to write "override def" instead of just "def".
-     *  This tells the compiler to generate an error if, in fact, you're *not* overriding something.
-     *  
-     *  Moreover, once a method has the "override" keyword, anyone who later overrides it has to explicitly mark their method with "override".
-     *  The default "toString" already has the "override" keyword, so it's actually necessary here.
-     *  
-     *  I've added it for you, but try removing it to see the compile error.
-     */
-
-  //    override def toString() = {
-  //      println("Ontology")
-  //      println("Objects: ")
-  //      for (i <- objects) println(i)
-  //      println(); println("Arrows: ")
-  //      /*
-  //       * TODO (David) I commented the next line  out, as it wasn't compiling. You're looking for "allGenerators", rather than arrows. Remind me
-  //       * to give you a quick lesson on working out what methods are defined on which classes.  ---S
-  //       */
-  //      //      for (i <- arrows) println(i)
-  //
-  //      /*
-  //       *  Finally, I'm adding the next line (which just generates an exception, if the program ever gets to here, because
-  //       *  the toString method must return a String, and the compiler knows this and complains if it can't see a return value being generated.
-  //       */
-  //      ???
-  //    }
-
-  override lazy val adjoinTerminalObject: TerminalObjectAdjoined = new Ontology with TerminalObjectAdjoined {
-    val terminalObject = Box("*")
-    def generatorFrom(o: O) = Arrow(o, terminalObject, "*")
-
-  }
-  override lazy val adjoinInitialObject: InitialObjectAdjoined = new Ontology with InitialObjectAdjoined {
-    val initialObject = Box(".")
-    def generatorTo(o: O) = Arrow(initialObject, o, ".")
-  }
-
   trait Dataset extends FunctorToSet {
     override def equals(other: Any): Boolean = {
       other match {

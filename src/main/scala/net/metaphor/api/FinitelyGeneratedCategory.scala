@@ -106,61 +106,6 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   //    override val minimumLevel = self.maximumLevel
   //    override val maximumLevel = self.minimumLevel
   //  }
-
-  //TODO: relax the return type.
-
-  val adjoinTerminalObject: TerminalObjectAdjoined // FinitelyGeneratedCategory[C] with TerminalObject[O, M]
-  val adjoinInitialObject: InitialObjectAdjoined //FinitelyGeneratedCategory[C] with InitialObject[O, M]
-
-  trait TerminalObjectAdjoined extends FinitelyGeneratedCategory[C] with TerminalObject[O, M] { terminal: C =>
-    override type O = self.O
-    override type G = self.G
-
-    def terminalObject: O
-    def generatorFrom(o: O): G
-    
-    override def morphismFrom(o: O) = self.generatorAsMorphism(generatorFrom(o))
-
-    override val minimumLevel = self.minimumLevel
-    override val maximumLevel = self.maximumLevel + 1
-    override def objectsAtLevel(k: Int) = if (k == maximumLevel) {
-      List(terminalObject)
-    } else {
-      self.objectsAtLevel(k)
-    }
-    override def generators(source: O, target: O) = {
-      if (target == terminalObject) {
-        List(generatorFrom(source))
-      } else {
-        self.generators(source, target)
-      }
-    }
-  }
-  trait InitialObjectAdjoined extends FinitelyGeneratedCategory[C] with InitialObject[O, M] { initial: C =>
-    override type O = self.O
-    override type G = self.G
-
-    def initialObject: O
-    def generatorTo(o: O): G
-
-    override def morphismTo(o: O) = self.generatorAsMorphism(generatorTo(o))
-
-    override val minimumLevel = self.minimumLevel - 1
-    override val maximumLevel = self.maximumLevel
-    override def objectsAtLevel(k: Int) = if (k == minimumLevel) {
-      List(initialObject)
-    } else {
-      self.objectsAtLevel(k)
-    }
-    override def generators(source: O, target: O) = {
-      if (source == initialObject) {
-        List(generatorTo(target))
-      } else {
-        self.generators(source, target)
-      }
-    }
-  }
-  
   
   trait FinitelyGeneratedFunctorTo[SC <: FinitelyGeneratedCategory[SC]] extends super.FunctorTo[SC]  with FunctorWithFinitelyGeneratedSource[SC, C] {
   }
@@ -307,44 +252,6 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
     def onGenerators(g: f.source.G): f.target.M
     override def onMorphisms(m: f.source.M) = f.target.compose(onObjects(f.source.source(m)), m.representative.morphisms.map(onGenerators _))
   }
-
-
-//
-//trait ConcreteFinitelyGeneratedCategory extends FinitelyGeneratedCategory[ConcreteFinitelyGeneratedCategory] {
-//  type F = FunctorToSet
-//  type T = NaturalTransformationToSet[FunctorToSet]
-//  type CSets = FunctorsToSet
-//  lazy val functorsToSet = ???
-//  lazy val adjoinInitialObject = ???
-//  lazy val adjoinTerminalObject = ???
-//
-//  override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[ConcreteFinitelyGeneratedCategory]): FunctorToSet = {
-//    new FunctorToSet {
-//      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
-//      def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
-//    }
-//  }
-//  override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[ConcreteFinitelyGeneratedCategory, FunctorToSet]): NaturalTransformationToSet[FunctorToSet] = {
-//    new NaturalTransformationToSet[FunctorToSet] {
-//      val source = liftFunctorToSet(t.source)
-//      val target = liftFunctorToSet(t.target)
-//      def apply(o: O) = t(o)
-//    }
-//  }
-//}
-//
-//class FinitelyGeneratedCategoryWrapper[C <: FinitelyGeneratedCategory[C]](val c: FinitelyGeneratedCategory[C]) extends ConcreteFinitelyGeneratedCategory {
-//  override type O = c.O
-//  override type G = c.G
-//  val maximumLevel = c.maximumLevel
-//  val minimumLevel = c.minimumLevel
-//  def objectsAtLevel(k: Int) = c.objectsAtLevel(k)
-//  def generators(s: O, t: O) = c.generators(s, t)
-//  def identity(o: O) = c.identity(o)
-//  def source(m: M) = c.source(m)
-//  def target(m: M) = c.target(m)
-//  def compose(m1: M, m2: M) = c.compose(m1, m2)
-//}
 
 trait FinitelyGeneratedCategories[C <: FinitelyGeneratedCategory[C]] /* extends Categories[O, M, C] */ { FGCAT =>
 }

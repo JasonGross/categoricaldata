@@ -15,26 +15,6 @@ trait FinitelyPresentedCategory[C <: FinitelyPresentedCategory[C]] extends Finit
 //  trait Opposite extends super.Opposite { opposite: C =>
 //    override def relations(source: O, target: O) = self.relations(target, source)
 //  }
-
-  trait TerminalObjectAdjoined extends super.TerminalObjectAdjoined { terminal: C =>
-    def relations(source: O, target: O) = {
-      if (target == terminalObject) {
-        ???
-      } else {
-        self.relations(source, target)
-      }
-    }
-  }
-  trait InitialObjectAdjoined extends super.InitialObjectAdjoined { initial: C =>
-    def relations(source: O, target: O) = {
-      if (source == initialObject) {
-        ???
-      } else {
-        self.relations(source, target)
-      }
-    }
-  }
-
 }
 
 trait FinitelyPresentedCategories[C <: FinitelyPresentedCategory[C]] extends FinitelyGeneratedCategories[C] { FPCAT =>
