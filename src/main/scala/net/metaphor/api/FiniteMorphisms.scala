@@ -2,15 +2,15 @@ package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
 trait NormalForm[C <: FinitelyPresentedCategory[C]] { self: C =>
-  def normalForm(p: self.Path): self.Path
+  def normalForm(p: Path): Path
 
-  def normalWordsOfLength(k: Int)(source: self.O, target: self.O): List[self.Path] = {
+  def normalWordsOfLength(k: Int)(source: self.O, target: self.O): List[Path] = {
     wordsOfLength(k)(source, target).filter(inNormalForm _)
   }
 
-  def inNormalForm(p: self.Path) = p == normalForm(p)
-  override def pathEquality (p1:self.Path, p2:self.Path) = { 
-    normalForm(p1)==normalForm(p2)
+  def inNormalForm(p: Path) = p == normalForm(p)
+  override def pathEquality(p1: self.Path, p2: self.Path) = {
+    normalForm(p1) == normalForm(p2)
   }
 }
 
@@ -23,19 +23,22 @@ trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends NormalForm[C] {
   def normalWords(source: self.O, target: self.O) = (for (k <- 0 to maximumWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
 
   // FIXME uncomment this!
-//    lazy val yoneda = new HeteroFunctor[C, CSets] {
-//      override def source = self
-//      override def target = functorsToSet
-//      override def onObjects(s: self.O) = liftFunctorToSet(new FunctorToSet {
-//        override def onObjects(t: O) = normalWords(s, t)
-//        override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
-//      })
-//     override def onMorphisms(m: self.M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
-//        override def source = onObjects(self.source(m))
-//        override def target = onObjects(self.target(m))
-//        override def apply(o: O) = ???
-//      })
-//    }
+  //    lazy val yoneda = new HeteroFunctor[C, CSets] {
+  //      override def source = self
+  //      override def target = functorsToSet
+  //      override def onObjects(s: self.O) = liftFunctorToSet(new FunctorToSet {
+  //        override def onObjects(t: O) = normalWords(s, t)
+  //        override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
+  //      })
+  //     override def onMorphisms(m: self.M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
+  //        override def source = onObjects(self.source(m))
+  //        override def target = onObjects(self.target(m))
+  //        override def apply(o: O) = ???
+  //      })
+  //    }
+  
+    override def normalForm(p: Path): Path = ???
+
 }
 
 trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { self: C =>
@@ -49,7 +52,7 @@ trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { se
   require(verifyAcyclicity)
 
   override def maximumWordLength(source: O, target: O): Int = ???
-  override def normalForm(m: M): M = ???
+  override def normalForm(p: Path): Path = ???
 }
 
 trait Graph[C <: FinitelyPresentedCategory[C]] { self: C =>
@@ -57,5 +60,5 @@ trait Graph[C <: FinitelyPresentedCategory[C]] { self: C =>
 }
 
 trait AcyclicGraph[C <: FinitelyPresentedCategory[C]] extends Graph[C] with Acyclic[C] { self: C =>
-  override def normalForm(m: M) = m
+  override def normalForm(p: Path) = p
 }

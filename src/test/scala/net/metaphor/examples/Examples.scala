@@ -1,5 +1,6 @@
 package net.metaphor.examples
 import net.metaphor.api.Ontology
+import net.metaphor.api.Ontologies
 
 object Examples {
 
@@ -121,7 +122,7 @@ object Examples {
     source = c,
     target = TerminalCategory,
     onObjects = (for (b <- c.objects) yield (b.name -> "V0")).toMap,
-    onMorphisms = (for (Path(_, List(a)) <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) -> stringAsPath("V0")).toMap //
+    onMorphisms = (for (a <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) -> stringAsPath("V0")).toMap //
     )
 
 //  def TerminalDataset(c: Ontology) = Dataset(

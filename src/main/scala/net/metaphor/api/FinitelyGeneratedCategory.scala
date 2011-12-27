@@ -40,7 +40,7 @@ trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]]
   override def identity(o: O) = PathEquivalenceClass(Path(o, o, Nil))
 
   case class PathEquivalenceClass(representative: Path) {
-    override def equals(other: Any) {
+    override def equals(other: Any) = {
       other match {
         case PathEquivalenceClass(otherRepresentative) => pathEquality(representative, otherRepresentative)
         case _ => false
@@ -115,10 +115,11 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   trait TerminalObjectAdjoined extends FinitelyGeneratedCategory[C] with TerminalObject[O, M] { terminal: C =>
     override type O = self.O
     override type G = self.G
-    override type M = self.M
 
     def terminalObject: O
     def generatorFrom(o: O): G
+    
+    override def morphismFrom(o: O) = self.generatorAsMorphism(generatorFrom(o))
 
     override val minimumLevel = self.minimumLevel
     override val maximumLevel = self.maximumLevel + 1
@@ -138,10 +139,11 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   trait InitialObjectAdjoined extends FinitelyGeneratedCategory[C] with InitialObject[O, M] { initial: C =>
     override type O = self.O
     override type G = self.G
-    override type M = self.M
 
     def initialObject: O
     def generatorTo(o: O): G
+
+    override def morphismTo(o: O) = self.generatorAsMorphism(generatorTo(o))
 
     override val minimumLevel = self.minimumLevel - 1
     override val maximumLevel = self.maximumLevel
@@ -160,8 +162,8 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   }
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    def onGenerator(g: G): Function
-    override def onMorphism(m: M) = m
+    def onGenerators(g: G): Function
+    override def onMorphisms(m: M) = m.representative.morphisms.map(onGenerators _).fold(Sets.identity(onObjects(self.source(m))))(Sets.compose _)
     
     
     def colimit = functorsToSet.colimit(functorToSet)
@@ -188,11 +190,11 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
           functorToSet(o)
         }
       }
-      override def onMorphisms(m: M): Function = {
-        if (self.target(m) == adjoinTerminalObject.terminalObject) {
-          mapToTerminalSet(self.source(m))
+      override def onGenerators(g: G): Function = {
+        if (self.target(g) == adjoinTerminalObject.terminalObject) {
+          mapToTerminalSet(self.source(g))
         } else {
-          functorToSet(m)
+          functorToSet(g)
         }
       }
     }
@@ -218,11 +220,11 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
           functorToSet(o)
         }
       }
-      override def onMorphisms(m: M): Function = {
-        if (self.target(m) == adjoinInitialObject.initialObject) {
-          mapFromInitialSet(self.source(m))
+      override def onGenerators(g: G): Function = {
+        if (self.target(g) == adjoinInitialObject.initialObject) {
+          mapFromInitialSet(self.source(g))
         } else {
-          functorToSet(m)
+          functorToSet(g)
         }
       }
     }

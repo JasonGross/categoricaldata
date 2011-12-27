@@ -15,9 +15,12 @@ case class Arrow(source: Box, target: Box, name: String) {
 trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override type O = Box
   override type G = Arrow
-
-
-//  def opposite = new Ontology with Opposite
+  
+  override def source(g: G) = g.source
+  override def target(g: G) = g.target
+  
+  
+  //  def opposite = new Ontology with Opposite
 
   // TODO pull this up
   override def equals(other: Any) = {
@@ -70,15 +73,50 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
 
   override lazy val adjoinTerminalObject: TerminalObjectAdjoined = new Ontology with TerminalObjectAdjoined {
     val terminalObject = Box("*")
-    def morphismFrom(o: O) = ontology.generatorAsMorphism(Arrow(o, terminalObject, "*"))
+    def generatorFrom(o: O) = Arrow(o, terminalObject, "*")
 
   }
   override lazy val adjoinInitialObject: InitialObjectAdjoined = new Ontology with InitialObjectAdjoined {
     val initialObject = Box(".")
-    def morphismTo(o: O) = ontology.generatorAsMorphism(Arrow(initialObject, o, "."))
+    def generatorTo(o: O) = Arrow(initialObject, o, ".")
   }
 
-  trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
+  trait Dataset extends FunctorToSet with net.metaphor.api.Dataset {
+    override def equals(other: Any): Boolean = {
+      other match {
+        case other: Dataset => {
+          if (source != other.source) return false
+          for (o <- source.objects) if (this(o) != other(o)) return false
+          for (
+            g <- source.allGenerators;
+            m1 = source.generatorAsMorphism(g);
+            m2 = other.source.generatorAsMorphism(g);
+            g1 = this(m1).toFunction;
+            g2 = other(m2).toFunction;
+            x <- this(source.source(g)).toIterable
+          ) {
+            if (g1(x) != g2(x)) return false
+          }
+          true
+        }
+        case _ => false
+      }
+    }
+
+    override def hashCode = ???
+
+    override def toString = {
+      "Dataset(\n" +
+        "  source = " + source + ", \n" +
+        "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
+        "  onMorphisms = Map(\n" + (for (g <- source.allGenerators; m = source.generatorAsMorphism(g); g1 = this(m).toFunction) yield "    " + m.toString + " -> " + (m + (for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)).mkString("\n") + "  )\n)"
+    }
+
+    // TODO define this recursively, and provide some way to let the user help out. 
+    def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = ???
+    def isIsomorphicTo(other: Dataset) = findIsomorphismsTo(other).nonEmpty
+
+  }
   trait Datamap extends NaturalTransformationToSet[Dataset] with net.metaphor.api.Datamap[Dataset]
 
   override type F = Dataset
@@ -91,8 +129,8 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
       case _ => {
         require(f.source == ontology)
         new Dataset {
-          def onObjects(o: O) = f(o)
-          def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
+          override def onObjects(o: O) = f(o)
+          override def onGenerators(g: G) = f(g.asInstanceOf[f.source.M])
         }
       }
     }
@@ -103,9 +141,9 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
       case _ => {
         require(t.sourceCategory == ontology)
         new Datamap {
-          val source = liftFunctorToSet(t.source)
-          val target = liftFunctorToSet(t.target)
-          def apply(o: Box) = t(o)
+          override val source = liftFunctorToSet(t.source)
+          override val target = liftFunctorToSet(t.target)
+          override def apply(o: Box) = t(o)
         }
       }
     }
@@ -122,18 +160,18 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
       def apply(o: Box) = t(o)
     }
   }
- //TODO: Change assertGraph to assertFree
+  //TODO: Change assertGraph to assertFree
   def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic
   def assertGraph: Ontology with Ontologies.Graph = new OntologyWrapper(this) with Ontologies.Graph
   def assertFinite: Ontology with Ontologies.Finite = new OntologyWrapper(this) with Ontologies.Finite {
-    def maximumWordLength(s: O, t:O) = ???
+    def maximumWordLength(s: O, t: O) = ???
     def normalForm(m: M) = ???
   }
- }
+}
 
 private class OntologyWrapper(val o: Ontology) extends Ontology {
   override type O = o.O
-  override type M = o.M
+  override type G = o.G
 
   val minimumLevel = o.minimumLevel
   val maximumLevel = o.maximumLevel
@@ -143,8 +181,10 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
 }
 
 object Ontologies extends FinitelyPresentedCategories[Ontology] {
-  trait Finite extends net.metaphor.api.FiniteMorphisms[Ontology] with Ontology { self =>
+  trait Finite extends  Ontology with net.metaphor.api.FiniteMorphisms[Ontology] { self =>
     // FIXME check that we're actually finite
+    
+   
   }
 
   trait Acyclic extends net.metaphor.api.Acyclic[Ontology] with Finite { self: Ontology =>

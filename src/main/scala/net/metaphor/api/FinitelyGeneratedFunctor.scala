@@ -1,16 +1,18 @@
 package net.metaphor.api
 
 trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallFunctor[C] { fgFunctor =>
-  override type SC <: SliceCategory
-  override type cSC <: CosliceCategory
+  type SC <: SliceCategory
+  type cSC <: CosliceCategory
 
-  
   def onGenerators(g: source.G): target.M
   override def onMorphisms(m: source.M) = ???
-  
+
   class SliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory[SC] { sliceCategory: SC =>
     override type O = ObjectLeftOf
     override type G = ObjectLeftOfMap
+
+    def source(g: G) = g.source
+    def target(g: G) = g.target
 
     case class ObjectLeftOf(left: fgFunctor.source.O, morphism: fgFunctor.target.M) {
       require(fgFunctor.target.source(morphism) == fgFunctor.apply(left))
@@ -22,7 +24,6 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
       require(fgFunctor.target.compose(fgFunctor.onGenerators(generator), target.morphism) == source.morphism)
     }
 
-    
     def opposite = ??? // new SliceCategory(onRight) with Opposite
     def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
       for (
@@ -33,9 +34,9 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
     }
     val minimumLevel: Int = fgFunctor.source.minimumLevel
     val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
-    
+
     def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
-    import fgFunctor.source.generatorAsMorphism 
+      import fgFunctor.source.generatorAsMorphism
       for (g <- fgFunctor.source.generators(source.left, target.left); if fgFunctor.target.compose(fgFunctor.apply(g), target.morphism) == source.morphism) yield {
         ObjectLeftOfMap(source, target, g)
       }
@@ -46,22 +47,28 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
     type F = FunctorToSet
     type T = NaturalTransformationToSet[FunctorToSet]
 
-    override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[SC]): FunctorToSet = new FunctorToSet {
-      override def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
-      override def onMorphisms(m: source.M) = f(m.asInstanceOf[f.source.M])
+    override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[SC]): FunctorToSet = {
+      require(f.source == fgFunctor.source)
+      new FunctorToSet {
+        override def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
+        override def onGenerators(g: source.G) = f(f.source.generatorAsMorphism(g.asInstanceOf[f.source.G]))
+      }
     }
-    override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[SC, F]): NaturalTransformationToSet[FunctorToSet] = new NaturalTransformationToSet[FunctorToSet] {
-      override val source = t.source
-      override val target = t.target
-      override def apply(o: sourceCategory.O) = t(o)
+    override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[SC, F]): NaturalTransformationToSet[FunctorToSet] = {
+      require(t.sourceCategory == fgFunctor.source)
+      new NaturalTransformationToSet[FunctorToSet] {
+        override val source = t.source
+        override val target = t.target
+        override def apply(o: sourceCategory.O) = t(o)
+      }
     }
 
     lazy val adjoinInitialObject = ???
-//      FIXME, get something like this to work?
-//      new ConcreteFinitelyGeneratedCategory with WithInitialObject[ConcreteFinitelyGeneratedCategory] {
-//      val initialObject = ???
-//      def morphismTo(o: O) = ???
-//    }
+    //      FIXME, get something like this to work?
+    //      new ConcreteFinitelyGeneratedCategory with WithInitialObject[ConcreteFinitelyGeneratedCategory] {
+    //      val initialObject = ???
+    //      def morphismTo(o: O) = ???
+    //    }
     lazy val adjoinTerminalObject = ??? // probably never used
 
   }
@@ -69,6 +76,9 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
   class CosliceCategory(onLeft: fgFunctor.target.O) extends FinitelyGeneratedCategory[cSC] { cosliceCategory: cSC =>
     override type O = ObjectRightOf
     override type G = ObjectRightOfMap
+
+    def source(g: G) = g.source
+    def target(g: G) = g.target
 
     case class ObjectRightOf(right: fgFunctor.source.O, morphism: fgFunctor.target.M) {
       require(fgFunctor.target.source(morphism) == onLeft)
@@ -80,7 +90,6 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
       require(fgFunctor.target.compose(source.morphism, fgFunctor.onGenerators(generator)) == target.morphism)
     }
 
- 
     def opposite = ??? // new CosliceCategory(onLeft) with Opposite
     def objectsAtLevel(k: Int): List[ObjectRightOf] = {
       for (
@@ -92,7 +101,7 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
     val minimumLevel: Int = fgFunctor.source.minimumLevel
     val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
     def generators(source: ObjectRightOf, target: ObjectRightOf): List[ObjectRightOfMap] = {
-      import fgFunctor.source.generatorAsMorphism 
+      import fgFunctor.source.generatorAsMorphism
       for (g <- fgFunctor.source.generators(source.right, target.right); if fgFunctor.target.compose(source.morphism, fgFunctor.apply(g)) == target.morphism) yield {
         ObjectRightOfMap(source, target, g)
       }
@@ -105,7 +114,7 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
 
     override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[cSC]): FunctorToSet = new FunctorToSet {
       override def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
-      override def onMorphisms(m: source.M) = f(m.asInstanceOf[f.source.M])
+      override def onGenerators(g: source.G) = f(g.asInstanceOf[f.source.M])
     }
     override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[cSC, F]): NaturalTransformationToSet[FunctorToSet] = new NaturalTransformationToSet[FunctorToSet] {
       override val source = t.source
@@ -116,8 +125,8 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
     lazy val adjoinInitialObject = ??? // probably never used
     lazy val adjoinTerminalObject = ???
   }
-  
-abstract class SliceFunctor extends HeteroFunctor[C, source.CategoriesOver[SC]] { sliceFunctor =>
+
+  abstract class SliceFunctor extends HeteroFunctor[C, source.CategoriesOver[SC]] { sliceFunctor =>
     override val source: fgFunctor.target.type = fgFunctor.target
     override val target = fgFunctor.source.categoriesOver[SC]
     override def onObjects(s: source.O): target.O = new SliceCategoryOver(s)
