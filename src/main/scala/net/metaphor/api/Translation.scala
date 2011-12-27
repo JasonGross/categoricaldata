@@ -28,7 +28,7 @@ trait FiniteTarget extends Translation { translation =>
       def onObjects(o: Box) = {
         slice(o).functor.pullback(i).limitSet
       }
-      def onMorphisms(m: Path) = ???
+      def onGenerators(g: translation.target.G) = ???
     }
     def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
       val source = onObjects(m.source)
@@ -41,7 +41,7 @@ trait FiniteTarget extends Translation { translation =>
       def onObjects(o: Box) = {
         coslice(o).functor.pullback(i).colimitSet
       }
-      def onMorphisms(m: Path) = ???
+      def onGenerators(m: translation.target.G) = ???
     }
     def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
       val source = onObjects(m.source)

@@ -7,7 +7,16 @@ trait Category[C <: Category[C]] { self: C =>
   def source(m: M): O
   def target(m: M): O
   def compose(m1: M, m2: M): M
+  def compose(m0: M, ms: M*): M = ms.fold(m0)(compose _)
+  def compose(o: O, ms: List[M]): M = {
+    ms match {
+      case Nil => identity(o)
+      case m :: Nil => m
+      case h :: t => compose(h, t:_*)
+    }
+  }
 
+  
   trait FunctorFrom[TC <: Category[TC]] extends HeteroFunctor[C, TC] {
     override val source: self.type = self
   }

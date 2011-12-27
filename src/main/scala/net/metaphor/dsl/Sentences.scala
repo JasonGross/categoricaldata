@@ -55,8 +55,8 @@ object Sentences {
 
     val minimumLevel = 0
     val maximumLevel = 0
-    def objectsAtLevel(k: Int) = if(k ==0)boxes else Nil
-    override def generators(source: Box, target: Box) = arrowMap(source, target).map(_.asPath)
+    def objectsAtLevel(k: Int) = if (k == 0) boxes else Nil
+    override def generators(source: Box, target: Box) = arrowMap(source, target)
     override def relations(source: Box, target: Box) = Nil // FIXME
   }
 
@@ -70,24 +70,23 @@ object Sentences {
       val t = target.objects.find(_.name == onObjects(s.name)).get
       s -> t
     }).toMap
-    private val morphismMap: Map[Arrow, Path] = (for (
-      p @ Path(sb, List(s)) <- source.allGenerators
+    private val morphismMap: Map[Arrow, target.M] = (for (
+      a <- source.allGenerators
     ) yield {
-      s -> Path(source = objectMap(sb),
-        arrows = for (StringArrow(ts, tp, to) <- onMorphisms(StringArrow(s.source.name, s.name, s.target.name)).arrows) yield {
-          target.allGenerators.map(_.arrows.head).find(a => a.source.name == ts && a.name == tp && a.target.name == to).get
-        })
+      val morphisms = for (StringArrow(ts, tp, to) <- onMorphisms(StringArrow(a.source.name, a.name, a.target.name)).arrows) yield {
+        target.generatorAsMorphism(target.allGenerators.find(a => a.source.name == ts && a.name == tp && a.target.name == to).get)
+      }
+      a -> target.compose(objectMap(source.generatorSource(a)), morphisms)
     }).toMap
 
     override def onObjects(o: Box) = objectMap(o)
-    override def onMorphisms(m: Path) = Path(objectMap(m.source), m.arrows.map(morphismMap(_)).map(_.arrows).flatten)
-
+    override def onGenerators(a: Arrow) = morphismMap(a)
   }
 
-//  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
-//    // construct a new translation object
-//    new ConcreteTranslation(source, target, onObjects, onMorphisms)
-//  }
+  //  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
+  //    // construct a new translation object
+  //    new ConcreteTranslation(source, target, onObjects, onMorphisms)
+  //  }
   def Translation(source: Ontology, target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation with FiniteTarget = {
     // construct a new translation object
     new ConcreteTranslation(source, target, onObjects, onMorphisms) with FiniteTarget
@@ -99,14 +98,14 @@ object Sentences {
       s -> onObjects(s.name)
     }).toMap
     val morphismMap = (for (
-      Path(sb, List(s)) <- source.allGenerators
+      a <- source.allGenerators
     ) yield {
-      s -> onMorphisms(StringArrow(s.source.name, s.name, s.target.name)).asInstanceOf[Any => Any]
+      a -> onMorphisms(StringArrow(a.source.name, a.name, a.target.name)).asInstanceOf[Any => Any]
     }).toMap
 
     new source.Dataset {
       override def onObjects(o: Box) = objectMap(o)
-      override def onMorphisms(m: Path) = m.arrows.map(morphismMap(_)).foldLeft(identity[Any] _)(_.andThen(_))
+      override def onGenerators(a: Arrow) = morphismMap(a)
     }
   }
 }

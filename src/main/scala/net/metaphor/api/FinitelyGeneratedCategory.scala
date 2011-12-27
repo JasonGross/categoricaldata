@@ -16,16 +16,16 @@ case class Path[O, G](source: O, target: O, morphisms: List[G])
 trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]] extends SmallCategory[C] { self: C =>
   override type M = PathEquivalenceClass
   type G
-
   type Path = net.metaphor.api.Path[O, G]
 
+  def generatorSource(g: G): O
+  def generatorTarget(g: G): O
+  
   def objectsAtLevel(k: Int): List[O]
 
-  def source(g: G): O
-  def target(g: G): O
   def generators(source: O, target: O): List[G]
 
-  implicit def generatorAsPath(g: G) = Path(source(g), target(g), List(g))
+  implicit def generatorAsPath(g: G) = Path(generatorSource(g), generatorTarget(g), List(g))
   implicit def pathAsMorphism(p: Path) = PathEquivalenceClass(p)
   implicit def generatorAsMorphism(g: G): M = pathAsMorphism(generatorAsPath(g))
 
@@ -160,10 +160,15 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
       }
     }
   }
-
+  
+  trait FinitelyGeneratedFunctorTo[SC <: FinitelyGeneratedCategory[SC]] extends super.FunctorTo[SC] {
+    def onGenerators(g: source.G): M
+    def onMorphisms(m: source.M) = compose(onObjects(source.source(m)), m.representative.morphisms.map(onGenerators _))
+  }
+  
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
     def onGenerators(g: G): Function
-    override def onMorphisms(m: M) = m.representative.morphisms.map(onGenerators _).fold(Sets.identity(onObjects(self.source(m))))(Sets.compose _)
+    override def onMorphisms(m: M) = Sets.compose(onObjects(self.source(m)), m.representative.morphisms.map(onGenerators _))
     
     
     def colimit = functorsToSet.colimit(functorToSet)

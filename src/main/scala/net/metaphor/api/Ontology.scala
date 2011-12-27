@@ -16,8 +16,8 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override type O = Box
   override type G = Arrow
   
-  override def source(g: G) = g.source
-  override def target(g: G) = g.target
+  override def generatorSource(g: G) = g.source
+  override def generatorTarget(g: G) = g.target
   
   
   //  def opposite = new Ontology with Opposite
