@@ -1,25 +1,16 @@
 package net.metaphor.api
 
-case class Box(name: String) {
-}
+case class Box(name: String)
 
-case class Arrow(source: Box, target: Box, name: String) {
-}
-
-//case class Path(source: Box, arrows: List[Arrow]) {
-//  def target = arrows.lastOption.map(_.target).getOrElse(source)
-//
-//  override def toString = source.name + (for (a <- arrows) yield " --- " + a.name + " --> " + a.target).mkString
-//}
+case class Arrow(source: Box, target: Box, name: String)
 
 trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
   override type O = Box
   override type G = Arrow
-  
+
   override def generatorSource(g: G) = g.source
   override def generatorTarget(g: G) = g.target
-  
-  
+
   //  def opposite = new Ontology with Opposite
 
   // TODO pull this up
@@ -81,10 +72,10 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
     def generatorTo(o: O) = Arrow(initialObject, o, ".")
   }
 
-  trait Dataset extends FunctorToSet with net.metaphor.api.Dataset {
+  trait Dataset extends FunctorToSet {
     override def equals(other: Any): Boolean = {
       other match {
-        case other: Dataset => {
+        case other: Ontology#Dataset => {
           if (source != other.source) return false
           for (o <- source.objects) if (this(o) != other(o)) return false
           for (
@@ -109,7 +100,14 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
       "Dataset(\n" +
         "  source = " + source + ", \n" +
         "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
-        "  onMorphisms = Map(\n" + (for (g <- source.allGenerators; m = source.generatorAsMorphism(g); g1 = this(m).toFunction) yield "    " + m.toString + " -> " + (m + (for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)).mkString("\n") + "  )\n)"
+        "  onMorphisms = Map(" + (if (source.allGenerators.nonEmpty) "\n" else "") +
+        (for (
+          g <- source.allGenerators;
+          m = source.generatorAsMorphism(g);
+          g1 = this(m).toFunction
+        ) yield {
+          "    " + m.toString + " -> " + (m + (for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
+        }).mkString("\n") + "  ))"
     }
 
     // TODO define this recursively, and provide some way to let the user help out. 
@@ -117,7 +115,7 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
     def isIsomorphicTo(other: Dataset) = findIsomorphismsTo(other).nonEmpty
 
   }
-  trait Datamap extends NaturalTransformationToSet[Dataset] with net.metaphor.api.Datamap[Dataset]
+  trait Datamap extends NaturalTransformationToSet[Dataset]
 
   override type F = Dataset
   override type T = Datamap
@@ -130,7 +128,7 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
         require(f.source == ontology)
         new Dataset {
           override def onObjects(o: O) = f(o)
-          override def onGenerators(g: G) = f(g.asInstanceOf[f.source.M])
+          override def onGenerators(g: G) = f(f.source.generatorAsMorphism(g))
         }
       }
     }
@@ -181,10 +179,9 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
 }
 
 object Ontologies extends FinitelyPresentedCategories[Ontology] {
-  trait Finite extends  Ontology with net.metaphor.api.FiniteMorphisms[Ontology] { self =>
+  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms[Ontology] { self =>
     // FIXME check that we're actually finite
-    
-   
+
   }
 
   trait Acyclic extends net.metaphor.api.Acyclic[Ontology] with Finite { self: Ontology =>

@@ -5,7 +5,7 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
   type cSC <: CosliceCategory
 
   def onGenerators(g: source.G): target.M
-  override def onMorphisms(m: source.M) = ???
+  override def onMorphisms(m: source.M) = target.compose(onObjects(source.source(m)), m.representative.morphisms.map(onGenerators _))
 
   class SliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory[SC] { sliceCategory: SC =>
     override type O = ObjectLeftOf
