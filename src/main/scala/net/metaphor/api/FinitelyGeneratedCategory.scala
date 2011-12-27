@@ -171,10 +171,13 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
         { s: self.O => { t: self.O => { a: Any => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
 
       val resultSet = new Set {
+        override def sizeIfFinite = Some(maps.size)
         override def toIterable = maps
       }
       val resultFunctions: (self.O => Function) = { o: self.O =>
         new Function {
+          override def source = ???
+            override def target = ???
           override def toFunction = functions(o).asInstanceOf[Any => Any]
         }
       }
@@ -221,10 +224,13 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
         { s: self.O => { t: self.O => { a: Any => for (g <- generators(s, t)) yield functor(g).toFunction(a) } } })
 
       val resultSet = new Set {
+        override def sizeIfFinite = Some(clumps.size)
         override def toIterable = clumps
       }
       val resultFunctions: (self.O => Function) = { o: self.O =>
         new Function {
+          override def source = ???
+          override def target = ???
           override def toFunction = functions(o)
         }
       }
