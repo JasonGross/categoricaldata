@@ -5,6 +5,7 @@ import net.tqft.toolkit.permutations.Permutations
 trait Set {
   def toIterable: Iterable[Any]
   def identity: Function = IdentityFunction(this)
+  
   override def equals(other: Any) = {
     other match {
       case other: Set => {
@@ -13,9 +14,11 @@ trait Set {
       case _ => false
     }
   }
+  
   /**
    * The default implementation calls sizeIfFinite, which may be expensive.
    */
+  
   def finite: Boolean = sizeIfFinite.nonEmpty
   def sizeIfFinite: Option[Int]
   def size: Int = sizeIfFinite.getOrElse(???)
@@ -24,7 +27,7 @@ trait Function { function =>
   def source: Set
   def target: Set
   def toFunction: Any => Any
-  def andThen(other: Function) = new Function {
+  def andThen[C](other: Function) = new Function {
     def source = function.source
     def target = other.target
     def toFunction = function.toFunction andThen other.toFunction
@@ -41,7 +44,7 @@ trait Function { function =>
     }
   }
 }
-case class IdentityFunction[A](set: Set) extends Function {
+case class IdentityFunction(set: Set) extends Function {
   override def source = set
   override def target = set
   override def toFunction = { a: Any => a }
@@ -58,18 +61,16 @@ object Function {
   }
 }
 }
+
 trait Sets extends Category[Sets] {
   type O = Set
   type M = Function
-}
-
-object Sets extends Sets {
   override def identity(set: Set) = set.identity
   override def source(f: Function) = f.source
   override def target(f: Function) = f.target
   override def compose(first: Function, second: Function) = first andThen second
   
-  def bijections(set1: Set, set2: Set) = {
+  def bijections(set1: Set, set2: Set): Set = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
       case (Some(k), Some(l)) if k == l => {
         val set2List = set2.toIterable.toList
@@ -84,3 +85,6 @@ object Sets extends Sets {
     }
   }
 }
+
+object Sets extends Sets
+

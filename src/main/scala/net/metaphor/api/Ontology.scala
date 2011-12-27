@@ -69,7 +69,7 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
     }
 
     // TODO define this recursively, and provide some way to let the user help out. 
-    def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
+    def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {      
       ???
     }
     
