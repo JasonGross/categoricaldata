@@ -1,5 +1,6 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
+import net.tqft.toolkit.collections.NonStrictIterable
 
 trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]] extends SmallCategory[C] { self: C =>
   def objectsAtLevel(k: Int): List[O]
@@ -196,6 +197,15 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
       // this is where all the work happens.
       def concreteLimit[A](objects: Iterable[self.O], sets: self.O => Iterable[A], functions: self.O => (self.O => (A => Iterable[A]))): (Iterable[self.O => A], self.O => ((self.O => A) => A)) = {
 
+        
+//        def checkMapsOutOfObject(s: self.O)(map: Map[self.O, A]) = {
+//          for(t <- map.keys)
+//        }
+//        
+//        val successiveProducts = objects.scanLeft(NonStrictIterable(Map.empty[self.O, A]))({
+//          (i,o) => for (m <- i; a <- sets(o)) yield m + (o -> a)
+//        })
+        
         val resultMaps = ???
         def resultFunctions(o: self.O)(map: self.O => A) = map(o)
 
