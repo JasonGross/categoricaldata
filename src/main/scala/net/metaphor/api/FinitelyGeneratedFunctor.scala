@@ -112,7 +112,7 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
     override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[cSC]): FunctorToSet = new FunctorToSet {
       require(f.source == cosliceCategory)
       override def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
-      override def onGenerators(g: source.G) = f(g.asInstanceOf[f.source.M])
+      override def onGenerators(g: source.G) = f(f.source.generatorAsMorphism(g.asInstanceOf[f.source.G]))
     }
     override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[cSC, F]): NaturalTransformationToSet[FunctorToSet] = new NaturalTransformationToSet[FunctorToSet] {
       override val source = t.source

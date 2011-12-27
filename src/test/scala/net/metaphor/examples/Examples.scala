@@ -12,7 +12,7 @@ object Examples {
     objects = List("an edge", "a vertex"),
     arrows = List(
       "an edge" --- "has as source" --> "a vertex",
-      "an edge" --- "has as target" --> "a vertex")).assertAcyclic.assertGraph 
+      "an edge" --- "has as target" --> "a vertex")).assertAcyclic.assertFree 
 
   val TerminalGraph = Dataset(source = Grph,
     onObjects = Map(
@@ -210,7 +210,7 @@ object Examples {
 	arrows = List(
       "0" --- "E01" --> "1",
       "1" --- "E10" --> "0")
-    ).assertGraph
+    ).assertFree
   
   val E2ToPointedSet = Translation (
     source = E2,

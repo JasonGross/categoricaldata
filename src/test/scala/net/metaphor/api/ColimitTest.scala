@@ -15,19 +15,10 @@ class ColimitTest extends FlatSpec with ShouldMatchers {
     onObjects = Map("article" -> List("X", "Y", "Z"), "author" -> List("a", "b", "c", "d"), "authorship" -> List("Xa", "Xb", "Yb", "Yc", "Zd")),
     onMorphisms = Map(("authorship" --- "by" --> "author") -> (_.drop(1)), ("authorship" --- "has title" --> "article") -> (_.take(1))))
 
-  "colimit" should "correctly find two connected components of the authorship graph (1)" in {
-    val colimit = i.colimitFunctor(C.adjoinTerminalObject.terminalObject)
-    // or just
-    //     val colimit = i.colimitFunctor(Box("*"))
-
-    for (s <- colimit.toIterable) println(s)
-    colimit.toIterable.size should equal(2)
-  }
-
-  "colimit" should "correctly find two connected components of the authorship graph (2)" in {
+  "colimit" should "correctly find two connected components of the authorship graph" in {
     val colimit = i.colimitSet
 
- 
+    for (s <- colimit.toIterable) println(s) 
     colimit.toIterable.size should equal(2)
   }
 

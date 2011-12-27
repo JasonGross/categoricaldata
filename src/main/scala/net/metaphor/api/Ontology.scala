@@ -158,9 +158,9 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
       def apply(o: Box) = t(o)
     }
   }
-  //TODO: Change assertGraph to assertFree
+
   def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic
-  def assertGraph: Ontology with Ontologies.Graph = new OntologyWrapper(this) with Ontologies.Graph
+  def assertFree: Ontology with Ontologies.Free = new OntologyWrapper(this) with Ontologies.Free
   def assertFinite: Ontology with Ontologies.Finite = new OntologyWrapper(this) with Ontologies.Finite {
     def maximumWordLength(s: O, t: O) = ???
     def normalForm(m: M) = ???
@@ -181,21 +181,20 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
 object Ontologies extends FinitelyPresentedCategories[Ontology] {
   trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms[Ontology] { self =>
     // FIXME check that we're actually finite
-
   }
 
   trait Acyclic extends net.metaphor.api.Acyclic[Ontology] with Finite { self: Ontology =>
     override def assertAcyclic = this
-    override def assertGraph: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
+    override def assertFree: Ontology with Ontologies.FreeAcyclic = new OntologyWrapper(this) with FreeAcyclic
 
   }
-  trait Graph extends net.metaphor.api.Graph[Ontology] { self: Ontology =>
-    override def assertAcyclic: Ontology with Ontologies.AcyclicGraph = new OntologyWrapper(this) with AcyclicGraph
-    override def assertGraph = this
+  trait Free extends net.metaphor.api.Free[Ontology] { self: Ontology =>
+    override def assertAcyclic: Ontology with Ontologies.FreeAcyclic = new OntologyWrapper(this) with FreeAcyclic
+    override def assertFree = this
   }
-  trait AcyclicGraph extends net.metaphor.api.AcyclicGraph[Ontology] with Acyclic with Graph { self: Ontology =>
+  trait FreeAcyclic extends net.metaphor.api.FreeAcyclic[Ontology] with Acyclic with Free { self: Ontology =>
     override def assertAcyclic = this
-    override def assertGraph = this
+    override def assertFree = this
   }
 }
 

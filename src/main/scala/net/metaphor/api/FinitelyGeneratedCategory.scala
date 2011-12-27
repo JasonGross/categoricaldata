@@ -167,77 +167,29 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   
   trait FunctorToSet extends super.FunctorToSet with FunctorWithFinitelyGeneratedSource[C, Sets] { functorToSet =>
     def colimit = functorsToSet.colimit(functorToSet)
-    def colimitFunctor = colimit.initialObject.asInstanceOf[adjoinTerminalObject.FunctorToSet]
-    def colimitSet = {
-      val c = colimitFunctor
-      c(c.source.asInstanceOf[TerminalObject[O, M]].terminalObject)
-    }
+    def colimitCoCone = colimit.initialObject
+    def colimitSet = colimitCoCone.terminalSet
     def limit = functorsToSet.limit(functorToSet)
-    def limitFunctor = limit.terminalObject.asInstanceOf[adjoinInitialObject.FunctorToSet]
-    def limitSet = {
-      val c = limitFunctor
-      c(c.source.asInstanceOf[InitialObject[O, M]].initialObject)
-    }
+    def limitCone = limit.terminalObject
+    def limitSet = limitCone.initialSet
 
-    trait CoCone extends adjoinTerminalObject.FunctorToSet {
+    trait CoCone {
       def terminalSet: Set
       def mapToTerminalSet(o: O): Function
-
-      override def onObjects(o: O): Set = {
-        if (o == adjoinTerminalObject.terminalObject) {
-          terminalSet
-        } else {
-          functorToSet(o)
-        }
-      }
-      override def onGenerators(g: G): Function = {
-        if (self.target(g) == adjoinTerminalObject.terminalObject) {
-          mapToTerminalSet(self.source(g))
-        } else {
-          functorToSet(g)
-        }
-      }
     }
-    trait CoConeMap extends adjoinTerminalObject.NaturalTransformationToSet[CoCone] {
+    trait CoConeMap extends {
+      def source: CoCone
+      def target: CoCone
       def terminalMap: Function
-
-      override def apply(o: O) = {
-        if (o == adjoinTerminalObject.terminalObject) {
-          terminalMap
-        } else {
-          functorToSet(o).identity
-        }
-      }
     }
-    trait Cone extends adjoinInitialObject.FunctorToSet {
+    trait Cone extends {
       def initialSet: Set
       def mapFromInitialSet(o: O): Function
-
-      override def onObjects(o: O): Set = {
-        if (o == adjoinInitialObject.initialObject) {
-          initialSet
-        } else {
-          functorToSet(o)
-        }
-      }
-      override def onGenerators(g: G): Function = {
-        if (self.target(g) == adjoinInitialObject.initialObject) {
-          mapFromInitialSet(self.source(g))
-        } else {
-          functorToSet(g)
-        }
-      }
     }
-    trait ConeMap extends adjoinInitialObject.NaturalTransformationToSet[Cone] {
+    trait ConeMap extends {
+      def source: Cone
+      def target: Cone
       def initialMap: Function
-
-      override def apply(o: O) = {
-        if (o == adjoinInitialObject.initialObject) {
-          initialMap
-        } else {
-          functorToSet(o).identity
-        }
-      }
     }
   }
 
