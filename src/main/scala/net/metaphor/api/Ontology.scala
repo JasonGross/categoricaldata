@@ -111,12 +111,15 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
     }
 
     // TODO define this recursively, and provide some way to let the user help out. 
-    def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = ???
-    def isIsomorphicTo(other: Dataset) = findIsomorphismsTo(other).nonEmpty
+    def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
+      ???
+    }
+    
+    def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
 
   }
   trait Datamap extends NaturalTransformationToSet[Dataset]
-
+  
   override type F = Dataset
   override type T = Datamap
   override type CSets = Datasets
