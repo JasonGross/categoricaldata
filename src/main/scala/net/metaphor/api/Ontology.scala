@@ -70,12 +70,12 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
 
   override lazy val adjoinTerminalObject: TerminalObjectAdjoined = new Ontology with TerminalObjectAdjoined {
     val terminalObject = Box("*")
-    def morphismFrom(o: O) = Arrow(o, terminalObject, "*")
+    def morphismFrom(o: O) = ontology.generatorAsMorphism(Arrow(o, terminalObject, "*"))
 
   }
   override lazy val adjoinInitialObject: InitialObjectAdjoined = new Ontology with InitialObjectAdjoined {
     val initialObject = Box(".")
-    def morphismTo(o: O) = Arrow(initialObject, o, ".")
+    def morphismTo(o: O) = ontology.generatorAsMorphism(Arrow(initialObject, o, "."))
   }
 
   trait Dataset extends FunctorToSet with net.metaphor.api.Dataset
@@ -92,7 +92,7 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
         require(f.source == ontology)
         new Dataset {
           def onObjects(o: O) = f(o)
-          def onMorphisms(m: M) = f(m)
+          def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
         }
       }
     }

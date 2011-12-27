@@ -1,4 +1,5 @@
 package net.metaphor.examples
+import net.metaphor.api.Ontology
 
 object Examples {
 

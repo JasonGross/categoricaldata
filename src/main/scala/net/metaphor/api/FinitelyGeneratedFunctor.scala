@@ -29,7 +29,7 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
         l <- (fgFunctor.source.minimumLevel to k).toList;
         left <- fgFunctor.source.objectsAtLevel(l);
         path <- fgFunctor.target.wordsOfLength(k - l)(fgFunctor.apply(left), onRight)
-      ) yield ObjectLeftOf(left, path.asMorphism)
+      ) yield ObjectLeftOf(left, fgFunctor.target.pathAsMorphism(path))
     }
     val minimumLevel: Int = fgFunctor.source.minimumLevel
     val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
@@ -87,7 +87,7 @@ trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallF
         l <- (fgFunctor.source.minimumLevel to k).toList;
         right <- fgFunctor.source.objectsAtLevel(l);
         path <- fgFunctor.target.wordsOfLength(k - l)(onLeft, fgFunctor.apply(right))
-      ) yield ObjectRightOf(right, path.asMorphism)
+      ) yield ObjectRightOf(right, fgFunctor.target.pathAsMorphism(path))
     }
     val minimumLevel: Int = fgFunctor.source.minimumLevel
     val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
