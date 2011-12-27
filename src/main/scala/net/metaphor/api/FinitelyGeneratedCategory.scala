@@ -161,88 +161,35 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
     }
   }
   
-  trait FinitelyGeneratedFunctorTo[SC <: FinitelyGeneratedCategory[SC]] extends super.FunctorTo[SC] {
-    def onGenerators(g: source.G): M
-    def onMorphisms(m: source.M) = compose(onObjects(source.source(m)), m.representative.morphisms.map(onGenerators _))
+  
+  trait FinitelyGeneratedFunctorTo[SC <: FinitelyGeneratedCategory[SC]] extends super.FunctorTo[SC]  with FunctorWithFinitelyGeneratedSource[SC, C] {
   }
   
-  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    def onGenerators(g: G): Function
-    override def onMorphisms(m: M) = Sets.compose(onObjects(self.source(m)), m.representative.morphisms.map(onGenerators _))
-    
-    
+  trait FunctorToSet extends super.FunctorToSet with FunctorWithFinitelyGeneratedSource[C, Sets] { functorToSet =>
     def colimit = functorsToSet.colimit(functorToSet)
-    def colimitFunctor = colimit.initialObject.asInstanceOf[adjoinTerminalObject.FunctorToSet]
-    def colimitSet = {
-      val c = colimitFunctor
-      c(c.source.asInstanceOf[TerminalObject[O, M]].terminalObject)
-    }
+    def colimitCoCone = colimit.initialObject
+    def colimitSet = colimitCoCone.terminalSet
     def limit = functorsToSet.limit(functorToSet)
-    def limitFunctor = limit.terminalObject.asInstanceOf[adjoinInitialObject.FunctorToSet]
-    def limitSet = {
-      val c = limitFunctor
-      c(c.source.asInstanceOf[InitialObject[O, M]].initialObject)
-    }
+    def limitCone = limit.terminalObject
+    def limitSet = limitCone.initialSet
 
-    trait CoCone extends adjoinTerminalObject.FunctorToSet {
+    trait CoCone {
       def terminalSet: Set
       def mapToTerminalSet(o: O): Function
-
-      override def onObjects(o: O): Set = {
-        if (o == adjoinTerminalObject.terminalObject) {
-          terminalSet
-        } else {
-          functorToSet(o)
-        }
-      }
-      override def onGenerators(g: G): Function = {
-        if (self.target(g) == adjoinTerminalObject.terminalObject) {
-          mapToTerminalSet(self.source(g))
-        } else {
-          functorToSet(g)
-        }
-      }
     }
-    trait CoConeMap extends adjoinTerminalObject.NaturalTransformationToSet[CoCone] {
+    trait CoConeMap extends {
+      def source: CoCone
+      def target: CoCone
       def terminalMap: Function
-
-      override def apply(o: O) = {
-        if (o == adjoinTerminalObject.terminalObject) {
-          terminalMap
-        } else {
-          functorToSet(o).identity
-        }
-      }
     }
-    trait Cone extends adjoinInitialObject.FunctorToSet {
+    trait Cone extends {
       def initialSet: Set
       def mapFromInitialSet(o: O): Function
-
-      override def onObjects(o: O): Set = {
-        if (o == adjoinInitialObject.initialObject) {
-          initialSet
-        } else {
-          functorToSet(o)
-        }
-      }
-      override def onGenerators(g: G): Function = {
-        if (self.target(g) == adjoinInitialObject.initialObject) {
-          mapFromInitialSet(self.source(g))
-        } else {
-          functorToSet(g)
-        }
-      }
     }
-    trait ConeMap extends adjoinInitialObject.NaturalTransformationToSet[Cone] {
+    trait ConeMap extends {
+      def source: Cone
+      def target: Cone
       def initialMap: Function
-
-      override def apply(o: O) = {
-        if (o == adjoinInitialObject.initialObject) {
-          initialMap
-        } else {
-          functorToSet(o).identity
-        }
-      }
     }
   }
 
@@ -355,6 +302,13 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   }
 
 }
+
+  trait FunctorWithFinitelyGeneratedSource[SC <: FinitelyGeneratedCategory[SC], TC <: Category[TC]] { f: HeteroFunctor[SC, TC] =>
+    def onGenerators(g: f.source.G): f.target.M
+    override def onMorphisms(m: f.source.M) = f.target.compose(onObjects(f.source.source(m)), m.representative.morphisms.map(onGenerators _))
+  }
+
+
 //
 //trait ConcreteFinitelyGeneratedCategory extends FinitelyGeneratedCategory[ConcreteFinitelyGeneratedCategory] {
 //  type F = FunctorToSet

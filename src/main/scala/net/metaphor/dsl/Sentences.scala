@@ -1,13 +1,11 @@
 package net.metaphor.dsl
-import net.metaphor.api.Ontology
-import net.metaphor.api.Translation
-import net.metaphor.api.Box
 import net.metaphor.api.Arrow
-import net.metaphor.api.Path
-import net.metaphor.api.Dataset
-import net.metaphor.api.Ontologies
+import net.metaphor.api.Box
 import net.metaphor.api.FiniteMorphisms
 import net.metaphor.api.FiniteTarget
+import net.metaphor.api.Ontology
+import net.metaphor.api.Ontologies
+import net.metaphor.api.Translation
 
 object Sentences {
   implicit def stringAsPath(s: String) = StringSource(s)

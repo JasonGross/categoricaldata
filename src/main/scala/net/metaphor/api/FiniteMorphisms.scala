@@ -50,15 +50,15 @@ trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { se
   }
 
   require(verifyAcyclicity)
-
+  
   override def maximumWordLength(source: O, target: O): Int = ???
-  override def normalForm(p: Path): Path = ???
+  override def normalForm(p: Path): Path = p // FIXME
 }
 
-trait Graph[C <: FinitelyPresentedCategory[C]] { self: C =>
+trait Free[C <: FinitelyPresentedCategory[C]] { self: C =>
   require(allRelations.isEmpty)
 }
 
-trait AcyclicGraph[C <: FinitelyPresentedCategory[C]] extends Graph[C] with Acyclic[C] { self: C =>
+trait FreeAcyclic[C <: FinitelyPresentedCategory[C]] extends Free[C] with Acyclic[C] { self: C =>
   override def normalForm(p: Path) = p
 }
