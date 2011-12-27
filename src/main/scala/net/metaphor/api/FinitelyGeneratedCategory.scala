@@ -161,16 +161,11 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
     }
   }
   
-  trait FinitelyGeneratedFunctorTo[SC <: FinitelyGeneratedCategory[SC]] extends super.FunctorTo[SC] {
-    def onGenerators(g: source.G): M
-    def onMorphisms(m: source.M) = compose(onObjects(source.source(m)), m.representative.morphisms.map(onGenerators _))
+  
+  trait FinitelyGeneratedFunctorTo[SC <: FinitelyGeneratedCategory[SC]] extends super.FunctorTo[SC]  with FunctorWithFinitelyGeneratedSource[SC, C] {
   }
   
-  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    def onGenerators(g: G): Function
-    override def onMorphisms(m: M) = Sets.compose(onObjects(self.source(m)), m.representative.morphisms.map(onGenerators _))
-    
-    
+  trait FunctorToSet extends super.FunctorToSet with FunctorWithFinitelyGeneratedSource[C, Sets] { functorToSet =>
     def colimit = functorsToSet.colimit(functorToSet)
     def colimitFunctor = colimit.initialObject.asInstanceOf[adjoinTerminalObject.FunctorToSet]
     def colimitSet = {
@@ -355,6 +350,13 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   }
 
 }
+
+  trait FunctorWithFinitelyGeneratedSource[SC <: FinitelyGeneratedCategory[SC], TC <: Category[TC]] { f: HeteroFunctor[SC, TC] =>
+    def onGenerators(g: f.source.G): f.target.M
+    override def onMorphisms(m: f.source.M) = f.target.compose(onObjects(f.source.source(m)), m.representative.morphisms.map(onGenerators _))
+  }
+
+
 //
 //trait ConcreteFinitelyGeneratedCategory extends FinitelyGeneratedCategory[ConcreteFinitelyGeneratedCategory] {
 //  type F = FunctorToSet

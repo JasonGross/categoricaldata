@@ -1,11 +1,8 @@
 package net.metaphor.api
 
-trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallFunctor[C] { fgFunctor =>
+trait FinitelyGeneratedFunctor[C <: FinitelyGeneratedCategory[C]] extends SmallFunctor[C] with FunctorWithFinitelyGeneratedSource[C, C] { fgFunctor =>
   type SC <: SliceCategory
   type cSC <: CosliceCategory
-
-  def onGenerators(g: source.G): target.M
-  override def onMorphisms(m: source.M) = target.compose(onObjects(source.source(m)), m.representative.morphisms.map(onGenerators _))
 
   class SliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory[SC] { sliceCategory: SC =>
     override type O = ObjectLeftOf
