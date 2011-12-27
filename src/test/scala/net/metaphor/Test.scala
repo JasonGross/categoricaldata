@@ -282,5 +282,12 @@ class Test extends FlatSpec with ShouldMatchers {
   "shriek" should "work (2)" in {
     ReverseGraph.__!(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
-
+ // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
+  
+  "colimit and shriek" should "agree for terminal functors" in {
+    //For any category C, and any dataset D:C-->Set, we should have colim(D)=TerminalFunctor(C).__!(D)
+  }
+   "limit and pushforward" should "agree for terminal functors" in {
+    //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
+  }
 }
