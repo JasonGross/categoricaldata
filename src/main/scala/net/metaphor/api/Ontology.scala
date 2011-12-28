@@ -121,11 +121,27 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
   object Datasets extends Datasets
 
-  def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic
-  def assertFree: Ontology with Ontologies.Free = new OntologyWrapper(this) with Ontologies.Free
-  def assertFinite: Ontology with Ontologies.Finite = new OntologyWrapper(this) with Ontologies.Finite {
-    def maximumWordLength(s: O, t: O) = ???
-    def normalForm(m: M) = ???
+  def assertAcyclic: Ontology with Ontologies.Acyclic = {
+    this match {
+      case o: Ontologies.Acyclic => o
+      case _ => new OntologyWrapper(this) with Ontologies.Acyclic
+    }
+  }
+  def assertFree: Ontology with Ontologies.Free = {
+    this match {
+      case o: Ontologies.Free => o
+      case _ =>
+        new OntologyWrapper(this) with Ontologies.Free
+    }
+  }
+  def assertFinite: Ontology with Ontologies.Finite = {
+    this match {
+      case o: Ontologies.Finite => o
+      case _ => new OntologyWrapper(this) with Ontologies.Finite {
+        def maximumWordLength(s: O, t: O) = ???
+        def normalForm(m: M) = ???
+      }
+    }
   }
 }
 

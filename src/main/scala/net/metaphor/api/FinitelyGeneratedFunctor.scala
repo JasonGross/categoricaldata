@@ -15,7 +15,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
   type SC <: SliceCategory
   type cSC <: CosliceCategory
 
-  class SliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory { sliceCategory: SC =>
+  class SliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { sliceCategory: SC =>
     override type O = ObjectLeftOf
     override type G = ObjectLeftOfMap
 
@@ -48,18 +48,6 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
         ObjectLeftOfMap(source, target, g)
       }
     }
-
-    val functorsToSet = new SpecializedFunctorsToSet
-
-    override type F = FunctorToSet
-    
-    // provide a mixin that performs this empty formalism.
-    def internalize(f: net.metaphor.api.FunctorToSet): F = new FunctorToSet {
-      require(f.source == source)
-      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
-      def onGenerators(g: G) = f(sliceCategory.generatorAsMorphism(g).asInstanceOf[f.source.M])
-    }
-    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ???
 
   }
 

@@ -156,9 +156,8 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
 
   
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    override val source: FinitelyGeneratedCategory
-    def onGenerators(g: source.G): target.M
-    override def onMorphisms(m: source.M) = {
+    def onGenerators(g: G): FFunction
+    override def onMorphisms(m: M) = {
       val start = onObjects(source.source(m))
       val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
       target.compose(start, morphisms)
@@ -304,4 +303,19 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
 
 }
 
+object FinitelyGeneratedCategories {
+  trait StandardFunctorsToSet { C: FinitelyGeneratedCategory =>
+    val functorsToSet = new SpecializedFunctorsToSet
+
+    override type F = FunctorToSet
+    override type T = NaturalTransformationToSet
+
+    def internalize(f: net.metaphor.api.FunctorToSet): F = new FunctorToSet {
+      require(f.source == source)
+      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
+      def onGenerators(g: G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
+    }
+    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ???
+  }
+}
 

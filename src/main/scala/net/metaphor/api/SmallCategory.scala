@@ -75,3 +75,19 @@ trait SmallCategory extends Category { category =>
 
   def categoriesOver: CategoriesOver = new CategoriesOver {}
 }
+
+object SmallCategories {
+  trait StandardFunctorsToSet { C: SmallCategory =>
+    val functorsToSet = new SpecializedFunctorsToSet
+
+    override type F = FunctorToSet
+    override type T = NaturalTransformationToSet
+
+    def internalize(f: net.metaphor.api.FunctorToSet): F = new FunctorToSet {
+      require(f.source == source)
+      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
+      def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
+    }
+    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ???
+  }
+}
