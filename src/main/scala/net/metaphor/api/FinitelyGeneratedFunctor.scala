@@ -50,8 +50,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
-    type CSets = FunctorsToSet
-    val functorsToSet = new FunctorsToSet
+    val functorsToSet = new SpecializedFunctorsToSet
 
     override type F = FunctorToSet
     
@@ -94,8 +93,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
-    type CSets = FunctorsToSet
-    val functorsToSet = new FunctorsToSet
+    val functorsToSet = new SpecializedFunctorsToSet
 
     override type F = FunctorToSet
     

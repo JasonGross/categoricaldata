@@ -3,7 +3,7 @@ package net.metaphor.api
 trait Functor {
   val source: Category
   val target: Category
-
+  
   final def apply(o: source.O): target.O = onObjects(o)
   // the dummy implicit argument is a hack to allow overloading of apply
   final def apply(m: source.M)(implicit d: DummyImplicit): target.M = onMorphisms(m)

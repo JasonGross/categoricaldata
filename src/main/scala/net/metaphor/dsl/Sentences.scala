@@ -79,13 +79,10 @@ object Sentences {
     }).toMap
 
     override def onObjects(o: Box) = objectMap(o)
-    override def onGenerators(a: Arrow) = morphismMap(a)
+    // And again, replacing source.G with the apparently equivalent Arrow causes an AbstractMethodError
+    override def onGenerators(a: source.G) = morphismMap(a)
   }
 
-  //  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
-  //    // construct a new translation object
-  //    new ConcreteTranslation(source, target, onObjects, onMorphisms)
-  //  }
   def Translation(source: Ontology, target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation with FiniteTarget = {
     // construct a new translation object
     new ConcreteTranslation(source, target, onObjects, onMorphisms) with FiniteTarget

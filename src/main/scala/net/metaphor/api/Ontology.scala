@@ -15,8 +15,6 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   override def generatorSource(g: G) = g.source
   override def generatorTarget(g: G) = g.target
 
-  //  def opposite = new Ontology with Opposite
-
   // TODO pull this up
   override def equals(other: Any) = {
     other match {
@@ -34,11 +32,11 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
   }
 
-  trait Dataset extends FunctorToSet {
+  trait Dataset extends FunctorToSet { dataset =>
     override def equals(other: Any): Boolean = {
       other match {
         case other: Ontology#Dataset => {
-          if (source != other.source) return false
+          if (dataset.source != other.source) return false
           for (o <- source.objects) if (this(o) != other(o)) return false
           for (
             g <- source.allGenerators;
@@ -89,7 +87,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     require(f.source == this)
     new Dataset {
       override def onObjects(o: Box) = f(o.asInstanceOf[f.source.O])
-      override def onGenerators(a: Arrow) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
+      // and yet another weird one: replacing this with Arrow causes an AbstractMethodError
+      override def onGenerators(a: source.G) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
     }
   }
   override def internalize(t: net.metaphor.api.NaturalTransformationToSet) = {
@@ -101,10 +100,13 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
   }
 
-  override type CSets = Datasets
-
+  trait SpecializedFunctorsToSet  extends super.SpecializedFunctorsToSet {
+    override type O = ontology.F
+    override type M = ontology.T
+  }
+  
   override val functorsToSet = Datasets
-  sealed trait Datasets extends FunctorsToSet
+  sealed trait Datasets extends SpecializedFunctorsToSet
 
   // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
   object Datasets extends Datasets

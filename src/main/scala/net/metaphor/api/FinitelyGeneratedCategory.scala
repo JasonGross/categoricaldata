@@ -151,7 +151,9 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
 
   def finitelyGeneratedCategoriesOver: FinitelyGeneratedCategoriesOver = new FinitelyGeneratedCategoriesOver {}
   
-  
+  override type F <: FunctorToSet
+  override type T <: NaturalTransformationToSet
+
   
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
     override val source: FinitelyGeneratedCategory
@@ -189,12 +191,11 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
     }
   }
 
-  // Contrary to appearance, these definitions are *not* redundant with those in SmallCategory.
-  // Since then, we've further specialized FunctorToSet, etc., and these definitions further constrain F, T and CSets.
-  override type CSets <: FunctorsToSet
-  val functorsToSet: CSets
+  val functorsToSet: SpecializedFunctorsToSet
 
-  class FunctorsToSet extends super.FunctorsToSet { functorsToSet: CSets =>
+  class SpecializedFunctorsToSet extends super.SpecializedFunctorsToSet { functorsToSet =>
+    
+    
 
     def limit(functor: self.FunctorToSet): TerminalObject[functor.Cone, functor.ConeMap] = {
       // this is where all the work happens.

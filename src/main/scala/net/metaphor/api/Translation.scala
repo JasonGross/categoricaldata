@@ -23,44 +23,45 @@ trait FiniteTarget extends Translation { translation =>
   lazy val slice: SliceFunctor = new SliceFunctor
   lazy val coslice: CosliceFunctor = new CosliceFunctor
 
-  trait Pushforward extends CovariantDataFunctor { pushforward =>
-    override def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
-      def onObjects(o: Box) = {
-        ???
-        //        slice(o).functor.pullback(i).limitSet
+  object Pushforward extends CovariantDataFunctor { pushforward =>
+    override def onObjects(i: source.O) = new translation.target.Dataset {
+      override def onObjects(o: Box) = {
+        val F = slice(o).functor
+        F.Pullback(i).limitSet
       }
-      def onGenerators(g: translation.target.G) = ???
+      override def onGenerators(g: translation.target.G) = ???
     }
-    override def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
-      val source = pushforward.onObjects(m.source)
-      val target = pushforward.onObjects(m.target)
-      def apply(o: Box) = ???
+    override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
+      override val source = pushforward.onObjects(m.source)
+      override val target = pushforward.onObjects(m.target)
+      override def apply(o: Box) = ???
     }
   }
-  trait Shriek extends CovariantDataFunctor { shriek =>
-    override def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
-      def onObjects(o: Box) = {
-        val z = coslice
-        val a = coslice(o)
-        val b = a.functor
-        val c = b.pullback
-        val d: c.target.O = c(i)
-        val CCC = b.source
-//        val e = d.colimitSet // FIXME
-//        coslice(o).functor.pullback(i).colimitSet
-        ???
+  object Shriek extends CovariantDataFunctor { shriek =>
+    override def onObjects(i: source.O) = new translation.target.Dataset {
+      override def onObjects(o: Box) = {
+        val F = coslice(o).functor // FIXME weird, why on earth do we need this intermediate val?
+        F.Pullback(i).colimitSet
       }
-      def onGenerators(m: translation.target.G) = ???
+      override def onGenerators(m: translation.target.G) = ???
     }
-    override def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
-      val source = onObjects(m.source)
-      val target = onObjects(m.target)
-      def apply(o: Box) = ???
+    override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
+      override val source = onObjects(m.source)
+      override val target = onObjects(m.target)
+      override def apply(o: Box) = ???
     }
   }
 
-  def pushforward: Pushforward = new Pushforward {}
-  def shriek: Shriek = new Shriek {}
-  def __! = shriek
-  def __* = pushforward
+  def __! = new Functor {
+    override val source = FunctorsToSet 
+    override val target = translation.target.functorsToSet
+    def onObjects(i: FunctorToSet) = Shriek.apply(translation.source.internalize(i))
+    def onMorphisms(t: NaturalTransformationToSet) = Shriek.apply(translation.source.internalize(t))
+  } 
+  def __* = new Functor {
+    override val source = FunctorsToSet
+    override val target = translation.target.functorsToSet 
+    def onObjects(i: FunctorToSet) = Pushforward.apply(translation.source.internalize(i))
+    def onMorphisms(t: NaturalTransformationToSet) = Pushforward.apply(translation.source.internalize(t))
+  } 
 }

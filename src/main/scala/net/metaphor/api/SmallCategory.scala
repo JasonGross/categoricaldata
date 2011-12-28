@@ -1,9 +1,6 @@
 package net.metaphor.api
 
 trait SmallCategory extends Category { category =>
-  type CSets <: FunctorsToSet
-
-  def functorsToSet: CSets
 
   trait FunctorToSet extends FunctorFrom with net.metaphor.api.FunctorToSet
 
@@ -19,15 +16,27 @@ trait SmallCategory extends Category { category =>
   def internalize(f: net.metaphor.api.FunctorToSet): F
   def internalize(t: net.metaphor.api.NaturalTransformationToSet): T
 
-  class FunctorsToSet extends Category { functorsToSet: CSets =>
+  class SpecializedFunctorsToSet extends Category { functorsToSet =>
     override type O = category.F
     override type M = category.T
-    
-    def identity(o: O) = ???
-    def source(m: M) = ???
-    def target(m: M) = ???
-    def compose(m1: M, m2: M) = ???
+
+    override def identity(o: O) = internalize(FunctorsToSet.identity(o))
+    override def source(m: M) = internalize(FunctorsToSet.source(m))
+    override def target(m: M) = internalize(FunctorsToSet.target(m))
+    override def compose(m1: M, m2: M) = internalize(FunctorsToSet.compose(m1, m2))
   }
+
+  object AllFunctorsToSet extends Category {
+    override type O = category.FunctorToSet
+    override type M = category.NaturalTransformationToSet
+
+    override def identity(o: O) = internalize(FunctorsToSet.identity(o))
+    override def source(m: M) = internalize(FunctorsToSet.source(m))
+    override def target(m: M) = internalize(FunctorsToSet.target(m))
+    override def compose(m1: M, m2: M) = internalize(FunctorsToSet.compose(m1, m2))
+  }
+
+  def functorsToSet: SpecializedFunctorsToSet
 
   trait FunctorTo extends SmallFunctor {
     override val target: category.type = category
