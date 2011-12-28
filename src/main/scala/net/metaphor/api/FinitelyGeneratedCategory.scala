@@ -2,7 +2,9 @@ package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 import net.tqft.toolkit.collections.NonStrictIterable
 
-case class Path[O, G](source: O, target: O, morphisms: List[G])
+case class Path[O, G](source: O, target: O, morphisms: List[G]) {
+  override def toString = source.toString + morphisms.mkString
+}
 
 /**
  * A LocallyFinitelyGeneratedCategory may have infinitely many objects, but each object sits at some integer level,
@@ -13,14 +15,14 @@ case class Path[O, G](source: O, target: O, morphisms: List[G])
  * can be written as some composition of 'generators' between some chain of objects (with no restrictions on the levels).
  */
 
-trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]] extends SmallCategory[C] { self: C =>
+trait LocallyFinitelyGeneratedCategory extends SmallCategory {
   override type M = PathEquivalenceClass
   type G
   type Path = net.metaphor.api.Path[O, G]
 
   def generatorSource(g: G): O
   def generatorTarget(g: G): O
-  
+
   def objectsAtLevel(k: Int): List[O]
 
   def generators(source: O, target: O): List[G]
@@ -72,7 +74,7 @@ trait LocallyFinitelyGeneratedCategory[C <: LocallyFinitelyGeneratedCategory[C]]
 /**
  * A FinitelyGeneratedCategory is just a LocallyFinitelyGeneratedCategory with finitely many levels (and so finitely many objects and generators).
  */
-trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends LocallyFinitelyGeneratedCategory[C] { self: C =>
+trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self =>
   // TODO, maybe minimumLevel actually belongs one level up; we could insist everything is bounded below.
   // In that case, we'd have to pull opposite down.
   val minimumLevel: Int
@@ -106,11 +108,27 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
   //    override val minimumLevel = self.maximumLevel
   //    override val maximumLevel = self.minimumLevel
   //  }
-  
-  trait FinitelyGeneratedFunctorTo[SC <: FinitelyGeneratedCategory[SC]] extends super.FunctorTo[SC]  with FunctorWithFinitelyGeneratedSource[SC, C] {
+
+  trait FinitelyGeneratedFunctorTo extends super.FunctorTo {
+    override val source: FinitelyGeneratedCategory
+    def onGenerators(g: source.G): target.M
+    override def onMorphisms(m: source.M) = {
+      val start = onObjects(source.source(m))
+      val morphisms = for(g <- m.representative.morphisms) yield onGenerators(g)
+      target.compose(start, morphisms)
+    }
+
   }
-  
-  trait FunctorToSet extends super.FunctorToSet with FunctorWithFinitelyGeneratedSource[C, Sets] { functorToSet =>
+
+  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
+    override val source: FinitelyGeneratedCategory
+    def onGenerators(g: source.G): target.M
+    override def onMorphisms(m: source.M) = {
+      val start = onObjects(source.source(m))
+      val morphisms = for(g <- m.representative.morphisms) yield onGenerators(g)
+      target.compose(start, morphisms)
+    }
+
     def colimit = functorsToSet.colimit(functorToSet)
     def colimitCoCone = colimit.initialObject
     def colimitSet = colimitCoCone.terminalSet
@@ -120,28 +138,26 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
 
     trait CoCone {
       def terminalSet: Set
-      def mapToTerminalSet(o: O): Function
+      def mapToTerminalSet(o: O): FFunction
     }
     trait CoConeMap extends {
       def source: CoCone
       def target: CoCone
-      def terminalMap: Function
+      def terminalMap: FFunction
     }
     trait Cone extends {
       def initialSet: Set
-      def mapFromInitialSet(o: O): Function
+      def mapFromInitialSet(o: O): FFunction
     }
     trait ConeMap extends {
       def source: Cone
       def target: Cone
-      def initialMap: Function
+      def initialMap: FFunction
     }
   }
 
   // Contrary to appearance, these definitions are *not* redundant with those in SmallCategory.
   // Since then, we've further specialized FunctorToSet, etc., and these definitions further constrain F, T and CSets.
-  override type F <: FunctorToSet
-  override type T <: NaturalTransformationToSet[F]
   override type CSets <: FunctorsToSet
   val functorsToSet: CSets
 
@@ -174,10 +190,10 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
         override def sizeIfFinite = Some(maps.size)
         override def toIterable = maps
       }
-      val resultFunctions: (self.O => Function) = { o: self.O =>
-        new Function {
+      val resultFunctions: (self.O => FFunction) = { o: self.O =>
+        new FFunction {
           override def source = ???
-            override def target = ???
+          override def target = ???
           override def toFunction = functions(o).asInstanceOf[Any => Any]
         }
       }
@@ -227,8 +243,8 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
         override def sizeIfFinite = Some(clumps.size)
         override def toIterable = clumps
       }
-      val resultFunctions: (self.O => Function) = { o: self.O =>
-        new Function {
+      val resultFunctions: (self.O => FFunction) = { o: self.O =>
+        new FFunction {
           override def source = ???
           override def target = ???
           override def toFunction = functions(o)
@@ -254,10 +270,4 @@ trait FinitelyGeneratedCategory[C <: FinitelyGeneratedCategory[C]] extends Local
 
 }
 
-  trait FunctorWithFinitelyGeneratedSource[SC <: FinitelyGeneratedCategory[SC], TC <: Category[TC]] { f: HeteroFunctor[SC, TC] =>
-    def onGenerators(g: f.source.G): f.target.M
-    override def onMorphisms(m: f.source.M) = f.target.compose(onObjects(f.source.source(m)), m.representative.morphisms.map(onGenerators _))
-  }
 
-trait FinitelyGeneratedCategories[C <: FinitelyGeneratedCategory[C]] /* extends Categories[O, M, C] */ { FGCAT =>
-}

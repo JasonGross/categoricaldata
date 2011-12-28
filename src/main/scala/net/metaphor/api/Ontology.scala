@@ -1,10 +1,14 @@
 package net.metaphor.api
 
-case class Box(name: String)
+case class Box(name: String) {
+  override def toString = "\"" + name + "\""
+}
 
-case class Arrow(source: Box, target: Box, name: String)
+case class Arrow(source: Box, target: Box, name: String) {
+  override def toString = source.toString + " --- \"" + name + "\" --> " + target.toString
+}
 
-trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
+trait Ontology extends FinitelyPresentedCategory { ontology =>
   override type O = Box
   override type G = Arrow
 
@@ -69,56 +73,41 @@ trait Ontology extends FinitelyPresentedCategory[Ontology] { ontology =>
     }
 
     // TODO define this recursively, and provide some way to let the user help out. 
-    def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {      
+    def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
       ???
     }
-    
+
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
 
   }
-  trait Datamap extends NaturalTransformationToSet[Dataset]
-  
+  trait Datamap extends NaturalTransformationToSet
+
   override type F = Dataset
   override type T = Datamap
-  override type CSets = Datasets
 
-  override def liftFunctorToSet(f: net.metaphor.api.FunctorToSet[Ontology]): Dataset = {
-    f match {
-      case f: Dataset => f
-      case _ => {
-        require(f.source == ontology)
-        new Dataset {
-          override def onObjects(o: O) = f(o)
-          override def onGenerators(g: G) = f(f.source.generatorAsMorphism(g))
-        }
-      }
+  override def internalize(f: net.metaphor.api.FunctorToSet) = {
+    require(f.source == this)
+    new Dataset {
+      override def onObjects(o: Box) = f(o.asInstanceOf[f.source.O])
+      override def onGenerators(a: Arrow) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
     }
   }
-  override def liftNaturalTransformationToSet(t: net.metaphor.api.NaturalTransformationToSet[Ontology, Dataset]): Datamap = {
-    t match {
-      case t: Datamap => t
-      case _ => {
-        require(t.sourceCategory == ontology)
-        new Datamap {
-          override val source = liftFunctorToSet(t.source)
-          override val target = liftFunctorToSet(t.target)
-          override def apply(o: Box) = t(o)
-        }
-      }
+  override def internalize(t: net.metaphor.api.NaturalTransformationToSet) = {
+    require(t.sourceCategory == this)
+    new Datamap {
+      override val source = internalize(t.source)
+      override val target = internalize(t.target)
+      override def apply(o: Box) = t(o.asInstanceOf[t.sourceCategory.O])
     }
   }
+
+  override type CSets = Datasets
 
   override val functorsToSet = Datasets
   sealed trait Datasets extends FunctorsToSet
 
   // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
-  object Datasets extends Datasets {
-    override def lift(t: HeteroNaturalTransformation[Ontology, Sets, Dataset]) = new Datamap {
-      val source = t.source
-      val target = t.target
-      def apply(o: Box) = t(o)
-    }
-  }
+  object Datasets extends Datasets
 
   def assertAcyclic: Ontology with Ontologies.Acyclic = new OntologyWrapper(this) with Ontologies.Acyclic
   def assertFree: Ontology with Ontologies.Free = new OntologyWrapper(this) with Ontologies.Free
@@ -139,21 +128,21 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
   def relations(s: O, t: O) = o.relations(s, t)
 }
 
-object Ontologies extends FinitelyPresentedCategories[Ontology] {
-  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms[Ontology] { self =>
+object Ontologies {
+  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms { self =>
     // FIXME check that we're actually finite
   }
 
-  trait Acyclic extends net.metaphor.api.Acyclic[Ontology] with Finite { self: Ontology =>
+  trait Acyclic extends net.metaphor.api.Acyclic with Finite { self: Ontology =>
     override def assertAcyclic = this
     override def assertFree: Ontology with Ontologies.FreeAcyclic = new OntologyWrapper(this) with FreeAcyclic
 
   }
-  trait Free extends net.metaphor.api.Free[Ontology] { self: Ontology =>
+  trait Free extends net.metaphor.api.Free { self: Ontology =>
     override def assertAcyclic: Ontology with Ontologies.FreeAcyclic = new OntologyWrapper(this) with FreeAcyclic
     override def assertFree = this
   }
-  trait FreeAcyclic extends net.metaphor.api.FreeAcyclic[Ontology] with Acyclic with Free { self: Ontology =>
+  trait FreeAcyclic extends net.metaphor.api.FreeAcyclic with Acyclic with Free { self: Ontology =>
     override def assertAcyclic = this
     override def assertFree = this
   }

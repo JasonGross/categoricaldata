@@ -6,7 +6,7 @@ import net.metaphor.api.FiniteTarget
 import net.metaphor.api.Ontology
 import net.metaphor.api.Ontologies
 import net.metaphor.api.Translation
-import net.metaphor.api.Function
+import net.metaphor.api.FFunction
 
 object Sentences {
   implicit def stringAsPath(s: String) = StringSource(s)
@@ -104,7 +104,7 @@ object Sentences {
 
     new source.Dataset {
       override def onObjects(o: Box) = objectMap(o)
-      override def onGenerators(a: Arrow): Function = new Function {
+      override def onGenerators(a: Arrow): FFunction = new FFunction {
         override def source = onObjects(a.source)
         override def target = onObjects(a.target)
        override def toFunction = morphismMap(a) 

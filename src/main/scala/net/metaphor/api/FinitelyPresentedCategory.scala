@@ -1,7 +1,7 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-trait FinitelyPresentedCategory[C <: FinitelyPresentedCategory[C]] extends FinitelyGeneratedCategory[C] { self: C =>
+trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { self =>
   def relations(source: O, target: O): List[(Path, Path)]
   def relationsFrom(source: O) = for (target <- objects; r <- relations(source, target)) yield r
   def relationsTo(target: O) = for (source <- objects; r <- relations(source, target)) yield r
@@ -17,6 +17,4 @@ trait FinitelyPresentedCategory[C <: FinitelyPresentedCategory[C]] extends Finit
 //  }
 }
 
-trait FinitelyPresentedCategories[C <: FinitelyPresentedCategory[C]] extends FinitelyGeneratedCategories[C] { FPCAT =>
-}
 

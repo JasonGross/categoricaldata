@@ -4,7 +4,7 @@ import net.tqft.toolkit.permutations.Permutations
 
 trait Set {
   def toIterable: Iterable[Any]
-  def identity: Function = IdentityFunction(this)
+  def identity: FFunction = IdentityFunction(this)
   
   override def equals(other: Any) = {
     other match {
@@ -22,12 +22,15 @@ trait Set {
   def finite: Boolean = sizeIfFinite.nonEmpty
   def sizeIfFinite: Option[Int]
   def size: Int = sizeIfFinite.getOrElse(???)
+  
+  override def toString = toIterable.toSet[Any].toString
+  override def hashCode = toIterable.toSet[Any].hashCode
 }
-trait Function { function =>
+trait FFunction { function =>
   def source: Set
   def target: Set
   def toFunction: Any => Any
-  def andThen[C](other: Function) = new Function {
+  def andThen[C](other: FFunction) = new FFunction {
     def source = function.source
     def target = other.target
     def toFunction = function.toFunction andThen other.toFunction
@@ -35,7 +38,7 @@ trait Function { function =>
   
   override def equals(other: Any): Boolean = {
     other match {
-      case other: Function => {
+      case other: FFunction => {
         if(source != other.source) return false
         if(target != other.target) return false
         for(x <- source.toIterable) { if(toFunction(x) != other.toFunction(x)) return false }
@@ -44,17 +47,17 @@ trait Function { function =>
     }
   }
 }
-case class IdentityFunction(set: Set) extends Function {
+case class IdentityFunction(set: Set) extends FFunction {
   override def source = set
   override def target = set
   override def toFunction = { a: Any => a }
 }
 
-object Function {
+object FFunction {
   def apply(source: Set, target: Set, function: Any => Any) = {
     val source_ = source
     val target_ = target
-    new Function {
+    new FFunction {
     override val source = source_
     override val target = target_
     override val toFunction = function
@@ -62,13 +65,13 @@ object Function {
 }
 }
 
-trait Sets extends Category[Sets] {
+trait Sets extends Category {
   type O = Set
-  type M = Function
+  type M = FFunction
   override def identity(set: Set) = set.identity
-  override def source(f: Function) = f.source
-  override def target(f: Function) = f.target
-  override def compose(first: Function, second: Function) = first andThen second
+  override def source(f: FFunction) = f.source
+  override def target(f: FFunction) = f.target
+  override def compose(first: FFunction, second: FFunction) = first andThen second
   
   def bijections(set1: Set, set2: Set): Set = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
@@ -78,7 +81,7 @@ trait Sets extends Category[Sets] {
           val m = (for((x, i) <- set2.toIterable zip p) yield {
             x -> set2List(i)
           }).toMap
-          Function(set1, set2, m)
+          FFunction(set1, set2, m)
         }
       }
       case _ => NonStrictIterable()
@@ -86,5 +89,7 @@ trait Sets extends Category[Sets] {
   }
 }
 
-object Sets extends Sets
+object Sets extends Sets {
+  override def toString = "Sets"
+}
 

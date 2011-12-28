@@ -1,8 +1,8 @@
 package net.metaphor.api
 
-trait Translation extends FinitelyGeneratedFunctor[Ontology] { translation =>
-  val source: Ontology
-  val target: Ontology
+trait Translation extends FinitelyGeneratedFunctor { translation =>
+  override val source: Ontology
+  override val target: Ontology
 
   override type SC = SliceCategory
   override type cSC = CosliceCategory
@@ -23,27 +23,29 @@ trait FiniteTarget extends Translation { translation =>
   lazy val slice: SliceFunctor = new SliceFunctor
   lazy val coslice: CosliceFunctor = new CosliceFunctor
 
-  trait Pushforward extends CovariantDataFunctor {
-    def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
+  trait Pushforward extends CovariantDataFunctor { pushforward =>
+    override def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = {
-        slice(o).functor.pullback(i).limitSet
+        ???
+        //        slice(o).functor.pullback(i).limitSet
       }
       def onGenerators(g: translation.target.G) = ???
     }
-    def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
-      val source = onObjects(m.source)
-      val target = onObjects(m.target)
+    override def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
+      val source = pushforward.onObjects(m.source)
+      val target = pushforward.onObjects(m.target)
       def apply(o: Box) = ???
     }
   }
-  trait Shriek extends CovariantDataFunctor {
-    def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
+  trait Shriek extends CovariantDataFunctor { shriek =>
+    override def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = {
-        coslice(o).functor.pullback(i).colimitSet
+        ???
+        //        coslice(o).functor.pullback(i).colimitSet
       }
       def onGenerators(m: translation.target.G) = ???
     }
-    def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
+    override def onMorphisms(m: translation.source.Datamap) = new translation.target.Datamap {
       val source = onObjects(m.source)
       val target = onObjects(m.target)
       def apply(o: Box) = ???

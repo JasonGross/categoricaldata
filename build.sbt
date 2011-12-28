@@ -4,7 +4,7 @@ organization := ""
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.9.0"
+scalaVersion := "2.9.1"
 
 retrieveManaged := true
 
@@ -12,7 +12,8 @@ resolvers ++= Seq(
 	"Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
 	"tqft.net Maven repository" at "http://tqft.net/releases",
 	"Sonatype Nexus Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-	"Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases"
+	"Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases",
+	"Scala Snapshots" at "http://scala-tools.org/repo-snapshots/"
 )
 
 libraryDependencies ++= Seq(

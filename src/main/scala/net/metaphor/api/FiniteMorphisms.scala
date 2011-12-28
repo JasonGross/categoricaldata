@@ -1,7 +1,7 @@
 package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-trait NormalForm[C <: FinitelyPresentedCategory[C]] { self: C =>
+trait NormalForm { self: FinitelyPresentedCategory =>
   def normalForm(p: Path): Path
 
   def normalWordsOfLength(k: Int)(source: self.O, target: self.O): List[Path] = {
@@ -14,7 +14,7 @@ trait NormalForm[C <: FinitelyPresentedCategory[C]] { self: C =>
   }
 }
 
-trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends NormalForm[C] { self: C =>
+trait FiniteMorphisms extends NormalForm { self: FinitelyPresentedCategory =>
   // TODO How would instances arise, which aren't acyclic?
   // We'd need a proof there are only finitely many loops/relations
 
@@ -22,26 +22,11 @@ trait FiniteMorphisms[C <: FinitelyPresentedCategory[C]] extends NormalForm[C] {
   def maximumWordLength: Int = (for (s <- objects; t <- objects) yield maximumWordLength(s, t)).max
   def normalWords(source: self.O, target: self.O) = (for (k <- 0 to maximumWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
 
-  // FIXME uncomment this!
-  //    lazy val yoneda = new HeteroFunctor[C, CSets] {
-  //      override def source = self
-  //      override def target = functorsToSet
-  //      override def onObjects(s: self.O) = liftFunctorToSet(new FunctorToSet {
-  //        override def onObjects(t: O) = normalWords(s, t)
-  //        override def onMorphisms(m: M) = { n: M => compose(n, m) }.asInstanceOf[Any => Any]
-  //      })
-  //     override def onMorphisms(m: self.M) = liftNaturalTransformationToSet(new NaturalTransformationToSet[F] {
-  //        override def source = onObjects(self.source(m))
-  //        override def target = onObjects(self.target(m))
-  //        override def apply(o: O) = ???
-  //      })
-  //    }
-  
     override def normalForm(p: Path): Path = ???
 
 }
 
-trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { self: C =>
+trait Acyclic extends FiniteMorphisms { self: FinitelyPresentedCategory =>
   def verifyAcyclicity: Boolean = {
     for (w <- allNontrivialWords) {
       if (w.source == w.target) return false
@@ -55,10 +40,10 @@ trait Acyclic[C <: FinitelyPresentedCategory[C]] extends FiniteMorphisms[C] { se
   override def normalForm(p: Path): Path = p // FIXME
 }
 
-trait Free[C <: FinitelyPresentedCategory[C]] { self: C =>
+trait Free { self: FinitelyPresentedCategory =>
   require(allRelations.isEmpty)
 }
 
-trait FreeAcyclic[C <: FinitelyPresentedCategory[C]] extends Free[C] with Acyclic[C] { self: C =>
+trait FreeAcyclic extends Free with Acyclic { self: FinitelyPresentedCategory =>
   override def normalForm(p: Path) = p
 }

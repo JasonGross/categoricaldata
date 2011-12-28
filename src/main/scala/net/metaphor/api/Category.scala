@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait Category[C <: Category[C]] { self: C =>
+trait Category { category =>
   type O
   type M
   def identity(o: O): M
@@ -19,26 +19,19 @@ trait Category[C <: Category[C]] { self: C =>
   }
 
   
-  trait FunctorFrom[TC <: Category[TC]] extends HeteroFunctor[C, TC] {
-    override val source: self.type = self
+  trait FunctorFrom extends Functor {
+    override val source: category.type = category
   }
-  trait NaturalTransformationFrom[TC <: Category[TC], F <: FunctorFrom[TC]] extends HeteroNaturalTransformation[C, TC, F] {
-    override val source: F
-    override val target: F
+  trait NaturalTransformationFrom extends NaturalTransformation {
+    override val source: FunctorFrom
+    override val target: FunctorFrom
   }
-  trait FunctorTo[SC <: Category[SC]] extends HeteroFunctor[SC, C] {
-    override val target: self.type = self
+  trait FunctorTo extends Functor {
+    override val target: category.type = category
   }
-  trait NaturalTransformationTo[SC <: Category[SC], F <: FunctorTo[SC]] extends HeteroNaturalTransformation[SC, C, F] {
-    override val source: F
-    override val target: F
+  trait NaturalTransformationTo extends NaturalTransformation {
+    override val source: FunctorTo
+    override val target: FunctorTo
   }
 
-  trait FunctorToSet extends FunctorFrom[Sets] with net.metaphor.api.FunctorToSet[C]
-
-  trait NaturalTransformationToSet[F <: FunctorToSet] extends NaturalTransformationFrom[Sets, F] with net.metaphor.api.NaturalTransformationToSet[C, F] {
-    override val source: F
-    override val target: F
-    override val sourceCategory: self.type = self
-  }
 }
