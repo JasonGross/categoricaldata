@@ -1,8 +1,8 @@
 package net.metaphor.api
 
-//object InitialObject {
-//  implicit def InitialObjectToObject[O, M](i: InitialObject[O, M]) = i.initialObject
-//}
+object InitialObject {
+  implicit def InitialObjectToObject[O, M](i: InitialObject[O, M]) = i.initialObject
+}
 object TerminalObject {
   implicit def TerminalObjectToObject[O, M](i: TerminalObject[O, M]) = i.terminalObject
 }
@@ -18,7 +18,7 @@ trait TerminalObject[O, M] {
 
 
 // TODO one day, TerminalObject should look like this:
-//trait TerminalObject[C <: Category[C]] { category: Category[C] => 
+//trait TerminalObject { category: Category => 
 //  def terminalObject: category.O
 //  def morphismFrom(o: category.O): category.M
 //}

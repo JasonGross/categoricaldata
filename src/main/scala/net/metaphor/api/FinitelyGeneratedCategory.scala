@@ -109,23 +109,56 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
   //    override val maximumLevel = self.minimumLevel
   //  }
 
-  trait FinitelyGeneratedFunctorTo extends super.FunctorTo {
+  trait FinitelyGeneratedFunctorTo extends FunctorTo {
     override val source: FinitelyGeneratedCategory
     def onGenerators(g: source.G): target.M
     override def onMorphisms(m: source.M) = {
       val start = onObjects(source.source(m))
-      val morphisms = for(g <- m.representative.morphisms) yield onGenerators(g)
+      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
       target.compose(start, morphisms)
     }
+  }
+
+  trait FinitelyGeneratedCategoryOver extends CategoryOver {
+    override def functor: FinitelyGeneratedFunctorTo
+  }
+
+  trait FinitelyGeneratedFunctorOver extends FunctorOver {
+    override def source: FinitelyGeneratedCategoryOver
+    override def target: FinitelyGeneratedCategoryOver
+    override def functor: FinitelyGeneratedFunctor
 
   }
 
+  trait FinitelyGeneratedCategoriesOver extends Category { categoriesOver =>
+    override type O = FinitelyGeneratedCategoryOver
+    override type M = FinitelyGeneratedFunctorOver
+    override def identity(f: O) = new FinitelyGeneratedFunctorOver {
+      val source = f
+      val target = f
+      val functor = ??? // FIXME
+      //new Functor.IdentityFunctor(f.category)
+    }
+    override def source(t: M) = t.source
+    override def target(t: M) = t.target
+    override def compose(m1: M, m2: M): M = new FinitelyGeneratedFunctorOver {
+      val source = m1.source
+      val target = m2.target
+      val functor = ??? // FIXME
+      //new Functor.CompositeFunctor(m1.functor, m2.functor)
+    }
+  }
+
+  def finitelyGeneratedCategoriesOver: FinitelyGeneratedCategoriesOver = new FinitelyGeneratedCategoriesOver {}
+  
+  
+  
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
     override val source: FinitelyGeneratedCategory
     def onGenerators(g: source.G): target.M
     override def onMorphisms(m: source.M) = {
       val start = onObjects(source.source(m))
-      val morphisms = for(g <- m.representative.morphisms) yield onGenerators(g)
+      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
       target.compose(start, morphisms)
     }
 

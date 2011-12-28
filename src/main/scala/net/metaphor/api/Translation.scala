@@ -40,8 +40,15 @@ trait FiniteTarget extends Translation { translation =>
   trait Shriek extends CovariantDataFunctor { shriek =>
     override def onObjects(i: translation.source.Dataset) = new translation.target.Dataset {
       def onObjects(o: Box) = {
+        val z = coslice
+        val a = coslice(o)
+        val b = a.functor
+        val c = b.pullback
+        val d: c.target.O = c(i)
+        val CCC = b.source
+//        val e = d.colimitSet // FIXME
+//        coslice(o).functor.pullback(i).colimitSet
         ???
-        //        coslice(o).functor.pullback(i).colimitSet
       }
       def onGenerators(m: translation.target.G) = ???
     }
