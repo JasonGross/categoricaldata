@@ -32,7 +32,6 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       require(fgFunctor.target.compose(fgFunctor.onGenerators(generator), target.morphism) == source.morphism)
     }
 
-    def opposite = ??? // new SliceCategory(onRight) with Opposite
     def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
       for (
         l <- (fgFunctor.source.minimumLevel to k).toList;
@@ -54,7 +53,12 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
 
     override type F = FunctorToSet
     
-    def internalize(f: net.metaphor.api.FunctorToSet): F = ???
+    // provide a mixin that performs this empty formalism.
+    def internalize(f: net.metaphor.api.FunctorToSet): F = new FunctorToSet {
+      require(f.source == source)
+      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
+      def onGenerators(g: G) = f(sliceCategory.generatorAsMorphism(g).asInstanceOf[f.source.M])
+    }
     def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ???
 
   }

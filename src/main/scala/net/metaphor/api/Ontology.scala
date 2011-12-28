@@ -84,27 +84,37 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   override type T = Datamap
 
   override def internalize(f: net.metaphor.api.FunctorToSet) = {
-    require(f.source == this)
-    new Dataset {
-      override def onObjects(o: Box) = f(o.asInstanceOf[f.source.O])
-      // and yet another weird one: replacing this with Arrow causes an AbstractMethodError
-      override def onGenerators(a: source.G) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
+    f match {
+      case f: Dataset => f
+      case _ => {
+        require(f.source == this)
+        new Dataset {
+          override def onObjects(o: Box) = f(o.asInstanceOf[f.source.O])
+          // and yet another weird one: replacing this with Arrow causes an AbstractMethodError
+          override def onGenerators(a: source.G) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
+        }
+      }
     }
   }
   override def internalize(t: net.metaphor.api.NaturalTransformationToSet) = {
-    require(t.sourceCategory == this)
-    new Datamap {
-      override val source = internalize(t.source)
-      override val target = internalize(t.target)
-      override def apply(o: Box) = t(o.asInstanceOf[t.sourceCategory.O])
+    t match {
+      case t: Datamap => t
+      case _ => {
+        require(t.sourceCategory == this)
+        new Datamap {
+          override val source = internalize(t.source)
+          override val target = internalize(t.target)
+          override def apply(o: Box) = t(o.asInstanceOf[t.sourceCategory.O])
+        }
+      }
     }
   }
 
-  trait SpecializedFunctorsToSet  extends super.SpecializedFunctorsToSet {
+  trait SpecializedFunctorsToSet extends super.SpecializedFunctorsToSet {
     override type O = ontology.F
     override type M = ontology.T
   }
-  
+
   override val functorsToSet = Datasets
   sealed trait Datasets extends SpecializedFunctorsToSet
 
