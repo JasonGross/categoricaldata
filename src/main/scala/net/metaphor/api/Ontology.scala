@@ -116,10 +116,10 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         def onObjects(o: Box) = {
           compositionDiagram.unbox(o) match {
             case Left(box) => {
-              Sets.bijections(this(box), other(box))
+              Sets.bijections(dataset(box), other(box))
             }
             case Right(Arrow(a, b, _)) => {
-              Sets.bijections(this(a), other(b))
+              Sets.bijections(dataset(a), other(b))
             }
           }
         }

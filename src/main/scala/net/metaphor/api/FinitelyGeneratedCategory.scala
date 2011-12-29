@@ -196,19 +196,44 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
     def limit: TerminalObject[functorToSet.Cone, functorToSet.ConeMap] = {
       // this is where all the work happens.
       def concreteLimit[A](objects: Iterable[self.O], sets: self.O => Iterable[A], functions: self.O => (self.O => (A => Iterable[A]))): (Iterable[self.O => A], self.O => ((self.O => A) => A)) = {
+        /** 
+         *  @returns None if there are actually no morphisms from o1 to o2
+         * 			 Some(None) if there are several morphisms, with different images on a
+         * 			 Some(Some(b)) is all morphisms send a to b.
+         */
+        def functionsCommonResult(o1: self.O)(o2: self.O)(a: A): Option[Option[A]] = {
+          val results = functions(o1)(o2)(a).toList
+          results.headOption.map(b => results.tail.foldLeft[Option[A]](Some(b))({ case (Some(b), c) if b == c => Some(b); case _ => None }))
+        }
 
-        //        def checkMapsOutOfObject(s: self.O)(map: Map[self.O, A]) = {
-        //          for(t <- map.keys)
-        //        }
-        //        
-        //        val successiveProducts = objects.scanLeft(NonStrictIterable(Map.empty[self.O, A]))({
-        //          (i,o) => for (m <- i; a <- sets(o)) yield m + (o -> a)
-        //        })
+        case class Intermediate(processedObjects: List[self.O], processedPairs: List[(self.O, self.O)], maps: Iterable[Map[self.O, A]]) {
+          private def productWith(o: self.O) = {
+            if (processedObjects.contains(o)) this
+            else {
+              Intermediate(o :: processedObjects, processedPairs, for (m <- maps; a <- sets(o)) yield m + (o -> a))
+            }
+          }
+          def processPair(pair: (self.O, self.O)): Intermediate = {
+            if (processedObjects.contains(pair._1)) {
+              if (processedObjects.contains(pair._2)) {
+                val newMaps = for(m <- maps; cr = functionsCommonResult(pair._1)(pair._2)(m(pair._1)); if cr.isEmpty || cr.get == Some(m(pair._2))) yield m
+                Intermediate(processedObjects, pair :: processedPairs, newMaps)
+              } else {
+                val newMaps = for(m <- maps; cr <- functionsCommonResult(pair._1)(pair._2)(m(pair._1)); b <- cr) yield m + (pair._2 -> b)
+                Intermediate(pair._2 :: processedObjects, pair :: processedPairs, newMaps)
+              }
+            } else {
+              productWith(pair._1).processPair(pair)
+            }
+          }
+        }
+        val start = Intermediate(Nil, Nil, NonStrictIterable(Map.empty[self.O, A]))
 
-        val resultMaps = ???
+        val finish = (for (o1 <- objects; o2 <- objects) yield (o1, o2)).foldLeft(start)({ _.processPair(_) })
+
         def resultFunctions(o: self.O)(map: self.O => A) = map(o)
 
-        (resultMaps, resultFunctions _)
+        (finish.maps, resultFunctions _)
       }
 
       val (maps, functions) = concreteLimit(

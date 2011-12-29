@@ -10,6 +10,8 @@ import net.metaphor.api.FiniteTarget
 import net.metaphor.api.FiniteMorphisms
 import net.metaphor.api.Ontologies
 import net.metaphor.examples.Examples
+import org.scalatest.matchers.Matcher
+import org.scalatest.matchers.MatchResult
 /*
  * This should always compile when checked in.
  */
@@ -18,6 +20,17 @@ import net.metaphor.examples.Examples
 class Test extends FlatSpec with ShouldMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
+
+  class IsomorphismMatcher(right: Ontology#Dataset) extends Matcher[Ontology#Dataset] {
+    def apply(left: Ontology#Dataset) = {
+      MatchResult(
+        left.isIsomorphicTo(right),
+        "The data sets are not isomorphic",
+        "The data sets are isomorphic")
+    }
+  }
+
+  def beIsomorphicTo(d: Ontology#Dataset) = new IsomorphismMatcher(d)
 
   val DavidsFunkyGraph = Dataset(source = Examples.Grph,
     onObjects = Map(
@@ -142,82 +155,71 @@ class Test extends FlatSpec with ShouldMatchers {
 
   val E2ToPointedSetRPushFunky = Dataset(
     source = Examples.PointedSet,
-    onObjects = Map (
-        "an element" -> List("a1a","b1a","d3d"), 
-        "a pointed set" -> List ("a1","d3")),
-    onMorphisms = Map ( 
-       ("an element" --- "is in" --> "a pointed set") -> Map ( 
-           "a1a" -> "a1",
-           "ba1" -> "a1",
-           "d3d" -> "d3"),
-       ("a pointed set" --- "has as chosen" --> "an element") -> Map (
-           "a1" -> "a1a",
-           "d3" -> "d3d")
-    )
-  )
-  
- 
- val OneTwoThreePointed = Dataset ( 
-     source = Examples.PointedSet,
-     onObjects = Map (
-    	"an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"), 
-        "a pointed set" -> List ("a", "b", "c")),
-    onMorphisms = Map ( 
-       ("an element" --- "is in" --> "a pointed set") -> Map ( 
-           "a1" -> "a",
-           "b1" -> "b",
-           "b2" -> "b",
-           "c1" -> "c",
-           "c2" -> "c",
-           "c3" -> "c"),
-       ("a pointed set" --- "has as chosen" --> "an element") -> Map (
-           "a" -> "a1",
-           "b" -> "b1",
-           "c" -> "c1")
-    )
-  )
+    onObjects = Map(
+      "an element" -> List("a1a", "b1a", "d3d"),
+      "a pointed set" -> List("a1", "d3")),
+    onMorphisms = Map(
+      ("an element" --- "is in" --> "a pointed set") -> Map(
+        "a1a" -> "a1",
+        "ba1" -> "a1",
+        "d3d" -> "d3"),
+      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+        "a1" -> "a1a",
+        "d3" -> "d3d")))
 
+  val OneTwoThreePointed = Dataset(
+    source = Examples.PointedSet,
+    onObjects = Map(
+      "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+      "a pointed set" -> List("a", "b", "c")),
+    onMorphisms = Map(
+      ("an element" --- "is in" --> "a pointed set") -> Map(
+        "a1" -> "a",
+        "b1" -> "b",
+        "b2" -> "b",
+        "c1" -> "c",
+        "c2" -> "c",
+        "c3" -> "c"),
+      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+        "a" -> "a1",
+        "b" -> "b1",
+        "c" -> "c1")))
 
-  val SixElementsIso = Dataset (
-    source = Examples.Isomorphism,  
-    onObjects = Map (
-        "0" -> List ("a1", "b1", "b2", "c1", "c2", "c3"),
-        "1" -> List ("a1", "b1", "b2", "c1", "c2", "c3")),
-    onMorphisms = Map (
-        ("0" --- "E01" --> "1") -> Map (
-        	"a1" -> "a1",
-           	"b1" -> "b1",
-           	"b2" -> "b2",
-           	"c1" -> "c1",
-           	"c2" -> "c2",
-           	"c3" -> "c3"),
-        ("1" --- "E10" --> "0") -> Map (
-        	"a1" -> "a1",
-        	"b1" -> "b1",
-        	"b2" -> "b2",
-        	"c1" -> "c1",
-        	"c2" -> "c2",
-        	"c3" -> "c3")
-     )
-  )
-  
+  val SixElementsIso = Dataset(
+    source = Examples.Isomorphism,
+    onObjects = Map(
+      "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+      "1" -> List("a1", "b1", "b2", "c1", "c2", "c3")),
+    onMorphisms = Map(
+      ("0" --- "E01" --> "1") -> Map(
+        "a1" -> "a1",
+        "b1" -> "b1",
+        "b2" -> "b2",
+        "c1" -> "c1",
+        "c2" -> "c2",
+        "c3" -> "c3"),
+      ("1" --- "E10" --> "0") -> Map(
+        "a1" -> "a1",
+        "b1" -> "b1",
+        "b2" -> "b2",
+        "c1" -> "c1",
+        "c2" -> "c2",
+        "c3" -> "c3")))
+
   val ThreeElementsIso = Dataset(
-  	source = Examples.Isomorphism,
-  	onObjects = Map (
-        "0" -> List ("a", "b", "c"),
-        "1" -> List ("a", "b", "c")),
-    onMorphisms = Map (
-        ("0" --- "E01" --> "1") -> Map (
-        	"a" -> "a",
-           	"b" -> "b",
-           	"c" -> "c"),
-        ("1" --- "E10" --> "0") -> Map (
-        	"a" -> "a",
-           	"b" -> "b",
-           	"c" -> "c")
-     )
-  )
-  
+    source = Examples.Isomorphism,
+    onObjects = Map(
+      "0" -> List("a", "b", "c"),
+      "1" -> List("a", "b", "c")),
+    onMorphisms = Map(
+      ("0" --- "E01" --> "1") -> Map(
+        "a" -> "a",
+        "b" -> "b",
+        "c" -> "c"),
+      ("1" --- "E10" --> "0") -> Map(
+        "a" -> "a",
+        "b" -> "b",
+        "c" -> "c")))
 
   val DavidsFunkyFunction = Dataset(source = Examples.Ord(1),
     onObjects = Map(
@@ -260,7 +262,7 @@ class Test extends FlatSpec with ShouldMatchers {
   }
 
   "pushforward" should "work nicely with the map from E2 to PointedSet" in {
-    Examples.E2ToPointedSet.__*(FunkyE2Dataset).isIsomorphicTo(E2ToPointedSetRPushFunky) should equal(true)
+    Examples.E2ToPointedSet.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetRPushFunky)
   }
 
   // TODO waiting on translations with infinite targets
@@ -269,12 +271,13 @@ class Test extends FlatSpec with ShouldMatchers {
   //    }
 
   "pushforward" should "work (1)" in {
-    Examples.TerminalFunctor(Examples.Ord(1)).__*(DavidsFunkyFunction) should equal(DavidsFunkySet1)
+    val pushforward = Examples.TerminalFunctor(Examples.Ord(1)).__*(DavidsFunkyFunction)
+    pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
   }
 
   "shriek" should "work (1)" in {
     val shriek = Examples.TerminalFunctor(Examples.Ord(1)).__!(DavidsFunkyFunction)
-    shriek.isIsomorphicTo(DavidsFunkySet2) should equal (true)
+    shriek.isIsomorphicTo(DavidsFunkySet2) should equal(true)
   }
 
   //   "shriek" should "work (1)" in {
@@ -318,11 +321,11 @@ class Test extends FlatSpec with ShouldMatchers {
   }
 
   "pushforward" should "work (3)" in {
-    ReverseGraph.__*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
+    ReverseGraph.__*(DavidsFunkyGraph) should beIsomorphicTo(DavidsFunkyGraphReversed)
   }
 
   "shriek" should "work (2)" in {
-    ReverseGraph.__!(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
+    ReverseGraph.__!(DavidsFunkyGraph) should beIsomorphicTo(DavidsFunkyGraphReversed)
   }
   // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
 
@@ -333,10 +336,10 @@ class Test extends FlatSpec with ShouldMatchers {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
   }
   "pushforward" should "work with PointedSetToIsomorphism" in {
-    Examples.PointedSetToIsomorphism.__*(OneTwoThreePointed) should equal(SixElementsIso)
+    Examples.PointedSetToIsomorphism.__*(OneTwoThreePointed) should beIsomorphicTo(SixElementsIso)
   }
-  
+
   "shriek" should "work with PointedSetToIsomorphism" in {
-	  Examples.PointedSetToIsomorphism.__!(OneTwoThreePointed) should equal(ThreeElementsIso)
-  }  
+    Examples.PointedSetToIsomorphism.__!(OneTwoThreePointed) should beIsomorphicTo(ThreeElementsIso)
+  }
 }

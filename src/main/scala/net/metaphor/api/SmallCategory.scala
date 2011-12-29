@@ -10,7 +10,6 @@ trait SmallCategory extends Category { smallCategory =>
   trait NaturalTransformationToSet extends NaturalTransformationFrom with net.metaphor.api.NaturalTransformationToSet {
     override val source: F
     override val target: F
-    override val sourceCategory: smallCategory.type = smallCategory
   }
 
   def internalize(f: net.metaphor.api.FunctorToSet): F

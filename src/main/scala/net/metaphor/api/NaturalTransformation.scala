@@ -3,8 +3,8 @@ package net.metaphor.api
 trait NaturalTransformation {
   val source: Functor
   val target: Functor
-  val sourceCategory: source.source.type = source.source
-  val targetCategory: source.target.type = source.target
+  lazy val sourceCategory: target.source.type = target.source
+  lazy val targetCategory: target.target.type = target.target
   def apply(o: sourceCategory.O): targetCategory.M
 }
 
