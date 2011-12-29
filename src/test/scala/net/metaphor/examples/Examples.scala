@@ -163,13 +163,13 @@ object Examples {
 //    def OppositeOntology (c: Ontology) = Ontology ( 
 //		  objects = c.objects
 //		  arrows = for (a <- c.arrows) yield {a.target --- a.name --> a.source} 
-//		  relations = ???)
+//		  relations = ???) //???
 		  
 //def OppositeFunctor (f:Functor) = Functor( 
 //    source = OppositeOntology(f.source)
 //    target = OppositeOntology(f.target)
 //    onObjects = f.onObjects
-//    onMorphisms = for (???))
+//    onMorphisms = for (???)) //???
     
   val SourceFunction = Translation(
     source = Examples.Ord(1),

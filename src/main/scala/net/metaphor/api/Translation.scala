@@ -7,7 +7,7 @@ trait Translation extends FinitelyGeneratedFunctor { translation =>
   override type SC = SliceCategory
   override type cSC = CosliceCategory
 
-  def assertFiniteTarget: Translation with FiniteTarget = ???
+  def assertFiniteTarget: Translation with FiniteTarget = ??? //???
 }
 
 trait FiniteTarget extends Translation { translation =>
@@ -29,12 +29,12 @@ trait FiniteTarget extends Translation { translation =>
         val F = slice(o).functor
         F.Pullback(i).limitSet
       }
-      override def onGenerators(g: translation.target.G) = ???
+      override def onGenerators(g: translation.target.G) = ??? //???
     }
     override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
-      override def apply(o: Box) = ???
+      override def apply(o: Box) = ??? //???
     }
   }
   object Shriek extends CovariantDataFunctor { shriek =>
@@ -43,12 +43,12 @@ trait FiniteTarget extends Translation { translation =>
         val F = coslice(o).functor // FIXME weird, why on earth do we need this intermediate val?
         F.Pullback(i).colimitSet
       }
-      override def onGenerators(m: translation.target.G) = ???
+      override def onGenerators(m: translation.target.G) = ??? //???
     }
     override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
       override val source = onObjects(m.source)
       override val target = onObjects(m.target)
-      override def apply(o: Box) = ???
+      override def apply(o: Box) = ??? //???
     }
   }
 

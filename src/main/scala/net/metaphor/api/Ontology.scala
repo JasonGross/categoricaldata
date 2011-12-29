@@ -25,7 +25,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
   }
 
-  override def hashCode = ???
+  override def hashCode = ??? //???
 
   override def toString = {
     // TODO relations in Ontology.toString
@@ -54,7 +54,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       }
     }
 
-    override def hashCode = ???
+    override def hashCode = ??? //???
 
     override def toString = {
       "Dataset(\n" +
@@ -72,7 +72,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     // TODO define this recursively, and provide some way to let the user help out. 
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
-      ???
+      ??? //???
     }
 
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
@@ -138,8 +138,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     this match {
       case o: Ontologies.Finite => o
       case _ => new OntologyWrapper(this) with Ontologies.Finite {
-        def maximumWordLength(s: O, t: O) = ???
-        def normalForm(m: M) = ???
+        def maximumWordLength(s: O, t: O) = ??? //???
+        def normalForm(m: M) = ??? //???
       }
     }
   }

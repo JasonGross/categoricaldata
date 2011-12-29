@@ -88,6 +88,6 @@ object SmallCategories {
       def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
       def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
     }
-    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ???
+    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ??? //???
   }
 }
