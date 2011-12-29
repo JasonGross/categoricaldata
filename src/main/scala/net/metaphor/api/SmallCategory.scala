@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait SmallCategory extends Category { category =>
+trait SmallCategory extends Category { smallCategory =>
 
   trait FunctorToSet extends FunctorFrom with net.metaphor.api.FunctorToSet
 
@@ -10,15 +10,15 @@ trait SmallCategory extends Category { category =>
   trait NaturalTransformationToSet extends NaturalTransformationFrom with net.metaphor.api.NaturalTransformationToSet {
     override val source: F
     override val target: F
-    override val sourceCategory: category.type = category
+    override val sourceCategory: smallCategory.type = smallCategory
   }
 
   def internalize(f: net.metaphor.api.FunctorToSet): F
   def internalize(t: net.metaphor.api.NaturalTransformationToSet): T
 
   class SpecializedFunctorsToSet extends Category { functorsToSet =>
-    override type O = category.F
-    override type M = category.T
+    override type O = smallCategory.F
+    override type M = smallCategory.T
 
     override def identity(o: O) = internalize(FunctorsToSet.identity(o))
     override def source(m: M) = internalize(FunctorsToSet.source(m))
@@ -27,8 +27,8 @@ trait SmallCategory extends Category { category =>
   }
 
   object AllFunctorsToSet extends Category {
-    override type O = category.FunctorToSet
-    override type M = category.NaturalTransformationToSet
+    override type O = smallCategory.FunctorToSet
+    override type M = smallCategory.NaturalTransformationToSet
 
     override def identity(o: O) = internalize(FunctorsToSet.identity(o))
     override def source(m: M) = internalize(FunctorsToSet.source(m))
@@ -38,22 +38,22 @@ trait SmallCategory extends Category { category =>
 
   def functorsToSet: SpecializedFunctorsToSet
 
-  trait FunctorTo extends SmallFunctor {
-    override val target: category.type = category
+  trait CategoryOver extends SmallFunctor {
+    override val target: smallCategory.type = smallCategory
   }
-  trait NaturalTransformationTo extends NaturalTransformation {
-    override val source: FunctorTo
-    override val target: FunctorTo
+  trait NaturalTransformationOver extends NaturalTransformation {
+    override val source: CategoryOver
+    override val target: CategoryOver
   }
 
-  trait CategoryOver {
-    def category = functor.source
-    def functor: FunctorTo
-  }
-  trait FunctorOver {
-    def source: CategoryOver
-    def target: CategoryOver
-    def functor: Functor
+  trait FunctorOver { functorOver =>
+    val source: CategoryOver
+    val target: CategoryOver
+    trait F extends Functor {
+      override val source: functorOver.source.source.type = functorOver.source.source
+      override val target: functorOver.target.source.type = functorOver.target.source
+    }
+    def functor: F
   }
 
   trait CategoriesOver extends Category { categoriesOver =>
@@ -62,14 +62,14 @@ trait SmallCategory extends Category { category =>
     override def identity(f: O) = new FunctorOver {
       val source = f
       val target = f
-      var functor = new Functor.IdentityFunctor(f.category)
+      var functor = ??? // new Functor.IdentityFunctor(f.category)
     }
     override def source(t: M) = t.source
     override def target(t: M) = t.target
     override def compose(m1: M, m2: M): M = new FunctorOver {
       val source = m1.source
       val target = m2.target
-      val functor = new Functor.CompositeFunctor(m1.functor, m2.functor)
+      val functor = ??? // new Functor.CompositeFunctor(m1.functor, m2.functor)
     }
   }
 
