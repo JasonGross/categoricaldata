@@ -74,16 +74,7 @@ class Test extends FlatSpec with ShouldMatchers {
         "i" -> "jbar",
         "j" -> "jbar")))
 
-  val ReverseGraph = Translation(
-    source = Examples.Grph,
-    target = Examples.Grph,
-    onObjects = Map(
-      "an edge" -> "an edge",
-      "a vertex" -> "a vertex"),
-    onMorphisms = Map(
-      ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
-      ("an edge" --- "has as target" --> "a vertex") -> ("an edge" --- "has as source" --> "a vertex")))
-
+  
   val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
@@ -195,7 +186,7 @@ class Test extends FlatSpec with ShouldMatchers {
     source = Examples.Isomorphism,  
     onObjects = Map (
         "0" -> List ("a1", "b1", "b2", "c1", "c2", "c3"),
-        "1" -> List ("a1", "b1", "b2", "c1", "c2", "c3"))
+        "1" -> List ("a1", "b1", "b2", "c1", "c2", "c3")),
     onMorphisms = Map (
         ("0" --- "E01" --> "1") -> Map (
         	"a1" -> "a1",
@@ -218,7 +209,7 @@ class Test extends FlatSpec with ShouldMatchers {
   	source = Examples.Isomorphism,
   	onObjects = Map (
         "0" -> List ("a", "b", "c"),
-        "1" -> List ("a", "b", "c"))
+        "1" -> List ("a", "b", "c")),
     onMorphisms = Map (
         ("0" --- "E01" --> "1") -> Map (
         	"a" -> "a",
@@ -332,15 +323,15 @@ class Test extends FlatSpec with ShouldMatchers {
   //   }
 
   "pullback" should "work (4)" in {
-    ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
+    Examples.ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
 
   "pushforward" should "work (3)" in {
-    ReverseGraph.__*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
+    Examples.ReverseGraph.__*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
 
   "shriek" should "work (2)" in {
-    ReverseGraph.__!(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
+    Examples.ReverseGraph.__!(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
  // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
   
@@ -351,10 +342,10 @@ class Test extends FlatSpec with ShouldMatchers {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
   }
   "pushforward" should "work with PointedSetToIsomorphism" in {
-    PointedSetToIsomorphism.__*(OneTwoThreePointed) should equal(SixElementsIso)
+    Examples.PointedSetToIsomorphism.__*(OneTwoThreePointed) should equal(SixElementsIso)
   }
   
   "shriek" should "work with PointedSetToIsomorphism" in {
-	  PointedSetToIsomorphism.__!(OneTwoThreePointed) should equal(ThreeElementsIso)
+	  Examples.PointedSetToIsomorphism.__!(OneTwoThreePointed) should equal(ThreeElementsIso)
   }  
 }

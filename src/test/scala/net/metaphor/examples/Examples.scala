@@ -33,6 +33,17 @@ object Examples {
       ("an edge" --- "has as target" --> "a vertex") -> Map(
         "input" -> "transition",
         "output" -> "species")))
+        
+  val ReverseGraph = Translation(
+    source = Examples.Grph,
+    target = Examples.Grph,
+    onObjects = Map(
+      "an edge" -> "an edge",
+      "a vertex" -> "a vertex"),
+    onMorphisms = Map(
+      ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
+      ("an edge" --- "has as target" --> "a vertex") -> ("an edge" --- "has as source" --> "a vertex")))
+
 
   val InitialGraph = Dataset(source = Grph,
     onObjects = Map(
