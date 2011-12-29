@@ -93,19 +93,23 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def onMorphisms(m: source.M): SliceFunctorOver = new SliceFunctorOver(m)
 
     class SliceCategoryOver(onRight: fgFunctor.target.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver {
-        override val source = buildSliceCategory(onRight)
-        override def onObjects(o: source.ObjectLeftOf) = o.left
-        override def onGenerators(g: source.ObjectLeftOfMap) = {
-          import fgFunctor.source.generatorAsMorphism
-          g.generator
-        }
+      override val source = buildSliceCategory(onRight)
+      override def onObjects(o: source.ObjectLeftOf) = o.left
+      override def onGenerators(g: source.ObjectLeftOfMap) = {
+        import fgFunctor.source.generatorAsMorphism
+        g.generator
+      }
     }
     class SliceFunctorOver(m: fgFunctor.target.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver {
       override val source = sliceFunctor.onObjects(fgFunctor.target.source(m))
       override val target = sliceFunctor.onObjects(fgFunctor.target.target(m))
       override val functor = new F {
-        override def onObjects(o: source.ObjectLeftOf): target.ObjectLeftOf = target.ObjectLeftOf(left = o.left, morphism = fgFunctor.target.compose(o.morphism, m))
-        override def onGenerators(g: source.ObjectLeftOfMap): target.M = target.generatorAsMorphism(target.ObjectLeftOfMap(onObjects(g.source), onObjects(g.target), g.generator))
+        override def onObjects(o: source.ObjectLeftOf): target.ObjectLeftOf = {
+          target.ObjectLeftOf(left = o.left, morphism = fgFunctor.target.compose(o.morphism, m))
+        }
+        override def onGenerators(g: source.ObjectLeftOfMap): target.M = {
+          target.generatorAsMorphism(target.ObjectLeftOfMap(onObjects(g.source), onObjects(g.target), g.generator))
+        }
       }
     }
 
@@ -120,19 +124,23 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def onMorphisms(m: source.M): CosliceFunctorOver = new CosliceFunctorOver(m)
 
     class CosliceCategoryOver(onLeft: fgFunctor.target.opposite.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver {
-        override val source = buildCosliceCategory(onLeft)
-        override def onObjects(o: source.ObjectRightOf) = o.right
-        override def onGenerators(g: source.ObjectRightOfMap) = {
-          import fgFunctor.source.generatorAsMorphism
-          g.generator
+      override val source = buildCosliceCategory(onLeft)
+      override def onObjects(o: source.ObjectRightOf) = o.right
+      override def onGenerators(g: source.ObjectRightOfMap) = {
+        import fgFunctor.source.generatorAsMorphism
+        g.generator
       }
     }
     class CosliceFunctorOver(m: fgFunctor.target.opposite.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver {
-      override val source = cosliceFunctor.onObjects(fgFunctor.target.opposite.source(m))
-      override val target = cosliceFunctor.onObjects(fgFunctor.target.opposite.target(m))
+      override val source = cosliceFunctor.onObjects(fgFunctor.target.opposite.target(m)) // source, target, schmource, schtarget, who's keeping track anyway?
+      override val target = cosliceFunctor.onObjects(fgFunctor.target.opposite.source(m))
       override val functor = new F {
-        override def onObjects(o: source.ObjectRightOf): target.ObjectRightOf = target.ObjectRightOf(right = o.right, morphism = fgFunctor.target.compose(m.asInstanceOf[fgFunctor.target.M], o.morphism))
-        override def onGenerators(g: source.ObjectRightOfMap): target.M = target.generatorAsMorphism(target.ObjectRightOfMap(onObjects(g.target), onObjects(g.source), g.generator))
+        override def onObjects(o: source.ObjectRightOf): target.ObjectRightOf = {
+          target.ObjectRightOf(right = o.right, morphism = fgFunctor.target.compose(m.asInstanceOf[fgFunctor.target.M], o.morphism))
+        }
+        override def onGenerators(g: source.ObjectRightOfMap): target.M = {
+          target.generatorAsMorphism(target.ObjectRightOfMap(onObjects(g.target), onObjects(g.source), g.generator))
+        }
       }
     }
 

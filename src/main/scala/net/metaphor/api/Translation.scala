@@ -88,9 +88,11 @@ trait FiniteTarget extends Translation { translation =>
         val cocone: sourceData.CoCone = new sourceData.CoCone {
           override val terminalSet = targetColimitInitialCoCone.terminalSet
           override def mapToTerminalSet(o: Fs.source.O) = {
-            // actually, o is an ObjectRightOf
-            targetColimitInitialCoCone.mapToTerminalSet(???) andThen ???
-            ???
+            // TODO if this really right?
+        	  val f = targetColimitInitialCoCone.mapToTerminalSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
+        	  new coConeFunction(o) {
+        	    override def toFunction = f.toFunction
+        	  }
           }
         }
 
