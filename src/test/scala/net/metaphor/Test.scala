@@ -171,9 +171,69 @@ class Test extends FlatSpec with ShouldMatchers {
   )
   
  
+ val OneTwoThreePointed = Dataset ( 
+     source = Examples.PointedSet,
+     onObjects = Map (
+    	"an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"), 
+        "a pointed set" -> List ("a", "b", "c")),
+    onMorphisms = Map ( 
+       ("an element" --- "is in" --> "a pointed set") -> Map ( 
+           "a1" -> "a",
+           "b1" -> "b",
+           "b2" -> "b",
+           "c1" -> "c",
+           "c2" -> "c",
+           "c3" -> "c"),
+       ("a pointed set" --- "has as chosen" --> "an element") -> Map (
+           "a" -> "a1",
+           "b" -> "b1",
+           "c" -> "c1")
+    )
+  )
 
+  val SixElementsIso = Dataset (
+    source = Examples.Isomorphism,  
+    onObjects = Map (
+        "0" -> List ("a1", "b1", "b2", "c1", "c2", "c3"),
+        "1" -> List ("a1", "b1", "b2", "c1", "c2", "c3"))
+    onMorphisms = Map (
+        ("0" --- "E01" --> "1") -> Map (
+        	"a1" -> "a1",
+           	"b1" -> "b1",
+           	"b2" -> "b2",
+           	"c1" -> "c1",
+           	"c2" -> "c2",
+           	"c3" -> "c3"),
+        ("1" --- "E10" --> "0") -> Map (
+        	"a1" -> "a1",
+        	"b1" -> "b1",
+        	"b2" -> "b2",
+        	"c1" -> "c1",
+        	"c2" -> "c2",
+        	"c3" -> "c3")
+     )
+  )
+  
+  val ThreeElementsIso = Dataset(
+  	source = Examples.Isomorphism,
+  	onObjects = Map (
+        "0" -> List ("a", "b", "c"),
+        "1" -> List ("a", "b", "c"))
+    onMorphisms = Map (
+        ("0" --- "E01" --> "1") -> Map (
+        	"a" -> "a",
+           	"b" -> "b",
+           	"c" -> "c"),
+        ("1" --- "E10" --> "0") -> Map (
+        	"a" -> "a",
+           	"b" -> "b",
+           	"c" -> "c")
+     )
+  )
   
   
+  
+  	
   val DavidsFunkyFunction = Dataset(source = Examples.Ord(1),
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
@@ -290,4 +350,11 @@ class Test extends FlatSpec with ShouldMatchers {
    "limit and pushforward" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
   }
+  "pushforward" should "work with PointedSetToIsomorphism" in {
+    PointedSetToIsomorphism.__*(OneTwoThreePointed) should equal(SixElementsIso)
+  }
+  
+  "shriek" should "work with PointedSetToIsomorphism" in {
+	  PointedSetToIsomorphism.__!(OneTwoThreePointed) should equal(ThreeElementsIso)
+  }  
 }
