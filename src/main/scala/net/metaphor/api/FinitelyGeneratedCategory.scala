@@ -174,22 +174,38 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
     def limitSet = limitCone.initialSet
 
     trait CoCone {
-      def terminalSet: Set
-      def mapToTerminalSet(o: O): FFunction
+      val terminalSet: Set
+      abstract class coConeFunction(o: O) extends FFunction {
+        override val source = functorToSet(o)
+        override val target = terminalSet
+      }
+      def mapToTerminalSet(o: O): coConeFunction
     }
-    trait CoConeMap extends {
-      def source: CoCone
-      def target: CoCone
-      def terminalMap: FFunction
+    trait CoConeMap extends { coConeMap =>
+      val source: CoCone
+      val target: CoCone
+      trait terminalFunction extends FFunction {
+        override val source = coConeMap.source.terminalSet
+        override val target = coConeMap.target.terminalSet
+      }
+      val terminalMap: terminalFunction
     }
     trait Cone extends {
-      def initialSet: Set
-      def mapFromInitialSet(o: O): FFunction
+      val initialSet: Set
+      abstract class coneFunction(o: O) extends FFunction {
+        override val source = initialSet
+        override val target = functorToSet(o)
+      }
+      def mapFromInitialSet(o: O): coneFunction
     }
-    trait ConeMap extends {
-      def source: Cone
-      def target: Cone
-      def initialMap: FFunction
+    trait ConeMap extends { coneMap =>
+      val source: Cone
+      val target: Cone
+      trait initialFunction extends FFunction {
+        override val source = coneMap.source.initialSet
+        override val target = coneMap.target.initialSet
+      }
+      val initialMap: initialFunction
     }
 
     def limit: TerminalObject[functorToSet.Cone, functorToSet.ConeMap] = {
@@ -244,28 +260,24 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
         override def sizeIfFinite = Some(maps.size)
         override def toIterable = maps
       }
-      val resultFunctions: (self.O => FFunction) = { o: self.O =>
-        new FFunction {
-          override def source = ???
-          override def target = ???
-          override def toFunction = functions(o).asInstanceOf[Any => Any]
-        }
-      }
 
       new TerminalObject[functorToSet.Cone, functorToSet.ConeMap] {
-        def terminalObject = new functorToSet.Cone {
-          override def initialSet = resultSet
-          override def mapFromInitialSet(o: self.O) = resultFunctions(o)
+        val terminalObject = new functorToSet.Cone {
+          override val initialSet = resultSet
+          override def mapFromInitialSet(o: self.O) = new coneFunction(o) {
+            override def toFunction = functions(o).asInstanceOf[Any => Any]
+          }
         }
         def morphismFrom(other: functorToSet.Cone) = {
           new functorToSet.ConeMap {
             override val source = other
             override val target = terminalObject
-            override def initialMap = ???
+            override val initialMap = new initialFunction {
+            	override def toFunction = { x: Any => { o: self.O => other.mapFromInitialSet(o).toFunction(x) }}
+            }
           }
         }
       }
-
     }
 
     def colimit: InitialObject[functorToSet.CoCone, functorToSet.CoConeMap] = {
@@ -288,7 +300,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
         (resultClumps, resultFunctions _)
       }
 
-      val (clumps, functions) = concreteColimit(
+      val (clumps, functions) = concreteColimit[Any](
         objects,
         { o: self.O => functorToSet(o).toIterable },
         { s: self.O => { t: self.O => { a: Any => for (g <- generators(s, t)) yield functorToSet(g).toFunction(a) } } })
@@ -297,24 +309,21 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
         override def sizeIfFinite = Some(clumps.size)
         override def toIterable = clumps
       }
-      val resultFunctions: (self.O => FFunction) = { o: self.O =>
-        new FFunction {
-          override def source = ???
-          override def target = ???
-          override def toFunction = functions(o)
-        }
-      }
 
       new InitialObject[functorToSet.CoCone, functorToSet.CoConeMap] {
-        def initialObject = new functorToSet.CoCone {
-          override def terminalSet = resultSet
-          override def mapToTerminalSet(o: self.O) = resultFunctions(o)
+        val initialObject = new functorToSet.CoCone {
+          override val terminalSet = resultSet
+          override def mapToTerminalSet(o: self.O) = new coConeFunction(o) {
+            override def toFunction = functions(o)
+          }
         }
         def morphismTo(other: functorToSet.CoCone) = {
           new functorToSet.CoConeMap {
             override val source = initialObject
             override val target = other
-            override def terminalMap = ???
+            override val terminalMap = new terminalFunction {
+              override def toFunction = { x: List[(self.O, Any)] => other.mapToTerminalSet(x.head._1).toFunction(x.head._2) }.asInstanceOf[Any => Any]
+            }
           }
         }
       }

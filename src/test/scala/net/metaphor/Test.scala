@@ -321,14 +321,29 @@ class Test extends FlatSpec with ShouldMatchers {
   }
 
   "pushforward" should "work (3)" in {
-    ReverseGraph.__*(DavidsFunkyGraph) should beIsomorphicTo(DavidsFunkyGraphReversed)
+    val LHS = ReverseGraph.__*(DavidsFunkyGraph)
+    val RHS = DavidsFunkyGraphReversed
+    println(LHS)
+    println(RHS)
+    LHS should beIsomorphicTo(RHS)
   }
 
   "shriek" should "work (2)" in {
-    ReverseGraph.__!(DavidsFunkyGraph) should beIsomorphicTo(DavidsFunkyGraphReversed)
+    val LHS = ReverseGraph.__!(DavidsFunkyGraph)
+    val RHS = DavidsFunkyGraphReversed
+    println(LHS)
+    println(RHS)
+    LHS should beIsomorphicTo(RHS)
   }
   // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
-
+  // Scott: sure, if you have some supply of datasets, you could write
+  /*
+   * for(dataset <- dataset; C = dataset.source) {
+   *    val T = TerminalFunctor(C)
+   *    val x = T.target.allObjects.head 									// the target only has one object, so this hack to get it is okay.
+   * 	dataset.colimitSet should equal(TerminalFunctor(C).__!(dataset)(x))
+   * }
+   */
   "colimit and shriek" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have colim(D)=TerminalFunctor(C).__!(D)
   }
