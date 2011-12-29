@@ -248,7 +248,7 @@ object Examples {
 //      ("an edge" --- "has as source" --> "a vertex") -> ("an element".identity),
 //      ("an edge" --- "has as target" --> "a vertex") -> ("an element" --- "has as successor" --> "an element")))
 
-      // TODO (David) this is broken; there's no object in DiscreteDynamicalSystem called "a vertex"
+      
 //  val GraphToDiscreteDynamicalSystem2 = Translation(
 //    source = Grph,
 //    target = DiscreteDynamicalSystem,
