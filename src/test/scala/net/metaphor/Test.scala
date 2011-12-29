@@ -273,7 +273,8 @@ class Test extends FlatSpec with ShouldMatchers {
   }
 
   "shriek" should "work (1)" in {
-    Examples.TerminalFunctor(Examples.Ord(1)).__!(DavidsFunkyFunction) should equal(DavidsFunkySet2)
+    val shriek = Examples.TerminalFunctor(Examples.Ord(1)).__!(DavidsFunkyFunction)
+    shriek.isIsomorphicTo(DavidsFunkySet2) should equal (true)
   }
 
   //   "shriek" should "work (1)" in {

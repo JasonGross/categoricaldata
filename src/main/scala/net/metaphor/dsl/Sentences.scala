@@ -102,9 +102,7 @@ object Sentences {
     new source.Dataset {
       override def onObjects(o: source.O) = objectMap(o)
       // WEIRD: changing source.G to Arrow (which should be fine) results in AbstractMethodError at runtime. Compiler bug?
-      override def onGenerators(a: source.G): FFunction = new FFunction {
-        override def source = onObjects(a.source)
-        override def target = onObjects(a.target)
+      override def onGenerators(a: source.G): FFunction = new FFunction(a) {
         override def toFunction = morphismMap(a)
       }
     }

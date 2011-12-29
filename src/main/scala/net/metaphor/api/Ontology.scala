@@ -33,6 +33,11 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   }
 
   trait Dataset extends FunctorToSet { dataset =>
+    abstract class FFunction(g: G) extends net.metaphor.api.FFunction {
+      override def source = onObjects(generatorSource(g))
+      override def target = onObjects(generatorTarget(g))
+    }
+    
     override def equals(other: Any): Boolean = {
       other match {
         case other: Ontology#Dataset => {
@@ -70,9 +75,82 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         }).mkString("\n") + "  ))"
     }
 
-    // TODO define this recursively, and provide some way to let the user help out. 
+    // TODO provide some way to let the user help out. 
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
-      ???
+      require(other.source == this.source)
+
+      val compositionDiagram = new Ontology {
+        // FIXME deal with objects at other levels
+        val unbox: Map[Box, Either[Box, Arrow]] = {
+          ((for (b <- ontology.objectsAtLevel(0)) yield b -> Left(b)) :::
+            (for (a <- ontology.allGenerators) yield Box(a.toString) -> Right(a))).toMap
+        }
+
+        val minimumLevel = 0
+        val maximumLevel = 0
+        def objectsAtLevel(k: Int) = {
+          k match {
+            case 0 => {
+              unbox.keys.toList
+            }
+            case _ => Nil
+          }
+        }
+        def generators(source: Box, target: Box) = {
+          unbox(source) match {
+            case Left(a) => {
+              unbox(target) match {
+                case Right(arrow) => {
+                  (if (arrow.source == a) List(Arrow(source, target, "left")) else Nil) ::: (if (arrow.target == a) List(Arrow(source, target, "right")) else Nil)
+                }
+                case Left(_) => Nil
+              }
+            }
+            case Right(_) => Nil // no arrows out of arrows!
+          }
+        }
+        def relations(source: Box, target: Box) = Nil
+      }
+
+      val noninvariantBijections = new compositionDiagram.Dataset {
+        def onObjects(o: Box) = {
+          compositionDiagram.unbox(o) match {
+            case Left(box) => {
+              Sets.bijections(this(box), other(box))
+            }
+            case Right(Arrow(a, b, _)) => {
+              Sets.bijections(this(a), other(b))
+            }
+          }
+        }
+        def onGenerators(g: Arrow) = {
+          g match {
+            case Arrow(s, t, direction) => {
+              (compositionDiagram.unbox(t), direction) match {
+                case (Right(arrow), "left") => {
+                  new FFunction(g) {
+                    def toFunction = { f => f.asInstanceOf[FFunction] andThen other.onGenerators(g) }
+                  }
+                }
+                case (Right(arrow), "right") => {
+                  new FFunction(g) {
+                    def toFunction = { f => dataset.onGenerators(g) andThen f.asInstanceOf[FFunction] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      for(bijection <- noninvariantBijections.limitSet.toIterable) yield {
+        new Datamap {
+          override val source = dataset
+          override val target = internalize(other)
+          // ACHTUNG --- this relies on the inner implementation of colimit; in particular that the set it produces is a set of (Box => FFunction)
+          override def apply(o: Box) = bijection.asInstanceOf[Box => FFunction](o)
+        }
+      }
     }
 
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
