@@ -15,3 +15,9 @@ Icon
 target
 project/boot
 lib_managed
+
+# IDEA stuff
+.idea
+.eml
+metaphor.eml
+metaphor.iml

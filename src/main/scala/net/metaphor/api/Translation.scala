@@ -37,11 +37,9 @@ trait FiniteTarget extends Translation { translation =>
 
         // First, construct the limit (that is, the terminal cone) on the slice category over the target of g.
         // Ft is the functor from the comma category of objects left of the target of g, back to the source of the the functor.
-        //        val Ft = slice(translation.target.generatorTarget(g)).functor
         val targetLimitTerminalCone = Ft.pullback(i).limit.terminalObject
 
         // Second, construct the dataset over the slice category over the target of g.
-        //        val Fs = slice(translation.target.generatorSource(g)).functor
         val sourceData = Fs.pullback(i)
 
         // Third, we need to build a cone for sourceData 
@@ -50,7 +48,6 @@ trait FiniteTarget extends Translation { translation =>
           override def mapFromInitialSet(o: Fs.source.O) = {
             // actually, o is an ObjectLeftOf
             targetLimitTerminalCone.mapFromInitialSet(???) andThen ???
-            val Fg = slice(translation.target.generatorAsMorphism(g)).functor
             ???
           }
         }
@@ -74,10 +71,36 @@ trait FiniteTarget extends Translation { translation =>
         val F = coslice(o) // FIXME weird, why on earth do we need this intermediate val?
         F.pullback(i).colimitSet
       }
-      override def onGenerators(m: translation.target.G) = {
-        val F = coslice(translation.target.opposite.generatorAsMorphism(m)).functor
-        ??? // TODO maths
+      override def onGenerators(g: translation.target.G) = {
+        val sg = coslice(translation.target.opposite.generatorAsMorphism(g))
+        val Fg = sg.functor
+        val Ft = sg.target
+        val Fs = sg.source
+
+        // First, construct the colimit (that is, the initial cocone) on the coslice category over the target of g.
+        // Ft is the functor from the comma category of objects left of the target of g, back to the source of the the functor.
+        val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject
+
+        // Second, construct the dataset over the slice category over the target of g.
+        val sourceData = Fs.pullback(i)
+
+        // Third, we need to build a cone for sourceData 
+        val cocone: sourceData.CoCone = new sourceData.CoCone {
+          override val terminalSet = targetColimitInitialCoCone.terminalSet
+          override def mapToTerminalSet(o: Fs.source.O) = {
+            // actually, o is an ObjectRightOf
+            targetColimitInitialCoCone.mapToTerminalSet(???) andThen ???
+            ???
+          }
+        }
+
+        // Now, the source limit provides us with the desired map.
+        val sourceColimit = sourceData.colimit
+        val coconeMap = sourceColimit.morphismTo(cocone)
+
+        coconeMap.terminalMap
       }
+      
     }
     override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
       override val source = onObjects(m.source)
