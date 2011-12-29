@@ -199,6 +199,11 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
   object Datasets extends Datasets
 
+  
+  override lazy val opposite: Ontology = new Ontology with Opposite { }
+  
+
+  
   def assertAcyclic: Ontology with Ontologies.Acyclic = {
     this match {
       case o: Ontologies.Acyclic => o

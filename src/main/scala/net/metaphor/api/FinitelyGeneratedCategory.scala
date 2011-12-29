@@ -15,7 +15,7 @@ case class Path[O, G](source: O, target: O, morphisms: List[G]) {
  * can be written as some composition of 'generators' between some chain of objects (with no restrictions on the levels).
  */
 
-trait LocallyFinitelyGeneratedCategory extends SmallCategory {
+trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   override type M = PathEquivalenceClass
   type G
   type Path = net.metaphor.api.Path[O, G]
@@ -52,18 +52,17 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory {
 
   def pathEquality(path1: Path, path2: Path): Boolean = ???
 
-  //  trait Opposite { opposite: C =>
-  //    override type O = self.O
-  //    override type M = self.M
-  //
-  //    // reverse all the levels!
-  //    override def objectsAtLevel(k: Int) = self.objectsAtLevel(-k)
-  //    override def generators(source: O, target: O) = self.generators(target, source)
-  //
-  //    override def source(m: M) = self.target(m)
-  //    override def target(m: M) = self.source(m)
-  //    override def compose(m1: M, m2: M) = self.compose(m2, m1)
-  //  }
+  trait Opposite extends LocallyFinitelyGeneratedCategory {
+    override type O = lfgCategory.O
+    override type G = lfgCategory.G
+    
+    // reverse all the levels!
+    override def objectsAtLevel(k: Int) = lfgCategory.objectsAtLevel(-k)
+    override def generators(source: lfgCategory.O, target: lfgCategory.O) = lfgCategory.generators(target, source)
+
+    override def generatorSource(g: lfgCategory.G) = lfgCategory.generatorTarget(g)
+    override def generatorTarget(g: lfgCategory.G) = lfgCategory.generatorSource(g)
+  }
 
   /**
    * Implementing opposite should be easy; generally just write "def opposite = new C with Opposite", replacing C as appropriate.
@@ -115,10 +114,12 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
-  //  trait Opposite extends super.Opposite { opposite: C =>
-  //    override val minimumLevel = self.maximumLevel
-  //    override val maximumLevel = self.minimumLevel
-  //  }
+  trait Opposite extends FinitelyGeneratedCategory with super.Opposite { 
+    override val minimumLevel = self.maximumLevel
+    override val maximumLevel = self.minimumLevel
+  }
+
+   lazy val opposite: FinitelyGeneratedCategory = new  Opposite with FinitelyGeneratedCategories.StandardFunctorsToSet
 
   trait FinitelyGeneratedCategoryOver extends CategoryOver with FinitelyGeneratedFunctor {
     override val source: FinitelyGeneratedCategory
@@ -143,16 +144,14 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
     override def identity(f: O) = new FinitelyGeneratedFunctorOver {
       val source = f
       val target = f
-      val functor = ??? // FIXME
-      //new Functor.IdentityFunctor(f.category)
+      val functor = ???
     }
     override def source(t: M) = t.source
     override def target(t: M) = t.target
     override def compose(m1: M, m2: M): M = new FinitelyGeneratedFunctorOver {
       val source = m1.source
       val target = m2.target
-      val functor = ??? // FIXME
-      //new Functor.CompositeFunctor(m1.functor, m2.functor)
+      val functor = ???
     }
   }
 
@@ -196,7 +195,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
     def limit: TerminalObject[functorToSet.Cone, functorToSet.ConeMap] = {
       // this is where all the work happens.
       def concreteLimit[A](objects: Iterable[self.O], sets: self.O => Iterable[A], functions: self.O => (self.O => (A => Iterable[A]))): (Iterable[self.O => A], self.O => ((self.O => A) => A)) = {
-        /** 
+        /**
          *  @returns None if there are actually no morphisms from o1 to o2
          * 			 Some(None) if there are several morphisms, with different images on a
          * 			 Some(Some(b)) is all morphisms send a to b.
@@ -216,10 +215,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
           def processPair(pair: (self.O, self.O)): Intermediate = {
             if (processedObjects.contains(pair._1)) {
               if (processedObjects.contains(pair._2)) {
-                val newMaps = for(m <- maps; cr = functionsCommonResult(pair._1)(pair._2)(m(pair._1)); if cr.isEmpty || cr.get == Some(m(pair._2))) yield m
+                val newMaps = for (m <- maps; cr = functionsCommonResult(pair._1)(pair._2)(m(pair._1)); if cr.isEmpty || cr.get == Some(m(pair._2))) yield m
                 Intermediate(processedObjects, pair :: processedPairs, newMaps)
               } else {
-                val newMaps = for(m <- maps; cr <- functionsCommonResult(pair._1)(pair._2)(m(pair._1)); b <- cr) yield m + (pair._2 -> b)
+                val newMaps = for (m <- maps; cr <- functionsCommonResult(pair._1)(pair._2)(m(pair._1)); b <- cr) yield m + (pair._2 -> b)
                 Intermediate(pair._2 :: processedObjects, pair :: processedPairs, newMaps)
               }
             } else {

@@ -111,12 +111,12 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
   }
 
   abstract class CosliceFunctor extends Functor { cosliceFunctor =>
-    override val source: fgFunctor.target.type = fgFunctor.target // FIXME should be opposite here.
+    override val source: fgFunctor.target.opposite.type = fgFunctor.target.opposite
     override val target: fgFunctor.source.FinitelyGeneratedCategoriesOver = fgFunctor.source.finitelyGeneratedCategoriesOver
     override def onObjects(s: source.O): target.O = new CosliceCategoryOver(s)
     override def onMorphisms(m: source.M): target.M = new CosliceFunctorOver(m)
 
-    class CosliceCategoryOver(onLeft: fgFunctor.target.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver {
+    class CosliceCategoryOver(onLeft: fgFunctor.target.opposite.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver {
         override val source = buildCosliceCategory(onLeft)
         override def onObjects(o: source.ObjectRightOf) = o.right
         override def onGenerators(g: source.ObjectRightOfMap) = {
@@ -124,12 +124,12 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
           g.generator
       }
     }
-    class CosliceFunctorOver(m: fgFunctor.target.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver {
-      override val source = cosliceFunctor.onObjects(fgFunctor.target.source(m))
-      override val target = cosliceFunctor.onObjects(fgFunctor.target.target(m))
+    class CosliceFunctorOver(m: fgFunctor.target.opposite.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver {
+      override val source = cosliceFunctor.onObjects(fgFunctor.target.opposite.source(m))
+      override val target = cosliceFunctor.onObjects(fgFunctor.target.opposite.target(m))
       override val functor = ???
     }
 
-    def buildCosliceCategory(onLeft: fgFunctor.target.O): cSC
+    def buildCosliceCategory(onLeft: fgFunctor.target.opposite.O): cSC
   }
 }

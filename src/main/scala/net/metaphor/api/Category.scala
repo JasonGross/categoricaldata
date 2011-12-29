@@ -34,4 +34,13 @@ trait Category { category =>
     override val target: FunctorTo
   }
 
+  trait Opposite extends Category {
+    type O = category.O
+    type M = category.M
+    override def identity(o: category.O) = category.identity(o)
+    override def source(m: category.M) = category.target(m)
+    override def target(m: category.M)=  category.source(m)
+    override def compose(m1: category.M, m2: category.M)= category.compose(m2, m1)
+  }
+  
 }
