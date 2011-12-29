@@ -11,7 +11,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
     target.compose(start, morphisms)
   }
-  
+
   type SC <: SliceCategory
   type cSC <: CosliceCategory
 
@@ -19,8 +19,8 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override type O = ObjectLeftOf
     override type G = ObjectLeftOfMap
 
-    def generatorSource(g: G) = g.source
-    def generatorTarget(g: G) = g.target
+    override def generatorSource(g: G) = g.source
+    override def generatorTarget(g: G) = g.target
 
     case class ObjectLeftOf(left: fgFunctor.source.O, morphism: fgFunctor.target.M) {
       require(fgFunctor.target.source(morphism) == fgFunctor.apply(left))
@@ -32,17 +32,17 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       require(fgFunctor.target.compose(fgFunctor.onGenerators(generator), target.morphism) == source.morphism)
     }
 
-    def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
+    override def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
       for (
         l <- (fgFunctor.source.minimumLevel to k).toList;
         left <- fgFunctor.source.objectsAtLevel(l);
         path <- fgFunctor.target.wordsOfLength(k - l)(fgFunctor.apply(left), onRight)
       ) yield ObjectLeftOf(left, fgFunctor.target.pathAsMorphism(path))
     }
-    val minimumLevel: Int = fgFunctor.source.minimumLevel
-    val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
+    override val minimumLevel: Int = fgFunctor.source.minimumLevel
+    override val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
 
-    def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
+    override def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
       import fgFunctor.source.generatorAsMorphism
       for (g <- fgFunctor.source.generators(source.left, target.left); if fgFunctor.target.compose(fgFunctor.apply(g), target.morphism) == source.morphism) yield {
         ObjectLeftOfMap(source, target, g)
@@ -51,12 +51,12 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
 
   }
 
-  class CosliceCategory(onLeft: fgFunctor.target.O) extends FinitelyGeneratedCategory { cosliceCategory: cSC =>
+  class CosliceCategory(onLeft: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { cosliceCategory: cSC =>
     override type O = ObjectRightOf
     override type G = ObjectRightOfMap
 
-    def generatorSource(g: G) = g.source
-    def generatorTarget(g: G) = g.target
+    override def generatorSource(g: G) = g.source
+    override def generatorTarget(g: G) = g.target
 
     case class ObjectRightOf(right: fgFunctor.source.O, morphism: fgFunctor.target.M) {
       require(fgFunctor.target.source(morphism) == onLeft)
@@ -68,29 +68,21 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       require(fgFunctor.target.compose(source.morphism, fgFunctor.onGenerators(generator)) == target.morphism)
     }
 
-    def opposite = ??? // new CosliceCategory(onLeft) with Opposite
-    def objectsAtLevel(k: Int): List[ObjectRightOf] = {
+    override def objectsAtLevel(k: Int): List[ObjectRightOf] = {
       for (
         l <- (fgFunctor.source.minimumLevel to k).toList;
         right <- fgFunctor.source.objectsAtLevel(l);
         path <- fgFunctor.target.wordsOfLength(k - l)(onLeft, fgFunctor.apply(right))
       ) yield ObjectRightOf(right, fgFunctor.target.pathAsMorphism(path))
     }
-    val minimumLevel: Int = fgFunctor.source.minimumLevel
-    val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
-    def generators(source: ObjectRightOf, target: ObjectRightOf): List[ObjectRightOfMap] = {
+    override val minimumLevel: Int = fgFunctor.source.minimumLevel
+    override val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
+    override def generators(source: ObjectRightOf, target: ObjectRightOf): List[ObjectRightOfMap] = {
       import fgFunctor.source.generatorAsMorphism
       for (g <- fgFunctor.source.generators(source.right, target.right); if fgFunctor.target.compose(source.morphism, fgFunctor.apply(g)) == target.morphism) yield {
         ObjectRightOfMap(source, target, g)
       }
     }
-
-    val functorsToSet = new SpecializedFunctorsToSet
-
-    override type F = FunctorToSet
-    
-    def internalize(f: net.metaphor.api.FunctorToSet): F = ???
-    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ???
 
   }
 
@@ -101,19 +93,17 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def onMorphisms(m: source.M): target.M = new SliceFunctorOver(m)
 
     class SliceCategoryOver(onRight: fgFunctor.target.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver {
-      override val functor: fgFunctor.source.FinitelyGeneratedFunctorTo = new fgFunctor.source.FinitelyGeneratedFunctorTo {
         override val source = buildSliceCategory(onRight)
         override def onObjects(o: source.ObjectLeftOf) = o.left
         override def onGenerators(g: source.ObjectLeftOfMap) = {
           import fgFunctor.source.generatorAsMorphism
           g.generator
         }
-      }
     }
     class SliceFunctorOver(m: fgFunctor.target.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver {
-      override def source = sliceFunctor.onObjects(fgFunctor.target.source(m))
-      override def target = sliceFunctor.onObjects(fgFunctor.target.target(m))
-      override def functor = ???
+      override val source = sliceFunctor.onObjects(fgFunctor.target.source(m))
+      override val target = sliceFunctor.onObjects(fgFunctor.target.target(m))
+      override val functor = ???
     }
 
     def buildSliceCategory(onRight: fgFunctor.target.O): SC
@@ -127,19 +117,17 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def onMorphisms(m: source.M): target.M = new CosliceFunctorOver(m)
 
     class CosliceCategoryOver(onLeft: fgFunctor.target.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver {
-      override val functor: fgFunctor.source.FinitelyGeneratedFunctorTo = new fgFunctor.source.FinitelyGeneratedFunctorTo {
         override val source = buildCosliceCategory(onLeft)
         override def onObjects(o: source.ObjectRightOf) = o.right
         override def onGenerators(g: source.ObjectRightOfMap) = {
           import fgFunctor.source.generatorAsMorphism
           g.generator
-        }
       }
     }
     class CosliceFunctorOver(m: fgFunctor.target.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver {
-      override def source = cosliceFunctor.onObjects(fgFunctor.target.source(m))
-      override def target = cosliceFunctor.onObjects(fgFunctor.target.target(m))
-      override def functor = ???
+      override val source = cosliceFunctor.onObjects(fgFunctor.target.source(m))
+      override val target = cosliceFunctor.onObjects(fgFunctor.target.target(m))
+      override val functor = ???
     }
 
     def buildCosliceCategory(onLeft: fgFunctor.target.O): cSC

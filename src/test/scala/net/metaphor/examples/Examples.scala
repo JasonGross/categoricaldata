@@ -236,8 +236,8 @@ object Examples {
     )
   )    
   
-          // FIXME (Scott) Allow translations with infinite targets.
-  // Hmm, I've commented this out for now, as I'm only allowing Translations with finite targets.
+// FIXME (Scott) Allow translations with infinite targets.
+// Hmm, I've commented this out for now, as I'm only allowing Translations with finite targets.
 //  val GraphToDiscreteDynamicalSystem1 = Translation(
 //    source = Grph,
 //    target = DiscreteDynamicalSystem,
