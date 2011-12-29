@@ -56,7 +56,7 @@ object Sentences {
     val maximumLevel = 0
     def objectsAtLevel(k: Int) = if (k == 0) boxes else Nil
     override def generators(source: Box, target: Box) = arrowMap(source, target)
-    override def relations(source: Box, target: Box) = Nil // FIXME
+    override def relations(source: Box, target: Box) = Nil // FIXME parse relations from the DSL
   }
 
   def Ontology(objects: Traversable[String], arrows: Traversable[StringArrow], relations: Traversable[StringRelation] = Nil): Ontology = {

@@ -18,11 +18,6 @@ import net.metaphor.examples.Examples
 class Test extends FlatSpec with ShouldMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
-  
-  		 
-      
-
-  
 
   val DavidsFunkyGraph = Dataset(source = Examples.Grph,
     onObjects = Map(
@@ -42,9 +37,6 @@ class Test extends FlatSpec with ShouldMatchers {
         "i" -> "C",
         "j" -> "C")))
 
- 
-
- 
   val DavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
       "an element" -> List("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar")),
@@ -102,78 +94,66 @@ class Test extends FlatSpec with ShouldMatchers {
         "i" -> "A",
         "j" -> "C")))
 
+  //TODO: Explain to David why FiniteCyclicMonoid is no good:
+  //     def FiniteCyclicMonoid (n : Int, k : Int) = Ontology (//should have k < n. When k = 0, this is the cyclic group of order n.
+  //         objects = List ("an element"),
+  //         arrows = List ("an element" --- "has as successor" --> "an element"),
+  //         relations = List (
+  //             (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
+  //             ===
+  //             (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
+  //             
+  //     def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(
+  //         source = TerminalCategory,
+  //         target = FiniteCyclicMonoid(n, k),
+  //         onObjects = Map ("V0" -> "an element"),
+  //         onMorphisms = Map ())
+  //             
+  //     val DavidsFunkyFiniteCyclicMonoid = Dataset (
+  //         source = FiniteCyclicMonoid(2,1),
+  //         onObjects = Map ("an element" -> List ("David","Scott","UC Berkeley", "MIT","succDavid","succScott","succUC Berkeley", "succMIT")),
+  //         onMorphisms = Map ("an element" --- "has as successor" --> "an element" -> Map (
+  //             "David" -> "succDavid",
+  //             "Scott" -> "succScott",
+  //             "UC Berkeley" -> "succUC Berkeley",
+  //             "MIT" -> "succMIT",
+  //             "succDavid" -> "succDavid",
+  //             "succScott" -> "succScott",
+  //             "succUC Berkeley" -> "succUC Berkeley", 
+  //             "succMIT" -> "succMIT")))
+  //             
+  //
 
-        
-        //TODO: Explain to David why FiniteCyclicMonoid is no good:
-//     def FiniteCyclicMonoid (n : Int, k : Int) = Ontology (//should have k < n. When k = 0, this is the cyclic group of order n.
-//         objects = List ("an element"),
-//         arrows = List ("an element" --- "has as successor" --> "an element"),
-//         relations = List (
-//             (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
-//             ===
-//             (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
-//             
-//     def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(
-//         source = TerminalCategory,
-//         target = FiniteCyclicMonoid(n, k),
-//         onObjects = Map ("V0" -> "an element"),
-//         onMorphisms = Map ())
-//             
-//     val DavidsFunkyFiniteCyclicMonoid = Dataset (
-//         source = FiniteCyclicMonoid(2,1),
-//         onObjects = Map ("an element" -> List ("David","Scott","UC Berkeley", "MIT","succDavid","succScott","succUC Berkeley", "succMIT")),
-//         onMorphisms = Map ("an element" --- "has as successor" --> "an element" -> Map (
-//             "David" -> "succDavid",
-//             "Scott" -> "succScott",
-//             "UC Berkeley" -> "succUC Berkeley",
-//             "MIT" -> "succMIT",
-//             "succDavid" -> "succDavid",
-//             "succScott" -> "succScott",
-//             "succUC Berkeley" -> "succUC Berkeley", 
-//             "succMIT" -> "succMIT")))
-//             
-//
+  val FunkyE2Dataset = Dataset(
+    source = Examples.E2,
+    onObjects = Map(
+      "0" -> List("a", "b", "c", "d"),
+      "1" -> List("1", "2", "3")),
+    onMorphisms = Map(
+      "0" --- "E01" --> "1" -> Map(
+        "a" -> "1",
+        "b" -> "1",
+        "c" -> "2",
+        "d" -> "3"),
+      "1" --- "E10" --> "0" -> Map(
+        "1" -> "a",
+        "2" -> "b",
+        "3" -> "d")))
 
- 
-    
-  val FunkyE2Dataset = Dataset ( 
-	source = Examples.E2,
-	onObjects = Map ( 
-	    "0" -> List ("a","b","c","d"),
-	    "1" -> List ("1","2","3")),
-	onMorphisms = Map ( 
-		"0" --- "E01" --> "1" -> Map (  
-		    "a" -> "1",
-		    "b" -> "1",
-		    "c" -> "2",
-		    "d" -> "3"),
-      "1" --- "E10" --> "0" -> Map ( 
-          "1" -> "a",
-          "2" -> "b",
-          "3" -> "d")
-	)
-  )
-  
-  val E2ToPointedSetRPushFunky = Dataset (
+  val E2ToPointedSetRPushFunky = Dataset(
     source = Examples.PointedSet,
-    onObjects = Map (
-        "an element" -> List("a1a","b1a","d3d"), 
-        "a pointed set" -> List ("a1","d3")),
-    onMorphisms = Map ( 
-       ("an element" --- "is in" --> "a pointed set") -> Map ( 
-           "a1a" -> "a1",
-           "ba1" -> "a1",
-           "d3d" -> "d3"),
-       ("a pointed set" --- "has as chosen" --> "an element") -> Map (
-           "a1" -> "a1a",
-           "d3" -> "d3d")
-    )
-  )
-  
- 
+    onObjects = Map(
+      "an element" -> List("a1a", "b1a", "d3d"),
+      "a pointed set" -> List("a1", "d3")),
+    onMorphisms = Map(
+      ("an element" --- "is in" --> "a pointed set") -> Map(
+        "a1a" -> "a1",
+        "ba1" -> "a1",
+        "d3d" -> "d3"),
+      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+        "a1" -> "a1a",
+        "d3" -> "d3d")))
 
-  
-  
   val DavidsFunkyFunction = Dataset(source = Examples.Ord(1),
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
@@ -214,17 +194,14 @@ class Test extends FlatSpec with ShouldMatchers {
     Examples.Codomain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet2)
   }
 
-  // FIXME (Scott)
-//   "pushforward" should "work nicely with the map from E2 to PointedSet" in {
-//     Examples.E2ToPointedSet.__*(FunkyE2Dataset).isIsomorphicTo(E2ToPointedSetRPushFunky) should equal(true)
-//  
-//  }
+  "pushforward" should "work nicely with the map from E2 to PointedSet" in {
+    Examples.E2ToPointedSet.__*(FunkyE2Dataset).isIsomorphicTo(E2ToPointedSetRPushFunky) should equal(true)
+  }
 
-//  "pullback" should "work with the GraphToDiscreteDynamicalSystem1 functor" in {
-//    GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
-//  }
-
-  // Unfortunately it seems that _* and _! aren't allowed method names. I've gone with __* and __! for now.
+  // TODO waiting on translations with infinite targets
+  //    "pullback" should "work with the GraphToDiscreteDynamicalSystem1 functor" in {
+  //      GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
+  //    }
 
   "pushforward" should "work (1)" in {
     Examples.TerminalFunctor(Examples.Ord(1)).__*(DavidsFunkyFunction) should equal(DavidsFunkySet1)
@@ -232,16 +209,15 @@ class Test extends FlatSpec with ShouldMatchers {
 
   "shriek" should "work (1)" in {
     Examples.TerminalFunctor(Examples.Ord(1)).__!(DavidsFunkyFunction) should equal(DavidsFunkySet2)
-    
   }
-  
-//   "shriek" should "work (1)" in {
-//	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
-//   }
-//
-//  "pushforward" should "work (2)" in {
-//    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph).isIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem) should equal(true)
-//  }
+
+  //   "shriek" should "work (1)" in {
+  //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
+  //   }
+  //
+  //  "pushforward" should "work (2)" in {
+  //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph).isIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem) should equal(true)
+  //  }
 
   // Let 0:C-->Set be the initial dataset and 1:C-->Set the terminal dataset.
   // For any functor F:C-->D, we have F^*(0)=0, F^*(1)=1, F_!(0)=0, F_*(1)=1.
@@ -282,12 +258,12 @@ class Test extends FlatSpec with ShouldMatchers {
   "shriek" should "work (2)" in {
     ReverseGraph.__!(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
- // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
-  
+  // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
+
   "colimit and shriek" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have colim(D)=TerminalFunctor(C).__!(D)
   }
-   "limit and pushforward" should "agree for terminal functors" in {
+  "limit and pushforward" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
   }
 }

@@ -37,7 +37,7 @@ trait Acyclic extends FiniteMorphisms { self: FinitelyPresentedCategory =>
   require(verifyAcyclicity)
 
   override def maximumWordLength(source: O, target: O): Int = ???
-  override def normalForm(p: Path): Path = p // FIXME
+  override def normalForm(p: Path): Path = p // FIXME: for acyclic categories, each hom space is finite, and we can brute force normal forms
 }
 
 trait Free { self: FinitelyPresentedCategory =>
