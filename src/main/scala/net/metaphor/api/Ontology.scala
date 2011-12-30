@@ -244,20 +244,20 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
 }
 
 object Ontologies {
-  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms { self =>
+  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms { 
     // FIXME check that we're actually finite
   }
 
-  trait Acyclic extends net.metaphor.api.Acyclic with Finite { self: Ontology =>
+  trait Acyclic extends net.metaphor.api.Acyclic with Finite { ontology: Ontology =>
     override def assertAcyclic = this
     override def assertFree: Ontology with Ontologies.FreeAcyclic = new OntologyWrapper(this) with FreeAcyclic
 
   }
-  trait Free extends net.metaphor.api.Free { self: Ontology =>
+  trait Free extends net.metaphor.api.Free { ontology: Ontology =>
     override def assertAcyclic: Ontology with Ontologies.FreeAcyclic = new OntologyWrapper(this) with FreeAcyclic
     override def assertFree = this
   }
-  trait FreeAcyclic extends net.metaphor.api.FreeAcyclic with Acyclic with Free { self: Ontology =>
+  trait FreeAcyclic extends net.metaphor.api.FreeAcyclic with Acyclic with Free { ontology: Ontology =>
     override def assertAcyclic = this
     override def assertFree = this
   }
