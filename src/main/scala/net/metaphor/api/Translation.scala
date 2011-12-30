@@ -72,7 +72,7 @@ trait FiniteTarget extends Translation { translation =>
         F.pullback(i).colimitSet
       }
       override def onGenerators(g: translation.target.G) = {
-        val sg = coslice(translation.target.opposite.generatorAsMorphism(g))
+        val sg = coslice(translation.target.opposite.generatorAsMorphism(translation.target.opposite.reverse(g)))
         val Fg = sg.functor
         val Ft = sg.target
         val Fs = sg.source

@@ -61,7 +61,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   def pathEquality(path1: Path, path2: Path): Boolean = ???
 
-  trait Opposite extends LocallyFinitelyGeneratedCategory { opposite =>
+  trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { opposite =>
     override type O = lfgCategory.O
 
     def reverse(g: lfgCategory.G): G
@@ -121,19 +121,19 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
-  trait Opposite extends FinitelyGeneratedCategory with super.Opposite { opposite =>
+  trait OppositeFinitelyGeneratedCategory extends FinitelyGeneratedCategory with OppositeLocallyFinitelyGeneratedCategory { opposite =>
     override val minimumLevel = fgCategory.maximumLevel
     override val maximumLevel = fgCategory.minimumLevel
   }
   
-  class ConcreteOpposite extends Opposite  with FinitelyGeneratedCategories.StandardFunctorsToSet {
+  class ConcreteOpposite extends OppositeFinitelyGeneratedCategory  with FinitelyGeneratedCategories.StandardFunctorsToSet {
     override type G = OppositeGenerator
     case class OppositeGenerator(g: fgCategory.G)
-    def reverse(g: fgCategory.G) = OppositeGenerator(g)
-    def unreverse(g: OppositeGenerator) = g.g
+    override def reverse(g: fgCategory.G) = OppositeGenerator(g)
+    override def unreverse(g: OppositeGenerator) = g.g
   }
 
-  lazy val opposite: FinitelyGeneratedCategory = new ConcreteOpposite 
+  lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite 
 
   trait FinitelyGeneratedCategoryOver extends CategoryOver with FinitelyGeneratedFunctor {
     override val source: FinitelyGeneratedCategory
