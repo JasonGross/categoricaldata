@@ -26,6 +26,13 @@ trait Set {
   override def toString = toIterable.toSet[Any].toString
   override def hashCode = toIterable.toSet[Any].hashCode
 }
+
+trait FiniteSet extends Set {
+  override def finite = true
+  override lazy val size = toIterable.size
+  override def sizeIfFinite = Some(size)
+}
+
 trait FFunction { function =>
   def source: Set
   def target: Set
@@ -45,6 +52,11 @@ trait FFunction { function =>
         return true
       }
     }
+  }
+  
+  override def toString = {
+    val f = toFunction
+    (for(o <- source.toIterable) yield (o -> f(o))).toMap.toString
   }
 }
 case class IdentityFunction(set: Set) extends FFunction {

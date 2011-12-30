@@ -11,10 +11,10 @@ trait FiniteTarget extends Translation { translation =>
   override val target: Ontologies.Finite
 
   class SliceFunctor extends super.SliceFunctor {
-    override def buildSliceCategory(onRight: Box) = new SliceCategory(onRight) 
+    override def buildSliceCategory(onRight: Box) = new SliceCategory(onRight)
   }
   class CosliceFunctor extends super.CosliceFunctor {
-    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft) 
+    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft)
   }
 
   lazy val slice: SliceFunctor = new SliceFunctor
@@ -43,9 +43,11 @@ trait FiniteTarget extends Translation { translation =>
         val cone: sourceData.Cone = new sourceData.Cone {
           override val initialSet = targetLimitTerminalCone.initialSet
           override def mapFromInitialSet(o: Fs.source.O) = {
-            // actually, o is an ObjectLeftOf
-            targetLimitTerminalCone.mapFromInitialSet(???) andThen ??? //???
-            ???
+            // TODO if this really right?
+            val f = targetLimitTerminalCone.mapFromInitialSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
+            new coneFunction(o) {
+              override def toFunction = f.toFunction
+            }
           }
         }
 
@@ -86,10 +88,10 @@ trait FiniteTarget extends Translation { translation =>
           override val terminalSet = targetColimitInitialCoCone.terminalSet
           override def mapToTerminalSet(o: Fs.source.O) = {
             // TODO if this really right?
-        	  val f = targetColimitInitialCoCone.mapToTerminalSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
-        	  new coConeFunction(o) {
-        	    override def toFunction = f.toFunction
-        	  }
+            val f = targetColimitInitialCoCone.mapToTerminalSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
+            new coConeFunction(o) {
+              override def toFunction = f.toFunction
+            }
           }
         }
 
@@ -99,7 +101,7 @@ trait FiniteTarget extends Translation { translation =>
 
         coconeMap.terminalMap
       }
-      
+
     }
     override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
       override val source = onObjects(m.source)

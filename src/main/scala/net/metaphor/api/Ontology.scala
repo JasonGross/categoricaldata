@@ -147,8 +147,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         new Datamap {
           override val source = dataset
           override val target = internalize(other)
-          // ACHTUNG --- this relies on the inner implementation of colimit; in particular that the set it produces is a set of (Box => FFunction)
-          override def apply(o: Box) = bijection.asInstanceOf[Box => FFunction](o)
+          // ACHTUNG --- this relies on the inner implementation of colimit; in particular that the set it produces is a set of FFunctions, each sending Boxes to FFunctions
+          override def apply(o: Box) = bijection.asInstanceOf[FFunction].toFunction.asInstanceOf[Box => FFunction](o)
         }
       }
     }

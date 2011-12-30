@@ -28,6 +28,12 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   def generatorTarget(g: G): O
 
   def objectsAtLevel(k: Int): List[O]
+  def objectSet: Set = {
+    new Set {
+      def toIterable = NonStrictNaturalNumbers.flatMap(x => Set(x, -x)).flatMap(x => objectsAtLevel(x))
+      def sizeIfFinite = None
+    }
+  }
 
   def generators(source: O, target: O): List[G]
 
@@ -90,6 +96,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   val maximumLevel: Int
 
   def objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
+  override def objectSet: Set = new Set {
+    def toIterable = objects
+    lazy val sizeIfFinite = Some(toIterable.size)
+  }
 
   /**
    * This returns all possible words in the generates.
@@ -185,6 +195,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       target.compose(start, morphisms)
     }
 
+    val totalSet = new FiniteSet {
+      def toIterable = for(o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
+    }
+    
     def colimitCoCone = colimit.initialObject
     def colimitSet = colimitCoCone.terminalSet
     def limitCone = limit.terminalObject
@@ -290,7 +304,13 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
             override val source = other
             override val target = terminalObject
             override val initialMap = new initialFunction {
-              override def toFunction = { x: Any => { o: fgCategory.O => other.mapFromInitialSet(o).toFunction(x) } }
+              override def toFunction = { x: Any =>
+                new FFunction {
+                  val source = fgCategory.objectSet
+                  val target = functorToSet.totalSet 
+                  def toFunction = { o: fgCategory.O => other.mapFromInitialSet(o).toFunction(x) }.asInstanceOf[Any => Any]
+                }
+              }
             }
           }
         }
