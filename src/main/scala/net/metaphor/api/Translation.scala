@@ -29,7 +29,6 @@ trait FiniteTarget extends Translation { translation =>
         val F = slice(o)
         F.pullback(i).limitSet
       }
-<<<<<<< local
       override def onGenerators(g: translation.target.G) = {
         val sg = slice(translation.target.generatorAsMorphism(g))
         val Fg = sg.functor
@@ -48,7 +47,7 @@ trait FiniteTarget extends Translation { translation =>
           override val initialSet = targetLimitTerminalCone.initialSet
           override def mapFromInitialSet(o: Fs.source.O) = {
             // actually, o is an ObjectLeftOf
-            targetLimitTerminalCone.mapFromInitialSet(???) andThen ???
+            targetLimitTerminalCone.mapFromInitialSet(???) andThen ??? //???
             ???
           }
         }
@@ -59,9 +58,6 @@ trait FiniteTarget extends Translation { translation =>
 
         coneMap.initialMap
       }
-=======
-      override def onGenerators(g: translation.target.G) = ??? //???
->>>>>>> other
     }
     override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
       override val source = pushforward.onObjects(m.source)
@@ -75,7 +71,6 @@ trait FiniteTarget extends Translation { translation =>
         val F = coslice(o) // FIXME weird, why on earth do we need this intermediate val?
         F.pullback(i).colimitSet
       }
-<<<<<<< local
       override def onGenerators(g: translation.target.G) = {
         val sg = coslice(translation.target.opposite.generatorAsMorphism(translation.target.opposite.reverse(g)))
         val Fg = sg.functor
@@ -108,9 +103,6 @@ trait FiniteTarget extends Translation { translation =>
         coconeMap.terminalMap
       }
       
-=======
-      override def onGenerators(m: translation.target.G) = ??? //???
->>>>>>> other
     }
     override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
       override val source = onObjects(m.source)
