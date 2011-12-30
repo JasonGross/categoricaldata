@@ -22,7 +22,12 @@ trait FiniteMorphisms extends NormalForm { self: FinitelyPresentedCategory =>
   def maximumWordLength: Int = (for (s <- objects; t <- objects) yield maximumWordLength(s, t)).max
   def normalWords(source: self.O, target: self.O) = (for (k <- 0 to maximumWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
 
+<<<<<<< local
   override def normalForm(p: Path): Path = ??? // FIXME, how do we obtain normal forms?
+=======
+  override def normalForm(p: Path): Path = ??? //???
+
+>>>>>>> other
 }
 
 trait Acyclic extends FiniteMorphisms { self: FinitelyPresentedCategory =>
@@ -35,8 +40,13 @@ trait Acyclic extends FiniteMorphisms { self: FinitelyPresentedCategory =>
 
   require(verifyAcyclicity)
 
+<<<<<<< local
   override def maximumWordLength(source: O, target: O): Int = ???
   override def normalForm(p: Path): Path = p // FIXME: for acyclic categories, each hom space is finite, and we can brute force normal forms
+=======
+  override def maximumWordLength(source: O, target: O): Int = ??? //???
+  override def normalForm(p: Path): Path = p // FIXME
+>>>>>>> other
 }
 
 trait Free { self: FinitelyPresentedCategory =>

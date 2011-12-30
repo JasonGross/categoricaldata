@@ -7,7 +7,7 @@ trait Translation extends FinitelyGeneratedFunctor { translation =>
   override type SC = SliceCategory
   override type cSC = CosliceCategory
 
-  def assertFiniteTarget: Translation with FiniteTarget = ???
+  def assertFiniteTarget: Translation with FiniteTarget = ??? //???
 }
 
 trait FiniteTarget extends Translation { translation =>
@@ -29,6 +29,7 @@ trait FiniteTarget extends Translation { translation =>
         val F = slice(o)
         F.pullback(i).limitSet
       }
+<<<<<<< local
       override def onGenerators(g: translation.target.G) = {
         val sg = slice(translation.target.generatorAsMorphism(g))
         val Fg = sg.functor
@@ -58,11 +59,14 @@ trait FiniteTarget extends Translation { translation =>
 
         coneMap.initialMap
       }
+=======
+      override def onGenerators(g: translation.target.G) = ??? //???
+>>>>>>> other
     }
     override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
-      override def apply(o: Box) = ???
+      override def apply(o: Box) = ??? //???
     }
   }
   trait RightPushforward extends CovariantDataFunctor { shriek =>
@@ -71,6 +75,7 @@ trait FiniteTarget extends Translation { translation =>
         val F = coslice(o) // FIXME weird, why on earth do we need this intermediate val?
         F.pullback(i).colimitSet
       }
+<<<<<<< local
       override def onGenerators(g: translation.target.G) = {
         val sg = coslice(translation.target.opposite.generatorAsMorphism(g))
         val Fg = sg.functor
@@ -103,11 +108,14 @@ trait FiniteTarget extends Translation { translation =>
         coconeMap.terminalMap
       }
       
+=======
+      override def onGenerators(m: translation.target.G) = ??? //???
+>>>>>>> other
     }
     override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
       override val source = onObjects(m.source)
       override val target = onObjects(m.target)
-      override def apply(o: Box) = ???
+      override def apply(o: Box) = ??? //???
     }
   }
 

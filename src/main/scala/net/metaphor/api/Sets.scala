@@ -21,7 +21,7 @@ trait Set {
   
   def finite: Boolean = sizeIfFinite.nonEmpty
   def sizeIfFinite: Option[Int]
-  def size: Int = sizeIfFinite.getOrElse(???)
+  def size: Int = sizeIfFinite.getOrElse(???) //???
   
   override def toString = toIterable.toSet[Any].toString
   override def hashCode = toIterable.toSet[Any].hashCode

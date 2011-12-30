@@ -59,7 +59,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     }
   }
 
-  def pathEquality(path1: Path, path2: Path): Boolean = ???
+  def pathEquality(path1: Path, path2: Path): Boolean = ??? //???
 
   trait Opposite extends LocallyFinitelyGeneratedCategory {
     override type O = lfgCategory.O
@@ -153,14 +153,24 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
     override def identity(f: O) = new FinitelyGeneratedFunctorOver {
       val source = f
       val target = f
+<<<<<<< local
       val functor = ???
+=======
+      val functor = ??? // FIXME //???
+      //new Functor.IdentityFunctor(f.category)
+>>>>>>> other
     }
     override def source(t: M) = t.source
     override def target(t: M) = t.target
     override def compose(m1: M, m2: M): M = new FinitelyGeneratedFunctorOver {
       val source = m1.source
       val target = m2.target
+<<<<<<< local
       val functor = ???
+=======
+      val functor = ??? // FIXME //???
+      //new Functor.CompositeFunctor(m1.functor, m2.functor)
+>>>>>>> other
     }
   }
 
@@ -253,8 +263,12 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
         }
         val start = Intermediate(Nil, Nil, NonStrictIterable(Map.empty[self.O, A]))
 
+<<<<<<< local
         val finish = (for (o1 <- objects; o2 <- objects) yield (o1, o2)).foldLeft(start)({ _.processPair(_) })
 
+=======
+        val resultMaps = ??? //???
+>>>>>>> other
         def resultFunctions(o: self.O)(map: self.O => A) = map(o)
 
         (finish.maps, resultFunctions _)
@@ -269,6 +283,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
         override def sizeIfFinite = Some(maps.size)
         override def toIterable = maps
       }
+<<<<<<< local
 
       new TerminalObject[functorToSet.Cone, functorToSet.ConeMap] {
         val terminalObject = new functorToSet.Cone {
@@ -276,14 +291,25 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
           override def mapFromInitialSet(o: self.O) = new coneFunction(o) {
             override def toFunction = functions(o).asInstanceOf[Any => Any]
           }
+=======
+      val resultFunctions: (self.O => FFunction) = { o: self.O =>
+        new FFunction {
+          override def source = ??? //???
+          override def target = ??? //???
+          override def toFunction = functions(o).asInstanceOf[Any => Any]
+>>>>>>> other
         }
         def morphismFrom(other: functorToSet.Cone) = {
           new functorToSet.ConeMap {
             override val source = other
             override val target = terminalObject
+<<<<<<< local
             override val initialMap = new initialFunction {
               override def toFunction = { x: Any => { o: self.O => other.mapFromInitialSet(o).toFunction(x) } }
             }
+=======
+            override def initialMap = ??? //???
+>>>>>>> other
           }
         }
       }
@@ -318,6 +344,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
         override def sizeIfFinite = Some(clumps.size)
         override def toIterable = clumps
       }
+<<<<<<< local
 
       new InitialObject[functorToSet.CoCone, functorToSet.CoConeMap] {
         val initialObject = new functorToSet.CoCone {
@@ -325,14 +352,25 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
           override def mapToTerminalSet(o: self.O) = new coConeFunction(o) {
             override def toFunction = functions(o)
           }
+=======
+      val resultFunctions: (self.O => FFunction) = { o: self.O =>
+        new FFunction {
+          override def source = ??? //???
+          override def target = ??? //???
+          override def toFunction = functions(o)
+>>>>>>> other
         }
         def morphismTo(other: functorToSet.CoCone) = {
           new functorToSet.CoConeMap {
             override val source = initialObject
             override val target = other
+<<<<<<< local
             override val terminalMap = new terminalFunction {
               override def toFunction = { x: List[(self.O, Any)] => other.mapToTerminalSet(x.head._1).toFunction(x.head._2) }.asInstanceOf[Any => Any]
             }
+=======
+            override def terminalMap =  //???
+>>>>>>> other
           }
         }
       }
@@ -359,7 +397,7 @@ object FinitelyGeneratedCategories {
       def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
       def onGenerators(g: G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
     }
-    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ???
+    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ??? //???
   }
 }
 

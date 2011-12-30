@@ -33,6 +33,17 @@ object Examples {
       ("an edge" --- "has as target" --> "a vertex") -> Map(
         "input" -> "transition",
         "output" -> "species")))
+        
+  val ReverseGraph = Translation(
+    source = Examples.Grph,
+    target = Examples.Grph,
+    onObjects = Map(
+      "an edge" -> "an edge",
+      "a vertex" -> "a vertex"),
+    onMorphisms = Map(
+      ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
+      ("an edge" --- "has as target" --> "a vertex") -> ("an edge" --- "has as source" --> "a vertex")))
+
 
   val InitialGraph = Dataset(source = Grph,
     onObjects = Map(
@@ -152,13 +163,13 @@ object Examples {
 //    def OppositeOntology (c: Ontology) = Ontology ( 
 //		  objects = c.objects
 //		  arrows = for (a <- c.arrows) yield {a.target --- a.name --> a.source} 
-//		  relations = ???)
+//		  relations = ???) //???
 		  
 //def OppositeFunctor (f:Functor) = Functor( 
 //    source = OppositeOntology(f.source)
 //    target = OppositeOntology(f.target)
 //    onObjects = f.onObjects
-//    onMorphisms = for (???))
+//    onMorphisms = for (???)) //???
     
   val SourceFunction = Translation(
     source = Examples.Ord(1),
@@ -248,7 +259,7 @@ object Examples {
 //      ("an edge" --- "has as source" --> "a vertex") -> ("an element".identity),
 //      ("an edge" --- "has as target" --> "a vertex") -> ("an element" --- "has as successor" --> "an element")))
 
-      // TODO (David) this is broken; there's no object in DiscreteDynamicalSystem called "a vertex"
+      
 //  val GraphToDiscreteDynamicalSystem2 = Translation(
 //    source = Grph,
 //    target = DiscreteDynamicalSystem,

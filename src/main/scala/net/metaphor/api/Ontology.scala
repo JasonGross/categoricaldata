@@ -25,7 +25,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
   }
 
-  override def hashCode = ???
+  override def hashCode = ??? //???
 
   override def toString = {
     // TODO relations in Ontology.toString
@@ -59,7 +59,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       }
     }
 
-    override def hashCode = ???
+    override def hashCode = ??? //???
 
     override def toString = {
       "Dataset(\n" +
@@ -77,6 +77,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     // TODO provide some way to let the user help out. 
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
+<<<<<<< local
       require(other.source == this.source)
 
       val compositionDiagram = new Ontology {
@@ -151,6 +152,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
           override def apply(o: Box) = bijection.asInstanceOf[Box => FFunction](o)
         }
       }
+=======
+      ??? //???
+>>>>>>> other
     }
 
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
@@ -221,8 +225,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     this match {
       case o: Ontologies.Finite => o
       case _ => new OntologyWrapper(this) with Ontologies.Finite {
-        def maximumWordLength(s: O, t: O) = ???
-        def normalForm(m: M) = ???
+        def maximumWordLength(s: O, t: O) = ??? //???
+        def normalForm(m: M) = ??? //???
       }
     }
   }
