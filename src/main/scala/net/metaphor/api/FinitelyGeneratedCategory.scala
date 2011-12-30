@@ -59,7 +59,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     }
   }
 
-  def pathEquality(path1: Path, path2: Path): Boolean = ???
+  def pathEquality(path1: Path, path2: Path): Boolean = ??? //???
 
   trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { opposite =>
     override type O = lfgCategory.O
@@ -158,14 +158,14 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     override def identity(f: O) = new FinitelyGeneratedFunctorOver {
       val source = f
       val target = f
-      val functor = ???
+      val functor = ??? //???
     }
     override def source(t: M) = t.source
     override def target(t: M) = t.target
     override def compose(m1: M, m2: M): M = new FinitelyGeneratedFunctorOver {
       val source = m1.source
       val target = m2.target
-      val functor = ???
+      val functor = ??? //???
     }
   }
 
@@ -281,7 +281,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
           override def mapFromInitialSet(o: fgCategory.O) = new coneFunction(o) {
             override def toFunction = functions(o).asInstanceOf[Any => Any]
           }
-        }
+       }
         def morphismFrom(other: functorToSet.Cone) = {
           new functorToSet.ConeMap {
             override val source = other
@@ -364,7 +364,7 @@ object FinitelyGeneratedCategories {
       def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
       def onGenerators(g: G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
     }
-    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ???
+    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ??? //???
   }
 }
 

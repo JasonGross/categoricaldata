@@ -79,16 +79,7 @@ class Test extends FlatSpec with ShouldMatchers {
         "i" -> "jbar",
         "j" -> "jbar")))
 
-  val ReverseGraph = Translation(
-    source = Examples.Grph,
-    target = Examples.Grph,
-    onObjects = Map(
-      "an edge" -> "an edge",
-      "a vertex" -> "a vertex"),
-    onMorphisms = Map(
-      ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
-      ("an edge" --- "has as target" --> "a vertex") -> ("an edge" --- "has as source" --> "a vertex")))
-
+  
   val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
@@ -167,6 +158,7 @@ class Test extends FlatSpec with ShouldMatchers {
         "a1" -> "a1a",
         "d3" -> "d3d")))
 
+<<<<<<< local
   val OneTwoThreePointed = Dataset(
     source = Examples.PointedSet,
     onObjects = Map(
@@ -206,7 +198,33 @@ class Test extends FlatSpec with ShouldMatchers {
         "c2" -> "c2",
         "c3" -> "c3")))
 
+=======
+  val SixElementsIso = Dataset (
+    source = Examples.Isomorphism,  
+    onObjects = Map (
+        "0" -> List ("a1", "b1", "b2", "c1", "c2", "c3"),
+        "1" -> List ("a1", "b1", "b2", "c1", "c2", "c3")),
+    onMorphisms = Map (
+        ("0" --- "E01" --> "1") -> Map (
+        	"a1" -> "a1",
+           	"b1" -> "b1",
+           	"b2" -> "b2",
+           	"c1" -> "c1",
+           	"c2" -> "c2",
+           	"c3" -> "c3"),
+        ("1" --- "E10" --> "0") -> Map (
+        	"a1" -> "a1",
+        	"b1" -> "b1",
+        	"b2" -> "b2",
+        	"c1" -> "c1",
+        	"c2" -> "c2",
+        	"c3" -> "c3")
+     )
+  )
+  
+>>>>>>> other
   val ThreeElementsIso = Dataset(
+<<<<<<< local
     source = Examples.Isomorphism,
     onObjects = Map(
       "0" -> List("a", "b", "c"),
@@ -221,6 +239,27 @@ class Test extends FlatSpec with ShouldMatchers {
         "b" -> "b",
         "c" -> "c")))
 
+=======
+  	source = Examples.Isomorphism,
+  	onObjects = Map (
+        "0" -> List ("a", "b", "c"),
+        "1" -> List ("a", "b", "c")),
+    onMorphisms = Map (
+        ("0" --- "E01" --> "1") -> Map (
+        	"a" -> "a",
+           	"b" -> "b",
+           	"c" -> "c"),
+        ("1" --- "E10" --> "0") -> Map (
+        	"a" -> "a",
+           	"b" -> "b",
+           	"c" -> "c")
+     )
+  )
+  
+  
+  
+  	
+>>>>>>> other
   val DavidsFunkyFunction = Dataset(source = Examples.Ord(1),
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
@@ -317,23 +356,31 @@ class Test extends FlatSpec with ShouldMatchers {
   //   }
 
   "pullback" should "work (4)" in {
-    ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
+    Examples.ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
 
   "pushforward" should "work (3)" in {
+<<<<<<< local
     val LHS = ReverseGraph.__*(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     println(LHS)
     println(RHS)
     LHS should beIsomorphicTo(RHS)
+=======
+    Examples.ReverseGraph.__*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
+>>>>>>> other
   }
 
   "shriek" should "work (2)" in {
+<<<<<<< local
     val LHS = ReverseGraph.__!(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     println(LHS)
     println(RHS)
     LHS should beIsomorphicTo(RHS)
+=======
+    Examples.ReverseGraph.__!(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
+>>>>>>> other
   }
   // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
   // Scott: sure, if you have some supply of datasets, you could write
@@ -351,10 +398,19 @@ class Test extends FlatSpec with ShouldMatchers {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
   }
   "pushforward" should "work with PointedSetToIsomorphism" in {
+<<<<<<< local
     Examples.PointedSetToIsomorphism.__*(OneTwoThreePointed) should beIsomorphicTo(SixElementsIso)
+=======
+    Examples.PointedSetToIsomorphism.__*(OneTwoThreePointed) should equal(SixElementsIso)
+>>>>>>> other
   }
 
   "shriek" should "work with PointedSetToIsomorphism" in {
+<<<<<<< local
     Examples.PointedSetToIsomorphism.__!(OneTwoThreePointed) should beIsomorphicTo(ThreeElementsIso)
   }
+=======
+	  Examples.PointedSetToIsomorphism.__!(OneTwoThreePointed) should equal(ThreeElementsIso)
+  }  
+>>>>>>> other
 }

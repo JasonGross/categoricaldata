@@ -25,8 +25,8 @@ trait Categories { CAT =>
     override def onObjects(o: SO) = second(first(o.asInstanceOf[first.SO]).asInstanceOf[second.SO]).asInstanceOf[TO]
     override def onMorphisms[X <: SO, Y <: SO](m: SM[X, Y]) = second(first(m.asInstanceOf[first.SM[first.SO, first.SO]]).asInstanceOf[second.SM[second.SO, second.SO]]).asInstanceOf[TM[TO, TO]]
   }
-  def compose1(first: NaturalTransformation, second: NaturalTransformation): NaturalTransformation = ???
-  def compose2(first: NaturalTransformation, second: NaturalTransformation): NaturalTransformation = ???
+  def compose1(first: NaturalTransformation, second: NaturalTransformation): NaturalTransformation = ??? //???
+  def compose2(first: NaturalTransformation, second: NaturalTransformation): NaturalTransformation = ??? //???
   
   // a category of type C
   trait Category extends net.metaphor.api2.Category { c: C =>

@@ -8,9 +8,9 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =
   def allRelations: List[(Path, Path)] = for (source <- objects; target <- objects; r <- relations(source, target)) yield r
 
   // FIXME implement toString, hashcode, equals
-  override def toString: String = ???
-  override def hashCode: Int = ???
-  override def equals(other: Any): Boolean = ???
+  override def toString: String = ??? //???
+  override def hashCode: Int = ??? //???
+  override def equals(other: Any): Boolean = ??? //???
 
   trait OppositeFinitelyPresentedCategory extends FinitelyPresentedCategory with OppositeFinitelyGeneratedCategory { 
     override def relations(source: O, target: O) = for((Path(_, _, g1s), Path(_, _, g2s)) <- fpCategory.relations(target, source)) yield {
