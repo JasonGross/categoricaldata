@@ -5,7 +5,7 @@ import net.tqft.toolkit.permutations.Permutations
 trait Set {
   def toIterable: Iterable[Any]
   def identity: FFunction = IdentityFunction(this)
-  
+
   override def equals(other: Any) = {
     other match {
       case other: Set => {
@@ -14,15 +14,15 @@ trait Set {
       case _ => false
     }
   }
-  
+
   /**
    * The default implementation calls sizeIfFinite, which may be expensive.
    */
-  
+
   def finite: Boolean = sizeIfFinite.nonEmpty
   def sizeIfFinite: Option[Int]
   def size: Int = sizeIfFinite.getOrElse(???) //???
-  
+
   override def toString = toIterable.toSet[Any].toString
   override def hashCode = toIterable.toSet[Any].hashCode
 }
@@ -35,13 +35,13 @@ trait FFunction { function =>
     def target = other.target
     def toFunction = function.toFunction andThen other.toFunction
   }
-  
+
   override def equals(other: Any): Boolean = {
     other match {
       case other: FFunction => {
-        if(source != other.source) return false
-        if(target != other.target) return false
-        for(x <- source.toIterable) { if(toFunction(x) != other.toFunction(x)) return false }
+        if (source != other.source) return false
+        if (target != other.target) return false
+        for (x <- source.toIterable) { if (toFunction(x) != other.toFunction(x)) return false }
         return true
       }
     }
@@ -58,11 +58,11 @@ object FFunction {
     val source_ = source
     val target_ = target
     new FFunction {
-    override val source = source_
-    override val target = target_
-    override val toFunction = function
+      override val source = source_
+      override val target = target_
+      override val toFunction = function
+    }
   }
-}
 }
 
 trait Sets extends Category {
@@ -72,13 +72,13 @@ trait Sets extends Category {
   override def source(f: FFunction) = f.source
   override def target(f: FFunction) = f.target
   override def compose(first: FFunction, second: FFunction) = first andThen second
-  
+
   def bijections(set1: Set, set2: Set): Set = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
       case (Some(k), Some(l)) if k == l => {
         val set2List = set2.toIterable.toList
-        for(p <- Permutations.of(k)) yield {
-          val m = (for((x, i) <- set2.toIterable zip p) yield {
+        for (p <- Permutations.of(k)) yield {
+          val m = (for ((x, i) <- set2.toIterable zip p) yield {
             x -> set2List(i)
           }).toMap
           FFunction(set1, set2, m)

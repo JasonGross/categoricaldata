@@ -20,6 +20,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def generatorTarget(g: G) = g.target
 
     case class ObjectRightOf(right: fgFunctor.source.O, morphism: fgFunctor.target.M) {
+      override def toString = "(" + morphism.toString + " = F(" + right.toString +"))"
       require(fgFunctor.target.target(morphism) == fgFunctor.apply(right))
       require(fgFunctor.target.source(morphism) == onLeft)
     }
@@ -56,6 +57,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def generatorTarget(g: G) = g.target
 
     case class ObjectLeftOf(left: fgFunctor.source.O, morphism: fgFunctor.target.M) {
+      override def toString = "(F(" + left.toString + ") = " + morphism.toString + ")"
       require(fgFunctor.target.source(morphism) == fgFunctor.apply(left))
       require(fgFunctor.target.target(morphism) == onRight)
     }

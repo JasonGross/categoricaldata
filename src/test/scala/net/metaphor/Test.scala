@@ -313,6 +313,9 @@ class Test extends FlatSpec with ShouldMatchers {
   }
 
   "__*" should "reverse graph as expected" in {
+    println
+    println("Output from \"__* should reverse graph as expected\":")
+    
     val LHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     println(LHS)
@@ -321,6 +324,9 @@ class Test extends FlatSpec with ShouldMatchers {
  }
 
   "__!" should "work reverse graph as expected" in {
+    println
+    println("Output from \"__! should reverse graph as expected\":")
+    
     val LHS = Examples.ReverseGraph.__!(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     println(LHS)

@@ -4,7 +4,10 @@ import net.tqft.toolkit.collections.NonStrictIterable
 
 case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   if (morphisms.isEmpty) require(source == target)
-  override def toString = morphisms.mkString(" = ") // TODO, make this prettier
+  override def toString = {
+    val afterFirstQuote = """".*"( --- ".*" --> ".*")""".r
+    source.toString + (for (m <- morphisms; s = m.toString) yield afterFirstQuote.unapplySeq(s).get.head).mkString
+  }
 }
 
 /**
@@ -57,6 +60,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
         case _ => false
       }
     }
+    override def toString = representative.toString
   }
 
   def pathEquality(path1: Path, path2: Path): Boolean = ??? //???
@@ -66,7 +70,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
     def reverse(g: lfgCategory.G): G
     def unreverse(g: opposite.G): lfgCategory.G
-    
+
     // reverse all the levels!
     override def objectsAtLevel(k: Int) = lfgCategory.objectsAtLevel(-k)
     override def generators(source: O, target: O) = lfgCategory.generators(target, source).map(reverse(_))
@@ -74,7 +78,6 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def generatorSource(g: opposite.G) = lfgCategory.generatorTarget(unreverse(g))
     override def generatorTarget(g: opposite.G) = lfgCategory.generatorSource(unreverse(g))
   }
-
 }
 
 /**
@@ -125,15 +128,15 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     override val minimumLevel = fgCategory.maximumLevel
     override val maximumLevel = fgCategory.minimumLevel
   }
-  
-  class ConcreteOpposite extends OppositeFinitelyGeneratedCategory  with FinitelyGeneratedCategories.StandardFunctorsToSet {
+
+  class ConcreteOpposite extends OppositeFinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet {
     override type G = OppositeGenerator
     case class OppositeGenerator(g: fgCategory.G)
     override def reverse(g: fgCategory.G) = OppositeGenerator(g)
     override def unreverse(g: OppositeGenerator) = g.g
   }
 
-  lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite 
+  lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite
 
   trait FinitelyGeneratedCategoryOver extends CategoryOver with FinitelyGeneratedFunctor {
     override val source: FinitelyGeneratedCategory
@@ -281,7 +284,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
           override def mapFromInitialSet(o: fgCategory.O) = new coneFunction(o) {
             override def toFunction = functions(o).asInstanceOf[Any => Any]
           }
-       }
+        }
         def morphismFrom(other: functorToSet.Cone) = {
           new functorToSet.ConeMap {
             override val source = other

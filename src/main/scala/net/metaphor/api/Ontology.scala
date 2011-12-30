@@ -29,7 +29,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   override def toString = {
     // TODO relations in Ontology.toString
-    "Ontology(objects = " + (for (o <- objects) yield o.name) + ", arrows = " + allGenerators + ")"
+    "Ontology(objects = " + (for (o <- objects) yield "\"" + o.name + "\"") + ", arrows = " + allGenerators + ")"
   }
 
   trait Dataset extends FunctorToSet { dataset =>
@@ -71,7 +71,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
           m = source.generatorAsMorphism(g);
           g1 = this(m).toFunction
         ) yield {
-          "    " + m.toString + " -> " + (m + (for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
+          "    (" + g.toString + ") -> " + ((for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
         }).mkString("\n") + "  ))"
     }
 
