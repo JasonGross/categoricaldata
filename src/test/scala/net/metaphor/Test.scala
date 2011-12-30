@@ -253,7 +253,7 @@ class Test extends FlatSpec with ShouldMatchers {
     Examples.Codomain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet2)
   }
 
-  "pushforward" should "work nicely with the map from E2 to PointedSet" in {
+  "__*" should "work nicely with the map from E2 to PointedSet" in {
     Examples.E2ToPointedSet.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetRPushFunky)
   }
 
@@ -262,21 +262,21 @@ class Test extends FlatSpec with ShouldMatchers {
   //      GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
   //    }
 
-  "pushforward" should "work (1)" in {
+  "__*" should "work with terminal functor on 'function'" in {
     val pushforward = Examples.TerminalFunctor(Examples.Ord(1)).__*(DavidsFunkyFunction)
     pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
   }
 
-  "shriek" should "work (1)" in {
+  "__!" should "work with terminal functor on 'function'" in {
     val shriek = Examples.TerminalFunctor(Examples.Ord(1)).__!(DavidsFunkyFunction)
     shriek.isIsomorphicTo(DavidsFunkySet2) should equal(true)
   }
 
-  //   "shriek" should "work (1)" in {
+  //   "__!" should "work (1)" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
   //   }
   //
-  //  "pushforward" should "work (2)" in {
+  //  "__*" should "work (2)" in {
   //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph).isIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem) should equal(true)
   //  }
 
@@ -296,23 +296,23 @@ class Test extends FlatSpec with ShouldMatchers {
   //	   (TerminalDataset(TerminalCategory))
   //   }
   //   
-  //   "pushforward" should "preserve the terminal dataset" in {
+  //   "__*" should "preserve the terminal dataset" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
   //	   should equal 
   //	   (TerminalDataset(FiniteCyclicMonoid(10,7)))
   //   }
   //   
-  //   "shriek" should "preserve the initialdataset" in {
+  //   "__!" should "preserve the initialdataset" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__!(InitialDataset(TerminalCategory)) 
   //	   should equal 
   //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
   //   }
 
-  "pullback" should "work (4)" in {
+  "pullback" should "reverse graph as expected" in {
     Examples.ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
 
-  "pushforward" should "work (3)" in {
+  "__*" should "reverse graph as expected" in {
     val LHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     println(LHS)
@@ -320,7 +320,7 @@ class Test extends FlatSpec with ShouldMatchers {
     LHS should beIsomorphicTo(RHS)
  }
 
-  "shriek" should "work (2)" in {
+  "__!" should "work reverse graph as expected" in {
     val LHS = Examples.ReverseGraph.__!(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     println(LHS)
@@ -336,17 +336,22 @@ class Test extends FlatSpec with ShouldMatchers {
    * 	dataset.colimitSet should equal(TerminalFunctor(C).__!(dataset)(x))
    * }
    */
-  "colimit and shriek" should "agree for terminal functors" in {
+  "colimit and __!" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have colim(D)=TerminalFunctor(C).__!(D)
   }
-  "limit and pushforward" should "agree for terminal functors" in {
+  "limit and __*" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
   }
-  "pushforward" should "work with PointedSetToIsomorphism" in {
+  "__*" should "work with PointedSetToIsomorphism" in {
     Examples.PointedSetToIsomorphism.__*(OneTwoThreePointed) should beIsomorphicTo(SixElementsIso)
   }
 
-  "shriek" should "work with PointedSetToIsomorphism" in {
+  "__!" should "work with PointedSetToIsomorphism" in {
     Examples.PointedSetToIsomorphism.__!(OneTwoThreePointed) should beIsomorphicTo(ThreeElementsIso)
   }
+  
+  
+  
+  
+  
 }

@@ -4,7 +4,7 @@ import net.tqft.toolkit.collections.NonStrictIterable
 
 case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   if (morphisms.isEmpty) require(source == target)
-  override def toString = source.toString + morphisms.mkString
+  override def toString = morphisms.mkString(" = ") // TODO, make this prettier
 }
 
 /**

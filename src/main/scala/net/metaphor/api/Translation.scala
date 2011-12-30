@@ -14,16 +14,16 @@ trait FiniteTarget extends Translation { translation =>
   override val target: Ontologies.Finite
 
   class SliceFunctor extends super.SliceFunctor {
-    override def buildSliceCategory(onRight: Box) = new SliceCategory(onRight)
+    override def buildSliceCategory(onRight: Box) = new SliceCategory(onRight) 
   }
   class CosliceFunctor extends super.CosliceFunctor {
-    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft)
+    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft) 
   }
 
   lazy val slice: SliceFunctor = new SliceFunctor
   lazy val coslice: CosliceFunctor = new CosliceFunctor
 
-  trait LeftPushforward extends CovariantDataFunctor { pushforward =>
+  trait RightPushforward extends CovariantDataFunctor { pushforward =>
     override def onObjects(i: source.O) = new translation.target.Dataset {
       override def onObjects(o: Box) = {
         val F = slice(o)
@@ -65,7 +65,7 @@ trait FiniteTarget extends Translation { translation =>
       override def apply(o: Box) = ??? //???
     }
   }
-  trait RightPushforward extends CovariantDataFunctor { shriek =>
+  trait LeftPushforward extends CovariantDataFunctor { shriek =>
     override def onObjects(i: source.O) = new translation.target.Dataset {
       override def onObjects(o: Box) = {
         val F = coslice(o) // FIXME weird, why on earth do we need this intermediate val?
@@ -117,13 +117,13 @@ trait FiniteTarget extends Translation { translation =>
   def __! = new Functor {
     override val source = FunctorsToSet
     override val target = translation.target.functorsToSet
-    def onObjects(i: FunctorToSet) = rightPushforward.apply(translation.source.internalize(i))
-    def onMorphisms(t: NaturalTransformationToSet) = rightPushforward.apply(translation.source.internalize(t))
+    def onObjects(i: FunctorToSet) = leftPushforward.apply(translation.source.internalize(i))
+    def onMorphisms(t: NaturalTransformationToSet) = leftPushforward.apply(translation.source.internalize(t))
   }
   def __* = new Functor {
     override val source = FunctorsToSet
     override val target = translation.target.functorsToSet
-    def onObjects(i: FunctorToSet) = leftPushforward.apply(translation.source.internalize(i))
-    def onMorphisms(t: NaturalTransformationToSet) = leftPushforward.apply(translation.source.internalize(t))
+    def onObjects(i: FunctorToSet) = rightPushforward.apply(translation.source.internalize(i))
+    def onMorphisms(t: NaturalTransformationToSet) = rightPushforward.apply(translation.source.internalize(t))
   }
 }
