@@ -19,7 +19,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
 	"junit" % "junit" % "4.8" % "test",
 	"org.scalatest" %% "scalatest" % "1.6.1" % "test",
-	"net.tqft.toolkit" %% "toolkit" % "1.0-SNAPSHOT"
+	"net.tqft.toolkit" %% "toolkit" % "0.1.0"
 )
 
 scalacOptions ++= Seq("-Xexperimental")
