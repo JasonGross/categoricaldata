@@ -27,7 +27,7 @@ trait FiniteTarget extends Translation { translation =>
         F.pullback(i).limitSet
       }
       override def onGenerators(g: translation.target.G) = {
-        val sg = slice(translation.target.opposite.generatorAsMorphism(translation.target.opposite.reverse(g)))
+        val sg = slice(translation.target.opposite.generatorAsMorphism(translation.target.opposite.reverseGenerator(g)))
         val Fg = sg.functor
         val Ft = sg.target
         val Fs = sg.source

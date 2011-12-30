@@ -104,7 +104,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       override val target = sliceFunctor.onObjects(fgFunctor.target.opposite.source(m)) // source, target, schmource, schtarget, who's keeping track anyway?
       override val functor = new F {
         override def onObjects(o: source.ObjectRightOf): target.ObjectRightOf = {
-          target.ObjectRightOf(right = o.right, morphism = fgFunctor.target.compose(m.asInstanceOf[fgFunctor.target.M], o.morphism)) // this cast will probably fail
+          target.ObjectRightOf(right = o.right, morphism = fgFunctor.target.compose(fgFunctor.target.opposite.unreverse(m), o.morphism)) // FIXME suspicious?
         }
         override def onGenerators(g: source.ObjectRightOfMap): target.M = {
           target.generatorAsMorphism(target.ObjectRightOfMap(onObjects(g.source), onObjects(g.target), g.generator))

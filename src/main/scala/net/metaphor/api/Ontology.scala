@@ -201,9 +201,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   class OppositeOntology extends Ontology with OppositeFinitelyPresentedCategory { opposite =>
     override type G = Arrow
-    override def reverse(g: Arrow) = Arrow(g.target, g.source, "(" + g.name + ")^op")
+    override def reverseGenerator(g: Arrow) = Arrow(g.target, g.source, "(" + g.name + ")^op")
     val unop = """\((.*)\)\^op""".r
-    override def unreverse(g: Arrow) = Arrow(g.target, g.source, g.name match { case unop(name) => name; case _ => throw new NullPointerException })
+    override def unreverseGenerator(g: Arrow) = Arrow(g.target, g.source, g.name match { case unop(name) => name; case _ => throw new NullPointerException })
   }
   
   override lazy val opposite: OppositeOntology = new OppositeOntology { }
