@@ -77,7 +77,6 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     // TODO provide some way to let the user help out. 
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
-<<<<<<< local
       require(other.source == this.source)
 
       val compositionDiagram = new Ontology {
@@ -152,9 +151,6 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
           override def apply(o: Box) = bijection.asInstanceOf[Box => FFunction](o)
         }
       }
-=======
-      ??? //???
->>>>>>> other
     }
 
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
