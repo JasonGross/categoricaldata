@@ -313,7 +313,7 @@ class Test extends FlatSpec with ShouldMatchers {
   }
 
   "pushforward" should "work (3)" in {
-    val LHS = ReverseGraph.__*(DavidsFunkyGraph)
+    val LHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     println(LHS)
     println(RHS)
@@ -321,7 +321,7 @@ class Test extends FlatSpec with ShouldMatchers {
  }
 
   "shriek" should "work (2)" in {
-    val LHS = ReverseGraph.__!(DavidsFunkyGraph)
+    val LHS = Examples.ReverseGraph.__!(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     println(LHS)
     println(RHS)
