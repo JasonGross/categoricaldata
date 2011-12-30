@@ -199,10 +199,14 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
   object Datasets extends Datasets
 
+  class Opposite extends Ontology with super.Opposite { opposite =>
+    override type G = Arrow
+    override def reverse(g: Arrow) = Arrow(g.target, g.source, "(" + g.name + ")^op")
+    val unop = """\((.*)\)^op""".r
+    override def unreverse(g: Arrow) = Arrow(g.target, g.source, g.name match { case unop(name) => name })
+  }
   
-  override lazy val opposite: Ontology = new Ontology with Opposite { }
-  
-
+  override lazy val opposite: Ontology = new Opposite { }
   
   def assertAcyclic: Ontology with Ontologies.Acyclic = {
     this match {

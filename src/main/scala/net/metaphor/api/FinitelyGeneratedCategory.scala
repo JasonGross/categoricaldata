@@ -61,22 +61,20 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   def pathEquality(path1: Path, path2: Path): Boolean = ???
 
-  trait Opposite extends LocallyFinitelyGeneratedCategory {
+  trait Opposite extends LocallyFinitelyGeneratedCategory { opposite =>
     override type O = lfgCategory.O
-    override type G = lfgCategory.G
 
+    def reverse(g: lfgCategory.G): G
+    def unreverse(g: opposite.G): lfgCategory.G
+    
     // reverse all the levels!
     override def objectsAtLevel(k: Int) = lfgCategory.objectsAtLevel(-k)
-    override def generators(source: lfgCategory.O, target: lfgCategory.O) = lfgCategory.generators(target, source)
+    override def generators(source: O, target: O) = lfgCategory.generators(target, source).map(reverse(_))
 
-    override def generatorSource(g: lfgCategory.G) = lfgCategory.generatorTarget(g)
-    override def generatorTarget(g: lfgCategory.G) = lfgCategory.generatorSource(g)
+    override def generatorSource(g: opposite.G) = lfgCategory.generatorTarget(unreverse(g))
+    override def generatorTarget(g: opposite.G) = lfgCategory.generatorSource(unreverse(g))
   }
 
-  /**
-   * Implementing opposite should be easy; generally just write "def opposite = new C with Opposite", replacing C as appropriate.
-   */
-  //  def opposite: C
 }
 
 /**
@@ -123,12 +121,19 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { self 
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
-  trait Opposite extends FinitelyGeneratedCategory with super.Opposite {
+  trait Opposite extends FinitelyGeneratedCategory with super.Opposite { opposite =>
     override val minimumLevel = self.maximumLevel
     override val maximumLevel = self.minimumLevel
   }
+  
+  class ConcreteOpposite extends Opposite  with FinitelyGeneratedCategories.StandardFunctorsToSet {
+    override type G = OppositeGenerator
+    case class OppositeGenerator(g: self.G)
+    def reverse(g: self.G) = OppositeGenerator(g)
+    def unreverse(g: OppositeGenerator) = g.g
+  }
 
-  lazy val opposite: FinitelyGeneratedCategory = new Opposite with FinitelyGeneratedCategories.StandardFunctorsToSet
+  lazy val opposite: FinitelyGeneratedCategory = new ConcreteOpposite 
 
   trait FinitelyGeneratedCategoryOver extends CategoryOver with FinitelyGeneratedFunctor {
     override val source: FinitelyGeneratedCategory

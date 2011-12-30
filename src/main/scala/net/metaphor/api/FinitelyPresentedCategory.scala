@@ -13,7 +13,9 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { self =>
   override def equals(other: Any): Boolean = ???
 
   trait Opposite extends FinitelyPresentedCategory with super.Opposite { 
-    override def relations(source: O, target: O) = self.relations(target, source)
+    override def relations(source: O, target: O) = for((Path(_, _, g1s), Path(_, _, g2s)) <- self.relations(target, source)) yield {
+      (Path(source, target, g1s.reverse.map(reverse(_))), Path(source, target, g2s.reverse.map(reverse(_))))
+    }
   }
 }
 
