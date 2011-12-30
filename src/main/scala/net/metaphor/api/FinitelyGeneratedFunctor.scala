@@ -12,10 +12,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     target.compose(start, morphisms)
   }
 
-  type SC <: SliceCategory
-  type cSC <: CosliceCategory
-
-  class SliceCategory(onLeft: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { sliceCategory: SC =>
+  class SliceCategory(onLeft: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { sliceCategory =>
     override type O = ObjectRightOf
     override type G = ObjectRightOfMap
 
@@ -51,7 +48,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
 
   }
 
-  class CosliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { cosliceCategory: cSC =>
+  class CosliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { cosliceCategory =>
     override type O = ObjectLeftOf
     override type G = ObjectLeftOfMap
 
@@ -113,7 +110,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
-    def buildSliceCategory(onLeft: fgFunctor.target.O): SC
+    def buildSliceCategory(onLeft: fgFunctor.target.O): SliceCategory
 
   }
 
@@ -145,6 +142,6 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
-    def buildCosliceCategory(onLeft: fgFunctor.target.opposite.O): cSC
+    def buildCosliceCategory(onLeft: fgFunctor.target.opposite.O): CosliceCategory
   }
 }

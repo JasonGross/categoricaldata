@@ -4,9 +4,6 @@ trait Translation extends FinitelyGeneratedFunctor { translation =>
   override val source: Ontology
   override val target: Ontology
 
-  override type SC = SliceCategory
-  override type cSC = CosliceCategory
-
   def assertFiniteTarget: Translation with FiniteTarget = ??? //???
 }
 
@@ -30,7 +27,7 @@ trait FiniteTarget extends Translation { translation =>
         F.pullback(i).limitSet
       }
       override def onGenerators(g: translation.target.G) = {
-        val sg = slice(translation.target.generatorAsMorphism(g))
+        val sg = slice(translation.target.opposite.generatorAsMorphism(translation.target.opposite.reverse(g)))
         val Fg = sg.functor
         val Ft = sg.target
         val Fs = sg.source
@@ -68,11 +65,11 @@ trait FiniteTarget extends Translation { translation =>
   trait LeftPushforward extends CovariantDataFunctor { shriek =>
     override def onObjects(i: source.O) = new translation.target.Dataset {
       override def onObjects(o: Box) = {
-        val F = coslice(o) // FIXME weird, why on earth do we need this intermediate val?
+        val F = coslice(o) // TODO weird, why on earth do we need this intermediate val?
         F.pullback(i).colimitSet
       }
       override def onGenerators(g: translation.target.G) = {
-        val sg = coslice(translation.target.opposite.generatorAsMorphism(translation.target.opposite.reverse(g)))
+        val sg = coslice(translation.target.generatorAsMorphism(g))
         val Fg = sg.functor
         val Ft = sg.target
         val Fs = sg.source
