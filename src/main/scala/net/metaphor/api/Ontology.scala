@@ -72,7 +72,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
           g1 = this(m).toFunction
         ) yield {
           "    (" + g.toString + ") -> " + ((for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
-        }).mkString("\n") + "  ))"
+        }).mkString("\n") + "))"
     }
 
     // TODO provide some way to let the user help out. 
@@ -237,8 +237,39 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     this match {
       case o: Ontologies.Finite => o
       case _ => new OntologyWrapper(this) with Ontologies.Finite {
-        def maximumWordLength(s: O, t: O) = ??? //???
-        def normalForm(m: M) = ??? //???
+
+        // returns all paths which can be obtained by applying one relation
+        def adjacentPaths(p: Path): List[Path] = {
+          for(
+              i <- (0 until p.length).toList;
+              j <- i + 1 until p.length;
+        	  slice = p.morphisms.slice(i, j);
+        	  s = generatorSource(slice.head);
+        	  t = generatorTarget(slice.last);
+        	  subpath = Path(s, t, slice);
+        	  (r1, r2) <- relations(s, t) ::: relations(s, t).map(_.swap);
+              if(r1 == subpath)
+          ) yield {
+            Path(p.source, p.target, p.morphisms.take(i) ::: r2.morphisms ::: p.morphisms.drop(j))
+          }
+        }
+        
+        val cachedEquivalenceClasses = net.tqft.toolkit.functions.Memo(computeEquivalenceClasses _)
+        
+        def computeEquivalenceClasses(s: O, t: O): (Int, Set[Set[Path]]) = {
+          ???
+        }
+
+        // a collection of sets of equivalent paths, such that for k = maximumWordLength(s, t) + 1, every path of length <= k appears in some set,
+        // and every path of length exactly k appears in a set also containing a shorter element.
+        def pathEquivalenceClasses(s: O, t: O): Set[Set[Path]] = cachedEquivalenceClasses(s, t)._2
+
+        override def maximumWordLength(s: O, t: O) = cachedEquivalenceClasses(s, t)._1
+        
+        override def normalForm(m: Path) = {
+          // yikes, how do we do this?
+          ???
+        }
       }
     }
   }

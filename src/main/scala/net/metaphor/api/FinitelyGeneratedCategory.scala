@@ -4,6 +4,9 @@ import net.tqft.toolkit.collections.NonStrictIterable
 
 case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   if (morphisms.isEmpty) require(source == target)
+  
+  def length = morphisms.size
+  
   override def toString = {
     val afterFirstQuote = """".*"( --- ".*" --> ".*")""".r
     source.toString + (for (m <- morphisms; s = m.toString) yield afterFirstQuote.unapplySeq(s).get.head).mkString
