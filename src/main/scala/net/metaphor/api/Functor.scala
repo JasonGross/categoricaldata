@@ -30,6 +30,35 @@ object Functor {
   }
 }
 
+trait Adjunction {
+  val C: Category
+  val D: Category
+  
+  trait LeftAdjoint extends Functor {
+    override val source: D.type = D
+    override val target: C.type = C
+  }
+  trait RightAdjoint extends Functor {
+    override val source: C.type = C
+    override val target: D.type = D
+  }
+  
+  val leftAdjoint: LeftAdjoint
+  val rightAdjoint: RightAdjoint
+  
+  trait Unit extends NaturalTransformation {
+    override val source: D.Identity.type = D.Identity
+//    override val target = compose(rightAdjoint, leftAdjoint)
+  }
+  trait Counit extends NaturalTransformation {
+//    override val source = compose(leftAdjoint, rightAdjoint)
+    override val target: C.Identity.type = C.Identity
+  }
+  
+  val unit: Unit
+  val counit: Counit
+}
+
 trait MemoFunctor extends Functor {
   import net.tqft.toolkit.functions.Memo
   val memoOnObjects = Memo(super.onObjects _)
