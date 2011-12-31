@@ -21,7 +21,7 @@ trait FiniteTarget extends Translation { translation =>
   lazy val coslice: CosliceFunctor = new CosliceFunctor
 
   trait RightPushforward extends CovariantDataFunctor { pushforward =>
-    override def onObjects(i: source.O) = new translation.target.Dataset {
+    override def onObjects(i: source.O): target.O = (new translation.target.Dataset {
       override def onObjects(o: Box) = {
         val F = slice(o)
         F.pullback(i).limitSet
@@ -57,15 +57,15 @@ trait FiniteTarget extends Translation { translation =>
 
         coneMap.initialMap
       }
-    }
-    override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
+    }).memo
+    override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
       override def apply(o: Box) = ??? //???
     }
   }
   trait LeftPushforward extends CovariantDataFunctor { shriek =>
-    override def onObjects(i: source.O) = new translation.target.Dataset {
+    override def onObjects(i: source.O): target.O = (new translation.target.Dataset {
       override def onObjects(o: Box) = {
         val F = coslice(o) // TODO weird, why on earth do we need this intermediate val?
         F.pullback(i).colimitSet
@@ -102,16 +102,19 @@ trait FiniteTarget extends Translation { translation =>
         coconeMap.terminalMap
       }
 
-    }
-    override def onMorphisms(m: translation.source.NaturalTransformationToSet) = new translation.target.Datamap {
+    }).memo
+    override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = onObjects(m.source)
       override val target = onObjects(m.target)
       override def apply(o: Box) = ??? //???
     }
   }
 
-  lazy val leftPushforward = new LeftPushforward {}
-  lazy val rightPushforward = new RightPushforward {}
+  trait MemoLeftPushforward extends LeftPushforward with MemoFunctor
+  trait MemoRightPushforward extends RightPushforward with MemoFunctor
+  
+  lazy val leftPushforward: LeftPushforward = new MemoLeftPushforward {}
+  lazy val rightPushforward: RightPushforward = new MemoRightPushforward {}
 
   def __! = new Functor {
     override val source = FunctorsToSet

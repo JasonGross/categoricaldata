@@ -53,13 +53,13 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   case class PathEquivalenceClass(representative: Path) {
     // sanity check
-    representative.morphisms.headOption.map(g => require(generatorSource(g) == representative.source))
-    representative.morphisms.lastOption.map(g => require(generatorTarget(g) == representative.target))
-    if (representative.morphisms.nonEmpty) {
-      for ((a, b) <- representative.morphisms zip representative.morphisms.tail) {
-        require(generatorTarget(a) == generatorSource(b))
-      }
-    }
+//    representative.morphisms.headOption.map(g => require(generatorSource(g) == representative.source))
+//    representative.morphisms.lastOption.map(g => require(generatorTarget(g) == representative.target))
+//    if (representative.morphisms.nonEmpty) {
+//      for ((a, b) <- representative.morphisms zip representative.morphisms.tail) {
+//        require(generatorTarget(a) == generatorSource(b))
+//      }
+//    }
     override def equals(other: Any) = {
       other match {
         case PathEquivalenceClass(otherRepresentative) => pathEquality(representative, otherRepresentative)
@@ -102,7 +102,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   val minimumLevel: Int
   val maximumLevel: Int
 
-  def objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
+  lazy val objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
   override def objectSet: FSet = new FSet {
     def toIterable = objects
     lazy val sizeIfFinite = Some(toIterable.size)
@@ -254,7 +254,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
     def limit: TerminalObject[functorToSet.Cone, functorToSet.ConeMap] = {
       // this is where all the work happens.
-      def concreteLimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Iterable[A]))): (Iterable[fgCategory.O => A], fgCategory.O => ((fgCategory.O => A) => A)) = {
+      def concreteLimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Set[A]))): (Iterable[fgCategory.O => A], fgCategory.O => ((fgCategory.O => A) => A)) = {
         /**
          *  @returns sets(o2) if there are actually no morphisms from o1 to o2
          * 			 None if there are several morphisms, with different images on a
@@ -307,7 +307,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       val (maps, functions) = concreteLimit(
         objects,
         { o: fgCategory.O => functorToSet(o).toIterable },
-        { s: fgCategory.O => { t: fgCategory.O => { a: Any => for (g <- generators(s, t)) yield functorToSet(g).toFunction(a) } } })
+        { s: fgCategory.O => { t: fgCategory.O => { a: Any => (for (g <- generators(s, t)) yield functorToSet(g).toFunction(a)).toSet } } })
 
       val resultSet = new FSet {
         override  def sizeIfFinite = Some(maps.size)
@@ -336,16 +336,16 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     def colimit: InitialObject[functorToSet.CoCone, functorToSet.CoConeMap] = {
 
       // This is where all the work happens.
-      def concreteColimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Iterable[A]))): (Iterable[List[(fgCategory.O, A)]], fgCategory.O => (A => List[(fgCategory.O, A)])) = {
+      def concreteColimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Set[A]))): (Iterable[Set[(fgCategory.O, A)]], fgCategory.O => (A => Set[(fgCategory.O, A)])) = {
         /**
          * finds all the clumps containing an element of slice, and smushes them together
          */
-        def combineClumps[B](clumps: Iterable[List[B]], slice: List[B]): Iterable[List[B]] = {
-          val (toCombine, toLeave) = clumps.partition(_.find(a => slice.contains(a)).nonEmpty)
-          toLeave ++ List(toCombine.flatten.toList)
+        def combineClumps[B](clumps: Iterable[Set[B]], slice: (B, B)): Iterable[Set[B]] = {
+          val (toCombine, toLeave) = clumps.partition(c => c.contains(slice._1) || c.contains(slice._2))
+          toLeave ++ List(toCombine.flatten.toSet)
         }
-        val initialClumps = for (o <- objects; x <- sets(o)) yield List((o, x))
-        val arrows = for (s <- objects; x <- sets(s); t <- objects; y <- functions(s)(t)(x)) yield List((s, x), (t, y))
+        val initialClumps = for (o <- objects; x <- sets(o)) yield Set((o, x))
+        val arrows = for (s <- objects; x <- sets(s); t <- objects; y <- functions(s)(t)(x)) yield ((s, x), (t, y))
 
         val resultClumps = arrows.foldLeft(initialClumps)(combineClumps _)
         def resultFunctions(o: fgCategory.O)(a: A) = resultClumps.find(_.contains((o, a))).get
@@ -356,7 +356,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       val (clumps, functions) = concreteColimit[Any](
         objects,
         { o: fgCategory.O => functorToSet(o).toIterable },
-        { s: fgCategory.O => { t: fgCategory.O => { a: Any => for (g <- generators(s, t)) yield functorToSet(g).toFunction(a) } } })
+        { s: fgCategory.O => { t: fgCategory.O => { a: Any => (for (g <- generators(s, t)) yield functorToSet(g).toFunction(a)).toSet } } })
 
       val resultSet = new FSet {
         override def sizeIfFinite = Some(clumps.size)
@@ -375,7 +375,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
             override val source = initialObject
             override val target = other
             override val terminalMap = new terminalFunction {
-              override def toFunction = { x: List[(fgCategory.O, Any)] => other.mapToTerminalSet(x.head._1).toFunction(x.head._2) }.asInstanceOf[Any => Any]
+              override def toFunction = { x: Set[(fgCategory.O, Any)] => { val h = x.head; other.mapToTerminalSet(h._1).toFunction(h._2) }}.asInstanceOf[Any => Any]
             }
           }
         }

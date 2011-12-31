@@ -37,7 +37,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       override def source = onObjects(generatorSource(g))
       override def target = onObjects(generatorTarget(g))
     }
-    
+
     override def equals(other: Any): Boolean = {
       other match {
         case other: Ontology#Dataset => {
@@ -59,9 +59,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       }
     }
 
-    override def hashCode = ??? //???
+    override def hashCode = toString.hashCode
 
-    override def toString = {
+    override lazy val toString = {
       "Dataset(\n" +
         "  source = " + source + ", \n" +
         "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
@@ -112,7 +112,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         def relations(source: Box, target: Box) = Nil
       }
 
-      val noninvariantBijections = new compositionDiagram.Dataset {
+      val noninvariantBijections = (new compositionDiagram.Dataset {
         def onObjects(o: Box) = {
           compositionDiagram.unbox(o) match {
             case Left(box) => {
@@ -141,9 +141,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
             }
           }
         }
-      }
+      }).memo
 
-      for(bijection <- noninvariantBijections.limitSet.toIterable) yield {
+      for (bijection <- noninvariantBijections.limitSet.toIterable) yield {
         new Datamap {
           override val source = dataset
           override val target = internalize(other)
@@ -155,9 +155,19 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
 
+    class DatasetMemo extends Dataset {
+      import net.tqft.toolkit.functions.Memo
+      val memoOnObjects = Memo(dataset.onObjects _)
+      val memoOnGenerators = Memo(dataset.onGenerators _)
+      override def onObjects(o: O) = memoOnObjects(o)
+      override def onGenerators(g: G) = memoOnGenerators(g)
+    }
+
+    lazy val memo: ontology.Dataset = new DatasetMemo
+
   }
   trait Datamap extends NaturalTransformationToSet { datamap =>
-    override def toString = "Datamap(\n  onObjects = Map(\n" + (for(o <- ontology.objects) yield "    " + o.toString + " -> " + datamap(o).toString).mkString(",\n    ") + "))"
+    override def toString = "Datamap(\n  onObjects = Map(\n" + (for (o <- ontology.objects) yield "    " + o.toString + " -> " + datamap(o).toString).mkString(",\n    ") + "))"
   }
 
   override type F = Dataset
@@ -207,9 +217,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     val unop = """\((.*)\)\^op""".r
     override def unreverseGenerator(g: Arrow) = Arrow(g.target, g.source, g.name match { case unop(name) => name; case _ => throw new NullPointerException })
   }
-  
-  override lazy val opposite: OppositeOntology = new OppositeOntology { }
-  
+
+  override lazy val opposite: OppositeOntology = new OppositeOntology {}
+
   def assertAcyclic: Ontology with Ontologies.Acyclic = {
     this match {
       case o: Ontologies.Acyclic => o
@@ -246,7 +256,7 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
 }
 
 object Ontologies {
-  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms { 
+  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms {
     // FIXME check that we're actually finite
   }
 

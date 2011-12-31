@@ -3,7 +3,7 @@ package net.metaphor.api
 trait Functor {
   val source: Category
   val target: Category
-  
+
   final def apply(o: source.O): target.O = onObjects(o)
   // the dummy implicit argument is a hack to allow overloading of apply
   final def apply(m: source.M)(implicit d: DummyImplicit): target.M = onMorphisms(m)
@@ -28,4 +28,12 @@ object Functor {
     def onMorphisms(m: source.M) = functor2(functor1(m).asInstanceOf[functor2.source.M])
 
   }
+}
+
+trait MemoFunctor extends Functor {
+  import net.tqft.toolkit.functions.Memo
+  val memoOnObjects = Memo(super.onObjects _)
+  val memoOnMorphisms = Memo(super.onMorphisms _)
+  abstract override def onObjects(o: source.O) = memoOnObjects(o)
+  abstract override def onMorphisms(o: source.M) = memoOnMorphisms(o)
 }
