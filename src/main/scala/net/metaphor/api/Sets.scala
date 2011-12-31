@@ -2,13 +2,13 @@ package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
 
-trait Set {
+trait FSet {
   def toIterable: Iterable[Any]
   def identity: FFunction = IdentityFunction(this)
 
   override def equals(other: Any) = {
     other match {
-      case other: Set => {
+      case other: FSet => {
         toIterable == other.toIterable
       }
       case _ => false
@@ -27,15 +27,15 @@ trait Set {
   override def hashCode = toIterable.toSet[Any].hashCode
 }
 
-trait FiniteSet extends Set {
+trait FiniteSet extends FSet {
   override def finite = true
   override lazy val size = toIterable.size
   override def sizeIfFinite = Some(size)
 }
 
 trait FFunction { function =>
-  def source: Set
-  def target: Set
+  def source: FSet
+  def target: FSet
   def toFunction: Any => Any
   def andThen[C](other: FFunction) = new FFunction {
     def source = function.source
@@ -59,14 +59,14 @@ trait FFunction { function =>
     (for(o <- source.toIterable) yield (o -> f(o))).toMap.toString
   }
 }
-case class IdentityFunction(set: Set) extends FFunction {
+case class IdentityFunction(set: FSet) extends FFunction {
   override def source = set
   override def target = set
   override def toFunction = { a: Any => a }
 }
 
 object FFunction {
-  def apply(source: Set, target: Set, function: Any => Any) = {
+  def apply(source: FSet, target: FSet, function: Any => Any) = {
     val source_ = source
     val target_ = target
     new FFunction {
@@ -78,14 +78,14 @@ object FFunction {
 }
 
 trait Sets extends Category {
-  type O = Set
+  type O = FSet
   type M = FFunction
-  override def identity(set: Set) = set.identity
+  override def identity(set: FSet) = set.identity
   override def source(f: FFunction) = f.source
   override def target(f: FFunction) = f.target
   override def compose(first: FFunction, second: FFunction) = first andThen second
 
-  def bijections(set1: Set, set2: Set): Set = {
+  def bijections(set1: FSet, set2: FSet): FSet = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
       case (Some(k), Some(l)) if k == l => {
         val set2List = set2.toIterable.toList

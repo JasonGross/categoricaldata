@@ -28,8 +28,8 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   def generatorTarget(g: G): O
 
   def objectsAtLevel(k: Int): List[O]
-  def objectSet: Set = {
-    new Set {
+  def objectSet: FSet = {
+    new FSet {
       def toIterable = NonStrictNaturalNumbers.flatMap(x => Set(x, -x)).flatMap(x => objectsAtLevel(x))
       def sizeIfFinite = None
     }
@@ -103,7 +103,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   val maximumLevel: Int
 
   def objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
-  override def objectSet: Set = new Set {
+  override def objectSet: FSet = new FSet {
     def toIterable = objects
     lazy val sizeIfFinite = Some(toIterable.size)
   }
@@ -218,7 +218,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     def limitSet = limitCone.initialSet
 
     trait CoCone {
-      val terminalSet: Set
+      val terminalSet: FSet
       abstract class coConeFunction(o: O) extends FFunction {
         override val source = functorToSet(o)
         override val target = terminalSet
@@ -235,7 +235,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       val terminalMap: terminalFunction
     }
     trait Cone extends {
-      val initialSet: Set
+      val initialSet: FSet
       abstract class coneFunction(o: O) extends FFunction {
         override val source = initialSet
         override val target = functorToSet(o)
@@ -309,7 +309,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         { o: fgCategory.O => functorToSet(o).toIterable },
         { s: fgCategory.O => { t: fgCategory.O => { a: Any => for (g <- generators(s, t)) yield functorToSet(g).toFunction(a) } } })
 
-      val resultSet = new Set {
+      val resultSet = new FSet {
         override  def sizeIfFinite = Some(maps.size)
         override def toIterable = maps.map(new Section(_))
       }
@@ -358,7 +358,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         { o: fgCategory.O => functorToSet(o).toIterable },
         { s: fgCategory.O => { t: fgCategory.O => { a: Any => for (g <- generators(s, t)) yield functorToSet(g).toFunction(a) } } })
 
-      val resultSet = new Set {
+      val resultSet = new FSet {
         override def sizeIfFinite = Some(clumps.size)
         override def toIterable = clumps
       }
