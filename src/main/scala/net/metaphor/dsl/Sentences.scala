@@ -88,10 +88,10 @@ object Sentences {
     new ConcreteTranslation(source, target, onObjects, onMorphisms) with FiniteTarget
   }
 
-  def Dataset(source: Ontology, onObjects: String => List[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
+  def Dataset(source: Ontology, onObjects: String => Traversable[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
 
     val objectMap = (for (s <- source.objects) yield {
-      s -> onObjects(s.name)
+      s -> onObjects(s.name).toList
     }).toMap
     val morphismMap = (for (
       a <- source.allGenerators

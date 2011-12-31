@@ -77,7 +77,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     // TODO provide some way to let the user help out. 
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
-      require(other.source == this.source)
+      require(other.source == dataset.source)
 
       val compositionDiagram = new Ontology {
         // FIXME deal with objects at other levels
@@ -143,8 +143,6 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         }
       }
 
-      println(noninvariantBijections)
-      
       for(bijection <- noninvariantBijections.limitSet.toIterable) yield {
         new Datamap {
           override val source = dataset
@@ -158,7 +156,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
 
   }
-  trait Datamap extends NaturalTransformationToSet
+  trait Datamap extends NaturalTransformationToSet { datamap =>
+    override def toString = "Datamap(\n  onObjects = Map(\n" + (for(o <- ontology.objects) yield "    " + o.toString + " -> " + datamap(o).toString).mkString(",\n    ") + "))"
+  }
 
   override type F = Dataset
   override type T = Datamap

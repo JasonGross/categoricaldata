@@ -289,24 +289,24 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   }
 
   "__*" should "reverse graph as expected" in {
-    println
-    println("Output from \"__* should reverse graph as expected\":")
+//    println
+//    println("Output from \"__* should reverse graph as expected\":")
     
     val LHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
-    println(LHS)
-    println(RHS)
+//    println(LHS)
+//    println(RHS)
     LHS should beIsomorphicTo(RHS)
  }
 
   "__!" should "work reverse graph as expected" in {
-    println
-    println("Output from \"__! should reverse graph as expected\":")
+//    println
+//    println("Output from \"__! should reverse graph as expected\":")
     
     val LHS = Examples.ReverseGraph.__!(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
-    println(LHS)
-    println(RHS)
+//    println(LHS)
+//    println(RHS)
     LHS should beIsomorphicTo(RHS)
   }
   // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.

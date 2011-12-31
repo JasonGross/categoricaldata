@@ -90,7 +90,7 @@ trait Sets extends Category {
       case (Some(k), Some(l)) if k == l => {
         val set2List = set2.toIterable.toList
         for (p <- Permutations.of(k)) yield {
-          val m = (for ((x, i) <- set2.toIterable zip p) yield {
+          val m = (for ((x, i) <- set1.toIterable zip p) yield {
             x -> set2List(i)
           }).toMap
           FFunction(set1, set2, m)
