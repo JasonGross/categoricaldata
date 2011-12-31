@@ -20,11 +20,29 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def generatorTarget(g: G) = g.target
 
     case class ObjectRightOf(right: fgFunctor.source.O, morphism: fgFunctor.target.M) {
-      override def toString = "(" + morphism.toString + " = F(" + right.toString +"))"
+      override def toString = "(" + morphism.toString + " = F(" + right.toString + "))"
+      // we need to provide our own equals method, to ignore the outer class
+      override def equals(other: Any) = {
+        other match {
+          case other: SliceCategory#ObjectRightOf => {
+            right == other.right && morphism == other.morphism
+          }
+          case _ => false
+        }
+      }
       require(fgFunctor.target.target(morphism) == fgFunctor.apply(right))
       require(fgFunctor.target.source(morphism) == onLeft)
     }
     case class ObjectRightOfMap(source: ObjectRightOf, target: ObjectRightOf, generator: fgFunctor.source.G) {
+      // we need to provide our own equals method, to ignore the outer class
+      override def equals(other: Any) = {
+        other match {
+          case other: SliceCategory#ObjectRightOfMap => {
+            source == other.source && target == other.target && generator == other.generator
+          }
+          case _ => false
+        }
+      }
       require(fgFunctor.source.generatorSource(generator) == source.right)
       require(fgFunctor.source.generatorTarget(generator) == target.right)
       require(fgFunctor.target.compose(source.morphism, fgFunctor.onGenerators(generator)) == target.morphism)
@@ -58,10 +76,29 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
 
     case class ObjectLeftOf(left: fgFunctor.source.O, morphism: fgFunctor.target.M) {
       override def toString = "(F(" + left.toString + ") = " + morphism.toString + ")"
+      // we need to provide our own equals method, to ignore the outer class
+      override def equals(other: Any) = {
+        other match {
+          case other: CosliceCategory#ObjectLeftOf => {
+            left == other.left && morphism == other.morphism
+          }
+          case _ => false
+        }
+      }
       require(fgFunctor.target.source(morphism) == fgFunctor.apply(left))
       require(fgFunctor.target.target(morphism) == onRight)
     }
     case class ObjectLeftOfMap(source: ObjectLeftOf, target: ObjectLeftOf, generator: fgFunctor.source.G) {
+      // we need to provide our own equals method, to ignore the outer class
+      override def equals(other: Any) = {
+        other match {
+          case other: CosliceCategory#ObjectLeftOfMap => {
+            source == other.source && target == other.target && generator == other.generator
+          }
+          case _ => false
+        }
+      }
+
       require(fgFunctor.source.generatorSource(generator) == source.left)
       require(fgFunctor.source.generatorTarget(generator) == target.left)
       require(fgFunctor.target.compose(fgFunctor.onGenerators(generator), target.morphism) == source.morphism)
@@ -76,11 +113,11 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     }
     override val minimumLevel: Int = fgFunctor.source.minimumLevel
     override val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
-    
+
     override def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
       import fgFunctor.source.generatorAsMorphism
       for (g <- fgFunctor.source.generators(source.left, target.left); if fgFunctor.target.compose(fgFunctor.apply(g), target.morphism) == source.morphism) yield {
-        ObjectLeftOfMap(source, target, g) 
+        ObjectLeftOfMap(source, target, g)
       }
     }
   }
@@ -92,16 +129,16 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def onMorphisms(m: source.M): SliceFunctorOver = new SliceFunctorOver(m)
 
     class SliceCategoryOver(onLeft: fgFunctor.target.opposite.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver { //(d | F) --> C
-      override val source = buildSliceCategory(onLeft)
+      override val source = getSliceCategory(onLeft)
       override def onObjects(o: source.ObjectRightOf) = o.right
       override def onGenerators(g: source.ObjectRightOfMap) = {
         import fgFunctor.source.generatorAsMorphism
         g.generator
       }
     }
-    class SliceFunctorOver(m: fgFunctor.target.opposite.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver {  //d --> d' ~> (d' | F) --> (d | F)
-      override val source = sliceFunctor.onObjects(fgFunctor.target.opposite.target(m))
-      override val target = sliceFunctor.onObjects(fgFunctor.target.opposite.source(m)) // source, target, schmource, schtarget, who's keeping track anyway?
+    class SliceFunctorOver(m: fgFunctor.target.opposite.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver { //d --> d' ~> (d' | F) --> (d | F)
+      override val source = sliceFunctor.onObjects(fgFunctor.target.opposite.source(m))
+      override val target = sliceFunctor.onObjects(fgFunctor.target.opposite.target(m))
       override val functor = new F {
         override def onObjects(o: source.ObjectRightOf): target.ObjectRightOf = {
           target.ObjectRightOf(right = o.right, morphism = fgFunctor.target.compose(fgFunctor.target.opposite.unreverse(m), o.morphism)) // FIXME suspicious?
@@ -112,6 +149,8 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
+//    val getSliceCategory = net.tqft.toolkit.functions.Memo(buildSliceCategory _)
+    val getSliceCategory = buildSliceCategory _
     def buildSliceCategory(onLeft: fgFunctor.target.O): SliceCategory
 
   }
@@ -123,17 +162,17 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def onMorphisms(m: source.M): CosliceFunctorOver = new CosliceFunctorOver(m)
 
     class CosliceCategoryOver(onRight: fgFunctor.target.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver { //(F | d) --> C
-      override val source = buildCosliceCategory(onRight)
+      override val source = getCosliceCategory(onRight)
       override def onObjects(o: source.ObjectLeftOf) = o.left
       override def onGenerators(g: source.ObjectLeftOfMap) = {
         import fgFunctor.source.generatorAsMorphism
         g.generator
       }
     }
-    
+
     class CosliceFunctorOver(m: fgFunctor.target.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver { //d --> d' ~> (F | d) --> (F | d')
       override val source = cosliceFunctor.onObjects(fgFunctor.target.source(m))
-      override val target = cosliceFunctor.onObjects(fgFunctor.target.target(m)) 
+      override val target = cosliceFunctor.onObjects(fgFunctor.target.target(m))
       override val functor = new F {
         override def onObjects(o: source.ObjectLeftOf): target.ObjectLeftOf = {
           target.ObjectLeftOf(left = o.left, morphism = fgFunctor.target.compose(o.morphism, m))
@@ -144,6 +183,8 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
+//    val getCosliceCategory = net.tqft.toolkit.functions.Memo(buildCosliceCategory _)
+    val getCosliceCategory = buildCosliceCategory _
     def buildCosliceCategory(onLeft: fgFunctor.target.opposite.O): CosliceCategory
   }
 }

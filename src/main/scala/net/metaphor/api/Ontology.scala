@@ -33,7 +33,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   }
 
   trait Dataset extends FunctorToSet { dataset =>
-    abstract class FFunction(g: G) extends net.metaphor.api.FFunction {
+    abstract class DatasetFunction(g: G) extends net.metaphor.api.FFunction {
       override def source = onObjects(generatorSource(g))
       override def target = onObjects(generatorTarget(g))
     }
@@ -128,13 +128,13 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
             case Arrow(s, t, direction) => {
               (compositionDiagram.unbox(t), direction) match {
                 case (Right(arrow), "left") => {
-                  new FFunction(g) {
-                    def toFunction = { f => f.asInstanceOf[FFunction] andThen other.onGenerators(g) }
+                  new DatasetFunction(g) {
+                    def toFunction = { f => f.asInstanceOf[FFunction] andThen other.onGenerators(arrow) }
                   }
                 }
                 case (Right(arrow), "right") => {
-                  new FFunction(g) {
-                    def toFunction = { f => dataset.onGenerators(g) andThen f.asInstanceOf[FFunction] }
+                  new DatasetFunction(g) {
+                    def toFunction = { f => dataset.onGenerators(arrow) andThen f.asInstanceOf[FFunction] }
                   }
                 }
               }
@@ -143,6 +143,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         }
       }
 
+      println(noninvariantBijections)
+      
       for(bijection <- noninvariantBijections.limitSet.toIterable) yield {
         new Datamap {
           override val source = dataset

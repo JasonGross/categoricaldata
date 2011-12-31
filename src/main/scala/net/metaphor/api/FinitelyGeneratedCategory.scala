@@ -254,12 +254,13 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
          * 			 Some(None) if there are several morphisms, with different images on a
          * 			 Some(Some(b)) is all morphisms send a to b.
          */
-        def functionsCommonResult(o1: fgCategory.O)(o2: fgCategory.O)(a: A): Option[Option[A]] = {
+        def functionsCommonResult(o1: fgCategory.O)(o2: fgCategory.O)(a: A): Option[Iterable[A]] = {
           val results = functions(o1)(o2)(a).toList
           results.headOption.map(b => results.tail.foldLeft[Option[A]](Some(b))({ case (Some(b), c) if b == c => Some(b); case _ => None }))
         }
 
         case class Intermediate(processedObjects: List[fgCategory.O], processedPairs: List[(fgCategory.O, fgCategory.O)], maps: Iterable[Map[fgCategory.O, A]]) {
+          println(this)
           private def productWith(o: fgCategory.O) = {
             if (processedObjects.contains(o)) this
             else {
@@ -272,7 +273,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
                 val newMaps = for (m <- maps; cr = functionsCommonResult(pair._1)(pair._2)(m(pair._1)); if cr.isEmpty || cr.get == Some(m(pair._2))) yield m
                 Intermediate(processedObjects, pair :: processedPairs, newMaps)
               } else {
-                val newMaps = for (m <- maps; cr <- functionsCommonResult(pair._1)(pair._2)(m(pair._1)); b <- cr) yield m + (pair._2 -> b)
+                val newMaps = for (m <- maps; cr = functionsCommonResult(pair._1)(pair._2)(m(pair._1)); b <- cr.getOrElse(sets(pair._1))) yield m + (pair._2 -> b)
                 Intermediate(pair._2 :: processedObjects, pair :: processedPairs, newMaps)
               }
             } else {
