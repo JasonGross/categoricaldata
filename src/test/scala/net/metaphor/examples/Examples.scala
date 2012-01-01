@@ -159,11 +159,6 @@ object Examples {
   //      onObjects = for (b <- c.boxes) yield Map (b.name -> List ()),
   //      onMorphisms = for (a <- c.arrows) yield Map ((a.source.name --- a.name --> a.target.name) -> Map ()))
   //      
-
-//    def OppositeOntology (c: Ontology) = Ontology ( 
-//		  objects = c.objects
-//		  arrows = for (a <- c.arrows) yield {a.target --- a.name --> a.source} 
-//		  relations = ???) //???
 		  
 //def OppositeFunctor (f:Functor) = Functor( 
 //    source = OppositeOntology(f.source)

@@ -4,13 +4,13 @@ import net.tqft.toolkit.collections.NonStrictIterable
 
 case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   if (morphisms.isEmpty) require(source == target)
-  
+
   def length = morphisms.size
   def andThen(path: Path[O, G]) = {
     require(target == path.source)
     Path(source, path.target, morphisms ::: path.morphisms)
   }
-  
+
   override def toString = {
     val afterFirstQuote = """".*"( --- ".*" --> ".*")""".r
     source.toString + (for (m <- morphisms; s = m.toString) yield afterFirstQuote.unapplySeq(s).get.head).mkString
@@ -35,7 +35,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   protected class RichPath(path: Path) {
     def subpath(i: Int, j: Int) = {
       val morphisms = path.morphisms.slice(i, j)
-      val (source, target) = if(morphisms.isEmpty) {
+      val (source, target) = if (morphisms.isEmpty) {
         ???
       } else {
         (generatorSource(morphisms.head), generatorTarget(morphisms.last))
@@ -43,7 +43,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       Path(source, target, morphisms)
     }
   }
-  
+
   def generatorSource(g: G): O
   def generatorTarget(g: G): O
 
@@ -68,13 +68,13 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   case class PathEquivalenceClass(representative: Path) {
     // sanity check
-//    representative.morphisms.headOption.map(g => require(generatorSource(g) == representative.source))
-//    representative.morphisms.lastOption.map(g => require(generatorTarget(g) == representative.target))
-//    if (representative.morphisms.nonEmpty) {
-//      for ((a, b) <- representative.morphisms zip representative.morphisms.tail) {
-//        require(generatorTarget(a) == generatorSource(b))
-//      }
-//    }
+    //    representative.morphisms.headOption.map(g => require(generatorSource(g) == representative.source))
+    //    representative.morphisms.lastOption.map(g => require(generatorTarget(g) == representative.target))
+    //    if (representative.morphisms.nonEmpty) {
+    //      for ((a, b) <- representative.morphisms zip representative.morphisms.tail) {
+    //        require(generatorTarget(a) == generatorSource(b))
+    //      }
+    //    }
     override def equals(other: Any) = {
       other match {
         case PathEquivalenceClass(otherRepresentative) => pathEquality(representative, otherRepresentative)
@@ -98,14 +98,14 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     def unreverse(m: opposite.M): lfgCategory.M = m match {
       case PathEquivalenceClass(Path(source, target, generators)) => lfgCategory.PathEquivalenceClass(Path(target, source, generators.reverse.map(unreverseGenerator(_))))
     }
-    
+
     // reverse all the levels!
     override def objectsAtLevel(k: Int) = lfgCategory.objectsAtLevel(-k)
     override def generators(source: O, target: O) = lfgCategory.generators(target, source).map(reverseGenerator(_))
 
     override def generatorSource(g: opposite.G) = lfgCategory.generatorTarget(unreverseGenerator(g))
     override def generatorTarget(g: opposite.G) = lfgCategory.generatorSource(unreverseGenerator(g))
-    
+
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(unreverse(p1).representative, unreverse(p2).representative)
   }
 }
@@ -147,11 +147,11 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         List(Path(source, source, Nil))
       }
       case 1 => generatorsFrom(source).map(generatorAsPath _)
-      case _ => for(Path(_, target, morphisms) <- wordsOfLengthFrom(k - 1)(source); g <- generatorsFrom(target)) yield Path(source, generatorTarget(g), morphisms ::: List(g))
+      case _ => for (Path(_, target, morphisms) <- wordsOfLengthFrom(k - 1)(source); g <- generatorsFrom(target)) yield Path(source, generatorTarget(g), morphisms ::: List(g))
     }
   }
-  
-  def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for(n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
+
+  def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for (n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
 
   def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
   def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g
@@ -160,9 +160,9 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   def allWordsOfLength(k: Int): List[Path] = {
     for (s <- objects; t <- objects; w <- wordsOfLength(k)(s, t)) yield w
   }
-  def allWordsUpToLength(k: Int): List[Path] = for(n <- (0 to k).toList; w <- allWordsOfLength(n)) yield w
-  
-  def wordsFrom(source: O) = (for(k <- NonStrictNaturalNumbers) yield wordsOfLengthFrom(k)(source)).takeWhile(_.nonEmpty).flatten
+  def allWordsUpToLength(k: Int): List[Path] = for (n <- (0 to k).toList; w <- allWordsOfLength(n)) yield w
+
+  def wordsFrom(source: O) = (for (k <- NonStrictNaturalNumbers) yield wordsOfLengthFrom(k)(source)).takeWhile(_.nonEmpty).flatten
   def words(source: O, target: O) = wordsFrom(source).filter(_.target == target)
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
@@ -177,19 +177,26 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     case class OppositeGenerator(g: fgCategory.G)
     override def reverseGenerator(g: fgCategory.G) = OppositeGenerator(g)
     override def unreverseGenerator(g: OppositeGenerator) = g.g
-    
-    
+
   }
 
   lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite
 
-  trait FinitelyGeneratedCategoryOver extends CategoryOver with FinitelyGeneratedFunctor {
+  trait FinitelyGeneratedCategoryOver extends CategoryOver with FinitelyGeneratedFunctor { categoryOver =>
     override val source: FinitelyGeneratedCategory
     def onGenerators(g: source.G): target.M
     override def onMorphisms(m: source.M) = {
       val start = onObjects(source.source(m))
       val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
       target.compose(start, morphisms)
+    }
+    trait Identity extends FinitelyGeneratedFunctorOver {
+      override val source: categoryOver.type = categoryOver
+      override val target: categoryOver.type = categoryOver
+      override val functor = new F {
+        override def onObjects(o: categoryOver.source.O) = o
+        override def onGenerators(g: categoryOver.source.G) = categoryOver.source.generatorAsMorphism(g)
+      }
     }
   }
 
@@ -203,17 +210,13 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   trait FinitelyGeneratedCategoriesOver extends Category { categoriesOver =>
     override type O = FinitelyGeneratedCategoryOver
     override type M = FinitelyGeneratedFunctorOver
-    override def identity(f: O) = new FinitelyGeneratedFunctorOver {
-      val source = f
-      val target = f
-      val functor = ??? //???
-    }
+    override def identity(f: O) = new f.Identity {}
     override def source(t: M) = t.source
     override def target(t: M) = t.target
     override def compose(m1: M, m2: M): M = new FinitelyGeneratedFunctorOver {
       val source = m1.source
       val target = m2.target
-      val functor = ??? //???
+      val functor = ??? // it's unclear to me that this is even possible to implement (c.f. CategoriesOver in SmallCategory)
     }
   }
 
@@ -231,15 +234,15 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     }
 
     lazy val totalSet = new FiniteFSet {
-      def toIterable = for(o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
+      def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
-    
+
     class Section(m: O => Any) extends FFunction {
       override val source = fgCategory.objectSet
       override val target = totalSet
       override val toFunction = m.asInstanceOf[Any => Any]
     }
-    
+
     def colimitCoCone = colimit.initialObject
     def colimitSet = colimitCoCone.terminalSet
     def limitCone = limit.terminalObject
@@ -338,7 +341,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         { s: fgCategory.O => { t: fgCategory.O => { a: Any => (for (g <- generators(s, t)) yield functorToSet(g).toFunction(a)).toSet } } })
 
       val resultSet = new FSet {
-        override  def sizeIfFinite = Some(maps.size)
+        override def sizeIfFinite = Some(maps.size)
         override def toIterable = maps.map(new Section(_))
       }
 
@@ -346,7 +349,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         val terminalObject = new functorToSet.Cone {
           override val initialSet = resultSet
           override def mapFromInitialSet(o: fgCategory.O) = new coneFunction(o) {
-            override def toFunction = ({s:Section => s.toFunction.asInstanceOf[fgCategory.O => Any]} andThen functions(o)).asInstanceOf[Any => Any]
+            override def toFunction = ({ s: Section => s.toFunction.asInstanceOf[fgCategory.O => Any] } andThen functions(o)).asInstanceOf[Any => Any]
           }
         }
         def morphismFrom(other: functorToSet.Cone) = {
@@ -403,7 +406,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
             override val source = initialObject
             override val target = other
             override val terminalMap = new terminalFunction {
-              override def toFunction = { x: Set[(fgCategory.O, Any)] => { val h = x.head; other.mapToTerminalSet(h._1).toFunction(h._2) }}.asInstanceOf[Any => Any]
+              override def toFunction = { x: Set[(fgCategory.O, Any)] => { val h = x.head; other.mapToTerminalSet(h._1).toFunction(h._2) } }.asInstanceOf[Any => Any]
             }
           }
         }
@@ -431,7 +434,12 @@ object FinitelyGeneratedCategories {
       def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
       def onGenerators(g: G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
     }
-    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ??? //???
+    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = new NaturalTransformationToSet {
+      require(t.sourceCategory == source)
+      val source = internalize(t.source)
+      val target = internalize(t.target)
+      def apply(o: O) = t(o.asInstanceOf[t.sourceCategory.O])
+    }
   }
 }
 
