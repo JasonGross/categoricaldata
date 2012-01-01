@@ -380,40 +380,40 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dc" -> "dd",
         "dd" -> "dd")))
         
-    val DDSTimeLapse2 = Translation (
-      source = Examples.DiscreteDynamicalSystem,
-      target = Examples.DiscreteDynamicalSystem,
-      onObjects = Map ("an element" -> "an element"),
-      onMorphisms = Map (
-          ("an element" --- "has as successor" --> "an element") -> 
-          ("an element" --- "has as successor" --> "an element" --- "has as successor" --> "an element")))
-        	
+//    val DDSTimeLapse2 = Translation (
+//      source = Examples.DiscreteDynamicalSystem,
+//      target = Examples.DiscreteDynamicalSystem,
+//      onObjects = Map ("an element" -> "an element"),
+//      onMorphisms = Map (
+//          ("an element" --- "has as successor" --> "an element") -> 
+//          ("an element" --- "has as successor" --> "an element" --- "has as successor" --> "an element")))
+//        	
 
   
-   "__*" should "provide a 'half-speed' DDS" in {
-    println
-    println("Output from \"__* should provide a 'half-speed' DDS\":")
-    
-    val X = DDS1
-    val LHS = DDSTimeLapse2.__*(X)
-    val RHS = DDS1Times2R
-    println(X)
-    println(LHS)
-    println(RHS)
-    LHS should beIsomorphicTo(RHS)
- }      
-  
-  "__!" should "provide a 'half-speed' DDS" in {
-    println
-    println("Output from \"__1 should provide a 'half-speed' DDS\":")
-    
-    val X = DDS1
-    val LHS = DDSTimeLapse2.__!(X)
-    val RHS = DDS1Times2L
-    println(X)
-    println(LHS)
-    println(RHS)
-    LHS should beIsomorphicTo(RHS)
- }      
+//   "__*" should "provide a 'half-speed' DDS" in {
+//    println
+//    println("Output from \"__* should provide a 'half-speed' DDS\":")
+//    
+//    val X = DDS1
+//    val LHS = DDSTimeLapse2.__*(X)
+//    val RHS = DDS1Times2R
+//    println(X)
+//    println(LHS)
+//    println(RHS)
+//    LHS should beIsomorphicTo(RHS)
+// }      
+//  
+//  "__!" should "provide a 'half-speed' DDS" in {
+//    println
+//    println("Output from \"__1 should provide a 'half-speed' DDS\":")
+//    
+//    val X = DDS1
+//    val LHS = DDSTimeLapse2.__!(X)
+//    val RHS = DDS1Times2L
+//    println(X)
+//    println(LHS)
+//    println(RHS)
+//    LHS should beIsomorphicTo(RHS)
+// }      
         
 }
