@@ -172,8 +172,8 @@ object Examples {
 //    onMorphisms = for (???)) //???
     
   val SourceFunction = Translation(
-    source = Examples.Ord(1),
-    target = Examples.Grph,
+    source = Ord(1),
+    target = Grph,
     onObjects = Map(
       "V0" -> "an edge",
       "V1" -> "a vertex"),
@@ -181,8 +181,8 @@ object Examples {
       ("V0" --- "E01" --> "V1") -> ("an edge" --- "has as source" --> "a vertex")))
 
   val TargetFunction = Translation(
-    source = Examples.Ord(1),
-    target = Examples.Grph,
+    source = Ord(1),
+    target = Grph,
     onObjects = Map(
       "V0" -> "an edge",
       "V1" -> "a vertex"),
@@ -192,6 +192,14 @@ object Examples {
   val DiscreteDynamicalSystem = Ontology(
     objects = List("an element"),
     arrows = List("an element" --- "has as successor" --> "an element"))
+  
+  val DDSTimeLapse (n : Int) = Translation (
+      source = DiscreteDynamicalSystem,
+      target = DiscreteDynamicalSystem,
+      onObjects = Map ("an element" -> "an element"),
+      onMorphisms = Map (
+          ("an element" --- "has as successor" --> "an element") -> 
+        	((for (i <- 1 to n) yield {"an element" --- "has as successor"}++)++"an element")))
 
    val Isomorphism = Ontology(
     objects = List("0", "1"),
