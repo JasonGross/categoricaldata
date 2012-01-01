@@ -111,12 +111,13 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(unreverse(p1).representative, unreverse(p2).representative)
   }
   
-  private trait Wrapper extends LocallyFinitelyGeneratedCategory {
+  protected trait Wrapper extends LocallyFinitelyGeneratedCategory {
     override type O = lfgCategory.O
     override type G = lfgCategory.G
     
     override val minimumLevel = lfgCategory.minimumLevel
     
+    override def objectsAtLevel(k: Int) = lfgCategory.objectsAtLevel(k)
     override def generators(s: O, t: O) = lfgCategory.generators(s, t)
     override def generatorSource(g: G) = lfgCategory.generatorSource(g)
     override def generatorTarget(g: G) = lfgCategory.generatorTarget(g)

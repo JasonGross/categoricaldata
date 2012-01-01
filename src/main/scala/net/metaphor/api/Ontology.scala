@@ -212,35 +212,25 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   def assertAcyclic: Ontology with Ontologies.Acyclic = {
     this match {
       case o: Ontologies.Acyclic => o
-      case _ => new OntologyWrapper(this) with Ontologies.Acyclic with FiniteByExhaustion
+      case _ => new OntologyWrapper with Ontologies.Acyclic with FiniteByExhaustion
     }
   }
   def assertFree: Ontology with Ontologies.Free = {
     this match {
       case o: Ontologies.Free => o
       case _ =>
-        new OntologyWrapper(this) with Ontologies.Free
+        new OntologyWrapper with Ontologies.Free
     }
   }
   def assertFinite: Ontology with Ontologies.Finite = {
     this match {
       case o: Ontologies.Finite => o
-      case _ => new OntologyWrapper(this) with Ontologies.Finite with FiniteByExhaustion
+      case _ => new OntologyWrapper with Ontologies.Finite with FiniteByExhaustion
     }
   }
-}
 
-private class OntologyWrapper(val o: Ontology) extends Ontology {
-  override type O = o.O
-  override type G = o.G
+  class OntologyWrapper extends super.Wrapper with Ontology
 
-  override val minimumLevel = o.minimumLevel
-  override val maximumLevel = o.maximumLevel
-  override def objectsAtLevel(k: Int) = o.objectsAtLevel(k)
-  override def generators(s: O, t: O) = o.generators(s, t)
-  override def relations(s: O, t: O) = o.relations(s, t)
-  
-  override def pathEquality(p1: Path, p2: Path) = o.pathEquality(p1, p2)
 }
 
 object Ontologies {
@@ -248,11 +238,11 @@ object Ontologies {
 
   trait Acyclic extends net.metaphor.api.Acyclic with Finite { ontology: Ontology =>
     override def assertAcyclic = this
-    override def assertFree: Ontology with Ontologies.FreeAcyclic = new OntologyWrapper(this) with FreeAcyclic
+    override def assertFree: Ontology with Ontologies.FreeAcyclic = new ontology.OntologyWrapper with FreeAcyclic
 
   }
   trait Free extends net.metaphor.api.Free { ontology: Ontology =>
-    override def assertAcyclic: Ontology with Ontologies.FreeAcyclic = new OntologyWrapper(this) with FreeAcyclic
+    override def assertAcyclic: Ontology with Ontologies.FreeAcyclic = new ontology.OntologyWrapper with FreeAcyclic
     override def assertFree = this
   }
   trait FreeAcyclic extends net.metaphor.api.FreeAcyclic with Acyclic with Free { ontology: Ontology =>

@@ -6,8 +6,6 @@ import net.tqft.toolkit.collections.NonStrictNaturalNumbers
  * A FinitelyGeneratedCategory is just a LocallyFinitelyGeneratedCategory with finitely many levels (and so finitely many objects and generators).
  */
 trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCategory =>
-  // TODO, maybe minimumLevel actually belongs one level up; we could insist everything is bounded below.
-  // In that case, we'd have to pull opposite down.
   val maximumLevel: Int
 
   lazy val objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
@@ -303,6 +301,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       }
     }
 
+  }
+
+  protected trait Wrapper extends super.Wrapper with FinitelyGeneratedCategory {
+    override val maximumLevel = fgCategory.maximumLevel
   }
 
 }

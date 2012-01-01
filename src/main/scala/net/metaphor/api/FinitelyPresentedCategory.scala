@@ -15,11 +15,15 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =
       case _ => false
     }
   }
-  
-  trait OppositeFinitelyPresentedCategory extends FinitelyPresentedCategory with OppositeFinitelyGeneratedCategory { 
-    override def relations(source: O, target: O) = for((Path(_, _, g1s), Path(_, _, g2s)) <- fpCategory.relations(target, source)) yield {
+
+  trait OppositeFinitelyPresentedCategory extends FinitelyPresentedCategory with OppositeFinitelyGeneratedCategory {
+    override def relations(source: O, target: O) = for ((Path(_, _, g1s), Path(_, _, g2s)) <- fpCategory.relations(target, source)) yield {
       (Path(source, target, g1s.reverse.map(reverseGenerator(_))), Path(source, target, g2s.reverse.map(reverseGenerator(_))))
     }
+  }
+
+  trait Wrapper extends super.Wrapper with FinitelyPresentedCategory {
+    override def relations(s: O, t: O) = fpCategory.relations(s, t)
   }
 }
 
