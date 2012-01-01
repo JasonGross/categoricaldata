@@ -15,9 +15,6 @@ trait NormalForm { fpCategory: FinitelyPresentedCategory =>
 }
 
 trait FiniteMorphisms extends NormalForm { fpCategory: FinitelyPresentedCategory =>
-  // TODO How would instances arise, which aren't acyclic?
-  // We'd need a proof there are only finitely many loops/relations
-
   def maximumWordLength(source: fpCategory.O, target: fpCategory.O): Int
   def maximumWordLength: Int = (for (s <- objects; t <- objects) yield maximumWordLength(s, t)).max
   def normalWords(source: fpCategory.O, target: fpCategory.O) = (for (k <- 0 to maximumWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList

@@ -3,8 +3,6 @@ package net.metaphor.api
 trait Translation extends FinitelyGeneratedFunctor { translation =>
   override val source: Ontology
   override val target: Ontology
-
-  def assertFiniteTarget: Translation with FiniteTarget = ??? //???
 }
 
 trait FiniteTarget extends Translation { translation =>
@@ -54,7 +52,6 @@ trait FiniteTarget extends Translation { translation =>
         val cone: sourceData.Cone = new sourceData.Cone {
           override val initialSet = targetLimitTerminalCone.initialSet
           override def mapFromInitialSet(o: Fs.source.O) = {
-            // TODO if this really right?
             val f = targetLimitTerminalCone.mapFromInitialSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
             new coneFunction(o) {
               override def toFunction = f.toFunction
@@ -72,14 +69,14 @@ trait FiniteTarget extends Translation { translation =>
     override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
-      override def apply(o: Box) = ??? //???
+      override def apply(o: Box) = ???  // MATH what is the pushforward of a Datamap?
     }
   }
 
   trait LeftPushforward extends CovariantDataFunctor with PullbackLeftAdjoint { shriek =>
     override def onObjects(i: source.O): target.O = (new translation.target.Dataset {
       override def onObjects(o: Box) = {
-        val F = coslice(o) // TODO weird, why on earth do we need this intermediate val?
+        val F = coslice(o) // Weird, why on earth do we need this intermediate val?
         F.pullback(i).colimitSet
       }
       override def onGenerators(g: translation.target.G) = {
@@ -99,7 +96,6 @@ trait FiniteTarget extends Translation { translation =>
         val cocone: sourceData.CoCone = new sourceData.CoCone {
           override val terminalSet = targetColimitInitialCoCone.terminalSet
           override def mapToTerminalSet(o: Fs.source.O) = {
-            // TODO if this really right?
             val f = targetColimitInitialCoCone.mapToTerminalSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
             new coConeFunction(o) {
               override def toFunction = f.toFunction
@@ -118,7 +114,7 @@ trait FiniteTarget extends Translation { translation =>
     override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = onObjects(m.source)
       override val target = onObjects(m.target)
-      override def apply(o: Box) = ??? //???
+      override def apply(o: Box) = ??? // MATH what is the pushforward of a Datamap?
     }
   }
 
@@ -176,7 +172,7 @@ trait FiniteTarget extends Translation { translation =>
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = leftUnit.source(o)
           override val target = leftUnit.target(o)
-          override def apply(o: translation.target.O): FFunction = ??? // MATH
+          override def apply(o: translation.target.O): FFunction = ??? // MATH what is the left unit for pullback?
         })
       }
     }
@@ -187,7 +183,7 @@ trait FiniteTarget extends Translation { translation =>
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = rightCounit.source(o)
           override val target = rightCounit.target(translation.target.internalize(o))
-          override def apply(o: translation.target.O): FFunction = ??? // MATH
+          override def apply(o: translation.target.O): FFunction = ??? // MATH what is the right counit for pullback?
         })
       }
     }
@@ -198,7 +194,7 @@ trait FiniteTarget extends Translation { translation =>
         translation.source.internalize(new NaturalTransformationToSet {
           override val source = rightUnit.source(o)
           override val target = rightUnit.target(o)
-          override def apply(o: translation.source.O): FFunction = ??? // MATH
+          override def apply(o: translation.source.O): FFunction = ??? // MATH what is the right unit for pullback?
         })
       }
 

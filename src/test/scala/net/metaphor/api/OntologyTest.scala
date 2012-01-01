@@ -50,7 +50,7 @@ class OntologyTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "Item 8" -> "Left Drawer")))
 
   "Dataset.isIsomorphicTo" should "be reflexive" in {
-    for (dataset <- List(Drawers /* TODO more */ )) {
+    for (dataset <- List(Drawers /* TODO add some more? */ )) {
       dataset should beIsomorphicTo(dataset)
     }
   }

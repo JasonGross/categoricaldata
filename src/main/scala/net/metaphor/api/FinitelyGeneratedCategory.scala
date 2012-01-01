@@ -177,7 +177,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     case class OppositeGenerator(g: fgCategory.G)
     override def reverseGenerator(g: fgCategory.G) = OppositeGenerator(g)
     override def unreverseGenerator(g: OppositeGenerator) = g.g
-
   }
 
   lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite
@@ -414,11 +413,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     }
 
   }
-
-//  val functorsToSet: SpecializedFunctorsToSet
-
-//  class SpecializedFunctorsToSet extends super.SpecializedFunctorsToSet { functorsToSet =>
-//  }
 
 }
 

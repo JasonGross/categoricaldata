@@ -3,7 +3,6 @@ package net.metaphor.dsl
 object SentencesExample extends App {
   import Sentences._
 
-  // TODO, allow descriptions, too?  
   // "a fusion object" is "a simple object in a unitary tensor category with duals",
   val C = Ontology(
     objects = List("a fusion object", "a graph", "a fusion category", "a positive ring"),
@@ -11,7 +10,6 @@ object SentencesExample extends App {
       "a fusion object" --- "sits inside" --> "a fusion category",
       "a fusion category" --- "has as fusion ring" --> "a positive ring") //
       ).assertAcyclic
-  // TODO give an example of relations
       
   val D = C
 

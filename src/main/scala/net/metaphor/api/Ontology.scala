@@ -16,20 +16,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   override def generatorSource(g: G) = g.source
   override def generatorTarget(g: G) = g.target
 
-  // TODO pull this up
-  override def equals(other: Any) = {
-    other match {
-      case other: Ontology => {
-        objects == other.objects && allGenerators == other.allGenerators && allRelations == other.allRelations
-      }
-      case _ => false
-    }
-  }
-
-  override def hashCode = ??? //???
+  override lazy val hashCode = toString.hashCode
 
   override def toString = {
-    // TODO relations in Ontology.toString
     "Ontology(objects = " + (for (o <- objects) yield "\"" + o.name + "\"") + ", arrows = " + allGenerators + ", relations = " + allRelations.map(p => p._1 + " === " + p._2) + ")"
   }
 
@@ -81,9 +70,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       require(other.source == dataset.source)
 
       val compositionDiagram = new Ontology with Ontologies.FreeAcyclic {
-        // FIXME deal with objects at other levels
         lazy val unbox: Map[Box, Either[Box, Arrow]] = {
-          ((for (b <- ontology.objectsAtLevel(0)) yield b -> Left(b)) :::
+          ((for (b <- ontology.objects) yield b -> Left(b)) :::
             (for (a <- ontology.allGenerators) yield Box(a.toString) -> Right(a))).toMap
         }
 
