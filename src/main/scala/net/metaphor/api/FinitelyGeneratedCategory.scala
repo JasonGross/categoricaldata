@@ -127,7 +127,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
    * This returns all possible words in the generators.
    */
   def wordsOfLength(k: Int)(source: O, target: O): List[Path] = {
-    val result: List[Path] = k match {
+    k match {
       case 0 => {
         if (source == target) {
           List(Path(source, source, Nil))
@@ -138,12 +138,17 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       case 1 => generators(source, target).map(generatorAsPath _)
       case _ => for (g <- generatorsFrom(source); Path(_, _, morphisms) <- wordsOfLength(k - 1)(fgCategory.target(g), target)) yield Path(source, target, g :: morphisms)
     }
-    for (p <- result) {
-      require(p.source == source)
-      require(p.target == target)
-    }
-    result
   }
+  def wordsOfLengthFrom(k: Int)(source: O): List[Path] = {
+    k match {
+      case 0 => {
+        List(Path(source, source, Nil))
+      }
+      case 1 => generatorsFrom(source).map(generatorAsPath _)
+      case _ => for(Path(_, target, morphisms) <- wordsOfLengthFrom(k - 1)(source); g <- generatorsFrom(target)) yield Path(source, generatorTarget(g), morphisms ::: List(g))
+    }
+  }
+  
   def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for(n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
 
   def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
@@ -154,13 +159,15 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     for (s <- objects; t <- objects; w <- wordsOfLength(k)(s, t)) yield w
   }
   def allWordsUpToLength(k: Int): List[Path] = for(n <- (0 to k).toList; w <- allWordsOfLength(n)) yield w
-  def words(source: O, target: O) = (for (k <- NonStrictNaturalNumbers) yield wordsOfLength(k)(source, target)).takeWhile(_.nonEmpty).flatten // TODO return immediately with a lazy iterable
+  
+  def wordsFrom(source: O) = (for(k <- NonStrictNaturalNumbers) yield wordsOfLengthFrom(k)(source)).takeWhile(_.nonEmpty).flatten
+  def words(source: O, target: O) = wordsFrom(source).filter(_.target == target)
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
   trait OppositeFinitelyGeneratedCategory extends FinitelyGeneratedCategory with OppositeLocallyFinitelyGeneratedCategory { opposite =>
-    override val minimumLevel = fgCategory.maximumLevel
-    override val maximumLevel = fgCategory.minimumLevel
+    override val minimumLevel = -fgCategory.maximumLevel
+    override val maximumLevel = -fgCategory.minimumLevel
   }
 
   class ConcreteOpposite extends OppositeFinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet {

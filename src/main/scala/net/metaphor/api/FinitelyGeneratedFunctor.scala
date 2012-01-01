@@ -56,7 +56,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       ) yield ObjectRightOf(right, fgFunctor.target.pathAsMorphism(path))
     }
     override val minimumLevel: Int = fgFunctor.source.minimumLevel
-    override val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
+    override val maximumLevel: Int = fgFunctor.source.maximumLevel + fgFunctor.target.asInstanceOf[FiniteMorphisms].maximumWordLength // FIXME, what if this isn't a FiniteMorphisms?
 
     override def generators(source: ObjectRightOf, target: ObjectRightOf): List[ObjectRightOfMap] = {
       import fgFunctor.source.generatorAsMorphism
@@ -112,7 +112,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       ) yield ObjectLeftOf(left, fgFunctor.target.pathAsMorphism(path))
     }
     override val minimumLevel: Int = fgFunctor.source.minimumLevel
-    override val maximumLevel: Int = 100 // FIXME fgFunctor.source.maximumLevel + fgFunctor.target.maximumWordLength
+    override val maximumLevel: Int = fgFunctor.source.maximumLevel + fgFunctor.target.asInstanceOf[FiniteMorphisms].maximumWordLength // FIXME, what if this isn't a FiniteMorphisms?
 
     override def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
       import fgFunctor.source.generatorAsMorphism

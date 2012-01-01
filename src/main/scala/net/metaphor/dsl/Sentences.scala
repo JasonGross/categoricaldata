@@ -7,6 +7,7 @@ import net.metaphor.api.Ontology
 import net.metaphor.api.Ontologies
 import net.metaphor.api.Translation
 import net.metaphor.api.FFunction
+import net.metaphor.api.Path
 
 object Sentences {
   implicit def stringAsPath(s: String) = StringSource(s)
@@ -44,19 +45,28 @@ object Sentences {
   case class StringRelation(lhs: StringPath, rhs: StringPath)
 
   class ConcreteOntology(_objects: Traversable[String], _arrows: Traversable[StringArrow], _relations: Traversable[StringRelation]) extends Ontology {
-    val boxes = _objects.toList map { Box(_) }
+    private val boxes = _objects.toList map { Box(_) }
 
-    val arrowMap = (for (StringArrow(s, p, o) <- _arrows.toList) yield {
-      val sb = boxes.find(_.name == s).get
-      val ob = boxes.find(_.name == o).get
-      Arrow(sb, ob, p)
-    }).groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
+    private implicit def stringToBox(s: String) = boxes.find(_.name == s).get
+    private implicit def stringArrow2Arrow(sa: StringArrow) = Arrow(sa.source, sa.target, sa.label)
+    
+    private val allArrows: List[Arrow] = for (sa <- _arrows.toList) yield stringArrow2Arrow(sa)
+    private val arrowMap = allArrows.groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
 
+    private val _allRelations: List[(Path, Path)] = (for(StringRelation(lhs, rhs) <- _relations.toList) yield {
+      val source: Box = lhs.source
+      val target: Box = lhs.target
+      val leftMorphisms = lhs.arrows.map(stringArrow2Arrow(_))
+      val rightMorphisms = rhs.arrows.map(stringArrow2Arrow(_))
+      (Path(source, target, leftMorphisms), Path(source, target, rightMorphisms))
+    })
+    private val relationsMap = _allRelations.groupBy(a => (a._1.source,a._1.target)).withDefaultValue(Nil)
+    
     val minimumLevel = 0
     val maximumLevel = 0
     def objectsAtLevel(k: Int) = if (k == 0) boxes else Nil
     override def generators(source: Box, target: Box) = arrowMap(source, target)
-    override def relations(source: Box, target: Box) = Nil // FIXME parse relations from the DSL
+    override def relations(source: Box, target: Box) = relationsMap(source, target)
   }
 
   def Ontology(objects: Traversable[String], arrows: Traversable[StringArrow], relations: Traversable[StringRelation] = Nil): Ontology = {

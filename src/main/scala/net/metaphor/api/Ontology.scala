@@ -30,7 +30,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   override def toString = {
     // TODO relations in Ontology.toString
-    "Ontology(objects = " + (for (o <- objects) yield "\"" + o.name + "\"") + ", arrows = " + allGenerators + ")"
+    "Ontology(objects = " + (for (o <- objects) yield "\"" + o.name + "\"") + ", arrows = " + allGenerators + ", relations = " + allRelations.map(p => p._1 + " === " + p._2) + ")"
   }
 
   trait Dataset extends FunctorToSet { dataset =>
@@ -224,7 +224,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   def assertAcyclic: Ontology with Ontologies.Acyclic = {
     this match {
       case o: Ontologies.Acyclic => o
-      case _ => new OntologyWrapper(this) with Ontologies.Acyclic
+      case _ => new OntologyWrapper(this) with Ontologies.Acyclic with FiniteByExhaustion
     }
   }
   def assertFree: Ontology with Ontologies.Free = {
@@ -237,59 +237,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   def assertFinite: Ontology with Ontologies.Finite = {
     this match {
       case o: Ontologies.Finite => o
-      case _ => new OntologyWrapper(this) with Ontologies.Finite {
-
-        // returns all paths which can be obtained by applying one relation
-        def adjacentPaths(p: Path): Set[Path] = {
-          (for (
-            i <- 0 until p.length;
-            j <- i + 1 until p.length;
-            slice = p.morphisms.slice(i, j);
-            s = generatorSource(slice.head);
-            t = generatorTarget(slice.last);
-            subpath = Path(s, t, slice);
-            (r1, r2) <- relations(s, t) ::: relations(s, t).map(_.swap);
-            if (r1 == subpath)
-          ) yield {
-            Path(p.source, p.target, p.morphisms.take(i) ::: r2.morphisms ::: p.morphisms.drop(j))
-          }).toSet
-        }
-
-        val cachedEquivalenceClasses = net.tqft.toolkit.functions.Memo({ (s: O, t: O) => allEquivalenceClasses._2.filter(c => c.head.source == s && c.head.target == t)})
-
-        val allEquivalenceClasses: (Int, Set[Set[Path]]) = {
-          def equivalenceClassesUpToLength(k: Int): Set[Set[Path]] = {
-            def combineClumps[B](clumps: Set[Set[B]], clump: Set[B]): Set[Set[B]] = {
-              val (toCombine, toLeave) = clumps.partition(c => c.intersect(clump).nonEmpty)
-              toLeave ++ Set(toCombine.flatten.toSet)
-            }
-            val words = allWordsUpToLength(k).toSet
-            words.map(p => adjacentPaths(p) + p).foldLeft(words.map(Set(_)))(combineClumps _)
-          }
-
-          def checkLongPathsShorten(k: Int, equivalenceClasses: Set[Set[Path]]): Boolean = {
-            (for(e <- equivalenceClasses; if e.exists(_.length == k ); if !e.exists(_.length < k)) yield e).isEmpty
-          }
-          
-          NonStrictNaturalNumbers.map(n => (n, equivalenceClassesUpToLength(n))).find({ case (n, ec) => checkLongPathsShorten(n, ec) }).get
-        }
-
-        // a collection of sets of equivalent paths, such that for k = maximumWordLength(s, t) + 1, every path of length <= k appears in some set,
-        // and every path of length exactly k appears in a set also containing a shorter element.
-        def pathEquivalenceClasses(s: O, t: O): Set[Set[Path]] = cachedEquivalenceClasses(s, t)
-
-        // maximumWordLength is actually just constant, in the current implementation
-        override def maximumWordLength(s: O, t: O) = allEquivalenceClasses._1 - 1
-
-        override def normalForm(m: Path): Path = {
-          if (m.length <= maximumWordLength(m.source, m.target) + 1) {
-            pathEquivalenceClasses(m.source, m.target).find(_.contains(m)).get.head
-          } else {
-            val s = m.subpath(0, m.length - 1)
-            normalForm(s) andThen m.subpath(m.length - 1, m.length)
-          }
-        }
-      }
+      case _ => new OntologyWrapper(this) with Ontologies.Finite with FiniteByExhaustion
     }
   }
 }
@@ -306,9 +254,7 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
 }
 
 object Ontologies {
-  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms {
-    // FIXME check that we're actually finite
-  }
+  trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms
 
   trait Acyclic extends net.metaphor.api.Acyclic with Finite { ontology: Ontology =>
     override def assertAcyclic = this
