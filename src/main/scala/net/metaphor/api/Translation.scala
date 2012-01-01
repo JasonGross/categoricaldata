@@ -8,11 +8,19 @@ trait Translation extends FinitelyGeneratedFunctor { translation =>
 trait FiniteTarget extends Translation { translation =>
   override val target: Ontologies.Finite
 
+  class FiniteSliceCategory(onRight: translation.target.O) extends SliceCategory(
+      translation.target.maximumWordLength,
+      onRight)
+  
+   class FiniteCosliceCategory(onLeft: translation.target.O) extends CosliceCategory(
+      translation.target.maximumWordLength,
+      onLeft)
+ 
   class SliceFunctor extends super.SliceFunctor {
-    override def buildSliceCategory(onRight: Box) = new SliceCategory(onRight)
+    override def buildSliceCategory(onRight: Box) = new FiniteSliceCategory(onRight)
   }
   class CosliceFunctor extends super.CosliceFunctor {
-    override def buildCosliceCategory(onLeft: Box) = new CosliceCategory(onLeft)
+    override def buildCosliceCategory(onLeft: Box) = new FiniteCosliceCategory(onLeft)
   }
 
   lazy val slice: SliceFunctor = new SliceFunctor

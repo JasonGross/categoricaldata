@@ -12,7 +12,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     target.compose(start, morphisms)
   }
 
-  class SliceCategory(onLeft: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { sliceCategory =>
+  class SliceCategory(maximumPathLength: Int, onLeft: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { sliceCategory =>
     override type O = ObjectRightOf
     override type G = ObjectRightOfMap
 
@@ -56,7 +56,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       ) yield ObjectRightOf(right, fgFunctor.target.pathAsMorphism(path))
     }
     override val minimumLevel: Int = fgFunctor.source.minimumLevel
-    override val maximumLevel: Int = fgFunctor.source.maximumLevel + fgFunctor.target.asInstanceOf[FiniteMorphisms].maximumWordLength // FIXME, what if this isn't a FiniteMorphisms?
+    override val maximumLevel: Int = fgFunctor.source.maximumLevel + maximumPathLength
 
     override def generators(source: ObjectRightOf, target: ObjectRightOf): List[ObjectRightOfMap] = {
       import fgFunctor.source.generatorAsMorphism
@@ -68,13 +68,12 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def pathEquality(p1: Path, p2: Path) = {
       val x1 = Path(p1.source.right, p1.target.right, p1.morphisms.map(_.generator))
       val x2 = Path(p2.source.right, p2.target.right, p2.morphisms.map(_.generator))
-
       fgFunctor.source.pathEquality(x1, x2)
     }
 
   }
 
-  class CosliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { cosliceCategory =>
+  class CosliceCategory(maximumPathLength: Int, onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { cosliceCategory =>
     override type O = ObjectLeftOf
     override type G = ObjectLeftOfMap
 
@@ -119,7 +118,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       ) yield ObjectLeftOf(left, fgFunctor.target.pathAsMorphism(path))
     }
     override val minimumLevel: Int = fgFunctor.source.minimumLevel
-    override val maximumLevel: Int = fgFunctor.source.maximumLevel + fgFunctor.target.asInstanceOf[FiniteMorphisms].maximumWordLength // FIXME, what if this isn't a FiniteMorphisms?
+    override val maximumLevel: Int = fgFunctor.source.maximumLevel + maximumPathLength
 
     override def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
       import fgFunctor.source.generatorAsMorphism
@@ -131,7 +130,6 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
     override def pathEquality(p1: Path, p2: Path) = {
       val x1 = Path(p1.source.left, p1.target.left, p1.morphisms.map(_.generator))
       val x2 = Path(p2.source.left, p2.target.left, p2.morphisms.map(_.generator))
-
       fgFunctor.source.pathEquality(x1, x2)
     }
   }

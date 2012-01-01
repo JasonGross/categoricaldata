@@ -44,6 +44,9 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     }
   }
 
+  val minimumLevel: Int
+
+  
   def generatorSource(g: G): O
   def generatorTarget(g: G): O
 
@@ -108,6 +111,33 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(unreverse(p1).representative, unreverse(p2).representative)
   }
+  
+  private trait Wrapper extends LocallyFinitelyGeneratedCategory {
+    override type O = lfgCategory.O
+    override type G = lfgCategory.G
+    
+    override val minimumLevel = lfgCategory.minimumLevel
+    
+    override def generators(s: O, t: O) = lfgCategory.generators(s, t)
+    override def generatorSource(g: G) = lfgCategory.generatorSource(g)
+    override def generatorTarget(g: G) = lfgCategory.generatorTarget(g)
+    
+    override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(p1, p2)    
+  }
+  
+  private trait Truncation extends Wrapper with FinitelyGeneratedCategory {
+    override def objectsAtLevel(k: Int) = {
+      if(k <= maximumLevel) {
+        lfgCategory.objectsAtLevel(k)
+      } else {
+        Nil
+      }
+    }
+  }
+  
+  private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategories.StandardFunctorsToSet
+  
+  def truncateAtLevel(maximumLevel: Int): FinitelyGeneratedCategory = new ConcreteTruncation(maximumLevel)
 }
 
 /**
@@ -116,7 +146,6 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCategory =>
   // TODO, maybe minimumLevel actually belongs one level up; we could insist everything is bounded below.
   // In that case, we'd have to pull opposite down.
-  val minimumLevel: Int
   val maximumLevel: Int
 
   lazy val objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
@@ -288,7 +317,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         /**
          *  @returns sets(o2) if there are actually no morphisms from o1 to o2
          * 			 None if there are several morphisms, with different images on a
-         * 			 Some(b) is all morphisms send a to b.
+         * 			 Some(b) if all morphisms send a to b.
          */
         def functionsCompatibleResults(o1: fgCategory.O, o2: fgCategory.O)(a: A, constrainedValue: Option[A] = None): Iterable[A] = {
           val results = functions(o1)(o2)(a).toList
