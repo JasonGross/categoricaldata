@@ -49,4 +49,5 @@ trait Category { category =>
     override def compose(m1: category.M, m2: category.M) = category.compose(m2, m1)
   }
 
+  def opposite: Category = new Opposite { } 
 }

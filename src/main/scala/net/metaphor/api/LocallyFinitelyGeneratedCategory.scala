@@ -45,7 +45,6 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   val minimumLevel: Int
 
-  
   def generatorSource(g: G): O
   def generatorTarget(g: G): O
 
@@ -58,6 +57,8 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   }
 
   def generators(source: O, target: O): List[G]
+  def generatorsFrom(source: O): List[G]
+  def generatorsTo(target: O): List[G]
 
   implicit def generatorAsPath(g: G) = Path(generatorSource(g), generatorTarget(g), List(g))
   implicit def pathAsMorphism(p: Path) = PathEquivalenceClass(p)
@@ -88,16 +89,28 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   def pathEquality(path1: Path, path2: Path): Boolean
 
-  trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { opposite =>
+  def wordsOfLengthFrom(k: Int)(source: O): List[Path] = {
+    k match {
+      case 0 => {
+        List(Path(source, source, Nil))
+      }
+      case 1 => generatorsFrom(source).map(generatorAsPath _)
+      case _ => for (Path(_, target, morphisms) <- wordsOfLengthFrom(k - 1)(source); g <- generatorsFrom(target)) yield Path(source, generatorTarget(g), morphisms ::: List(g))
+    }
+  }
+  def wordsFrom(source: O) = (for (k <- NonStrictNaturalNumbers) yield wordsOfLengthFrom(k)(source)).takeWhile(_.nonEmpty).flatten
+  def words(source: O, target: O) = wordsFrom(source).filter(_.target == target)
+
+  trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory {
     override type O = lfgCategory.O
 
-    def reverseGenerator(g: lfgCategory.G): opposite.G
-    def unreverseGenerator(g: opposite.G): lfgCategory.G
+    def reverseGenerator(g: lfgCategory.G): G
+    def unreverseGenerator(g: G): lfgCategory.G
 
-    def reverse(m: lfgCategory.M): opposite.M = m match {
+    def reverse(m: lfgCategory.M): M = m match {
       case lfgCategory.PathEquivalenceClass(Path(source, target, generators)) => PathEquivalenceClass(Path(target, source, generators.reverse.map(reverseGenerator(_))))
     }
-    def unreverse(m: opposite.M): lfgCategory.M = m match {
+    def unreverse(m: M): lfgCategory.M = m match {
       case PathEquivalenceClass(Path(source, target, generators)) => lfgCategory.PathEquivalenceClass(Path(target, source, generators.reverse.map(unreverseGenerator(_))))
     }
 
@@ -105,37 +118,37 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def objectsAtLevel(k: Int) = lfgCategory.objectsAtLevel(-k)
     override def generators(source: O, target: O) = lfgCategory.generators(target, source).map(reverseGenerator(_))
 
-    override def generatorSource(g: opposite.G) = lfgCategory.generatorTarget(unreverseGenerator(g))
-    override def generatorTarget(g: opposite.G) = lfgCategory.generatorSource(unreverseGenerator(g))
+    override def generatorSource(g: G) = lfgCategory.generatorTarget(unreverseGenerator(g))
+    override def generatorTarget(g: G) = lfgCategory.generatorSource(unreverseGenerator(g))
 
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(unreverse(p1).representative, unreverse(p2).representative)
   }
-  
+
   protected trait Wrapper extends LocallyFinitelyGeneratedCategory {
     override type O = lfgCategory.O
     override type G = lfgCategory.G
-    
+
     override val minimumLevel = lfgCategory.minimumLevel
-    
+
     override def objectsAtLevel(k: Int) = lfgCategory.objectsAtLevel(k)
     override def generators(s: O, t: O) = lfgCategory.generators(s, t)
     override def generatorSource(g: G) = lfgCategory.generatorSource(g)
     override def generatorTarget(g: G) = lfgCategory.generatorTarget(g)
-    
-    override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(p1, p2)    
+
+    override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(p1, p2)
   }
-  
+
   private trait Truncation extends Wrapper with FinitelyGeneratedCategory {
     override def objectsAtLevel(k: Int) = {
-      if(k <= maximumLevel) {
+      if (k <= maximumLevel) {
         lfgCategory.objectsAtLevel(k)
       } else {
         Nil
       }
     }
   }
-  
+
   private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategories.StandardFunctorsToSet
-  
+
   def truncateAtLevel(maximumLevel: Int): FinitelyGeneratedCategory = new ConcreteTruncation(maximumLevel)
 }

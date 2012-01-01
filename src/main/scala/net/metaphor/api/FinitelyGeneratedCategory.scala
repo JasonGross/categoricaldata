@@ -30,15 +30,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       case _ => for (g <- generatorsFrom(source); Path(_, _, morphisms) <- wordsOfLength(k - 1)(fgCategory.target(g), target)) yield Path(source, target, g :: morphisms)
     }
   }
-  def wordsOfLengthFrom(k: Int)(source: O): List[Path] = {
-    k match {
-      case 0 => {
-        List(Path(source, source, Nil))
-      }
-      case 1 => generatorsFrom(source).map(generatorAsPath _)
-      case _ => for (Path(_, target, morphisms) <- wordsOfLengthFrom(k - 1)(source); g <- generatorsFrom(target)) yield Path(source, generatorTarget(g), morphisms ::: List(g))
-    }
-  }
 
   def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for (n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
 
@@ -50,9 +41,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     for (s <- objects; t <- objects; w <- wordsOfLength(k)(s, t)) yield w
   }
   def allWordsUpToLength(k: Int): List[Path] = for (n <- (0 to k).toList; w <- allWordsOfLength(n)) yield w
-
-  def wordsFrom(source: O) = (for (k <- NonStrictNaturalNumbers) yield wordsOfLengthFrom(k)(source)).takeWhile(_.nonEmpty).flatten
-  def words(source: O, target: O) = wordsFrom(source).filter(_.target == target)
+  
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
@@ -68,7 +57,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     override def unreverseGenerator(g: OppositeGenerator) = g.g
   }
 
-  lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite
+  override lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite
 
   trait FinitelyGeneratedCategoryOver extends CategoryOver with FinitelyGeneratedFunctor { categoryOver =>
     override val source: FinitelyGeneratedCategory
