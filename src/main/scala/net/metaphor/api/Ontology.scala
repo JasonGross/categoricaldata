@@ -80,9 +80,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
       require(other.source == dataset.source)
 
-      val compositionDiagram = new Ontology {
+      val compositionDiagram = new Ontology with Ontologies.FreeAcyclic {
         // FIXME deal with objects at other levels
-        val unbox: Map[Box, Either[Box, Arrow]] = {
+        lazy val unbox: Map[Box, Either[Box, Arrow]] = {
           ((for (b <- ontology.objectsAtLevel(0)) yield b -> Left(b)) :::
             (for (a <- ontology.allGenerators) yield Box(a.toString) -> Right(a))).toMap
         }
@@ -246,11 +246,13 @@ private class OntologyWrapper(val o: Ontology) extends Ontology {
   override type O = o.O
   override type G = o.G
 
-  val minimumLevel = o.minimumLevel
-  val maximumLevel = o.maximumLevel
-  def objectsAtLevel(k: Int) = o.objectsAtLevel(k)
-  def generators(s: O, t: O) = o.generators(s, t)
-  def relations(s: O, t: O) = o.relations(s, t)
+  override val minimumLevel = o.minimumLevel
+  override val maximumLevel = o.maximumLevel
+  override def objectsAtLevel(k: Int) = o.objectsAtLevel(k)
+  override def generators(s: O, t: O) = o.generators(s, t)
+  override def relations(s: O, t: O) = o.relations(s, t)
+  
+  override def pathEquality(p1: Path, p2: Path) = o.pathEquality(p1, p2)
 }
 
 object Ontologies {

@@ -84,7 +84,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def toString = representative.toString
   }
 
-  def pathEquality(path1: Path, path2: Path): Boolean = ??? //???
+  def pathEquality(path1: Path, path2: Path): Boolean
 
   trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { opposite =>
     override type O = lfgCategory.O
@@ -105,6 +105,8 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
     override def generatorSource(g: opposite.G) = lfgCategory.generatorTarget(unreverseGenerator(g))
     override def generatorTarget(g: opposite.G) = lfgCategory.generatorSource(unreverseGenerator(g))
+    
+    override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(unreverse(p1).representative, unreverse(p2).representative)
   }
 }
 
@@ -175,6 +177,8 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     case class OppositeGenerator(g: fgCategory.G)
     override def reverseGenerator(g: fgCategory.G) = OppositeGenerator(g)
     override def unreverseGenerator(g: OppositeGenerator) = g.g
+    
+    
   }
 
   lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite

@@ -67,6 +67,8 @@ object Sentences {
     def objectsAtLevel(k: Int) = if (k == 0) boxes else Nil
     override def generators(source: Box, target: Box) = arrowMap(source, target)
     override def relations(source: Box, target: Box) = relationsMap(source, target)
+    
+    override def pathEquality(p1: Path, p2: Path) = ???
   }
 
   def Ontology(objects: Traversable[String], arrows: Traversable[StringArrow], relations: Traversable[StringRelation] = Nil): Ontology = {

@@ -65,6 +65,13 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
+    override def pathEquality(p1: Path, p2: Path) = {
+      val x1 = Path(p1.source.right, p1.target.right, p1.morphisms.map(_.generator))
+      val x2 = Path(p2.source.right, p2.target.right, p2.morphisms.map(_.generator))
+
+      fgFunctor.source.pathEquality(x1, x2)
+    }
+
   }
 
   class CosliceCategory(onRight: fgFunctor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { cosliceCategory =>
@@ -120,6 +127,13 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
         ObjectLeftOfMap(source, target, g)
       }
     }
+
+    override def pathEquality(p1: Path, p2: Path) = {
+      val x1 = Path(p1.source.left, p1.target.left, p1.morphisms.map(_.generator))
+      val x2 = Path(p2.source.left, p2.target.left, p2.morphisms.map(_.generator))
+
+      fgFunctor.source.pathEquality(x1, x2)
+    }
   }
 
   abstract class SliceFunctor extends Functor { sliceFunctor => // D^op --> Cat_{/C}
@@ -149,7 +163,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
-//    val getSliceCategory = net.tqft.toolkit.functions.Memo(buildSliceCategory _)
+    //    val getSliceCategory = net.tqft.toolkit.functions.Memo(buildSliceCategory _)
     val getSliceCategory = buildSliceCategory _
     def buildSliceCategory(onLeft: fgFunctor.target.O): SliceCategory
 
@@ -183,7 +197,7 @@ trait FinitelyGeneratedFunctor extends SmallFunctor { fgFunctor =>
       }
     }
 
-//    val getCosliceCategory = net.tqft.toolkit.functions.Memo(buildCosliceCategory _)
+    //    val getCosliceCategory = net.tqft.toolkit.functions.Memo(buildCosliceCategory _)
     val getCosliceCategory = buildCosliceCategory _
     def buildCosliceCategory(onLeft: fgFunctor.target.opposite.O): CosliceCategory
   }

@@ -105,6 +105,8 @@ trait Acyclic extends FiniteMorphisms { fpCategory: FinitelyPresentedCategory =>
 
 trait Free { fpCategory: FinitelyPresentedCategory =>
   require(allRelations.isEmpty)
+  
+  override def pathEquality(p1: Path, p2: Path) = p1 == p2
 }
 
 trait FreeAcyclic extends Free with Acyclic { fpCategory: FinitelyPresentedCategory => 
