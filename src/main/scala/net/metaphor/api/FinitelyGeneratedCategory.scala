@@ -6,6 +6,10 @@ case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   if (morphisms.isEmpty) require(source == target)
   
   def length = morphisms.size
+  def andThen(path: Path[O, G]) = {
+    require(target == path.source)
+    Path(source, path.target, morphisms ::: path.morphisms)
+  }
   
   override def toString = {
     val afterFirstQuote = """".*"( --- ".*" --> ".*")""".r
@@ -27,6 +31,19 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   type G
   type Path = net.metaphor.api.Path[O, G]
 
+  protected implicit def path2RichPath(path: Path) = new RichPath(path)
+  protected class RichPath(path: Path) {
+    def subpath(i: Int, j: Int) = {
+      val morphisms = path.morphisms.slice(i, j)
+      val (source, target) = if(morphisms.isEmpty) {
+        ???
+      } else {
+        (generatorSource(morphisms.head), generatorTarget(morphisms.last))
+      }
+      Path(source, target, morphisms)
+    }
+  }
+  
   def generatorSource(g: G): O
   def generatorTarget(g: G): O
 
@@ -44,12 +61,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   implicit def pathAsMorphism(p: Path) = PathEquivalenceClass(p)
   implicit def generatorAsMorphism(g: G): M = pathAsMorphism(generatorAsPath(g))
 
-  override def compose(m1: M, m2: M) = {
-    val p1 = m1.representative
-    val p2 = m2.representative
-    require(p1.target == p2.source)
-    PathEquivalenceClass(Path(p1.source, p2.target, p1.morphisms ::: p2.morphisms))
-  }
+  override def compose(m1: M, m2: M) = PathEquivalenceClass(m1.representative andThen m2.representative)
   override def source(m: M): O = m.representative.source
   override def target(m: M): O = m.representative.target
   override def identity(o: O) = PathEquivalenceClass(Path(o, o, Nil))
@@ -112,7 +124,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   }
 
   /**
-   * This returns all possible words in the generates.
+   * This returns all possible words in the generators.
    */
   def wordsOfLength(k: Int)(source: O, target: O): List[Path] = {
     val result: List[Path] = k match {
@@ -132,6 +144,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     }
     result
   }
+  def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for(n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
 
   def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
   def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g
@@ -140,6 +153,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   def allWordsOfLength(k: Int): List[Path] = {
     for (s <- objects; t <- objects; w <- wordsOfLength(k)(s, t)) yield w
   }
+  def allWordsUpToLength(k: Int): List[Path] = for(n <- (0 to k).toList; w <- allWordsOfLength(n)) yield w
   def words(source: O, target: O) = (for (k <- NonStrictNaturalNumbers) yield wordsOfLength(k)(source, target)).takeWhile(_.nonEmpty).flatten // TODO return immediately with a lazy iterable
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
