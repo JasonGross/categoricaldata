@@ -20,7 +20,18 @@ trait FiniteTarget extends Translation { translation =>
   lazy val slice: SliceFunctor = new SliceFunctor
   lazy val coslice: CosliceFunctor = new CosliceFunctor
 
-  trait RightPushforward extends CovariantDataFunctor { pushforward =>
+  trait PullbackLeftAdjoint extends LeftAdjoint { self: Functor =>
+    lazy val rightAdjoint = pullback
+    lazy val rightUnit = rightAdjoint.leftUnit
+    lazy val rightCounit = rightAdjoint.leftCounit
+  }
+  trait PullbackRightAdjoint extends RightAdjoint { self: Functor =>
+    lazy val leftAdjoint = pullback
+    lazy val leftUnit = leftAdjoint.rightUnit
+    lazy val leftCounit = leftAdjoint.rightCounit
+  }
+
+  trait RightPushforward extends CovariantDataFunctor with PullbackRightAdjoint { pushforward =>
     override def onObjects(i: source.O): target.O = (new translation.target.Dataset {
       override def onObjects(o: Box) = {
         val F = slice(o)
@@ -64,7 +75,8 @@ trait FiniteTarget extends Translation { translation =>
       override def apply(o: Box) = ??? //???
     }
   }
-  trait LeftPushforward extends CovariantDataFunctor { shriek =>
+
+  trait LeftPushforward extends CovariantDataFunctor with PullbackLeftAdjoint { shriek =>
     override def onObjects(i: source.O): target.O = (new translation.target.Dataset {
       override def onObjects(o: Box) = {
         val F = coslice(o) // TODO weird, why on earth do we need this intermediate val?
@@ -112,7 +124,7 @@ trait FiniteTarget extends Translation { translation =>
 
   trait MemoLeftPushforward extends LeftPushforward with MemoFunctor
   trait MemoRightPushforward extends RightPushforward with MemoFunctor
-  
+
   lazy val leftPushforward: LeftPushforward = new MemoLeftPushforward {}
   lazy val rightPushforward: RightPushforward = new MemoRightPushforward {}
 
@@ -128,4 +140,70 @@ trait FiniteTarget extends Translation { translation =>
     def onObjects(i: FunctorToSet) = rightPushforward.apply(translation.source.internalize(i))
     def onMorphisms(t: NaturalTransformationToSet) = rightPushforward.apply(translation.source.internalize(t))
   }
+
+  trait Pullback extends super.Pullback with LeftAdjoint with RightAdjoint {
+    /*
+     *	F: C --> D
+     *
+     * 	F^*: D-Sets --> C-Sets, has
+     * 		left adjoint F_!: C-Sets --> D-Sets
+     * 		right adjoint F_*: C-Sets --> D-Sets
+     * 
+     * We have a (left) counit F_! F^* --> id_{C-Sets}
+     *     and a (left) unit   id_{D-Sets} --> F^* F_!
+     *     
+     * and also a (right) counit F^* F_* --> id_{D-Sets}
+     *      and a (right) unit   id_{C-Sets} --> F_* F^*
+     */
+    lazy val leftAdjoint = leftPushforward
+    lazy val rightAdjoint = rightPushforward
+
+    lazy val leftCounit = new NaturalTransformation { leftCounit =>
+      val source =  leftPushforward andThen pullback 
+      val target = pullback.target.Identity
+      def apply(o: translation.source.F /* e.g. Dataset */ ): translation.source.T /* e.g. Datamap */ = {
+        translation.source.internalize(new NaturalTransformationToSet {
+          override val source = ??? // leftCounit.source(o)
+          override val target = leftCounit.target(o)
+          override def apply(o: translation.source.O): FFunction = ??? // MATH what is the left counit for pullback?
+        })
+      }
+    }
+    lazy val leftUnit = new NaturalTransformation { leftUnit =>
+      val source = pullback.source.Identity
+      val target = pullback andThen leftPushforward
+      def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */): translation.target.T = {
+        translation.target.internalize(new NaturalTransformationToSet {
+          override val source = leftUnit.source(o)
+          override val target = leftUnit.target(o)
+          override def apply(o: translation.target.O): FFunction = ??? // MATH
+        })
+      }
+    }
+    lazy val rightCounit = new NaturalTransformation { rightCounit =>
+      val source = pullback andThen rightPushforward
+      val target = pullback.source.Identity
+      def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */): translation.target.T = {
+        translation.target.internalize(new NaturalTransformationToSet {
+          override val source = rightCounit.source(o)
+          override val target = rightCounit.target(translation.target.internalize(o))
+          override def apply(o: translation.target.O): FFunction = ??? // MATH
+        })
+      }
+    }
+    lazy val rightUnit = new NaturalTransformation { rightUnit =>
+      val source = translation.source.AllFunctorsToSet.Identity
+      val target = rightPushforward andThen pullback
+      def apply(o: sourceCategory.O /* this is just translation.source.FunctorToSet, but the compiler is recalcitrant */): translation.source.T = {
+        translation.source.internalize(new NaturalTransformationToSet {
+          override val source = rightUnit.source(o)
+          override val target = rightUnit.target(o)
+          override def apply(o: translation.source.O): FFunction = ??? // MATH
+        })
+      }
+
+    }
+  }
+
+  override lazy val pullback = new Pullback {}
 }

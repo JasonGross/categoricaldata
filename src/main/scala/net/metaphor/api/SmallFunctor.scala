@@ -11,6 +11,8 @@ trait SmallFunctor extends Functor { smallFunctor =>
 //        def apply(m: net.metaphor.api.NaturalTransformationToSet) = {
 //          super.apply(functor.target.internalize(m))
 //        }
+    
+    def andThen(g: CovariantDataFunctor) = DataFunctors.compose(this, g)
   }
   trait CovariantDataFunctor extends Functor {
     override val source = smallFunctor.source.AllFunctorsToSet
@@ -19,8 +21,27 @@ trait SmallFunctor extends Functor { smallFunctor =>
 //        def apply(m: SmallCategory#NaturalTransformationToSet) = {
 //          super.apply(functor.source.internalize(m))
 //        }
+    def andThen(g: ContravariantDataFunctor) = DataFunctors.compose(this, g)
   }
 
+  object DataFunctors {
+    class TargetComposition(f: ContravariantDataFunctor, g: CovariantDataFunctor) extends Functor {
+      override val source: f.source.type = f.source
+      override val target: g.target.type = g.target
+      override def onObjects(o: source.O): target.O = g(f(o))
+      override def onMorphisms(m: source.M): target.M = g(f(m))
+    }
+    class SourceComposition(f: CovariantDataFunctor, g: ContravariantDataFunctor) extends Functor {
+      override val source: f.source.type = f.source
+      override val target: g.target.type = g.target
+      override def onObjects(o: source.O): target.O = g(f(o))
+      override def onMorphisms(m: source.M): target.M = g(f(m))
+    }
+    
+    def compose(f: ContravariantDataFunctor, g: CovariantDataFunctor) = new TargetComposition(f,g)
+    def compose(f: CovariantDataFunctor, g:  ContravariantDataFunctor) = new SourceComposition(f,g)
+  }
+  
   trait Pullback extends ContravariantDataFunctor {
     override def onObjects(i: smallFunctor.target.FunctorToSet) = smallFunctor.source.internalize(new smallFunctor.source.FunctorToSet {
       def onObjects(o: smallFunctor.source.O) = i(smallFunctor.apply(o))
