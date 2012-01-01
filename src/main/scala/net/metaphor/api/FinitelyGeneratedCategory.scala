@@ -415,10 +415,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
   }
 
-  val functorsToSet: SpecializedFunctorsToSet
+//  val functorsToSet: SpecializedFunctorsToSet
 
-  class SpecializedFunctorsToSet extends super.SpecializedFunctorsToSet { functorsToSet =>
-  }
+//  class SpecializedFunctorsToSet extends super.SpecializedFunctorsToSet { functorsToSet =>
+//  }
 
 }
 
