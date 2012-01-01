@@ -160,17 +160,17 @@ trait FiniteTarget extends Translation { translation =>
 
     lazy val leftCounit = new NaturalTransformation { leftCounit =>
       val source =  leftPushforward andThen pullback 
-      val target = pullback.target.Identity
+      val target = pullback.target.identityFunctor
       def apply(o: translation.source.F /* e.g. Dataset */ ): translation.source.T /* e.g. Datamap */ = {
         translation.source.internalize(new NaturalTransformationToSet {
-          override val source = ??? // leftCounit.source(o)
+          override val source = leftCounit.source(o)
           override val target = leftCounit.target(o)
           override def apply(o: translation.source.O): FFunction = ??? // MATH what is the left counit for pullback?
         })
       }
     }
     lazy val leftUnit = new NaturalTransformation { leftUnit =>
-      val source = pullback.source.Identity
+      val source = pullback.source.identityFunctor
       val target = pullback andThen leftPushforward
       def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
@@ -182,7 +182,7 @@ trait FiniteTarget extends Translation { translation =>
     }
     lazy val rightCounit = new NaturalTransformation { rightCounit =>
       val source = pullback andThen rightPushforward
-      val target = pullback.source.Identity
+      val target = pullback.source.identityFunctor
       def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = rightCounit.source(o)
@@ -192,7 +192,7 @@ trait FiniteTarget extends Translation { translation =>
       }
     }
     lazy val rightUnit = new NaturalTransformation { rightUnit =>
-      val source = translation.source.AllFunctorsToSet.Identity
+      val source = translation.source.AllFunctorsToSet.identityFunctor
       val target = rightPushforward andThen pullback
       def apply(o: sourceCategory.O /* this is just translation.source.FunctorToSet, but the compiler is recalcitrant */): translation.source.T = {
         translation.source.internalize(new NaturalTransformationToSet {

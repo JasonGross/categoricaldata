@@ -205,7 +205,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       target.compose(start, morphisms)
     }
 
-    val totalSet = new FiniteSet {
+    lazy val totalSet = new FiniteFSet {
       def toIterable = for(o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
     
@@ -255,7 +255,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       val initialMap: initialFunction
     }
 
-    def limit: TerminalObject[functorToSet.Cone, functorToSet.ConeMap] = {
+    lazy val limit: TerminalObject[functorToSet.Cone, functorToSet.ConeMap] = {
       // this is where all the work happens.
       def concreteLimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Set[A]))): (Iterable[fgCategory.O => A], fgCategory.O => ((fgCategory.O => A) => A)) = {
         /**
@@ -336,7 +336,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       }
     }
 
-    def colimit: InitialObject[functorToSet.CoCone, functorToSet.CoConeMap] = {
+    lazy val colimit: InitialObject[functorToSet.CoCone, functorToSet.CoConeMap] = {
 
       // This is where all the work happens.
       def concreteColimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Set[A]))): (Iterable[Set[(fgCategory.O, A)]], fgCategory.O => (A => Set[(fgCategory.O, A)])) = {

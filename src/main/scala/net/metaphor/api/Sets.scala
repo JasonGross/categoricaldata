@@ -2,13 +2,14 @@ package net.metaphor.api
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
 
-trait FSet {
+trait FSet { fset =>
   def toIterable: Iterable[Any]
   def identity: FFunction = IdentityFunction(this)
 
   override def equals(other: Any) = {
     other match {
       case other: FSet => {
+        hashCode == other.hashCode &&
         toIterable == other.toIterable
       }
       case _ => false
@@ -24,10 +25,25 @@ trait FSet {
   def size: Int = sizeIfFinite.getOrElse(???) //???
 
   override def toString = toIterable.toSet[Any].toString
-  override def hashCode = toIterable.toSet[Any].hashCode
+  override lazy val hashCode = toIterable.toSet[Any].hashCode
+
+  private class CachingFSet extends FSet {
+    def sizeIfFinite = fset.sizeIfFinite
+    val toIterable = {
+      import net.tqft.toolkit.collections.CachingIterable
+      CachingIterable(fset.toIterable)
+    }
+  }
+  
+  private class ForcedFSet extends FiniteFSet {
+    val toIterable = fset.toIterable.toList
+  }
+  
+  def cache: FSet = new CachingFSet
+  def force: FSet = new ForcedFSet
 }
 
-trait FiniteSet extends FSet {
+trait FiniteFSet extends FSet {
   override def finite = true
   override lazy val size = toIterable.size
   override def sizeIfFinite = Some(size)
@@ -53,10 +69,10 @@ trait FFunction { function =>
       }
     }
   }
-  
+
   override def toString = {
     val f = toFunction
-    (for(o <- source.toIterable) yield (o -> f(o))).toMap.toString
+    (for (o <- source.toIterable) yield (o -> f(o))).toMap.toString
   }
 }
 case class IdentityFunction(set: FSet) extends FFunction {

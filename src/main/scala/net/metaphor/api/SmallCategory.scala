@@ -37,8 +37,16 @@ trait SmallCategory extends Category { smallCategory =>
 
   def functorsToSet: SpecializedFunctorsToSet
 
-  trait CategoryOver extends SmallFunctor {
+  trait CategoryOver extends SmallFunctor { categoryOver =>
     override val target: smallCategory.type = smallCategory
+    trait Identity extends FunctorOver {
+      override val source: categoryOver.type = categoryOver
+      override val target: categoryOver.type = categoryOver
+      override val functor = new F {
+        override def onObjects(o: categoryOver.source.O) = o
+        override def onMorphisms(m: categoryOver.source.M) = m
+      }
+    }
   }
   trait NaturalTransformationOver extends NaturalTransformation {
     override val source: CategoryOver
@@ -58,17 +66,13 @@ trait SmallCategory extends Category { smallCategory =>
   trait CategoriesOver extends Category { categoriesOver =>
     override type O = CategoryOver
     override type M = FunctorOver
-    override def identity(f: O) = new FunctorOver {
-      val source = f
-      val target = f
-      var functor = ??? // new Functor.IdentityFunctor(f.category)
-    }
+    override def identity(f: O) = new f.Identity {}
     override def source(t: M) = t.source
     override def target(t: M) = t.target
     override def compose(m1: M, m2: M): M = new FunctorOver {
       val source = m1.source
       val target = m2.target
-      val functor = ??? // new Functor.CompositeFunctor(m1.functor, m2.functor)
+      val functor = ??? // it's unclear to me that this is even possible to implement.
     }
   }
 
@@ -87,6 +91,11 @@ object SmallCategories {
       def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
       def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
     }
-    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = ??? //???
+    def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = new NaturalTransformationToSet {
+      require(t.sourceCategory == source)
+      val source = internalize(t.source)
+      val target = internalize(t.target)
+      def apply(o: O) = t(o.asInstanceOf[t.sourceCategory.O])
+    }
   }
 }

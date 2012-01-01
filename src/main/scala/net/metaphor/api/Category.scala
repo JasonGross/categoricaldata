@@ -33,10 +33,12 @@ trait Category { category =>
     override val target: FunctorTo
   }
   trait EndoFunctor extends FunctorFrom with FunctorTo
-  object Identity extends EndoFunctor {
+  
+  trait Identity extends EndoFunctor {
     override def onObjects(o: O) = o
     override def onMorphisms(m: M) = m
   }
+  object identityFunctor extends Identity
   
   trait Opposite extends Category {
     type O = category.O
