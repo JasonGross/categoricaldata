@@ -381,8 +381,8 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dd" -> "dd")))
         
     val DDSTimeLapse2 = Translation (
-      source = DiscreteDynamicalSystem,
-      target = DiscreteDynamicalSystem,
+      source = Examples.DiscreteDynamicalSystem,
+      target = Examples.DiscreteDynamicalSystem,
       onObjects = Map ("an element" -> "an element"),
       onMorphisms = Map (
           ("an element" --- "has as successor" --> "an element") -> 

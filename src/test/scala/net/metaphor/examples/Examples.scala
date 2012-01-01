@@ -193,13 +193,13 @@ object Examples {
     objects = List("an element"),
     arrows = List("an element" --- "has as successor" --> "an element"))
   
-  val DDSTimeLapse (n : Int) = Translation (
-      source = DiscreteDynamicalSystem,
-      target = DiscreteDynamicalSystem,
-      onObjects = Map ("an element" -> "an element"),
-      onMorphisms = Map (
-          ("an element" --- "has as successor" --> "an element") -> 
-        	((for (i <- 1 to n) yield {"an element" --- "has as successor"}++)++"an element")))
+//  val DDSTimeLapse (n : Int) = Translation (
+//      source = DiscreteDynamicalSystem,
+//      target = DiscreteDynamicalSystem,
+//      onObjects = Map ("an element" -> "an element"),
+//      onMorphisms = Map (
+//          ("an element" --- "has as successor" --> "an element") -> 
+//        	((for (i <- 1 to n) yield {"an element" --- "has as successor"}++)++"an element")))
 
    val Isomorphism = Ontology(
     objects = List("0", "1"),
