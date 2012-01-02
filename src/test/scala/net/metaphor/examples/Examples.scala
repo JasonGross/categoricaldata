@@ -54,7 +54,7 @@ object Examples {
       ("an edge" --- "has as target" --> "a vertex") -> Map()))
   
    def Ord(n: Int) = Ontology(
-    objects = for (i <- 0 to n) yield "V" + i.toString, //David added the ".toString" here. Correct? // Yes ---S
+    objects = for (i <- 0 to n) yield "V" + i.toString, 
     arrows = for (i <- 0 to n - 1) yield {
       ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
     }).assertAcyclic
@@ -72,7 +72,7 @@ object Examples {
     onObjects = Map("V0" -> "V1"),
     onMorphisms = Map())
 
-  //  def Skip (n : Int, k : Int) = functor (
+  //  def Skip (n : Int, k : Int) = Translation ( //TODO Need Scott's help on Skip.
   //      source = Examples.Ord(n),
   //      target = Examples.Ord(n+1),
   //      onObjects =
@@ -93,7 +93,7 @@ object Examples {
 
   //  def Coface(n: Int, k: Int) = Skip (n,k)
   //
-  //  def Duplicate(n : Int, k : Int) = functor (
+  //  def Duplicate(n : Int, k : Int) = Translation ( 
   //      source = Examples.Ord(n),
   //      target = Examples.Ord(n-1),
   //      onObjects = 
@@ -123,7 +123,7 @@ object Examples {
   //             ===
   //             (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
   //             
-  //     def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(
+  //     def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(//TODO Need Scott's help.
   //         source = TerminalCategory,
   //         target = FiniteCyclicMonoid(n, k),
   //         onObjects = Map ("V0" -> "an element"),
@@ -141,7 +141,8 @@ object Examples {
   //             "succScott" -> "succScott",
   //             "succUC Berkeley" -> "succUC Berkeley", 
   //             "succMIT" -> "succMIT")))
-  //             
+    
+  //             //TODO Need Scott's help on TranslationFiniteCyclicMonoids.
 //    def TranslationFiniteCyclicMonoids (n1 : Int, k1 : Int, n2: Int, k2: Int, image: Int) = Translation ( //A morphism of finite cyclic monoids is determined by the image of the unique generator. 
 //    		source = FiniteCyclicMonoid (n1 , k1),
 //    		target = FiniteCyclicMonoid (n2, k2),
@@ -171,13 +172,12 @@ object Examples {
     onMorphisms = (for (a <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) -> stringAsPath("V0")).toMap //
     )
 
-//  def TerminalDataset(c: Ontology) = Dataset(
-//    source = c,
-//    onObjects = (for (b <- c.objects) yield (b.name -> List("witness" + b.name))).toMap,
-//    onMorphisms = (for (a <- c.arrows) yield {
-//      Map((a.source.name --- a.name --> a.target.name) ->
-//        Map("witness" + a.source.name -> "witness" + a.target.name))
-//    }))
+  def TerminalDataset(c: Ontology) = Dataset(
+    source = c,
+    onObjects = (for (b <- c.objects) yield (b.name -> List(b.name))).toMap,
+    onMorphisms = (for (a <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) ->
+        Map(a.source.name -> a.target.name)).toMap
+  )
 
   val InitialCategory = Ontology(
     objects = List(),
@@ -189,11 +189,12 @@ object Examples {
     onObjects = Map(),
     onMorphisms = Map())
 
-  //  def InitialDataset (c : Ontology) = Dataset(
-  //      source = c,
-  //      onObjects = for (b <- c.boxes) yield Map (b.name -> List ()),
-  //      onMorphisms = for (a <- c.arrows) yield Map ((a.source.name --- a.name --> a.target.name) -> Map ()))
-  //      
+//    def InitialDataset (c : Ontology) = Dataset( //TODO I don't understand the problem here; it looks analagous to TerminalDataset, which works.
+//        source = c,
+//        onObjects = (for (b <- c.objects) yield b.name -> List ()).toMap,
+//        onMorphisms = (for (a <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) -> 
+//        	Map ()).toMap)
+//        
 		  
 //def OppositeFunctor (f:Functor) = Functor( 
 //    source = OppositeOntology(f.source)
