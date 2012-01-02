@@ -21,6 +21,7 @@ libraryDependencies ++= Seq(
 	"org.scalatest" %% "scalatest" % "1.6.1" % "test",
 	"net.tqft.toolkit" %% "toolkit" % "0.1.0",
 	"org.mortbay.jetty" % "jetty" % "6.1.22" % "jetty",
+	"org.mortbay.jetty" % "jetty" % "6.1.22" % "test",
 	"org.bowlerframework" %% "core" % "0.5.1"
 )
 
