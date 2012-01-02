@@ -48,10 +48,7 @@ trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCa
         toLeave ++ Set(toCombine.flatten.toSet)
       }
       val words = allWordsUpToLength(k).toSet
-      val result = words.map(p => adjacentPaths(p) + p).foldLeft(words.map(Set(_)))(combineClumps _)
-      println(result)
-      if (k > 10) throw new NullPointerException
-      result
+      words.map(p => adjacentPaths(p) + p).foldLeft(words.map(Set(_)))(combineClumps _)
     }
 
     def checkLongPathsShorten(k: Int, equivalenceClasses: Set[Set[Path]]): Boolean = {
