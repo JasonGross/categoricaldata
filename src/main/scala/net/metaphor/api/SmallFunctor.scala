@@ -55,9 +55,7 @@ trait SmallFunctor extends Functor { smallFunctor =>
   }
 
   lazy val pullback = new Pullback { }
-  
-//  object Pullback extends Pullback
-  
+    
   lazy val ^* = new Functor {
     override val source = FunctorsToSet 
     override val target = smallFunctor.source.functorsToSet

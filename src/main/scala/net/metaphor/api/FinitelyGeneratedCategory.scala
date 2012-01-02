@@ -14,24 +14,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     lazy val sizeIfFinite = Some(toIterable.size)
   }
 
-  /**
-   * This returns all possible words in the generators.
-   */
-  def wordsOfLength(k: Int)(source: O, target: O): List[Path] = {
-    k match {
-      case 0 => {
-        if (source == target) {
-          List(Path(source, source, Nil))
-        } else {
-          Nil
-        }
-      }
-      case 1 => generators(source, target).map(generatorAsPath _)
-      case _ => for (g <- generatorsFrom(source); Path(_, _, morphisms) <- wordsOfLength(k - 1)(fgCategory.target(g), target)) yield Path(source, target, g :: morphisms)
-    }
-  }
-
-  def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for (n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
 
   def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
   def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g

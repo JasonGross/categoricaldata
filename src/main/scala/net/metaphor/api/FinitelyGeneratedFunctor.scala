@@ -2,7 +2,6 @@ package net.metaphor.api
 
 trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
   override val source: LocallyFinitelyGeneratedCategory
-  override val target: LocallyFinitelyGeneratedCategory
 
   def onGenerators(g: source.G): target.M
   override def onMorphisms(m: source.M) = {
@@ -123,30 +122,39 @@ trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
 
 }
 
-trait FinitelyGeneratedFunctor extends LocallyFinitelyGeneratedFunctor { fgFunctor =>
+trait LocallyFinitelyGeneratedFunctorWithLocallyFinitelyGeneratedTarget extends LocallyFinitelyGeneratedFunctor { lfgFunctor =>
+  override val target: LocallyFinitelyGeneratedCategory
+
+  abstract class SliceCategory(onLeft: lfgFunctor.target.O) extends super.SliceCategory(onLeft) {
+    override def objectsAtLevel(k: Int): List[ObjectRightOf] = {
+      for (
+        l <- (lfgFunctor.source.minimumLevel to k).toList;
+        right <- lfgFunctor.source.objectsAtLevel(l);
+        path <- lfgFunctor.target.wordsOfLength(k - l)(onLeft, lfgFunctor.apply(right))
+      ) yield ObjectRightOf(right, lfgFunctor.target.pathAsMorphism(path))
+    }
+  }
+  abstract class CosliceCategory(onRight: lfgFunctor.target.O) extends super.CosliceCategory(onRight) {
+    override def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
+      for (
+        l <- (lfgFunctor.source.minimumLevel to k).toList;
+        left <- lfgFunctor.source.objectsAtLevel(l);
+        path <- lfgFunctor.target.wordsOfLength(k - l)(lfgFunctor.apply(left), onRight)
+      ) yield ObjectLeftOf(left, lfgFunctor.target.pathAsMorphism(path))
+    }
+  }
+
+}
+
+trait FinitelyGeneratedFunctor extends LocallyFinitelyGeneratedFunctorWithLocallyFinitelyGeneratedTarget { fgFunctor =>
 
   override val source: FinitelyGeneratedCategory
   override val target: FinitelyGeneratedCategory
 
   class SliceCategory(maximumPathLength: Int, onLeft: fgFunctor.target.O) extends super.SliceCategory(onLeft) {
-    override def objectsAtLevel(k: Int): List[ObjectRightOf] = {
-      for (
-        l <- (fgFunctor.source.minimumLevel to k).toList;
-        right <- fgFunctor.source.objectsAtLevel(l);
-        path <- fgFunctor.target.wordsOfLength(k - l)(onLeft, fgFunctor.apply(right))
-      ) yield ObjectRightOf(right, fgFunctor.target.pathAsMorphism(path))
-    }
     override val maximumLevel: Int = fgFunctor.source.maximumLevel + maximumPathLength
   }
-
   class CosliceCategory(maximumPathLength: Int, onRight: fgFunctor.target.O) extends super.CosliceCategory(onRight) {
-    override def objectsAtLevel(k: Int): List[ObjectLeftOf] = {
-      for (
-        l <- (fgFunctor.source.minimumLevel to k).toList;
-        left <- fgFunctor.source.objectsAtLevel(l);
-        path <- fgFunctor.target.wordsOfLength(k - l)(fgFunctor.apply(left), onRight)
-      ) yield ObjectLeftOf(left, fgFunctor.target.pathAsMorphism(path))
-    }
     override val maximumLevel: Int = fgFunctor.source.maximumLevel + maximumPathLength
   }
 

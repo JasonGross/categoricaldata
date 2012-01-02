@@ -98,8 +98,11 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       case _ => for (Path(_, target, morphisms) <- wordsOfLengthFrom(k - 1)(source); g <- generatorsFrom(target)) yield Path(source, generatorTarget(g), morphisms ::: List(g))
     }
   }
+  def wordsOfLength(k: Int)(source: O, target: O): List[Path] = wordsOfLengthFrom(k)(source).filter(_.target == target)
   def wordsFrom(source: O) = (for (k <- NonStrictNaturalNumbers) yield wordsOfLengthFrom(k)(source)).takeWhile(_.nonEmpty).flatten
   def words(source: O, target: O) = wordsFrom(source).filter(_.target == target)
+
+  def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for (n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
 
   trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory {
     override type O = lfgCategory.O
