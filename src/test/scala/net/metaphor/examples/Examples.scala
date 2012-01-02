@@ -142,7 +142,12 @@ object Examples {
   //             "succUC Berkeley" -> "succUC Berkeley", 
   //             "succMIT" -> "succMIT")))
   //             
-  //
+//    def TranslationFiniteCyclicMonoids (n1 : Int, k1 : Int, n2: Int, k2: Int, image: Int) = Translation ( //A morphism of finite cyclic monoids is determined by the image of the unique generator. 
+//    		source = FiniteCyclicMonoid (n1 , k1),
+//    		target = FiniteCyclicMonoid (n2, k2),
+//    		onObjects = Map ("an element" -> "an element"),
+//    		onMorphisms = Map ("an element" --- "has as successor" --> "an element" ->
+//    			((for (i <- 1 to image) yield {"an element" --- "has as successor"}++)++"an element")))
 
 
   val Compose = Translation(
