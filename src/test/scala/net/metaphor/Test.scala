@@ -85,36 +85,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "i" -> "A",
         "j" -> "C")))
 
-  //TODO: Explain to David why FiniteCyclicMonoid is no good:
-  //     def FiniteCyclicMonoid (n : Int, k : Int) = Ontology (//should have k < n. When k = 0, this is the cyclic group of order n.
-  //         objects = List ("an element"),
-  //         arrows = List ("an element" --- "has as successor" --> "an element"),
-  //         relations = List (
-  //             (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
-  //             ===
-  //             (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
-  //             
-  //     def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(
-  //         source = TerminalCategory,
-  //         target = FiniteCyclicMonoid(n, k),
-  //         onObjects = Map ("V0" -> "an element"),
-  //         onMorphisms = Map ())
-  //             
-  //     val DavidsFunkyFiniteCyclicMonoid = Dataset (
-  //         source = FiniteCyclicMonoid(2,1),
-  //         onObjects = Map ("an element" -> List ("David","Scott","UC Berkeley", "MIT","succDavid","succScott","succUC Berkeley", "succMIT")),
-  //         onMorphisms = Map ("an element" --- "has as successor" --> "an element" -> Map (
-  //             "David" -> "succDavid",
-  //             "Scott" -> "succScott",
-  //             "UC Berkeley" -> "succUC Berkeley",
-  //             "MIT" -> "succMIT",
-  //             "succDavid" -> "succDavid",
-  //             "succScott" -> "succScott",
-  //             "succUC Berkeley" -> "succUC Berkeley", 
-  //             "succMIT" -> "succMIT")))
-  //             
-  //
-
+  
   val FunkyE2Dataset = Dataset(
     source = Examples.E2,
     onObjects = Map(
