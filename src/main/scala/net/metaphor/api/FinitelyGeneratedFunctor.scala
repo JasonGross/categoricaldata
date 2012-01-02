@@ -1,5 +1,8 @@
 package net.metaphor.api
 
+trait FunctorWithFinitelyGeneratedSource extends LocallyFinitelyGeneratedFunctor {
+  override val source: FinitelyGeneratedCategory  
+}
 
 trait FinitelyGeneratedFunctor extends LocallyFinitelyGeneratedFunctorWithLocallyFinitelyGeneratedTarget { fgFunctor =>
 

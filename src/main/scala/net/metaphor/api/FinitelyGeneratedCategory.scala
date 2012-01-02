@@ -84,13 +84,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   override type T <: NaturalTransformationToSet
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    def onGenerators(g: G): FFunction
-    override def onMorphisms(m: M) = {
-      val start = onObjects(source.source(m))
-      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
-      target.compose(start, morphisms)
-    }
-
     lazy val totalSet = new FiniteFSet {
       def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
@@ -105,41 +98,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     def colimitSet = colimitCoCone.terminalSet
     def limitCone = limit.terminalObject
     def limitSet = limitCone.initialSet
-
-    trait CoCone {
-      val terminalSet: FSet
-      abstract class coConeFunction(o: O) extends FFunction {
-        override val source = functorToSet(o)
-        override val target = terminalSet
-      }
-      def mapToTerminalSet(o: O): coConeFunction
-    }
-    trait CoConeMap extends { coConeMap =>
-      val source: CoCone
-      val target: CoCone
-      trait terminalFunction extends FFunction {
-        override val source = coConeMap.source.terminalSet
-        override val target = coConeMap.target.terminalSet
-      }
-      val terminalMap: terminalFunction
-    }
-    trait Cone extends {
-      val initialSet: FSet
-      abstract class coneFunction(o: O) extends FFunction {
-        override val source = initialSet
-        override val target = functorToSet(o)
-      }
-      def mapFromInitialSet(o: O): coneFunction
-    }
-    trait ConeMap extends { coneMap =>
-      val source: Cone
-      val target: Cone
-      trait initialFunction extends FFunction {
-        override val source = coneMap.source.initialSet
-        override val target = coneMap.target.initialSet
-      }
-      val initialMap: initialFunction
-    }
 
     lazy val limit: TerminalObject[functorToSet.Cone, functorToSet.ConeMap] = {
       // this is where all the work happens.

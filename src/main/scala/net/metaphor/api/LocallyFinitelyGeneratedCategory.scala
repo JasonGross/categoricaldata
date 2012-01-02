@@ -141,7 +141,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(p1, p2)
   }
 
-  private trait Truncation extends Wrapper with FinitelyGeneratedCategory {
+  trait Truncation extends Wrapper with FinitelyGeneratedCategory {
     override def objectsAtLevel(k: Int) = {
       if (k <= maximumLevel) {
         lfgCategory.objectsAtLevel(k)
@@ -153,5 +153,60 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategories.StandardFunctorsToSet
 
-  def truncateAtLevel(maximumLevel: Int): FinitelyGeneratedCategory = new ConcreteTruncation(maximumLevel)
+  class TruncationFunctor(maximumLevel: Int) extends FunctorWithFinitelyGeneratedSource  {
+    override val source: Truncation = new ConcreteTruncation(maximumLevel)
+    override val target: lfgCategory.type = lfgCategory
+    override def onObjects(o: source.O) = o
+    override def onGenerators(g: source.G) = g
+  }
+  
+  def truncationFunctorAtLevel(maximumLevel: Int): TruncationFunctor = new TruncationFunctor(maximumLevel)
+  def truncateAtLevel(maximumLevel: Int): FinitelyGeneratedCategory = truncationFunctorAtLevel(maximumLevel).source
+  
+  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
+    def onGenerators(g: G): FFunction
+    override def onMorphisms(m: M) = {
+      val start = onObjects(source.source(m))
+      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
+      target.compose(start, morphisms)
+    }
+
+    trait CoCone {
+      val terminalSet: FSet
+      abstract class coConeFunction(o: O) extends FFunction {
+        override val source = functorToSet(o)
+        override val target = terminalSet
+      }
+      def mapToTerminalSet(o: O): coConeFunction
+    }
+    trait CoConeMap extends { coConeMap =>
+      val source: CoCone
+      val target: CoCone
+      trait terminalFunction extends FFunction {
+        override val source = coConeMap.source.terminalSet
+        override val target = coConeMap.target.terminalSet
+      }
+      val terminalMap: terminalFunction
+    }
+    trait Cone extends {
+      val initialSet: FSet
+      abstract class coneFunction(o: O) extends FFunction {
+        override val source = initialSet
+        override val target = functorToSet(o)
+      }
+      def mapFromInitialSet(o: O): coneFunction
+    }
+    trait ConeMap extends { coneMap =>
+      val source: Cone
+      val target: Cone
+      trait initialFunction extends FFunction {
+        override val source = coneMap.source.initialSet
+        override val target = coneMap.target.initialSet
+      }
+      val initialMap: initialFunction
+    }
+    
+    def limitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).limit
+    def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
+  }
 }
