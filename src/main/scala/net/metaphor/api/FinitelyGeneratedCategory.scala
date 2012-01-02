@@ -14,7 +14,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     lazy val sizeIfFinite = Some(toIterable.size)
   }
 
-
   def generatorsFrom(source: O) = for (target <- objects; g <- generators(source, target)) yield g
   def generatorsTo(target: O) = for (source <- objects; g <- generators(source, target)) yield g
   def allGenerators: List[G] = for (source <- objects; target <- objects; g <- generators(source, target)) yield g
