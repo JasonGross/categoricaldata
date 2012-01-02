@@ -154,6 +154,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     lazy val memo: ontology.Dataset = new DatasetMemo
 
+    lazy val toJSON = new net.metaphor.json.Dataset(this)
   }
   trait Datamap extends NaturalTransformationToSet { datamap =>
     override def toString = "Datamap(\n  onObjects = Map(\n" + (for (o <- ontology.objects) yield "    " + o.toString + " -> " + datamap(o).toString).mkString(",\n    ") + "))"
@@ -231,6 +232,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   class OntologyWrapper extends super.Wrapper with Ontology
 
+  lazy val toJSON = new net.metaphor.json.Ontology(this)
 }
 
 object Ontologies {

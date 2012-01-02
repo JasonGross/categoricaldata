@@ -1,5 +1,5 @@
-package net
+package net.metaphor
 
-package object metaphor {
+package object json {
 	def ??? = throw new NoSuchMethodException
 }

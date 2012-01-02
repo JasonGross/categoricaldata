@@ -1,0 +1,22 @@
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+  <display-name>Metaphor API</display-name>
+
+    <filter>
+		<filter-name>api</filter-name>
+ 		<filter-class>org.bowlerframework.http.BowlerFilter</filter-class>
+		<init-param>
+			<param-name>bootstrapClass</param-name>
+			<param-value>net.metaphor.server.Bootstrap</param-value>
+ 		</init-param>
+ 	</filter>
+
+ <filter-mapping>
+  <filter-name>api</filter-name>
+	<url-pattern>/*</url-pattern>
+ </filter-mapping>
+
+</web-app>

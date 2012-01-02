@@ -41,6 +41,9 @@ trait FSet { fset =>
   
   def cache: FSet = new CachingFSet
   def force: FSet = new ForcedFSet
+  
+  def toList = toIterable.toList
+  def toStringList = toList.map(_.toString)
 }
 
 trait FiniteFSet extends FSet {
@@ -71,9 +74,16 @@ trait FFunction { function =>
   }
 
   override def toString = {
-    val f = toFunction
-    (for (o <- source.toIterable) yield (o -> f(o))).toMap.toString
+    toMap.toString
   }
+  
+  def toMap: Map[Any, Any] = {
+    val f = toFunction
+    (for (o <- source.toIterable) yield (o -> f(o))).toMap
+  }
+  
+  def toStringMap: Map[String, String] = 
+    toMap.map({ case (a,b) => a.toString -> b.toString })
 }
 case class IdentityFunction(set: FSet) extends FFunction {
   override def source = set
