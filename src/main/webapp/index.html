@@ -5,20 +5,20 @@
 <body>
 
 <hr>
-First, you'll need to load a dataset (try TerminalBigraph).
+First, you'll need to load a dataset.
 <br/>
 
-<input name="dataset"></input>
+<input id="dataset" value="TerminalBigraph"/>
 <button type="button" onclick="loadDataset()">Load dataset</button>
 <br/>
 
 <textarea id="dataset-display" rows="12" cols="60"></textarea>
 
 <hr>
-Next, specify a translation with the same target (try ReverseGraph).
+Next, specify a translation with the same source.
 <br/>
 
-<input name="translation"></input> 
+<input id="translation" value="ReverseGraph"/> 
 <button type="button" onclick="loadTranslation()">Load translation</button>
 <br/>
 
@@ -29,7 +29,7 @@ Finally, you can ask the server to compute the left pushforward.<br/>
 <button type="button" onclick="computeLeftPushforward()">Compute pushforward</button>
 <br/>
 
-<textarea id="leftPushforward-result" rows="12" cols="60"></textarea>
+<textarea id="leftPushforward-result" rows="30" cols="120"></textarea>
 
 <script>
 function prettyPrint(json) {
@@ -49,7 +49,7 @@ $.ajax({
                 req.setRequestHeader("Accept", "application/json");
             },
         type:"GET",
-        url: "/metaphor/examples/datasets/TerminalBigraph",
+        url: "/metaphor/examples/datasets/" + $("#dataset").val(),
         success: function(data){
 	   dataset = data;
             $("#dataset-display").val(prettyPrint(data)); 
@@ -65,7 +65,7 @@ $.ajax({
                 req.setRequestHeader("Accept", "application/json");
             },
         type:"GET",
-        url: "/metaphor/examples/translations/ReverseGraph",
+        url: "/metaphor/examples/translations/" + $("#translation").val(),
         success: function(data){
 	    translation = data
             $("#translation-display").val(prettyPrint(data));  
@@ -77,18 +77,16 @@ $.ajax({
 <script>
 function computeLeftPushforward() {
 $.ajax({
-        type: "POST",
-        url: "/metaphor/compute/leftPushforward",
-	dataType: "json",
-	contentType: "application/json; charset=utf-8",
-	data: { "translation" : translation, "dataset" : dataset },
-	error: function(request,error){
-                alert(error);
-        },
-        success: function(data){
-            $("#leftPushforward-result").val(prettyPrint(data));
-        }
-        });
+	type: "GET",
+	url: "/metaphor/compute/leftPushforward",
+	data: { "translation": $("#translation-display").val(), "dataset": $("#dataset-display").val() },
+	success: function(data){
+		$("#leftPushforward-result").val(prettyPrint(data));
+	},
+	error:function (xhr, ajaxOptions, thrownError){
+                    alert("An error occurred on the server. Response code " + xhr.status + ". " + thrownError);
+        }    
+	});
 }
 </script>
 

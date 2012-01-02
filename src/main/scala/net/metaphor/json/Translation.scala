@@ -3,6 +3,13 @@ package net.metaphor.json
 case class TranslationOnArrow(arrow: Arrow, path: List[Arrow])
 
 case class Translation(source: Ontology, target: Ontology, onObjects: Map[String, String], onGenerators: List[TranslationOnArrow]) {
+  require(source != null)
+  require(target != null)
+  require(onObjects != null)
+  for(o <- source.objects) require(onObjects.keySet.contains(o))
+  require(onGenerators != null)
+  for(a <- source.arrows) require(onGenerators.exists(_.arrow == a))
+  
   def unpack: net.metaphor.api.Translation with net.metaphor.api.FiniteTarget = {
     net.metaphor.dsl.Sentences.Translation(
         source.unpack, 

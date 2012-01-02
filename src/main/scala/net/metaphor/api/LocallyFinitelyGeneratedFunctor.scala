@@ -23,7 +23,7 @@ trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
     override def generatorTarget(g: G) = g.target
 
     case class ObjectRightOf(right: lfgFunctor.source.O, morphism: lfgFunctor.target.M) {
-      override def toString = "(" + morphism.toString + " = F(" + right.toString + "))"
+      override def toString = ("(" + morphism.toString + " = F(" + right.toString + "))").replace('"', ''') // this replacement is a hack, so double quotes never show up in JSON
       // we need to provide our own equals method, to ignore the outer class
       override def equals(other: Any) = {
         other match {
@@ -75,7 +75,7 @@ trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
     override def generatorTarget(g: G) = g.target
 
     case class ObjectLeftOf(left: lfgFunctor.source.O, morphism: lfgFunctor.target.M) {
-      override def toString = "(F(" + left.toString + ") = " + morphism.toString + ")"
+      override def toString = ("(F(" + left.toString + ") = " + morphism.toString + ")").replace('"', ''') // this replacement is a hack, so double quotes never show up in JSON
       // we need to provide our own equals method, to ignore the outer class
       override def equals(other: Any) = {
         other match {

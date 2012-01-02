@@ -13,10 +13,18 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   def `GET /metaphor/examples/ontologies/Grph` = Examples.Grph.toJSON
   def `GET /metaphor/examples/datasets/TerminalBigraph` = Examples.TerminalBigraph.toJSON
   def `GET /metaphor/examples/translations/ReverseGraph` = Examples.ReverseGraph.toJSON
-  
-  def `POST /metaphor/compute/leftPushforward`(translation: Translation, dataset: Dataset): Dataset = {
-    val F = translation.unpack
-    val i = F.source.internalize(dataset.unpack)
+
+  def `GET /metaphor/compute/leftPushforward`(translation: String, dataset: String): Dataset = {
+    implicit val formats = net.liftweb.json.DefaultFormats
+    import net.liftweb.json.JsonParser.parse
+    val translationJSON = {
+      parse(translation).extract[Translation]
+    }
+    val datasetJSON = {
+      parse(dataset).extract[Dataset]
+    }
+    val F = translationJSON.unpack
+    val i = F.source.internalize(datasetJSON.unpack)
     F.leftPushforward(i).toJSON
-  } 
+  }
 }
