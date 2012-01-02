@@ -3,19 +3,46 @@ package net.metaphor.api
 trait Translation extends FinitelyGeneratedFunctor { translation =>
   override val source: Ontology
   override val target: Ontology
+
+  lazy val toJSON = net.metaphor.json.Pack.packTranslation(this)
+
+  override def equals(other: Any): Boolean = {
+    other match {
+      case other: Translation => {
+        if (source != other.source) return false
+        if (target != other.target) return false
+        for (o <- source.objects) {
+          if (this(o) != other(o)) return false
+        }
+        for (g <- source.allGenerators) {
+          if (this.onGenerators(g) != other.onGenerators(g)) return false
+        }
+        true
+      }
+      case _ => false
+    }
+  }
+
+  override def toString = {
+    "Translation(\n" +
+      "  source = " + source.toString + ",\n" +
+      "  target = " + target.toString + ",\n" +
+      "  onObjects = " + source.objects.map(o => o -> this(o)).toMap.toString + ",\n" +
+      "  onMorphisms = " + source.allGenerators.map(g => g -> this.onGenerators(g)).toMap.toString + ")"
+  }
 }
 
 trait FiniteTarget extends Translation { translation =>
   override val target: Ontologies.Finite
 
   class FiniteSliceCategory(onRight: translation.target.O) extends SliceCategory(
-      translation.target.maximumWordLength,
-      onRight)
-  
-   class FiniteCosliceCategory(onLeft: translation.target.O) extends CosliceCategory(
-      translation.target.maximumWordLength,
-      onLeft)
- 
+    translation.target.maximumWordLength,
+    onRight)
+
+  class FiniteCosliceCategory(onLeft: translation.target.O) extends CosliceCategory(
+    translation.target.maximumWordLength,
+    onLeft)
+
   class SliceFunctor extends super.SliceFunctor {
     override def buildSliceCategory(onRight: Box) = new FiniteSliceCategory(onRight)
   }
@@ -77,7 +104,7 @@ trait FiniteTarget extends Translation { translation =>
     override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
-      override def apply(o: Box) = ???  // MATH what is the pushforward of a Datamap?
+      override def apply(o: Box) = ??? // MATH what is the pushforward of a Datamap?
     }
   }
 
@@ -163,7 +190,7 @@ trait FiniteTarget extends Translation { translation =>
     lazy val rightAdjoint = rightPushforward
 
     lazy val leftCounit = new NaturalTransformation { leftCounit =>
-      val source =  leftPushforward andThen pullback 
+      val source = leftPushforward andThen pullback
       val target = pullback.target.identityFunctor
       def apply(o: translation.source.F /* e.g. Dataset */ ): translation.source.T /* e.g. Datamap */ = {
         translation.source.internalize(new NaturalTransformationToSet {
@@ -176,7 +203,7 @@ trait FiniteTarget extends Translation { translation =>
     lazy val leftUnit = new NaturalTransformation { leftUnit =>
       val source = pullback.source.identityFunctor
       val target = pullback andThen leftPushforward
-      def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */): translation.target.T = {
+      def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */ ): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = leftUnit.source(o)
           override val target = leftUnit.target(o)
@@ -187,7 +214,7 @@ trait FiniteTarget extends Translation { translation =>
     lazy val rightCounit = new NaturalTransformation { rightCounit =>
       val source = pullback andThen rightPushforward
       val target = pullback.source.identityFunctor
-      def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */): translation.target.T = {
+      def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */ ): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = rightCounit.source(o)
           override val target = rightCounit.target(translation.target.internalize(o))
@@ -198,7 +225,7 @@ trait FiniteTarget extends Translation { translation =>
     lazy val rightUnit = new NaturalTransformation { rightUnit =>
       val source = translation.source.AllFunctorsToSet.identityFunctor
       val target = rightPushforward andThen pullback
-      def apply(o: sourceCategory.O /* this is just translation.source.FunctorToSet, but the compiler is recalcitrant */): translation.source.T = {
+      def apply(o: sourceCategory.O /* this is just translation.source.FunctorToSet, but the compiler is recalcitrant */ ): translation.source.T = {
         translation.source.internalize(new NaturalTransformationToSet {
           override val source = rightUnit.source(o)
           override val target = rightUnit.target(o)

@@ -80,7 +80,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     //    }
     override def equals(other: Any) = {
       other match {
-        case PathEquivalenceClass(otherRepresentative) => pathEquality(representative, otherRepresentative)
+        case other: LocallyFinitelyGeneratedCategory#PathEquivalenceClass =>  pathEquality(representative, other.representative.asInstanceOf[Path])
         case _ => false
       }
     }

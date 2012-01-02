@@ -1,11 +1,13 @@
 package net.metaphor.json
 
-case class OnMorphism(arrow: Arrow, map: Map[String, String])
+case class DatasetOnArrow(arrow: Arrow, map: Map[String, String])
 
-case class Dataset(ontology: Ontology, onObjects: Map[String, List[String]], onMorphisms: List[OnMorphism]) {
-	def this(dataset: net.metaphor.api.Ontology#Dataset) = this(
-	    ontology = new Ontology(dataset.source),
-	    onObjects = dataset.source.objects.map(o => o.name -> dataset(o).toStringList).toMap,
-	    onMorphisms = dataset.source.allGenerators.map(a => OnMorphism(new Arrow(a), dataset.onGenerators(a).toStringMap))
-	)
+case class Dataset(ontology: Ontology, onObjects: Map[String, List[String]], onMorphisms: List[DatasetOnArrow]) {
+  def unpack: net.metaphor.api.Ontology#Dataset = {
+    net.metaphor.dsl.Sentences.Dataset(
+        ontology.unpack,
+        onObjects,
+        onMorphisms.map({ case DatasetOnArrow(a, map) => net.metaphor.dsl.Sentences.StringArrow(a.source, a.target, a.label) -> map }).toMap
+    )
+  }
 }

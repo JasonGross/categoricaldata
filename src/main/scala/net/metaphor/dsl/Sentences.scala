@@ -20,29 +20,29 @@ object Sentences {
     def ===(other: StringPath) = StringRelation(this, other)
   }
   case class ConcreteStringPath(source: String, arrows: List[StringArrow]) extends StringPath {
-    def ---(p: String) = IncompleteStringPath(this, p)
+    def ---(label: String) = IncompleteStringPath(this, label)
     def target = arrows.lastOption.map(_.target).getOrElse(source)
   }
-  case class IncompleteStringPath(path: StringPath, p: String) {
-    def -->(o: String) = ConcreteStringPath(path.source, path.arrows ::: List(StringArrow(path.target, p, o)))
+  case class IncompleteStringPath(path: StringPath, label: String) {
+    def -->(target: String) = ConcreteStringPath(path.source, path.arrows ::: List(StringArrow(path.target, target, label)))
   }
-  case class StringArrow(source: String, label: String, target: String) extends StringPath {
+  case class StringArrow(source: String, target: String, label: String) extends StringPath {
     def arrows = List(this)
-    def ---(p: String) = IncompleteStringPath(ConcreteStringPath(source, List(this)), p)
+    def ---(label: String) = IncompleteStringPath(ConcreteStringPath(source, List(this)), label)
   }
   case class StringSource(source: String) extends StringPath {
     def arrows = Nil
     def target = source
-    def ---(p: String) = IncompleteStringArrow(p)
+    def ---(label: String) = IncompleteStringArrow(label)
 
     def identity = ConcreteStringPath(source, Nil)
 
-    case class IncompleteStringArrow(p: String) {
-      def -->(o: String) = StringArrow(source, p, o)
+    case class IncompleteStringArrow(label: String) {
+      def -->(target: String) = StringArrow(source, target, label)
     }
   }
 
-  case class StringRelation(lhs: StringPath, rhs: StringPath)
+  case class StringRelation(left: StringPath, right: StringPath)
 
   class ConcreteOntology(_objects: Traversable[String], _arrows: Traversable[StringArrow], _relations: Traversable[StringRelation]) extends Ontology {
     private val boxes = _objects.toList map { Box(_) }
@@ -84,7 +84,7 @@ object Sentences {
     private val morphismMap: Map[Arrow, target.M] = (for (
       a <- source.allGenerators
     ) yield {
-      val morphisms = for (StringArrow(ts, tp, to) <- onMorphisms(StringArrow(a.source.name, a.name, a.target.name)).arrows) yield {
+      val morphisms = for (StringArrow(ts, to, tp) <- onMorphisms(StringArrow(a.source.name, a.target.name, a.name)).arrows) yield {
         target.generatorAsMorphism(target.allGenerators.find(a => a.source.name == ts && a.name == tp && a.target.name == to).get)
       }
       a -> target.compose(objectMap(source.generatorSource(a)), morphisms)
@@ -108,7 +108,7 @@ object Sentences {
     val morphismMap = (for (
       a <- source.allGenerators
     ) yield {
-      a -> onMorphisms(StringArrow(a.source.name, a.name, a.target.name)).asInstanceOf[Any => Any]
+      a -> onMorphisms(StringArrow(a.source.name, a.target.name, a.name)).asInstanceOf[Any => Any]
     }).toMap
 
     (new source.Dataset {

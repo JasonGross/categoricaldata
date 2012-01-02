@@ -1,0 +1,98 @@
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+</head>
+<body>
+
+<hr>
+First, you'll need to load a dataset (try TerminalBigraph).
+<br/>
+
+<input name="dataset"></input>
+<button type="button" onclick="loadDataset()">Load dataset</button>
+<br/>
+
+<textarea id="dataset-display" rows="12" cols="60"></textarea>
+
+<hr>
+Next, specify a translation with the same target (try ReverseGraph).
+<br/>
+
+<input name="translation"></input> 
+<button type="button" onclick="loadTranslation()">Load translation</button>
+<br/>
+
+<textarea id="translation-display" rows="12" cols="60"></textarea>
+
+<hr>
+Finally, you can ask the server to compute the left pushforward.<br/>
+<button type="button" onclick="computeLeftPushforward()">Compute pushforward</button>
+<br/>
+
+<textarea id="leftPushforward-result" rows="12" cols="60"></textarea>
+
+<script>
+function prettyPrint(json) {
+	return JSON.stringify(json, undefined, 2);
+}
+</script>
+
+<script>
+var translation;
+var dataset;
+</script>
+
+<script>
+function loadDataset() {
+$.ajax({
+        beforeSend: function(req) {
+                req.setRequestHeader("Accept", "application/json");
+            },
+        type:"GET",
+        url: "/metaphor/examples/datasets/TerminalBigraph",
+        success: function(data){
+	   dataset = data;
+            $("#dataset-display").val(prettyPrint(data)); 
+        }
+        });
+}
+</script>
+
+<script>
+function loadTranslation() {
+$.ajax({
+        beforeSend: function(req) {
+                req.setRequestHeader("Accept", "application/json");
+            },
+        type:"GET",
+        url: "/metaphor/examples/translations/ReverseGraph",
+        success: function(data){
+	    translation = data
+            $("#translation-display").val(prettyPrint(data));  
+        }
+        });
+}
+</script>
+
+<script>
+function computeLeftPushforward() {
+$.ajax({
+        type: "POST",
+        url: "/metaphor/compute/leftPushforward",
+	dataType: "json",
+	contentType: "application/json; charset=utf-8",
+	data: { "translation" : translation, "dataset" : dataset },
+	error: function(request,error){
+                alert(error);
+        },
+        success: function(data){
+            $("#leftPushforward-result").val(prettyPrint(data));
+        }
+        });
+}
+</script>
+
+
+</body>
+</html>
+

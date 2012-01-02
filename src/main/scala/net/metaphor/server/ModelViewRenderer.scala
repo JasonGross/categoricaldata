@@ -21,7 +21,7 @@ class ModelViewRenderer(jsonFormats: Formats = net.liftweb.json.DefaultFormats) 
     val parameters = extractParameters(request)
     prettyJsonViewRenderer.renderView(request, response,
       models collect {
-        case ontology: net.metaphor.api.Ontology => new net.metaphor.json.Ontology(ontology)
+        case ontology: net.metaphor.api.Ontology => net.metaphor.json.Pack.packOntology(ontology)
         case x => x
       })
   }
