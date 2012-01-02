@@ -21,11 +21,11 @@ libraryDependencies ++= Seq(
 	"org.scalatest" %% "scalatest" % "1.6.1" % "test",
 	"net.tqft.toolkit" %% "toolkit" % "0.1.0",
 	"org.mortbay.jetty" % "jetty" % "6.1.22" % "jetty",
-	"org.bowlerframework" %% "core" % "0.5"
+	"org.bowlerframework" %% "core" % "0.5.1"
 )
 
 libraryDependencies ++= {
-  val liftVersion = "2.4-M3" // Put the current/latest lift version here
+  val liftVersion = "2.4-M4" // Put the current/latest lift version here
   Seq(
     "net.liftweb" %% "lift-json" % liftVersion % "compile->default",
     "net.liftweb" %% "lift-json-ext" % liftVersion % "compile->default"
