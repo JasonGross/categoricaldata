@@ -30,12 +30,18 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   type G
   type Path = net.metaphor.api.Path[O, G]
 
-  protected implicit def path2RichPath(path: Path) = new RichPath(path)
+  /*protected*/ implicit def path2RichPath(path: Path) = new RichPath(path)
   protected class RichPath(path: Path) {
     def subpath(i: Int, j: Int) = {
       val morphisms = path.morphisms.slice(i, j)
       val (source, target) = if (morphisms.isEmpty) {
-        ???
+        if(i == 0) {
+          val s = path.source
+          (s, s)
+        } else {
+          val t = generatorTarget(path.morphisms(i - 1))
+          (t, t)
+        }
       } else {
         (generatorSource(morphisms.head), generatorTarget(morphisms.last))
       }

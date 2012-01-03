@@ -24,14 +24,13 @@ trait FiniteMorphisms extends NormalForm { fpCategory: FinitelyPresentedCategory
 
 trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCategory =>
   // returns all paths which can be obtained by applying one relation
-  private def adjacentPaths(p: Path): Set[Path] = {
+  def adjacentPaths(p: Path): Set[Path] = {
     (for (
-      i <- 0 until p.length;
-      j <- i + 1 until p.length;
-      slice = p.morphisms.slice(i, j);
-      s = generatorSource(slice.head);
-      t = generatorTarget(slice.last);
-      subpath = Path(s, t, slice);
+      i <- 0 to p.length;
+      j <- i to p.length;
+      subpath = p.subpath(i, j);
+      s = subpath.source;
+      t = subpath.target;
       (r1, r2) <- relations(s, t) ::: relations(s, t).map(_.swap);
       if (r1 == subpath)
     ) yield {
@@ -41,13 +40,14 @@ trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCa
 
   private val cachedEquivalenceClasses = net.tqft.toolkit.functions.Memo({ (s: O, t: O) => allEquivalenceClasses._2.filter(c => c.head.source == s && c.head.target == t) })
 
-  private val allEquivalenceClasses: (Int, Set[Set[Path]]) = {
+  private val allEquivalenceClasses: (Int, Set[Set[Path]]) = {    
     def equivalenceClassesUpToLength(k: Int): Set[Set[Path]] = {
       def combineClumps[B](clumps: Set[Set[B]], clump: Set[B]): Set[Set[B]] = {
         val (toCombine, toLeave) = clumps.partition(c => c.intersect(clump).nonEmpty)
         toLeave ++ Set(toCombine.flatten.toSet)
       }
       val words = allWordsUpToLength(k).toSet
+      
       words.map(p => adjacentPaths(p) + p).foldLeft(words.map(Set(_)))(combineClumps _)
     }
 
@@ -66,14 +66,14 @@ trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCa
   override def maximumWordLength(s: O, t: O) = allEquivalenceClasses._1 - 1
 
   override def normalForm(m: Path): Path = {
-    if (m.length > 10) throw new IllegalArgumentException
+    if (m.length > 10) throw new IllegalArgumentException // FIXME remove this
     if (m.length <= maximumWordLength(m.source, m.target) + 1) {
       pathEquivalenceClasses(m.source, m.target).find(_.contains(m)).get.toList.sortBy(_.length).head
     } else {
       val s = m.subpath(0, m.length - 1)
       val ns = normalForm(s)
       require(ns.length < s.length)
-      ns andThen m.subpath(m.length - 1, m.length)
+      normalForm(ns andThen m.subpath(m.length - 1, m.length))
     }
   }
 

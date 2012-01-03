@@ -22,12 +22,15 @@ class OntologyTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     for (k <- 0 until 10) I.wordsOfLength(k)(o0, o1) should have size (k mod 2)
     for (k <- 0 until 10) I.wordsOfLength(k)(o0, o0) should have size (k - 1 mod 2)
 
+    I.relations(o0, o0) should have size(1)
+        
     val List(m01) = I.generators(o0, o1).map(I.generatorAsMorphism(_))
     val List(m10) = I.generators(o1, o0).map(I.generatorAsMorphism(_))
 
     I.identity(o0) should equal(I.compose(m01, m10))
+        
+    I.compose(m01,m10,m01,m10) should equal(I.identity(o0))
     
-    for (k <- 1 until 10) I.morphismsOfLength(k)(o0, o0) should be('empty)
+    (for (k <- 0 until 5) yield I.morphismsOfLength(k)(o0, o0).size) should equal (List(1,0,0,0,0))
   }
-
 }
