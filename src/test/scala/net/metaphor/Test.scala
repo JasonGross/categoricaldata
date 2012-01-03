@@ -380,113 +380,123 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dc" -> "dd",
         "dd" -> "dd")))
 
-  //    val DDSTimeLapse2 = Translation (
-  //      source = Examples.DiscreteDynamicalSystem,
-  //      target = Examples.DiscreteDynamicalSystem,
-  //      onObjects = Map ("an element" -> "an element"),
-  //      onMorphisms = Map (
-  //          ("an element" --- "has as successor" --> "an element") -> 
-  //          ("an element" --- "has as successor" --> "an element" --- "has as successor" --> "an element")))
-  //        	
+//      val DDSTimeLapse2 = Translation (
+//        source = Examples.DiscreteDynamicalSystem,
+//        target = Examples.DiscreteDynamicalSystem,
+//        onObjects = Map ("an element" -> "an element"),
+//        onMorphisms = Map (
+//            ("an element" --- "has as successor" --> "an element") -> 
+//            ("an element" --- "has as successor" --> "an element" --- "has as successor" --> "an element")))
+//          	
+//
+//     "__*" should "provide a 'half-speed' DDS" in {
+//      println
+//      println("Output from \"__* should provide a 'half-speed' DDS\":")
+//      
+//      val X = DDS1
+//      val LHS = DDSTimeLapse2.__*(X)
+//      val RHS = DDS1Times2R
+//      println(X)
+//      println(LHS)
+//      println(RHS)
+//      LHS should beIsomorphicTo(RHS)
+//   }      
+//    
+//    "__!" should "provide a 'half-speed' DDS" in {
+//      println
+//      println("Output from \"__! should provide a 'half-speed' DDS\":")
+//      
+//      val X = DDS1
+//      val LHS = DDSTimeLapse2.__!(X)
+//      val RHS = DDS1Times2L
+//      println(X)
+//      println(LHS)
+//      println(RHS)
+//      LHS should beIsomorphicTo(RHS)
+//   }      
 
-  //   "__*" should "provide a 'half-speed' DDS" in {
-  //    println
-  //    println("Output from \"__* should provide a 'half-speed' DDS\":")
-  //    
-  //    val X = DDS1
-  //    val LHS = DDSTimeLapse2.__*(X)
-  //    val RHS = DDS1Times2R
-  //    println(X)
-  //    println(LHS)
-  //    println(RHS)
-  //    LHS should beIsomorphicTo(RHS)
-  // }      
-  //  
-  //  "__!" should "provide a 'half-speed' DDS" in {
-  //    println
-  //    println("Output from \"__! should provide a 'half-speed' DDS\":")
-  //    
-  //    val X = DDS1
-  //    val LHS = DDSTimeLapse2.__!(X)
-  //    val RHS = DDS1Times2L
-  //    println(X)
-  //    println(LHS)
-  //    println(RHS)
-  //    LHS should beIsomorphicTo(RHS)
-  // }      
+       val FCM20_19 = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
+      onObjects = Map(
+        "an element" -> List("a","b","c","d")),      
+      onMorphisms = Map(
+        "an element" --- "has as successor" --> "an element" -> Map(
+          "a" -> "c",
+          "b" -> "c",
+          "c" -> "d",
+          "d" -> "d")))
+    
+    val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
+      onObjects = Map(
+        "an element" -> List("a1","b1","c1","d1","a2","b2","c2","d2")),      
+      onMorphisms = Map(
+        "an element" --- "has as successor" --> "an element" -> Map(
+          "a1" -> "a2",
+          "b1" -> "b2",
+          "c1" -> "c2",
+          "d1" -> "d2",
+          "a2" -> "c1",
+          "b2" -> "c1",
+          "c2" -> "d1",
+          "d2" -> "d1")))
+          
+    val FCM20_19Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
+      onObjects = Map(
+        "an element" -> List("aa","ab","ac","ad","ba","bb","bc","bd","ca","cb","cc","cd","da","db","dc","dd")),
+      onMorphisms = Map(
+        "an element" --- "has as successor" --> "an element" -> Map(
+          "aa" -> "ca",
+          "ab" -> "ca",
+          "ac" -> "da",
+          "ad" -> "da",
+          "ba" -> "cb",
+          "bb" -> "cb",
+          "bc" -> "db",
+          "bd" -> "db",
+          "ca" -> "cc",
+          "cb" -> "cc",
+          "cc" -> "dc",
+          "cd" -> "dc",
+          "da" -> "cd",
+          "db" -> "cd",
+          "dc" -> "dd",
+          "dd" -> "dd")))
 
-  //     val FCM20_19 = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
-  //    onObjects = Map(
-  //      "an element" -> List("a","b","c","d")),      
-  //    onMorphisms = Map(
-  //      "an element" --- "has as successor" --> "an element" -> Map(
-  //        "a" -> "c",
-  //        "b" -> "c",
-  //        "c" -> "d",
-  //        "d" -> "d")))
-  //  
-  //  val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
-  //    onObjects = Map(
-  //      "an element" -> List("a1","b1","c1","d1","a2","b2","c2","d2")),      
-  //    onMorphisms = Map(
-  //      "an element" --- "has as successor" --> "an element" -> Map(
-  //        "a1" -> "a2",
-  //        "b1" -> "b2",
-  //        "c1" -> "c2",
-  //        "d1" -> "d2",
-  //        "a2" -> "c1",
-  //        "b2" -> "c1",
-  //        "c2" -> "d1",
-  //        "d2" -> "d1")))
-  //        
-  //  val FCM20_19Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
-  //    onObjects = Map(
-  //      "an element" -> List("aa","ab","ac","ad","ba","bb","bc","bd","ca","cb","cc","cd","da","db","dc","dd")),
-  //    onMorphisms = Map(
-  //      "an element" --- "has as successor" --> "an element" -> Map(
-  //        "aa" -> "ca",
-  //        "ab" -> "ca",
-  //        "ac" -> "da",
-  //        "ad" -> "da",
-  //        "ba" -> "cb",
-  //        "bb" -> "cb",
-  //        "bc" -> "db",
-  //        "bd" -> "db",
-  //        "ca" -> "cc",
-  //        "cb" -> "cc",
-  //        "cc" -> "dc",
-  //        "cd" -> "dc",
-  //        "da" -> "cd",
-  //        "db" -> "cd",
-  //        "dc" -> "dd",
-  //        "dd" -> "dd")))
-
-  //   "__*" should "provide a 'half-speed' FCM20_19" in {
-  //    println
-  //    println("Output from \"__* should provide a 'half-speed' FCM20_19\":")
-  //    
-  //    val X = FCM20_19
-  //    val T = TranslationFiniteCyclicMonoids(20,19,20,19,1);
-  //    val LHS = T.__*(X)
-  //    val RHS = FCM20_19Times2R
-  //    println(X)
-  //    println(LHS)
-  //    println(RHS)
-  //    LHS should beIsomorphicTo(RHS)
-  // }      
-  //  
-  //  "__!" should "provide a 'half-speed' FCM20_19" in {
-  //    println
-  //    println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
-  //    
-  //    val X = FCM20_19
-  //    val T = TranslationFiniteCyclicMonoids(20,19,20,19,1);
-  //    val LHS = T.__!(X)
-  //    val RHS = FCM20_19Times2L
-  //    println(X)
-  //    println(LHS)
-  //    println(RHS)
-  //    LHS should beIsomorphicTo(RHS)
-  // }             
+     "__*" should "provide a 'half-speed' FCM20_19" in {
+      println
+      println("Output from \"__* should provide a 'half-speed' FCM20_19\":")
+      
+      val X = FCM20_19
+      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,1);
+      val LHS = T.__*(X)
+      val RHS = FCM20_19Times2R
+      println(X)
+      println(LHS)
+      println(RHS)
+      LHS should beIsomorphicTo(RHS)
+   }      
+    
+    "__!" should "provide a 'half-speed' FCM20_19" in {
+      println
+      println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
+      
+      val X = FCM20_19
+      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,1);
+      val LHS = T.__!(X)
+      val RHS = FCM20_19Times2L
+      println(X)
+      println(LHS)
+      println(RHS)
+      LHS should beIsomorphicTo(RHS)
+   }       
+   
+   "opposite" should "be an involution for FiniteCyclicMonoid" in {
+     val FCM = Examples.FiniteCyclicMonoid(7,4)
+     FCM.opposite.opposite should equal(FCM)
+   }
+   
+   "yoneda" should "exist for objects in FiniteCyclicMonoid" in {
+     val FCM = Examples.FiniteCyclicMonoid(7,4)
+     FCM.Yoneda(box("V2")) should equal(FCM.Yoneda(box("V2")))
+   }
 
 }

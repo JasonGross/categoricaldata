@@ -179,7 +179,13 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         }
       }
     }
+    
   }
+//  def yoneda(o: O)=new Dataset { // TODO Why didn't this work?
+//      def onObjects(o: O) = ???
+//    		  def onGenerators(g: G) = ???
+//  }
+    
   override def internalize(t: net.metaphor.api.NaturalTransformationToSet) = {
     t match {
       case t: Datamap => t
