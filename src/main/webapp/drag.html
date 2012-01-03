@@ -1,0 +1,53 @@
+<html>
+<head>
+<script
+  src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script
+  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+  <script>
+    // make all the boxes draggable
+	$(function() {
+		$(".ontology-editor .box").draggable({ containment: ".canvas", stack: ".ontology-editor .box" });
+	});
+	</script>
+  <div class="ontology ontology-editor">
+
+    <div class="canvas" style="height: 400px">
+      <!--  some draggable boxes -->
+      <div id='an element' class="box"
+        style="position: relative; top: 25; left: 50;">
+        <p>an element</p>
+      </div>
+      <div id='a pointed set' class="box"
+        style="position: relative; top: 25; left: 250;">
+        <p>a pointed set</p>
+      </div>
+    </div>
+
+    <!-- output -->
+    <button
+      onclick="$('.ontology-editor #output').val(generateOntology());">
+      Generate DSL</button>
+    <button
+      onclick="$('.ontology-editor #output').val(generateJSON());">
+      Generate JSON</button>
+    <br />
+    <textarea rows=20 cols=80 id="output"></textarea>
+  </div>
+
+  <script>
+    function getBoxes() {
+      return $(".ontology-editor .box").map(function() { return '"' + this.id + '"'; }).get();
+    }
+    function generateOntology() {
+      return "Ontology(\n" + "  objects = List(" + getBoxes().join(', ') + "))"
+    }
+    function generateJSON() {
+      alert("Not implemented.");
+    }
+  </script>
+</body>
+</html>
