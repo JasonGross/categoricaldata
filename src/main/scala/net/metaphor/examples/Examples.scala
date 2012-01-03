@@ -254,6 +254,8 @@ object Examples {
       ("a pointed set" --- "has as chosen" --> "an element" --- "is in" --> "a pointed set")
         ===
         ("a pointed set"))).assertFinite
+        
+  val Retraction = PointedSets
   
   val E2 = Ontology( 
 	objects = List ("0", "1"),

@@ -302,14 +302,14 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     
   "__*" should "work with PointedSetsToIsomorphism" in {
     println
-    println("Output from \"__* should reverse graph as expected\":")
+    println("Output from \"__* should take this retraction and return two sets isomorphic to its base.\":")
     println
     val X = OneTwoThreePointed
     val LHS = SixElementsIso
     val RHS = Examples.ReverseGraph.__*(X)
-    println("Original graph: " + X)
-    println("Reversed graph: " + LHS)
-    println("Right pushforward of original: " + RHS)
+    println("Original retraction: "); println(X);println
+    println("Expected isomorphism: "); println (LHS);println
+    println("Right pushforward of original retraction: ");println (RHS)
     LHS should beIsomorphicTo(RHS)
   }
 
