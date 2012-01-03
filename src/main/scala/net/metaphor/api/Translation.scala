@@ -220,6 +220,20 @@ trait FiniteTranslation extends Translation { translation =>
           override val source = leftCounit.source(o)
           override val target = leftCounit.target(o)
           override def apply(o: translation.source.O): FFunction = ??? // MATH what is the left counit for pullback?
+   /* 
+    * Given a functor F: C-->D. 
+    * Given a dataset L: D-->Set
+    * Want: epsilon:= F_!F^*(L) --> L.
+    * Want: for each object d in D, a function epsilon(d): F_!F^*(L)(d) --> L(d)
+    * Let pi: (F | d)-->C.
+    * Want: a function n(d): colim_{F | d} pi^*F^*(L) --> L(d) 
+    * Given b:F(c)-->d in (F | d)
+    * Want: function epsilon(d): pi^*F^*L(b)-->L(d).
+    * Lemma: we have function L(a): L(F(c)) --> L(d).
+    * Want: function ep: pi^*F^*L(b)-->L(F(c)); composing with L(a) will give the desired epsilon(d).
+    * Compute: pi^*F^*L(b) = L(F(c)), where = means "canonically isomorphic to". 
+    * Provide ep:= canonical isomorphism. QED
+    */
         })
       }
     }
