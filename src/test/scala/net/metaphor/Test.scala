@@ -312,6 +312,10 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     println("Right pushforward of original retraction: ");println (RHS)
     LHS should beIsomorphicTo(RHS)
   }
+  
+//  "__*" should "work with PointedSetToIsomorphism" in {
+//    Examples.PointedSetsToIsomorphism.__*(OneTwoThreePointed) should beIsomorphicTo(SixElementsIso)
+//  }
 
   "__!" should "work with PointedSetsToIsomorphism" in {
     Examples.PointedSetsToIsomorphism.__!(OneTwoThreePointed) should beIsomorphicTo(ThreeElementsIso)
