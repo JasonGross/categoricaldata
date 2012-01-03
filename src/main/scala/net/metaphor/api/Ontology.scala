@@ -9,6 +9,10 @@ case class Arrow(source: Box, target: Box, name: String) {
   override def toString = source.toString + " --- \"" + name + "\" --> " + target.toString
 }
 
+trait Dataset extends net.metaphor.api.FunctorToSet {
+  
+}
+
 trait Ontology extends FinitelyPresentedCategory { ontology =>
   override type O = Box
   override type G = Arrow
@@ -22,7 +26,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     "Ontology(objects = " + (for (o <- objects) yield "\"" + o.name + "\"") + ", arrows = " + allGenerators + ", relations = " + allRelations.map(p => p._1 + " === " + p._2) + ")"
   }
 
-  trait Dataset extends FunctorToSet { dataset =>
+  trait Dataset extends FunctorToSet with net.metaphor.api.Dataset { dataset =>
     abstract class DatasetFunction(g: G) extends net.metaphor.api.FFunction {
       override def source = onObjects(generatorSource(g))
       override def target = onObjects(generatorTarget(g))

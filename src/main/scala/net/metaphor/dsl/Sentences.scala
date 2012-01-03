@@ -2,7 +2,7 @@ package net.metaphor.dsl
 import net.metaphor.api.Arrow
 import net.metaphor.api.Box
 import net.metaphor.api.FiniteMorphisms
-import net.metaphor.api.FiniteTarget
+import net.metaphor.api.FiniteTranslation
 import net.metaphor.api.Ontology
 import net.metaphor.api.Ontologies
 import net.metaphor.api.Translation
@@ -95,9 +95,9 @@ object Sentences {
     override def onGenerators(a: source.G) = morphismMap(a)
   }
 
-  def Translation(source: Ontology, target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation with FiniteTarget = {
+  def Translation(source: Ontology, target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath): FiniteTranslation = {
     // construct a new translation object
-    new ConcreteTranslation(source, target, onObjects, onMorphisms) with FiniteTarget
+    new ConcreteTranslation(source, target, onObjects, onMorphisms) with FiniteTranslation
   }
 
   def Dataset(source: Ontology, onObjects: String => Traversable[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {

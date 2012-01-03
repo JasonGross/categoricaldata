@@ -15,6 +15,11 @@ class Bootstrap {
     def resolveViewRenderer(request: Request) = new ModelViewRenderer
   })
   
+  
+  TransformerRegistry.registerTransformer(classOf[net.metaphor.api.Ontology], classOf[net.metaphor.server.transformers.OntologyTransformer])
+  TransformerRegistry.registerTransformer(classOf[net.metaphor.api.Dataset], classOf[net.metaphor.server.transformers.DatasetTransformer])
+  TransformerRegistry.registerTransformer(classOf[net.metaphor.api.FiniteTranslation], classOf[net.metaphor.server.transformers.FiniteTranslationTransformer])
+  
   // I think we're ready to start and instantiate our Controller.
   val controller = new MetaphorController
 }
