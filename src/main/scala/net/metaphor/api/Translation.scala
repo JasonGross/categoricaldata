@@ -104,7 +104,20 @@ trait FiniteTranslation extends Translation { translation =>
     override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
-      override def apply(o: Box) = ??? // MATH what is the pushforward of a Datamap?
+      override def apply(o: Box) = ??? // MATH what is the Rightpushforward of a Datamap?
+   /* 
+    * Given a functor F: C-->D. 
+    * Given datasets I,J: C-->Set
+    * Given a natural transformation m:I-->J
+    * Want: n:= F_*(m): F_*(I) --> F_*(J).
+    * Want: for each object d in D, a function n(d): F_*(I)(d)-->F_*(J)(d)
+    * Let pi: (d | F)-->C.
+    * Want: a function n(d): lim_{d | F} pi^*(I) --> lim_{d|F} pi^*(J) 
+    * Provide: lim_{d | F} pi^*(m).  
+    */
+      
+      
+      
     }
   }
 
@@ -149,7 +162,17 @@ trait FiniteTranslation extends Translation { translation =>
     override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = onObjects(m.source)
       override val target = onObjects(m.target)
-      override def apply(o: Box) = ??? // MATH what is the pushforward of a Datamap?
+      override def apply(o: Box) = ??? // MATH what is the Leftpushforward of a Datamap?
+   /* 
+    * Given a functor F: C-->D. 
+    * Given datasets I,J: C-->Set
+    * Given a natural transformation m:I-->J
+    * Want: n:= F_!(m): F_!(I) --> F_!(J).
+    * Want: for each object d in D, a function n(d): F_!(I)(d)-->F_!(J)(d)
+    * Let pi: (F | d)-->C.
+    * Want: a function n(d): colim_{F | d} pi^*(I) --> colim_{d|F} pi^*(J) 
+    * Provide: colim_{F | d} pi^*(m).  
+    */
     }
   }
 
