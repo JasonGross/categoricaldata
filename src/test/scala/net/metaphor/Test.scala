@@ -102,8 +102,8 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "2" -> "b",
         "3" -> "d")))
 
-  val E2ToPointedSetRPushFunky = Dataset(
-    source = Examples.PointedSet,
+  val E2ToPointedSetsRPushFunky = Dataset(
+    source = Examples.PointedSets,
     onObjects = Map(
       "an element" -> List("a1a", "b1a", "d3d"),
       "a pointed set" -> List("a1", "d3")),
@@ -117,7 +117,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "d3" -> "d3d")))
 
   val OneTwoThreePointed = Dataset(
-    source = Examples.PointedSet,
+    source = Examples.PointedSets,
     onObjects = Map(
       "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
       "a pointed set" -> List("a", "b", "c")),
@@ -200,8 +200,8 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     Examples.Codomain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet2)
   }
 
-  "__*" should "work nicely with the map from E2 to PointedSet" in {
-    Examples.E2ToPointedSet.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetRPushFunky)
+  "__*" should "work nicely with the map from E2 to PointedSets" in {
+    Examples.E2ToPointedSets.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetsRPushFunky)
   }
 
   // TODO waiting on translations with infinite targets
@@ -266,9 +266,9 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     val X = DavidsFunkyGraph
     val LHS = DavidsFunkyGraphReversed
     val RHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
-    println("Original graph:" + X)
+    println("Original graph: " + X)
     println("Reversed graph: " + LHS)
-    println("Right pushforward of original:" + RHS)
+    println("Right pushforward of original: " + RHS)
     LHS should beIsomorphicTo(RHS)
  }
 
@@ -297,12 +297,24 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   "limit and __*" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
   }
-  "__*" should "work with PointedSetToIsomorphism" in {
-    Examples.PointedSetToIsomorphism.__*(OneTwoThreePointed) should beIsomorphicTo(SixElementsIso)
+  
+    
+    
+  "__*" should "work with PointedSetsToIsomorphism" in {
+    println
+    println("Output from \"__* should reverse graph as expected\":")
+    println
+    val X = OneTwoThreePointed
+    val LHS = SixElementsIso
+    val RHS = Examples.ReverseGraph.__*(X)
+    println("Original graph: " + X)
+    println("Reversed graph: " + LHS)
+    println("Right pushforward of original: " + RHS)
+    LHS should beIsomorphicTo(RHS)
   }
 
-  "__!" should "work with PointedSetToIsomorphism" in {
-    Examples.PointedSetToIsomorphism.__!(OneTwoThreePointed) should beIsomorphicTo(ThreeElementsIso)
+  "__!" should "work with PointedSetsToIsomorphism" in {
+    Examples.PointedSetsToIsomorphism.__!(OneTwoThreePointed) should beIsomorphicTo(ThreeElementsIso)
   }
   
   val DDS1 = Dataset(source = Examples.DiscreteDynamicalSystem,

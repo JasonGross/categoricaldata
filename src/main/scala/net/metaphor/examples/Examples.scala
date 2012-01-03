@@ -245,7 +245,7 @@ object Examples {
         ===
         ("1")))).assertFinite
 
-  val PointedSet = Ontology(
+  val PointedSets = Ontology(
     objects = List ("an element", "a pointed set"),
     arrows = List (
       "an element" --- "is in" --> "a pointed set",
@@ -262,9 +262,9 @@ object Examples {
       "1" --- "E10" --> "0")
     ).assertFree
   
-  val E2ToPointedSet = Translation (
+  val E2ToPointedSets = Translation (
     source = E2,
-    target = PointedSet,
+    target = PointedSets,
     onObjects = Map (
         "0" -> "an element", 
         "1" -> "a pointed set"),
@@ -274,8 +274,8 @@ object Examples {
     )
   )
   
-  val PointedSetToIsomorphism = Translation (
-	source = PointedSet,
+  val PointedSetsToIsomorphism = Translation (
+	source = PointedSets,
     target = Isomorphism,
     onObjects = Map (
         "an element" -> "0", 
