@@ -1,0 +1,12 @@
+.ontology .box {
+	border: 1px solid #666666;
+	background: #ffffff;
+	color: #222222;
+	width: 150px;
+	height: 50px;
+	padding: 0.5em;
+}
+
+.ontology .canvas {
+	border: 1px solid #666666;
+}
