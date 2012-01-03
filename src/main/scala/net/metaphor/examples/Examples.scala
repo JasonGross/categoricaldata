@@ -121,7 +121,7 @@ object Examples {
   //         relations = List (
   //             (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
   //             ===
-  //             (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element")))
+  //             (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element"))).assertFinite
   //             
   //     def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(//TODO Need Scott's help.
   //         source = TerminalCategory,
