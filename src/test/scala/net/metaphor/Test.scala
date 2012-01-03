@@ -306,20 +306,28 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     println
     val X = OneTwoThreePointed
     val LHS = SixElementsIso
-    val RHS = Examples.ReverseGraph.__*(X)
+    val RHS = Examples.PointedSetsToIsomorphism.__*(X)
     println("Original retraction: "); println(X);println
     println("Expected isomorphism: "); println (LHS);println
     println("Right pushforward of original retraction: ");println (RHS)
     LHS should beIsomorphicTo(RHS)
   }
   
-//  "__*" should "work with PointedSetToIsomorphism" in {
-//    Examples.PointedSetsToIsomorphism.__*(OneTwoThreePointed) should beIsomorphicTo(SixElementsIso)
-//  }
-
+ 
+    
   "__!" should "work with PointedSetsToIsomorphism" in {
-    Examples.PointedSetsToIsomorphism.__!(OneTwoThreePointed) should beIsomorphicTo(ThreeElementsIso)
+//    println
+//    println("Output from \"__! should take this retraction and return two sets isomorphic to its total space.\":")
+//    println
+    val X = OneTwoThreePointed
+    val LHS = ThreeElementsIso
+    val RHS = Examples.PointedSetsToIsomorphism.__!(X)
+//    println("Original retraction: "); println(X);println
+//    println("Expected isomorphism: "); println (LHS);println
+//    println("Left pushforward of original retraction: ");println (RHS)
+    LHS should beIsomorphicTo(RHS)
   }
+  
   
   val DDS1 = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
