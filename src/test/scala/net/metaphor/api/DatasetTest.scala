@@ -10,7 +10,7 @@ import net.metaphor.CustomMatchers
 import net.tqft.toolkit.arithmetic.Factorial
 
 @RunWith(classOf[JUnitRunner])
-class OntologyTest extends FlatSpec with ShouldMatchers with CustomMatchers {
+class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
 

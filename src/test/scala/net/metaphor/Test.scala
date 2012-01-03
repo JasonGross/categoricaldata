@@ -300,9 +300,9 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   
     
     
-  "__*" should "work with PointedSetsToIsomorphism" in {
+  "__* along PointedSetsToIsomorphism" should "take a retraction and return two sets isomorphic to its base." in {
     println
-    println("Output from \"__* should take this retraction and return two sets isomorphic to its base.\":")
+    println("Output from \"__* along PointedSetsToIsomorphism should take a retraction and return two sets isomorphic to its base.\":")
     println
     val X = OneTwoThreePointed
     val LHS = SixElementsIso
