@@ -264,11 +264,11 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     println("Output from \"__* should reverse graph as expected\":")
     
     val X = DavidsFunkyGraph
-    val LHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
-    val RHS = DavidsFunkyGraphReversed
-    println(X)
-    println(LHS)
-    println(RHS)
+    val LHS = DavidsFunkyGraphReversed
+    val RHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
+    println("Original graph:" + X)
+    println("Reversed graph: " + LHS)
+    println("Right pushforward of original:" + RHS)
     LHS should beIsomorphicTo(RHS)
  }
 
