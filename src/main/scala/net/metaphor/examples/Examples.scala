@@ -134,13 +134,16 @@ object Examples {
     onObjects = Map("V0" -> "an element"),
     onMorphisms = Map())
 
-  //  def TranslationFiniteCyclicMonoids(n1: Int, k1: Int, n2: Int, k2: Int, image: Int) = Translation( //A morphism of finite cyclic monoids is determined by the image of the unique generator. 
-  //    source = FiniteCyclicMonoid(n1, k1),
-  //    target = FiniteCyclicMonoid(n2, k2),
-  //    onObjects = Map("an element" -> "an element"),
-  //    onMorphisms = Map("an element" --- "has as successor" --> "an element" ->
-  //      ((for (i <- 1 to image) yield { "an element" --- "has as successor" }++) ++ "an element")))
-  //
+  def TranslationFiniteCyclicMonoids(n1: Int, k1: Int, n2: Int, k2: Int, image: Int) = {//A morphism of finite cyclic monoids is determined by the image of the unique generator. 
+    def composition(i: Int) = (1 to i).foldLeft("an element".identity)({ case (x, m) => x --- "has as successor" --> "an element" })
+    
+  Translation( 
+    source = FiniteCyclicMonoid(n1, k1),
+    target = FiniteCyclicMonoid(n2, k2),
+    onObjects = Map("an element" -> "an element"),
+    onMorphisms = Map("an element" --- "has as successor" --> "an element" -> composition(image))
+    )
+  }
 
   val Compose = Translation(
     source = Examples.Chain(1),
