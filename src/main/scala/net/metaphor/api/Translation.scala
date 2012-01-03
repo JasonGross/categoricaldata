@@ -32,7 +32,7 @@ trait Translation extends FinitelyGeneratedFunctor { translation =>
   }
 }
 
-trait FiniteTarget extends Translation { translation =>
+trait FiniteTranslation extends Translation { translation =>
   override val target: Ontologies.Finite
 
   class FiniteSliceCategory(onRight: translation.target.O) extends SliceCategory(

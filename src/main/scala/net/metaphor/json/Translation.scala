@@ -10,7 +10,7 @@ case class Translation(source: Ontology, target: Ontology, onObjects: Map[String
   require(onGenerators != null)
   for(a <- source.arrows) require(onGenerators.exists(_.arrow == a))
   
-  def unpack: net.metaphor.api.Translation with net.metaphor.api.FiniteTarget = {
+  def unpack: net.metaphor.api.FiniteTranslation = {
     net.metaphor.dsl.Sentences.Translation(
         source.unpack, 
         target.unpack.assertFinite,

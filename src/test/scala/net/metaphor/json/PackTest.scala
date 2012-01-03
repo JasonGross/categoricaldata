@@ -17,7 +17,7 @@ class PackTest extends FlatSpec with ShouldMatchers {
     }
   }
   "Translation" should "pass through packing and unpacking successfully" in {
-    for (translation <- List(Examples.PointedSetsToIsomorphism)) {
+    for (translation <- List(Examples.PointedSetsToIsomorphism, Examples.ReverseGraph)) {
       val packed = Pack.packTranslation(translation)
       val unpacked = packed.unpack
 

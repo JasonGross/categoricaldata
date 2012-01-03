@@ -33,6 +33,16 @@ class SerializationTest extends FlatSpec with ShouldMatchers {
     }
 
   }
+  "Translation" should "pass through serialization successfully" in {
+    for (translation <- List(Examples.ReverseGraph)) {
+      val json = translation.toJSON
+      val string = write(json)
+      val result = parse(string).extract[Translation]
+
+      json should equal(result)
+    }
+
+  }
 
 }
 
