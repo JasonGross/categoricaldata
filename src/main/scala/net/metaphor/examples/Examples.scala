@@ -72,24 +72,30 @@ object Examples {
     onObjects = Map("V0" -> "V1"),
     onMorphisms = Map())
 
-  //  def Skip (n : Int, k : Int) = Translation ( //TODO Need Scott's help on Skip.
-  //      source = Examples.Ord(n),
-  //      target = Examples.Ord(n+1),
-  //      onObjects =
-  //          (for (i <- 0 to k-1) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
-  //          (for (i <- k to n) yield ("V" + i.toString) -> ("V" + (i + 1).toString)).toMap,
-  //      onMorphisms = 
-  //          (for (i <- 0 to k-1) yield {
-  //          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-  //          	->
-  //          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))}).toMap ++
-  //          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
-  //          ->
-  //          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) --- ("E" + (k + 1).toString + (k + 2).toString) --> ("V" + (k + 2).toString))
-  //          (for (i <- k+1 to n-1) yield {
-  //            (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-  //          	->
-  //          	(("V" + (i+1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))}).toMap)
+    def Skip (n : Int, k : Int) = {
+//    val onMorphisms1 =???
+//    val onMorphisms1 =???
+//    val onMorphisms1 =???
+//    
+  Translation ( // [n] --> [n+1] by skipping object k.
+        source = Examples.Ord(n),
+        target = Examples.Ord(n+1),
+        onObjects =
+            (for (i <- 0 to k-1) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
+            (for (i <- k to n) yield ("V" + i.toString) -> ("V" + (i + 1).toString)).toMap,
+        onMorphisms = 
+            (for (i <- 0 to k-1) yield {
+            	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
+            	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))}).toMap ++
+            	
+            Map (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) ->
+            (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) --- ("E" + (k + 1).toString + (k + 2).toString) --> ("V" + (k + 2).toString)))++
+            
+            (for (i <- k+1 to n-1) yield {
+              (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
+              (("V" + (i+1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))}).toMap
+  )
+  }
 
   //  def Coface(n: Int, k: Int) = Skip (n,k)
   //
@@ -114,42 +120,29 @@ object Examples {
   //  
   //  def Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
   //  
-    //TODO: Explain to David why FiniteCyclicMonoid is no good:
-  //     def FiniteCyclicMonoid (n : Int, k : Int) = Ontology (//should have k < n. When k = 0, this is the cyclic group of order n.
-  //         objects = List ("an element"),
-  //         arrows = List ("an element" --- "has as successor" --> "an element"),
-  //         relations = List (
-  //             (for (i <- 1 to n) yield {"an element" --- "has as successor" -->} + "an element")
-  //             ===
-  //             (for (i <- 1 to k) yield {"an element" --- "has as successor" -->} + "an element"))).assertFinite
-  //             
-  //     def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(//TODO Need Scott's help.
-  //         source = TerminalCategory,
-  //         target = FiniteCyclicMonoid(n, k),
-  //         onObjects = Map ("V0" -> "an element"),
-  //         onMorphisms = Map ())
-  //             
-  //     val DavidsFunkyFiniteCyclicMonoid = Dataset (
-  //         source = FiniteCyclicMonoid(2,1),
-  //         onObjects = Map ("an element" -> List ("David","Scott","UC Berkeley", "MIT","succDavid","succScott","succUC Berkeley", "succMIT")),
-  //         onMorphisms = Map ("an element" --- "has as successor" --> "an element" -> Map (
-  //             "David" -> "succDavid",
-  //             "Scott" -> "succScott",
-  //             "UC Berkeley" -> "succUC Berkeley",
-  //             "MIT" -> "succMIT",
-  //             "succDavid" -> "succDavid",
-  //             "succScott" -> "succScott",
-  //             "succUC Berkeley" -> "succUC Berkeley", 
-  //             "succMIT" -> "succMIT")))
-    
-  //             //TODO Need Scott's help on TranslationFiniteCyclicMonoids.
-//    def TranslationFiniteCyclicMonoids (n1 : Int, k1 : Int, n2: Int, k2: Int, image: Int) = Translation ( //A morphism of finite cyclic monoids is determined by the image of the unique generator. 
-//    		source = FiniteCyclicMonoid (n1 , k1),
-//    		target = FiniteCyclicMonoid (n2, k2),
-//    		onObjects = Map ("an element" -> "an element"),
-//    		onMorphisms = Map ("an element" --- "has as successor" --> "an element" ->
-//    			((for (i <- 1 to image) yield {"an element" --- "has as successor"}++)++"an element")))
+   
+       def FiniteCyclicMonoid (n : Int, k : Int) = { //should have k < n. When k = 0, this is the cyclic group of order n.
+         require (k<n)
+         def composition(i: Int) = (1 to i).foldLeft("an element".identity)({ case (x, m) => x --- "has as successor" --> "an element"})
+       Ontology (
+           objects = List ("an element"),
+           arrows = List ("an element" --- "has as successor" --> "an element"),
+           relations = List (composition(n) === composition(k))).assertFinite
+       }
+               
+       def TerminalCategoryToFiniteCyclicMonoid (n : Int, k : Int) = Translation(//TODO Need Scott's help.
+           source = TerminalCategory,
+           target = FiniteCyclicMonoid(n, k),
+           onObjects = Map ("V0" -> "an element"),
+           onMorphisms = Map ())
 
+//  def TranslationFiniteCyclicMonoids(n1: Int, k1: Int, n2: Int, k2: Int, image: Int) = Translation( //A morphism of finite cyclic monoids is determined by the image of the unique generator. 
+//    source = FiniteCyclicMonoid(n1, k1),
+//    target = FiniteCyclicMonoid(n2, k2),
+//    onObjects = Map("an element" -> "an element"),
+//    onMorphisms = Map("an element" --- "has as successor" --> "an element" ->
+//      ((for (i <- 1 to image) yield { "an element" --- "has as successor" }++) ++ "an element")))
+//
 
   val Compose = Translation(
     source = Examples.Ord(1),
@@ -189,19 +182,13 @@ object Examples {
     onObjects = Map(),
     onMorphisms = Map())
 
-//    def InitialDataset (c : Ontology) = Dataset( //TODO I don't understand the problem here; it looks analagous to TerminalDataset, which works.
-//        source = c,
-//        onObjects = (for (b <- c.objects) yield b.name -> List ()).toMap,
-//        onMorphisms = (for (a <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) -> 
-//        	Map ()).toMap)
-//        
-		  
-//def OppositeFunctor (f:Functor) = Functor( 
-//    source = OppositeOntology(f.source)
-//    target = OppositeOntology(f.target)
-//    onObjects = f.onObjects
-//    onMorphisms = for (???)) //???
-    
+    def InitialDataset (c : Ontology) = Dataset( 
+        source = c,
+        onObjects = (for (b <- c.objects) yield b.name -> List ()).toMap,
+        onMorphisms = (for (a <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) -> 
+        	Map[String, String] ()).toMap)
+        
+		      
   val SourceFunction = Translation(
     source = Ord(1),
     target = Grph,

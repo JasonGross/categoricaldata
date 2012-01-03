@@ -237,4 +237,11 @@ trait FiniteTranslation extends Translation { translation =>
   }
 
   override lazy val pullback = new Pullback {}
+
+  def opposite = new Translation {
+    override val source = translation.source.opposite
+    override val target = translation.target.opposite
+    override def onObjects(o: source.O) = translation.onObjects(o)
+    override def onGenerators(g: source.G) = ???
+  }
 }

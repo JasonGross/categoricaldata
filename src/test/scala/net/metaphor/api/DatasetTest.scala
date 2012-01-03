@@ -6,6 +6,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
 import net.metaphor.examples.Examples
+import net.metaphor.Test
 import net.metaphor.CustomMatchers
 import net.tqft.toolkit.arithmetic.Factorial
 
@@ -77,6 +78,11 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 
   "Dataset.findIsomorphismsTo" should "count automorphisms of Drawers" in {
     Drawers.findIsomorphismsTo(Drawers).size should equal(6)
+  }
+  
+  "Dataset.isIsomorphicTo" should "find that even a complex dataset is isomorphic to itself" in {
+    //Examples.ReverseGraph.__*(Test.DavidsFunkyGraph) should beIsomorphicTo(Examples.ReverseGraph.__*(Test.DavidsFunkyGraph))
+    1 should equal(0); println("I don't understand why the above line doesn't compile. I imported Test.scala just like CustomMatchers.scala.")// I don't understand why the above line doesn't compile. I imported Test.scala just like CustomMatchers.scala.
   }
 
 }

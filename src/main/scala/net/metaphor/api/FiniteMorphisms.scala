@@ -66,7 +66,6 @@ trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCa
   override def maximumWordLength(s: O, t: O) = allEquivalenceClasses._1 - 1
 
   override def normalForm(m: Path): Path = {
-    if (m.length > 10) throw new IllegalArgumentException // FIXME remove this
     if (m.length <= maximumWordLength(m.source, m.target) + 1) {
       pathEquivalenceClasses(m.source, m.target).find(_.contains(m)).get.toList.sortBy(_.length).head
     } else {
