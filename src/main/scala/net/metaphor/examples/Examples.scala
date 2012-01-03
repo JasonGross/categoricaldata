@@ -74,10 +74,10 @@ object Examples {
 
     def Skip (n : Int, k : Int) = {
 //    val onMorphisms1 =???
-//    val onMorphisms1 =???
-//    val onMorphisms1 =???
+//    val onMorphisms2 =???
+//    val onMorphisms3 =???
 //    
-  Translation ( // [n] --> [n+1] by skipping object k.
+	  Translation ( // [n] --> [n+1] by skipping object k.
         source = Examples.Chain(n),
         target = Examples.Chain(n+1),
         onObjects =
@@ -97,29 +97,28 @@ object Examples {
   )
   }
 
-  //  def Coface(n: Int, k: Int) = Skip (n,k)
-  //
-  //  def Duplicate(n : Int, k : Int) = Translation ( 
-  //      source = Examples.Chain(n),
-  //      target = Examples.Chain(n-1),
-  //      onObjects = 
-  //          (for (i <- 0 to k) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
-  //          (for (i <- k+1 to n) yield ("V" + i.toString) -> ("V" + (i - 1).toString)).toMap,
-  //      onMorphisms = Map (
-  //          for (i <- 0 to k-1) yield {
-  //          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-  //          	->
-  //          	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))},
-  //          (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString))
-  //          ->
-  //          ("V" + k.toString),
-  //          for (i <- k+1 to n-1) yield {
-  //            (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-  //          	->
-  //          	(("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))}))
-  //  
-  //  def Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
-  //  
+    def Coface(n: Int, k: Int) = Skip (n,k)
+  
+    def Duplicate(n : Int, k : Int) = Translation ( 
+        source = Examples.Chain(n),
+        target = Examples.Chain(n-1),
+        onObjects = 
+            (for (i <- 0 to k) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
+            (for (i <- k+1 to n) yield ("V" + i.toString) -> ("V" + (i - 1).toString)).toMap,
+        onMorphisms = 
+            (for (i <- 0 to k-1) yield {
+            	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
+            	(("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))}).toMap ++
+            	
+            Map (("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString)->
+            ("V" + k.toString).identity) ++
+            (for (i <- k+1 to n-1) yield {
+              (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))->
+              (("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))}).toMap
+  )
+    
+    def Codegeneracy(n : Int, k : Int) = Duplicate (n,k)
+    
    
        def FiniteCyclicMonoid (n : Int, k : Int) = { //should have k < n. When k = 0, this is the cyclic group of order n.
          require (k<n)
