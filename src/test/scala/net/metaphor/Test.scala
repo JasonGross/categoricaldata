@@ -498,5 +498,11 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
 //     val FCM = Examples.FiniteCyclicMonoid(7,4)
 //     FCM.Yoneda(box("V2")) should equal(FCM.Yoneda(box("V2")))
 //   }
-
+   
+//   "fullSubcategorySpannedBy" should "take Chains to Chains" in {//TODO Make a working fullSubcategorySpannedBy method.
+//	   val X = Examples.Chain(5)
+//	   val RHS = Examples.Chain(3)
+//	   val LHS = X.fullSubcategorySpannedBy(List("0","1","2","3")/*The fact that these are boxes should be inherent?*/)
+//	   LHS should equal(RHS)
+//   }
 }
