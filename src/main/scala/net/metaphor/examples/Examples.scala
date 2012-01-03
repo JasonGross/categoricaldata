@@ -95,26 +95,28 @@ object Examples {
 
   def Coface(n: Int, k: Int) = Skip(n, k)
 
-  def Duplicate(n: Int, k: Int) = Translation( //[n]-->[n-1] by duplicating object k. 
+  def Duplicate(n: Int, k: Int) = {
     //require ((n>0) and (n>=k)) //TODO explain why this require isn't working.
+    val FirstOnMorphisms = (for (i <- 0 to k - 1) yield {
+        (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
+          (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
+      }).toMap
+    val SecondOnMorphisms = Map(("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) ->
+          ("V" + k.toString).identity)
+    val ThirdOnMorphisms = (for (i <- k + 1 to n - 1) yield {
+          (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
+            (("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))
+        }).toMap
+    
+  Translation( //[n]-->[n-1] by duplicating object k. 
     source = Examples.Chain(n),
     target = Examples.Chain(n - 1),
     onObjects =
       (for (i <- 0 to k) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
         (for (i <- k + 1 to n) yield ("V" + i.toString) -> ("V" + (i - 1).toString)).toMap,
-    onMorphisms =
-      (for (i <- 0 to k - 1) yield {
-        (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
-          (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString))
-      }).toMap ++
-
-        Map(("V" + k.toString) --- ("E" + k.toString + (k + 1).toString) --> ("V" + (k + 1).toString) ->
-          ("V" + k.toString).identity) ++
-        (for (i <- k + 1 to n - 1) yield {
-          (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
-            (("V" + (i - 1).toString) --- ("E" + (i - 1).toString + i.toString) --> ("V" + i.toString))
-        }).toMap)
-
+    onMorphisms = FirstOnMorphisms ++ SecondOnMorphisms ++ ThirdOnMorphisms)
+  }
+  
   def Codegeneracy(n: Int, k: Int) = Duplicate(n, k)
 
   def FiniteCyclicMonoid(n: Int, k: Int) = { //should have k < n. When k = 0, this is the cyclic group of order n.
