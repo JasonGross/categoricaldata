@@ -53,7 +53,7 @@ object Examples {
       ("an edge" --- "has as source" --> "a vertex") -> Map(),
       ("an edge" --- "has as target" --> "a vertex") -> Map()))
   
-   def Ord(n: Int) = Ontology(
+   def Chain(n: Int) = Ontology(
     objects = for (i <- 0 to n) yield "V" + i.toString, 
     arrows = for (i <- 0 to n - 1) yield {
       ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
@@ -61,14 +61,14 @@ object Examples {
 
   
   val Domain = Translation(
-    source = Examples.Ord(0),
-    target = Examples.Ord(1),
+    source = Examples.Chain(0),
+    target = Examples.Chain(1),
     onObjects = Map("V0" -> "V0"),
     onMorphisms = Map())
 
   val Codomain = Translation(
-    source = Examples.Ord(0),
-    target = Examples.Ord(1),
+    source = Examples.Chain(0),
+    target = Examples.Chain(1),
     onObjects = Map("V0" -> "V1"),
     onMorphisms = Map())
 
@@ -78,8 +78,8 @@ object Examples {
 //    val onMorphisms1 =???
 //    
   Translation ( // [n] --> [n+1] by skipping object k.
-        source = Examples.Ord(n),
-        target = Examples.Ord(n+1),
+        source = Examples.Chain(n),
+        target = Examples.Chain(n+1),
         onObjects =
             (for (i <- 0 to k-1) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
             (for (i <- k to n) yield ("V" + i.toString) -> ("V" + (i + 1).toString)).toMap,
@@ -100,8 +100,8 @@ object Examples {
   //  def Coface(n: Int, k: Int) = Skip (n,k)
   //
   //  def Duplicate(n : Int, k : Int) = Translation ( 
-  //      source = Examples.Ord(n),
-  //      target = Examples.Ord(n-1),
+  //      source = Examples.Chain(n),
+  //      target = Examples.Chain(n-1),
   //      onObjects = 
   //          (for (i <- 0 to k) yield ("V" + i.toString) -> ("V" + i.toString)).toMap ++
   //          (for (i <- k+1 to n) yield ("V" + i.toString) -> ("V" + (i - 1).toString)).toMap,
@@ -145,15 +145,15 @@ object Examples {
 //
 
   val Compose = Translation(
-    source = Examples.Ord(1),
-    target = Examples.Ord(2),
+    source = Examples.Chain(1),
+    target = Examples.Chain(2),
     onObjects = Map(
       "V0" -> "V0",
       "V1" -> "V2"),
     onMorphisms = Map(
       ("V0" --- "E01" --> "V1") -> ("V0" --- "E01" --> "V1" --- "E12" --> "V2")))
 
-  val TerminalCategory = Examples.Ord(0)
+  val TerminalCategory = Examples.Chain(0)
 
   // Scott says: I fixed this up, but we need to talk about this in some detail!
   // David says: Yes, we should. I don't understand what's going on with Path(_, List(a)).
@@ -190,7 +190,7 @@ object Examples {
         
 		      
   val SourceFunction = Translation(
-    source = Ord(1),
+    source = Chain(1),
     target = Grph,
     onObjects = Map(
       "V0" -> "an edge",
@@ -199,7 +199,7 @@ object Examples {
       ("V0" --- "E01" --> "V1") -> ("an edge" --- "has as source" --> "a vertex")))
 
   val TargetFunction = Translation(
-    source = Ord(1),
+    source = Chain(1),
     target = Grph,
     onObjects = Map(
       "V0" -> "an edge",

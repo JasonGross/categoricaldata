@@ -15,9 +15,9 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
 
-  def setOfSize(n: Int) = Dataset(Examples.Ord(0), onObjects = Map("V0" -> (0 until n).map(_.toString)), onMorphisms = Map())
+  def setOfSize(n: Int) = Dataset(Examples.Chain(0), onObjects = Map("V0" -> (0 until n).map(_.toString)), onMorphisms = Map())
 
-  val Drawers = Dataset(Examples.Ord(1),
+  val Drawers = Dataset(Examples.Chain(1),
     onObjects = Map(
       "V0" -> List("Item 1", "Item 2", "Item 3", "Item 4"),
       "V1" -> List("Top Drawer", "Bottom Drawer")),
@@ -28,7 +28,7 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "Item 3" -> "Top Drawer",
         "Item 4" -> "Top Drawer")))
 
-  val Drawers2 = Dataset(Examples.Ord(1),
+  val Drawers2 = Dataset(Examples.Chain(1),
     onObjects = Map(
       "V0" -> List("Item 1", "Item 2", "Item 3", "Item 4"),
       "V1" -> List("Top Drawer", "Bottom Drawer")),
@@ -39,7 +39,7 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "Item 3" -> "Bottom Drawer",
         "Item 4" -> "Top Drawer")))
 
-  val DrawersRenamed = Dataset(Examples.Ord(1),
+  val DrawersRenamed = Dataset(Examples.Chain(1),
     onObjects = Map(
       "V0" -> List("Item 5", "Item 6", "Item 7", "Item 8"),
       "V1" -> List("Left Drawer", "Right Drawer")),

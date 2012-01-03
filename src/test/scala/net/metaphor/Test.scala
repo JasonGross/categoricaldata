@@ -168,7 +168,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "b" -> "b",
         "c" -> "c")))
 
-  val DavidsFunkyFunction = Dataset(source = Examples.Ord(1),
+  val DavidsFunkyFunction = Dataset(source = Examples.Chain(1),
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
       "V1" -> List("1978", "Scott's birthyear", "1868", "1861")),
@@ -192,12 +192,12 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       "succUC Berkeley" -> "succUC Berkeley",
       "succMIT" -> "succMIT")))
 
-  val DavidsFunkySet1 = Dataset(source = Examples.Ord(0),
+  val DavidsFunkySet1 = Dataset(source = Examples.Chain(0),
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
     onMorphisms = Map())
 
-  val DavidsFunkySet2 = Dataset(source = Examples.Ord(0),
+  val DavidsFunkySet2 = Dataset(source = Examples.Chain(0),
     onObjects = Map(
       "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
     onMorphisms = Map())
@@ -220,12 +220,12 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //    }
 
   "__*" should "work with terminal functor on 'function'" in {
-    val pushforward = Examples.TerminalFunctor(Examples.Ord(1)).__*(DavidsFunkyFunction)
+    val pushforward = Examples.TerminalFunctor(Examples.Chain(1)).__*(DavidsFunkyFunction)
     pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
   }
 
   "__!" should "work with terminal functor on 'function'" in {
-    val shriek = Examples.TerminalFunctor(Examples.Ord(1)).__!(DavidsFunkyFunction)
+    val shriek = Examples.TerminalFunctor(Examples.Chain(1)).__!(DavidsFunkyFunction)
     shriek.isIsomorphicTo(DavidsFunkySet2) should equal(true)
   }
 

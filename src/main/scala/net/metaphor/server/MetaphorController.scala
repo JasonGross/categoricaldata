@@ -10,7 +10,7 @@ import net.metaphor.api.Dataset
 
 class MetaphorController extends Controller with FunctionNameConventionRoutes {
 
-  def `GET /metaphor/examples/ontologies/Ord/:n`(n: Int) = Examples.Ord(n).toJSON
+  def `GET /metaphor/examples/ontologies/Chain/:n`(n: Int) = Examples.Chain(n).toJSON
   def `GET /metaphor/examples/ontologies/Isomorphism` = Examples.Isomorphism.toJSON
   def `GET /metaphor/examples/ontologies/Grph` = Examples.Grph.toJSON
   def `GET /metaphor/examples/datasets/TerminalBigraph` = Examples.TerminalBigraph.toJSON
