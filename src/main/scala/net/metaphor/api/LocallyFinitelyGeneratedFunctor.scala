@@ -130,8 +130,11 @@ trait LocallyFinitelyGeneratedFunctorWithLocallyFinitelyGeneratedTarget extends 
       for (
         l <- (lfgFunctor.source.minimumLevel to k).toList;
         right <- lfgFunctor.source.objectsAtLevel(l);
+// the next two lines should be swapped out for the following two, but I want to wait for a test        
         path <- lfgFunctor.target.wordsOfLength(k - l)(onLeft, lfgFunctor.apply(right))
       ) yield ObjectRightOf(right, lfgFunctor.target.pathAsMorphism(path))
+//        morphism <- lfgFunctor.target.morphismsOfLength(k - l)(onLeft, lfgFunctor.apply(right))
+//      ) yield ObjectRightOf(right, morphism)
     }
   }
   abstract class CosliceCategory(onRight: lfgFunctor.target.O) extends super.CosliceCategory(onRight) {
@@ -139,8 +142,11 @@ trait LocallyFinitelyGeneratedFunctorWithLocallyFinitelyGeneratedTarget extends 
       for (
         l <- (lfgFunctor.source.minimumLevel to k).toList;
         left <- lfgFunctor.source.objectsAtLevel(l);
+// the next two lines should be swapped out for the following two       
         path <- lfgFunctor.target.wordsOfLength(k - l)(lfgFunctor.apply(left), onRight)
       ) yield ObjectLeftOf(left, lfgFunctor.target.pathAsMorphism(path))
+//        morphism <- lfgFunctor.target.morphismsOfLength(k - l)(lfgFunctor.apply(left), onRight)
+//      ) yield ObjectLeftOf(left, morphism)
     }
   }
 
