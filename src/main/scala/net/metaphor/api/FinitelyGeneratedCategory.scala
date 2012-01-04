@@ -56,7 +56,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         override def onGenerators(g: categoryOver.source.G) = categoryOver.source.generatorAsMorphism(g)
       }
     }
-    def Yoneda(o:O) = ???
+    
   }
 
   trait FinitelyGeneratedFunctorOver extends FunctorOver {
