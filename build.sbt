@@ -40,12 +40,12 @@ libraryDependencies ++= Seq(
 
 // Dependencies for jetty:run
 libraryDependencies ++= Seq(
-	"org.mortbay.jetty" % "jetty" % "6.1.22" % "jetty"
+	"org.mortbay.jetty" % "jetty" % "6.1.22" % "container"
 )
 
 seq(webSettings :_*)
 
-jettyPort := 8081
+port in container.Configuration := 8081
 
 scalacOptions ++= Seq("-Xexperimental")
 
