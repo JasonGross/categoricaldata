@@ -490,6 +490,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
 //      LHS should beIsomorphicTo(RHS)
 //   }       
    
+   // Currently fails, because the morphisms get renamed by opposite: f => f^op, and f^op^op isn't the same as f. Maybe this should wait on isomorphism?
    "opposite" should "be an involution for FiniteCyclicMonoid" in {
      val FCM = Examples.FiniteCyclicMonoid(7,4)
      FCM.opposite.opposite should equal(FCM)
