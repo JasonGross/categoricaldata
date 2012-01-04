@@ -18,7 +18,6 @@ class ColimitTest extends FlatSpec with ShouldMatchers {
   "colimit" should "correctly find two connected components of the authorship graph" in {
     val colimit = i.colimitSet
 
-    for (s <- colimit.toIterable) println(s) 
     colimit.toIterable.size should equal(2)
   }
 

@@ -34,10 +34,4 @@ class OntologyTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     (for (k <- 0 until 5) yield I.morphismsOfLength(k)(o0, o0).size) should equal (List(1,0,0,0,0))
   }
   
-  "FiniteCyclicMonoid.morphismsOfLength" should "have the right sizes" in { 
-	  val C = Examples.FiniteCyclicMonoid(5, 3)
-	  val e = C.objects.head //Since the monoid has only one object, we can just get it -- the head of the list of objects. Equally valid: e = Box("an element")
-	      (for (k <- 0 until 8) yield C.morphismsOfLength(k)(e, e).size) should equal (List(1,1,1,1,1,0,0,0)) //How many morphisms of length 0,1,...7?
-
-  }
 }

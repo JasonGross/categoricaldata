@@ -16,15 +16,13 @@ resolvers ++= Seq(
 	"Scala Snapshots" at "http://scala-tools.org/repo-snapshots/"
 )
 
+// Project dependencies
 libraryDependencies ++= Seq(
-	"junit" % "junit" % "4.8" % "test",
-	"org.scalatest" %% "scalatest" % "1.6.1" % "test",
 	"net.tqft.toolkit" %% "toolkit" % "0.1.0",
-	"org.mortbay.jetty" % "jetty" % "6.1.22" % "jetty",
-	"org.mortbay.jetty" % "jetty" % "6.1.22" % "test",
 	"org.bowlerframework" %% "core" % "0.5.1"
 )
 
+// lift-json
 libraryDependencies ++= {
   val liftVersion = "2.4-M4" // Put the current/latest lift version here
   Seq(
@@ -32,6 +30,18 @@ libraryDependencies ++= {
     "net.liftweb" %% "lift-json-ext" % liftVersion % "compile->default"
     )
 }
+
+// Test dependencies
+libraryDependencies ++= Seq(
+	"junit" % "junit" % "4.8" % "test,dev",
+	"org.scalatest" %% "scalatest" % "1.6.1" % "test,dev",
+	"org.mortbay.jetty" % "jetty" % "6.1.22" % "test,dev"
+)
+
+// Dependencies for jetty:run
+libraryDependencies ++= Seq(
+	"org.mortbay.jetty" % "jetty" % "6.1.22" % "jetty"
+)
 
 seq(webSettings :_*)
 
