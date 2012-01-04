@@ -6,28 +6,31 @@ object Examples {
 
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
-  
-  def DiscreteCategoryOn(n:Int) = Ontology(
-     objects = for (i <- 1 to n) yield "V" + i.toString,
-     arrows = List()).assertFree
-     
-  def IndiscreteCategoryOn(n:Int) = {
-      val forward = for (i <- 1 to n - 1) yield {
-      ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)}
-      val backward = for (i <- 1 to n - 1) yield {
-      ("V" + (i+1).toString) --- ("E" + (i+1).toString + i.toString) --> ("V" + i.toString)}
-      val isoL = for (i <- 1 to n - 1) yield {
-      (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString) --- ("E" + (i+1).toString + i.toString) --> ("V" + i.toString)) ===
-        ("V"+ i.toString).identity}
-       val isoR = for (i <- 1 to n - 1) yield {
-      (("V" + (i+1).toString) --- ("E" + (i+1).toString + i.toString) --> ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ===
-        ("V"+ (i+1).toString).identity}
-      Ontology(
-          objects = for (i <- 1 to n) yield "V" + i.toString,
-          arrows = List.concat(forward, backward),
-          relations = List.concat(isoL,isoR)
-    )}.assertAcyclic
-    
+
+  def DiscreteCategoryOn(n: Int) = Ontology(
+    objects = for (i <- 1 to n) yield "V" + i.toString,
+    arrows = List()).assertFree
+
+  def IndiscreteCategoryOn(n: Int) = {
+    val forward = for (i <- 1 to n - 1) yield {
+      ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
+    }
+    val backward = for (i <- 1 to n - 1) yield {
+      ("V" + (i + 1).toString) --- ("E" + (i + 1).toString + i.toString) --> ("V" + i.toString)
+    }
+    val isoL = for (i <- 1 to n - 1) yield {
+      (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString) --- ("E" + (i + 1).toString + i.toString) --> ("V" + i.toString)) ===
+        ("V" + i.toString).identity
+    }
+    val isoR = for (i <- 1 to n - 1) yield {
+      (("V" + (i + 1).toString) --- ("E" + (i + 1).toString + i.toString) --> ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ===
+        ("V" + (i + 1).toString).identity
+    }
+    Ontology(
+      objects = for (i <- 1 to n) yield "V" + i.toString,
+      arrows = List.concat(forward, backward),
+      relations = List.concat(isoL, isoR))
+  }.assertFinite
 
   val Grph = Ontology(
     objects = List("an edge", "a vertex"),
@@ -319,6 +322,5 @@ object Examples {
       ("an element" --- "is married to" --> "an element" --- "is married to" --> "an element")
         ===
         ("an element")))
-        
 
 }
