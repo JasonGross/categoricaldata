@@ -1,0 +1,36 @@
+<html>
+<head>
+<script
+  src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://yandex.st/raphael/2.0.1/raphael.min.js"></script>
+<link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+  <div id="ontology-editor">
+    <div id="canvas" />
+  </div>
+  <script>
+var r = Raphael("canvas", 640, 480);
+var shapes = [  r.ellipse(190, 100, 30, 20),
+                    r.rect(290, 80, 60, 40, 10),
+                    r.rect(290, 180, 60, 40, 2),
+                    r.ellipse(450, 100, 20, 20)
+                ];
+function dragStart() {
+       this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
+       this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
+};                
+function dragUpdate(dx, dy) {
+            var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
+            this.attr(att);
+        };                                
+for (var i = 0, ii = shapes.length; i < ii; i++) {
+        var color = Raphael.getColor();
+        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0.5, "stroke-width": 2, cursor: "move"});
+        shapes[i].drag(dragUpdate, dragStart);
+    }                
+    
+// http://stackoverflow.com/questions/5844927/selecting-multiple-svg-elements-and-dragging-them-in-raphael-js    
+</script>
+</body>
+</html>
