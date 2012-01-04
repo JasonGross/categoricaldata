@@ -319,5 +319,6 @@ object Examples {
       ("an element" --- "is married to" --> "an element" --- "is married to" --> "an element")
         ===
         ("an element")))
+        
 
 }

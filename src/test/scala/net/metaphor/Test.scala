@@ -495,6 +495,8 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
      val FCM = Examples.FiniteCyclicMonoid(7,4)
      FCM.opposite.opposite should equal(FCM)
    }
+  
+ 
    
 //   "yoneda" should "exist for objects in FiniteCyclicMonoid" in { //TODO Activate this test when Yoneda has been made.
 //     val FCM = Examples.FiniteCyclicMonoid(7,4)
