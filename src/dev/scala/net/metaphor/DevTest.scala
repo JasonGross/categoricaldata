@@ -10,6 +10,7 @@ import net.metaphor.api.FiniteTranslation
 import net.metaphor.api.FiniteMorphisms
 import net.metaphor.api.Ontologies
 import net.metaphor.examples.Examples
+import net.metaphor.util.CustomMatchers
 /*
  * This should always compile when checked in.
  */

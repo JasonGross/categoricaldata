@@ -10,6 +10,7 @@ import net.metaphor.api.FiniteTranslation
 import net.metaphor.api.FiniteMorphisms
 import net.metaphor.api.Ontologies
 import net.metaphor.examples.Examples
+import net.metaphor.util.CustomMatchers
 /*
  * This should always compile when checked in.
  */
@@ -202,19 +203,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
     onMorphisms = Map())
 
-  "pullback" should "work with the domain inclusion" in {
-    Examples.Domain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet1)
-  }
-
-  "pullback" should "work with the codomain inclusion" in {
-    Examples.Codomain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet2)
-  }
-
-  // TODO waiting on translations with infinite targets
-  //    "pullback" should "work with the GraphToDiscreteDynamicalSystem1 functor" in {
-  //      GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
-  //    }
-
   "__*" should "work with terminal functor on 'function'" in {
     val pushforward = Examples.TerminalFunctor(Examples.Chain(1)).__*(DavidsFunkyFunction)
     pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
@@ -233,22 +221,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph).isIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem) should equal(true)
   //  }
 
-  // Let 0:C-->Set be the initial dataset and 1:C-->Set the terminal dataset.
-  // For any functor F:C-->D, we have F^*(0)=0, F^*(1)=1, F_!(0)=0, F_*(1)=1.
-  // I chose some random functor from above, TerminalCategoryToFiniteCyclicMonoid(10,7), and did the calculation there.
 
-  //   "pullback" should "preserve the initial dataset" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(InitialDataset(FiniteCyclicMonoid)) 
-  //	   should equal 
-  //	   (InitialDataset(TerminalCategory))
-  //   }
-  //   
-  //   "pullback" should "preserve the terminal dataset" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(TerminalDataset(FiniteCyclicMonoid)) 
-  //	   should equal 
-  //	   (TerminalDataset(TerminalCategory))
-  //   }
-  //   
   //   "__*" should "preserve the terminal dataset" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
   //	   should equal 
@@ -261,9 +234,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
   //   }
 
-  "pullback" should "reverse graph as expected" in {
-    Examples.ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
-  }
 
   "__!" should "work reverse graph as expected" in {
     //    println

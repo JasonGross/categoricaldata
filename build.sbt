@@ -34,7 +34,7 @@ libraryDependencies ++= {
 // Test dependencies
 libraryDependencies ++= Seq(
 	"junit" % "junit" % "4.8" % "test,dev",
-	"org.scalatest" %% "scalatest" % "1.6.1" % "test,dev",
+	"org.scalatest" %% "scalatest" % "1.6.1" % "compile,test,dev",
 	"org.mortbay.jetty" % "jetty" % "6.1.22" % "test,dev"
 )
 

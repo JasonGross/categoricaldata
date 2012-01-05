@@ -6,7 +6,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
 import net.metaphor.examples.Examples
-import net.metaphor.CustomMatchers
+import net.metaphor.util.CustomMatchers
 import net.tqft.toolkit.arithmetic.Factorial
 
 @RunWith(classOf[JUnitRunner])

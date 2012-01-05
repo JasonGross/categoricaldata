@@ -6,8 +6,8 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
 import net.metaphor.examples.Examples
-import net.metaphor.CustomMatchers
 import net.tqft.toolkit.arithmetic.Factorial
+import net.metaphor.util.CustomMatchers
 
 @RunWith(classOf[JUnitRunner])
 class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
