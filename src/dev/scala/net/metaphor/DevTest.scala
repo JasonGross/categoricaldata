@@ -202,14 +202,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
       "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
     onMorphisms = Map())
 
-  "pullback" should "work with the domain inclusion" in {
-    Examples.Domain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet1)
-  }
-
-  "pullback" should "work with the codomain inclusion" in {
-    Examples.Codomain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet2)
-  }
-
   "__*" should "work nicely with the map from E2 to PointedSets" in {
     Examples.E2ToPointedSets.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetsRPushFunky)
   }
@@ -219,15 +211,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
   //    }
 
-  "__*" should "work with terminal functor on 'function'" in {
-    val pushforward = Examples.TerminalFunctor(Examples.Chain(1)).__*(DavidsFunkyFunction)
-    pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
-  }
-
-  "__!" should "work with terminal functor on 'function'" in {
-    val shriek = Examples.TerminalFunctor(Examples.Chain(1)).__!(DavidsFunkyFunction)
-    shriek.isIsomorphicTo(DavidsFunkySet2) should equal(true)
-  }
+  
 
   //   "__!" should "work (1)" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
@@ -265,9 +249,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
   //   }
 
-  "pullback" should "reverse graph as expected" in {
-    Examples.ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
-  }
+  
 
   "__*" should "reverse graph as expected" in {
     println
@@ -282,16 +264,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     LHS should beIsomorphicTo(RHS)
   }
 
-  "__!" should "work reverse graph as expected" in {
-    //    println
-    //    println("Output from \"__! should reverse graph as expected\":")
-
-    val LHS = Examples.ReverseGraph.__!(DavidsFunkyGraph)
-    val RHS = DavidsFunkyGraphReversed
-    //    println(LHS)
-    //    println(RHS)
-    LHS should beIsomorphicTo(RHS)
-  }
+  
   // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
   // Scott: sure, if you have some supply of datasets, you could write
   /*
@@ -301,12 +274,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
    * 	dataset.colimitSet should equal(TerminalFunctor(C).__!(dataset)(x))
    * }
    */
-  "colimit and __!" should "agree for terminal functors" in {
-    //For any category C, and any dataset D:C-->Set, we should have colim(D)=TerminalFunctor(C).__!(D)
-  }
-  "limit and __*" should "agree for terminal functors" in {
-    //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
-  }
+  
 
   "__* along PointedSetsToIsomorphism" should "take a retraction and return two sets isomorphic to its base." in {
     println
@@ -321,18 +289,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     LHS should beIsomorphicTo(RHS)
   }
 
-  "__!" should "work with PointedSetsToIsomorphism" in {
-    //    println
-    //    println("Output from \"__! should take this retraction and return two sets isomorphic to its total space.\":")
-    //    println
-    val X = OneTwoThreePointed
-    val LHS = ThreeElementsIso
-    val RHS = Examples.PointedSetsToIsomorphism.__!(X)
-    //    println("Original retraction: "); println(X);println
-    //    println("Expected isomorphism: "); println (LHS);println
-    //    println("Left pushforward of original retraction: ");println (RHS)
-    LHS should beIsomorphicTo(RHS)
-  }
+  
   
 //  val SaturatedCommutativeTriangle = { //TODO Scala doesn't seem to even be reading this file or checking it. Make sure this val compiles.
 //    val ArrowsList=List (
@@ -510,6 +467,83 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 //      println(RHS)
 //      LHS should beIsomorphicTo(RHS)
 //   }      
+          
+            val FCM7_6 = Dataset(source = Examples.FiniteCyclicMonoid(7,6),
+    onObjects = Map(
+      "an element" -> List("a", "b", "c", "d")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "a" -> "c",
+        "b" -> "c",
+        "c" -> "d",
+        "d" -> "d")))
+
+  val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(7,6),
+    onObjects = Map(
+      "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "a1" -> "a2",
+        "b1" -> "b2",
+        "c1" -> "c2",
+        "d1" -> "d2",
+        "a2" -> "c1",
+        "b2" -> "c1",
+        "c2" -> "d1",
+        "d2" -> "d1")))
+
+  val FCM7_6Times2R = Dataset(source = Examples.FiniteCyclicMonoid(7,6),
+    onObjects = Map(
+      "an element" -> List("aa", "ab", "ac", "ad", "ba", "bb", "bc", "bd", "ca", "cb", "cc", "cd", "da", "db", "dc", "dd")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "aa" -> "ca",
+        "ab" -> "ca",
+        "ac" -> "da",
+        "ad" -> "da",
+        "ba" -> "cb",
+        "bb" -> "cb",
+        "bc" -> "db",
+        "bd" -> "db",
+        "ca" -> "cc",
+        "cb" -> "cc",
+        "cc" -> "dc",
+        "cd" -> "dc",
+        "da" -> "cd",
+        "db" -> "cd",
+        "dc" -> "dd",
+        "dd" -> "dd")))
+
+  
+  // These tests run forever. What's going on?
+  //     "__*" should "provide a 'half-speed' FCM20_19" in {
+  //      println
+  //      println("Output from \"__* should provide a 'half-speed' FCM20_19\":")
+  //      
+  //      val X = FCM20_19
+  //      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
+  //      val LHS = T.__*(X)
+  //      val RHS = FCM20_19Times2R
+  //      println(X)
+  //      println(LHS)
+  //      println(RHS)
+  //      LHS should beIsomorphicTo(RHS)
+  //   }  
+        
+        
+       "__*" should "provide a 'half-speed' FCM7_6" in {
+        println
+        println("Output from \"__* should provide a 'half-speed' FCM7_6\":")
+        
+        val X = FCM7_6
+        val T = Examples.TranslationFiniteCyclicMonoids(7,6,7,6,2);
+        val LHS = T.__*(X)
+        val RHS = FCM7_6Times2R
+        println(X)
+        println(LHS)
+        println(RHS)
+        LHS should beIsomorphicTo(RHS)
+     }      
 //    
 //    "__!" should "provide a 'half-speed' FCM20_19" in {
 //      println
