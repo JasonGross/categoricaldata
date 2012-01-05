@@ -3,6 +3,7 @@
 <script
   src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="http://yandex.st/raphael/2.0.1/raphael.min.js"></script>
+<script src="ontology-editor.js"></script>
 <link rel="stylesheet" href="stylesheet.css">
 </head>
 <body>
@@ -11,26 +12,98 @@
   </div>
   <script>
 var r = Raphael("canvas", 640, 480);
-var shapes = [  r.ellipse(190, 100, 30, 20),
-                    r.rect(290, 80, 60, 40, 10),
-                    r.rect(290, 180, 60, 40, 2),
-                    r.ellipse(450, 100, 20, 20)
-                ];
-function dragStart() {
-       this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
-       this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
-};                
-function dragUpdate(dx, dy) {
-            var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
-            this.attr(att);
-        };                                
-for (var i = 0, ii = shapes.length; i < ii; i++) {
-        var color = Raphael.getColor();
-        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0.5, "stroke-width": 2, cursor: "move"});
-        shapes[i].drag(dragUpdate, dragStart);
-    }                
+var boxes = [];
+                
+function createBoxRectangle(x, y) {
+  var WIDTH = 100, HEIGHT = 50, ROUNDING = 5;
+  var box = r.rect(x, y, WIDTH, HEIGHT, ROUNDING);
+  var color = Raphael.getColor();
+  box.attr({fill: color, stroke: color, "fill-opacity": 0.5, "stroke-width": 2, cursor: "move"});
+  return box;
+}
+function addLabel(c, label) {
+  label = typeof(label) != 'undefined' ? label : ''
+  var OFFSET_x = c.getBBox().width / 2, OFFSET_y = c.getBBox().height / 2;
+  return r.text(c.attr('x') + OFFSET_x, c.attr('y') + OFFSET_y, label);  
+}
+
+Raphael.el.bottomRight = function() {
+  var bb = this.getBBox();
+  return { x: bb.x + bb.width, y: bb.y + bb.height };
+}
+Raphael.el.right = function() {
+  var bb = this.getBBox();
+  return { x: bb.x + bb.width, y: bb.y + bb.height / 2 };
+}
+Raphael.el.center = function() {
+  var bb = this.getBBox();
+  return { x: bb.x + bb.width / 2, y: bb.y + bb.height / 2 };
+}
+
+
+function moveToString(coords) {
+  return "T" + coords.x + "," + coords.y;
+}
+function translationString(coords) {
+  return "T" + coords.x + "," + coords.y;
+}
+
+function dragToCreateArrow(source) {
+  var path;
+  var ox;
+  var oy;
+
+  function drawPath(dx, dy) {
+    path = r.path("M" + ox + "," + oy + "c20,0 -20,0 " + dx + "," + dy); 
+  }
+
+  function dragStart() {
+    var c = source.center();
+    ox = c.x;
+    oy = c.y;
+    drawPath(0, 0);
+  }
+  function dragUpdate(dx, dy) {
+    path.remove();
+    drawPath(dx, dy);
+  }
+  function dragStop() {
+    path.remove();
+  }
+
+  source.drag(dragUpdate, dragStart, dragStop);
+  return source;
+}
+
+function createBox(x, y, label) {
+  var box = createBoxRectangle(x, y);
     
-// http://stackoverflow.com/questions/5844927/selecting-multiple-svg-elements-and-dragging-them-in-raphael-js    
+  box.label = addLabel(box, label);
+  
+  box.addArrow = r.circle(0,0,3)
+                  .transform(translationString(box.right()) + "t-10,0")                                       // position just inside the right edge
+                  .attr({ fill: '#ffffff', stroke: '#0000cc', 'stroke-width': 2 })       // blue, and filled (transparently)
+                  .hover(function() { this.glowing = this.glow(); }, function() { this.glowing.remove(); });  // glow on hover
+                  
+  dragToCreateArrow(box.addArrow);
+    
+  var set = r.set()
+  set.push(box, box.label, box.addArrow);
+  box.draggable(set);
+  
+  boxes.push(box);
+  return box;
+}               
+
+createBox(100, 150); createBox(290, 80, 'an element'); createBox(290, 180); createBox(450, 100); 
+         
+var createNewBox = createBoxRectangle(100, 400);
+createNewBox.attr({fill: '#ffffff', 'fill-opacity': 0.0, cursor: 'default' });
+addLabel(createNewBox, 'Create a new box').toBack();
+createNewBox.mousedown(function() { createBox(100, 50); } );
+              
+
+                
 </script>
 </body>
 </html>
