@@ -333,7 +333,42 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     //    println("Left pushforward of original retraction: ");println (RHS)
     LHS should beIsomorphicTo(RHS)
   }
-
+  
+//  val SaturatedCommutativeTriangle = { //TODO Scala doesn't seem to even be reading this file or checking it. Make sure this val compiles.
+//    val ArrowsList=List (
+//          "V0" --- "E00" --> "V0"
+//          "V0" --- "E01" --> "V1",
+//          "V0" --- "E02" --> "V2",
+//          "V1" --- "E11" --> "V1",
+//          "V1" --- "E12" --> "V2",
+//          "V2" --- "E22" --> "V2")
+//    val RelationsId0=List(
+//        ("V0" --- "E00" --> "V0" --- "E00" --> "V0") === ("V0" --- "E00" --> "V0"),
+//        ("V0" --- "E00" --> "V0" --- "E01" --> "V1") === ("V0" --- "E01" --> "V1"),
+//        ("V0" --- "E00" --> "V0" --- "E02" --> "V2") === ("V0" --- "E02" --> "V2"))
+//    val RelationsId1=List(
+//        ("V0" --- "E01" --> "V1" --- "E11" --> "V1") === ("V0" --- "E01" --> "V1"),
+//        ("V1" --- "E11" --> "V1" --- "E11" --> "V1") === ("V1" --- "E11" --> "V1"),
+//        ("V1" --- "E11" --> "V1" --- "E12" --> "V2") === ("V1" --- "E12" --> "V2"))
+//    val RelationsId2=List(
+//        ("V0" --- "E02" --> "V2" --- "E22" --> "V2") === ("V0" --- "E02" --> "V2"),
+//        ("V1" --- "E12" --> "V2" --- "E22" --> "V2") === ("V1" --- "E12" --> "V2"),
+//        ("V2" --- "E22" --> "V2" --- "E22" --> "V2") === ("V2" --- "E22" --> "V2"))
+//    val Comp012=List(
+//        ("V0" --- "E01" --> "V1" --- "E12" --> "V2") === ("V0" --- "E02" --> "V2"))
+//    
+//    Ontology(
+//  
+//      objects = List("V0","V1","V2"),
+//      arrows = ArrowsList,
+//      relations = List.concat(RelationsId0,RelationsId1,RelationsId2,Comp012)
+//    )
+//  }
+//  
+//  "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO Is this test in the right place? Does it work? Do we have BeIsomorphicAsCategoriesTo, or any other such guy?
+//    chain(3) should BeIsomorphicAsCategoriesTo(SaturatedCommutativeTriangle)
+//  }
+      
   val DDS1 = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
       "an element" -> List("a", "b", "c", "d")),
