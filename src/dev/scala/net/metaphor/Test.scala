@@ -467,7 +467,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
 //      println("Output from \"__* should provide a 'half-speed' FCM20_19\":")
 //      
 //      val X = FCM20_19
-//      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,1);
+//      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
 //      val LHS = T.__*(X)
 //      val RHS = FCM20_19Times2R
 //      println(X)
@@ -481,7 +481,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
 //      println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
 //      
 //      val X = FCM20_19
-//      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,1);
+//      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
 //      val LHS = T.__!(X)
 //      val RHS = FCM20_19Times2L
 //      println(X)
