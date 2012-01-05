@@ -12,6 +12,7 @@ trait NormalForm { fpCategory: FinitelyPresentedCategory =>
   override def pathEquality(p1: fpCategory.Path, p2: fpCategory.Path) = {
     normalForm(p1) == normalForm(p2)
   }
+  override def pathHashCode(p: fpCategory.Path) = normalForm(p).hashCode
 }
 
 trait FiniteMorphisms extends NormalForm { fpCategory: FinitelyPresentedCategory =>

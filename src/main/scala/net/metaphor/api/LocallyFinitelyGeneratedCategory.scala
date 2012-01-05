@@ -90,10 +90,17 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
         case _ => false
       }
     }
+    override def hashCode = pathHashCode(representative)
     override def toString = representative.toString
   }
 
   def pathEquality(path1: Path, path2: Path): Boolean
+  /**
+   * The only constraint on pathHashCode is the equal paths must give the same result.
+   * The extent possible, unequal paths should give different results, as long as this is a cheap calculation.
+   * Categories with normal forms override this automatically.
+   */
+  def pathHashCode(path: Path): Int = 0
 
   def wordsOfLengthFrom(k: Int)(source: O): List[Path] = {
     k match {
