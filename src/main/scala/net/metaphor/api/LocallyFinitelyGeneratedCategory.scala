@@ -111,7 +111,9 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for (n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
 
   // TODO this is very inefficient, we probably should memo some results.
-  def morphismsOfLength(k: Int)(source: O, target: O): Set[M] = wordsUpToLength(k)(source, target).map(pathAsMorphism(_)).toSet -- wordsUpToLength(k-1)(source, target).map(pathAsMorphism(_)).toSet
+  def morphismsOfLength(k: Int)(source: O, target: O): Set[M] = {
+   wordsUpToLength(k)(source, target).map(pathAsMorphism(_)).toSet -- wordsUpToLength(k-1)(source, target).map(pathAsMorphism(_)).toSet 
+  }
   
   trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory {
     override type O = lfgCategory.O

@@ -17,6 +17,15 @@ trait Category { category =>
       case h :: t => compose(h, t: _*)
     }
   }
+  def power(m: M, k: Int): M = {
+    require(source(m) == target(m))
+    k match {
+      case 0 => identity(source(m))
+      case 1 => m
+      case k if k >= 2 => compose(source(m), List.fill(k)(m))
+      case k if k < 0 => throw new IllegalArgumentException
+    }
+  }
 
   trait FunctorFrom extends Functor {
     override val source: category.type = category
