@@ -95,7 +95,7 @@ object Examples {
     onMorphisms = Map())
 
   def Skip(n: Int, k: Int) = {
-    //require (n>=k) //TODO explain why this require isn't working.
+    //require (n>=k) //TODO David: explain why this require isn't working. Scott: Can you show me it not working? 
 
     val FirstOnMorphisms = (for (i <- 0 to k - 1) yield {
       (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
