@@ -21,8 +21,7 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =
   override def hashCode = {
     List(objects.toSet, allGenerators.toSet, symmetrizedRelations.toSet).hashCode
   }
-  
-  
+    
   def findIsomorphismsTo(other: FinitelyPresentedCategory): Iterable[Functor] = ???
   def isIsomorphicTo(other: FinitelyPresentedCategory) = findIsomorphismsTo(other).nonEmpty
 

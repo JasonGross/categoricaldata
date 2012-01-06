@@ -10,7 +10,7 @@ case class Arrow(source: Box, target: Box, name: String) {
 }
 
 trait Dataset extends net.metaphor.api.FunctorToSet {
-  
+
 }
 
 trait Ontology extends FinitelyPresentedCategory { ontology =>
@@ -158,7 +158,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     lazy val memo: ontology.Dataset = new DatasetMemo
 
-    lazy val toJSON =  net.metaphor.json.Pack.packDataset(this)
+    lazy val toJSON = net.metaphor.json.Pack.packDataset(this)
   }
   trait Datamap extends NaturalTransformationToSet { datamap =>
     override def toString = "Datamap(\n  onObjects = Map(\n" + (for (o <- ontology.objects) yield "    " + o.toString + " -> " + datamap(o).toString).mkString(",\n    ") + "))"
@@ -179,13 +179,13 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         }
       }
     }
-    
+
   }
-//  def yoneda(o: O)=new Dataset { // TODO Why didn't this work?
-//      def onObjects(o: O) = ???
-//    		  def onGenerators(g: G) = ???
-//  }
-    
+  //  def yoneda(o: O)=new Dataset { // TODO Why didn't this work?
+  //      def onObjects(o: O) = ???
+  //    		  def onGenerators(g: G) = ???
+  //  }
+
   override def internalize(t: net.metaphor.api.NaturalTransformationToSet) = {
     t match {
       case t: Datamap => t
@@ -242,13 +242,36 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   class OntologyWrapper extends super.Wrapper with Ontology
 
+  def findAllTranslationsTo(other: Ontology): Iterable[Translation] = {
+    trait TranslationToOther extends Translation {
+      override val target: other.type = other
+      override val source: ontology.type = ontology
+    }
+
+    // FIXME make this work for anything other than the terminal ontology.
+    objects match {
+      case e :: Nil => {
+        generators(e, e) match {
+          case Nil => {
+            for (x <- other.objects) yield new TranslationToOther {
+              override def onObjects(o: Box) = x
+              override def onGenerators(g: Arrow) = throw new IllegalArgumentException
+            }
+          }
+          case _ => ???
+        }
+      }
+      case _ => ???
+    }
+  }
+
   lazy val toJSON = net.metaphor.json.Pack.packOntology(this)
 }
 
 object Ontologies extends Category with InitialObject with TerminalObject {
   override type O = Ontology
   override type M = Translation
-  
+
   override val terminalObject = net.metaphor.examples.Examples.Chain(0)
   override def morphismToTerminalObject(ontology: Ontology): Translation = new Translation {
     override val source: ontology.type = ontology
@@ -256,19 +279,19 @@ object Ontologies extends Category with InitialObject with TerminalObject {
     override def onObjects(o: Box) = terminalObject.objects.head
     override def onGenerators(g: Arrow) = terminalObject.identity(terminalObject.objects.head)
   }
-  override val initialObject = net.metaphor.examples.Examples.Chain(-1) 
+  override val initialObject = net.metaphor.examples.Examples.Chain(-1)
   override def morphismFromInitialObject(ontology: Ontology): Translation = new Translation {
     override val source: initialObject.type = initialObject
     override val target: ontology.type = ontology
     override def onObjects(o: Box) = throw new IllegalArgumentException
     override def onGenerators(g: Arrow) = throw new IllegalArgumentException
   }
-  
+
   override def identity(o: Ontology) = ???
   override def source(m: Translation) = m.source
   override def target(m: Translation) = m.target
   override def compose(m1: Translation, m2: Translation) = ???
-  
+
   trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms
 
   trait Acyclic extends net.metaphor.api.Acyclic with Finite { ontology: Ontology =>
