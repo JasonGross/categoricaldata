@@ -90,6 +90,8 @@ object Sentences {
       a -> target.compose(objectMap(source.generatorSource(a)), morphisms)
     }).toMap
 
+    verifyRelations
+    
     override def onObjects(o: Box) = objectMap(o)
     // And again, replacing source.G with the apparently equivalent Arrow causes an AbstractMethodError
     override def onGenerators(a: source.G) = morphismMap(a)
