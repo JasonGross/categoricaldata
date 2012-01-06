@@ -103,7 +103,7 @@ object FFunction {
   }
 }
 
-trait Sets extends Category {
+trait Sets extends Category with InitialObject with TerminalObject {
   type O = FSet
   type M = FFunction
   override def identity(set: FSet) = set.identity
@@ -111,6 +111,11 @@ trait Sets extends Category {
   override def target(f: FFunction) = f.target
   override def compose(first: FFunction, second: FFunction) = first andThen second
 
+  override val terminalObject: FSet = List("*")
+  override val initialObject: FSet = Nil
+  override def morphismTo(s: FSet) = FFunction(s, terminalObject, { a => "*" })
+  override def morphismFrom(s: FSet) = FFunction(initialObject, s, { a => throw new IllegalArgumentException })
+  
   def bijections(set1: FSet, set2: FSet): FSet = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
       case (Some(k), Some(l)) if k == l => {
