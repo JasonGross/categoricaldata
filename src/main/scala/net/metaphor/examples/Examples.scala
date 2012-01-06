@@ -180,9 +180,6 @@ object Examples {
 
   val TerminalCategory = Examples.Chain(0)
 
-  // Scott says: I fixed this up, but we need to talk about this in some detail!
-  // David says: Yes, we should. I don't understand what's going on with Path(_, List(a)).
-
   def TerminalFunctor(c: Ontology) = Translation(
     source = c,
     target = TerminalCategory,

@@ -245,7 +245,20 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   lazy val toJSON = net.metaphor.json.Pack.packOntology(this)
 }
 
-object Ontologies {
+object Ontologies extends Category with InitialObject with TerminalObject {
+  override type O = Ontology
+  override type M = Translation
+  
+  override val terminalObject = net.metaphor.examples.Examples.Chain(0)
+  override val initialObject = net.metaphor.examples.Examples.Chain(-1)
+  override def morphismTo(o: Ontology): Translation = ???
+  override def morphismFrom(o: Ontology): Translation = ???
+  
+  override def identity(o: Ontology) = ???
+  override def source(m: Translation) = m.source
+  override def target(m: Translation) = m.target
+  override def compose(m1: Translation, m2: Translation) = ???
+  
   trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms
 
   trait Acyclic extends net.metaphor.api.Acyclic with Finite { ontology: Ontology =>
