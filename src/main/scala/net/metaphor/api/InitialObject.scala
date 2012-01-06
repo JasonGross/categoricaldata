@@ -1,24 +1,10 @@
 package net.metaphor.api
 
-object InitialObject {
-  implicit def InitialObjectToObject[O, M](i: InitialObject[O, M]) = i.initialObject
+trait TerminalObject { category: Category => 
+  def terminalObject: category.O
+  def morphismFrom(o: category.O): category.M
 }
-object TerminalObject {
-  implicit def TerminalObjectToObject[O, M](i: TerminalObject[O, M]) = i.terminalObject
+trait InitialObject { category: Category => 
+  def initialObject: category.O
+  def morphismTo(o: category.O): category.M
 }
-
-trait InitialObject[O, M] {
-	def initialObject: O
-	def morphismTo(o: O): M
-}
-trait TerminalObject[O, M] {
-	def terminalObject: O
-	def morphismFrom(o: O): M
-}
-
-
-// TODO one day, TerminalObject should look like this:
-//trait TerminalObject { category: Category => 
-//  def terminalObject: category.O
-//  def morphismFrom(o: category.O): category.M
-//}

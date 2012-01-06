@@ -100,7 +100,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     def limitCone = limit.terminalObject
     def limitSet = limitCone.initialSet
 
-    lazy val limit: TerminalObject[functorToSet.Cone, functorToSet.ConeMap] = {
+    lazy val limit: Cones with TerminalObject = {
       // this is where all the work happens.
       def concreteLimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Set[A]))): (Iterable[fgCategory.O => A], fgCategory.O => ((fgCategory.O => A) => A)) = {
         /**
@@ -162,7 +162,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         override def toIterable = maps.map(new Section(_))
       }
 
-      new TerminalObject[functorToSet.Cone, functorToSet.ConeMap] {
+      new Cones with TerminalObject {
         val terminalObject = new functorToSet.Cone {
           override val initialSet = resultSet
           override def mapFromInitialSet(o: fgCategory.O) = new coneFunction(o) {
@@ -181,7 +181,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       }
     }
 
-    lazy val colimit: InitialObject[functorToSet.CoCone, functorToSet.CoConeMap] = {
+    lazy val colimit: CoCones with InitialObject = {
 
       // This is where all the work happens.
       def concreteColimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Set[A]))): (Iterable[Set[(fgCategory.O, A)]], fgCategory.O => (A => Set[(fgCategory.O, A)])) = {
@@ -211,7 +211,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         override def toIterable = clumps
       }
 
-      new InitialObject[functorToSet.CoCone, functorToSet.CoConeMap] {
+      new CoCones with InitialObject {
         val initialObject = new functorToSet.CoCone {
           override val terminalSet = resultSet
           override def mapToTerminalSet(o: fgCategory.O) = new coConeFunction(o) {

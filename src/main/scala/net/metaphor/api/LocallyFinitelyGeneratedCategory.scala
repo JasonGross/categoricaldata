@@ -223,6 +223,37 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       }
       val initialMap: initialFunction
     }
+    trait Cones extends Category {
+      override type O = Cone
+      override type M = ConeMap
+      
+      override def identity(c: Cone) = ???
+      override def source(c: ConeMap) = c.source
+      override def target(c: ConeMap) = c.target
+      override def compose(c1: ConeMap, c2: ConeMap) = new ConeMap {
+        override val source = c1.source
+        override val target = c2.target
+        override val initialMap = new initialFunction {
+          override def toFunction = c1.initialMap.toFunction andThen c2.initialMap.toFunction
+        }
+      }
+    }
+    trait CoCones extends Category {
+      override type O = CoCone
+      override type M = CoConeMap
+      
+      override def identity(c: CoCone) = ???
+      override def source(c: CoConeMap) = c.source
+      override def target(c: CoConeMap) = c.target
+      override def compose(c1: CoConeMap, c2: CoConeMap) = new CoConeMap {
+        override val source = c1.source
+        override val target = c2.target
+        override val terminalMap = new terminalFunction {
+          override def toFunction = c1.terminalMap.toFunction andThen c2.terminalMap.toFunction
+        }
+      }
+    }
+    
     
     def limitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).limit
     def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
