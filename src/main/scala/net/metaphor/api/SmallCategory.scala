@@ -24,21 +24,21 @@ trait SmallCategory extends Category { smallCategory =>
 
     override def terminalObject = internalize(new FunctorToSet {
       override def onObjects(o: smallCategory.O) = Sets.terminalObject
-      override def onMorphisms(m: smallCategory.M) = Sets.morphismTo(Sets.terminalObject)
+      override def onMorphisms(m: smallCategory.M) = Sets.morphismToTerminalObject(Sets.terminalObject)
     })
-    override def morphismTo(f: O) = internalize(new net.metaphor.api.NaturalTransformationToSet { t =>
+    override def morphismToTerminalObject(f: O) = internalize(new net.metaphor.api.NaturalTransformationToSet { t =>
       override val source = f
       override val target = terminalObject
-      override def apply(o: t.sourceCategory.O) = Sets.morphismTo(f(o))
+      override def apply(o: t.sourceCategory.O) = Sets.morphismToTerminalObject(f(o))
     })
     override def initialObject = internalize(new FunctorToSet {
       override def onObjects(o: smallCategory.O) = Sets.initialObject
-      override def onMorphisms(m: smallCategory.M) = Sets.morphismFrom(Sets.initialObject)
+      override def onMorphisms(m: smallCategory.M) = Sets.morphismFromInitialObject(Sets.initialObject)
     })
-    override def morphismFrom(f: O) = internalize(new net.metaphor.api.NaturalTransformationToSet { t =>
+    override def morphismFromInitialObject(f: O) = internalize(new net.metaphor.api.NaturalTransformationToSet { t =>
       override val source = initialObject
       override val target = f
-      override def apply(o: t.sourceCategory.O) = Sets.morphismFrom(f(o))
+      override def apply(o: t.sourceCategory.O) = Sets.morphismFromInitialObject(f(o))
     })
   }
 

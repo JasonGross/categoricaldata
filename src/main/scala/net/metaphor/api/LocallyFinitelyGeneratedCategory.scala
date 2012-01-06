@@ -195,16 +195,16 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
         override val source = functorToSet(o)
         override val target = terminalSet
       }
-      def mapToTerminalSet(o: O): coConeFunction
+      def functionToTerminalSet(o: O): coConeFunction
     }
     trait CoConeMap extends { coConeMap =>
       val source: CoCone
       val target: CoCone
-      trait terminalFunction extends FFunction {
+      trait TerminalFunction extends FFunction {
         override val source = coConeMap.source.terminalSet
         override val target = coConeMap.target.terminalSet
       }
-      val terminalMap: terminalFunction
+      val terminalFunction: TerminalFunction
     }
     trait Cone extends {
       val initialSet: FSet
@@ -212,16 +212,16 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
         override val source = initialSet
         override val target = functorToSet(o)
       }
-      def mapFromInitialSet(o: O): coneFunction
+      def functionFromInitialSet(o: O): coneFunction
     }
     trait ConeMap extends { coneMap =>
       val source: Cone
       val target: Cone
-      trait initialFunction extends FFunction {
+      trait InitialFunction extends FFunction {
         override val source = coneMap.source.initialSet
         override val target = coneMap.target.initialSet
       }
-      val initialMap: initialFunction
+      val initialFunction: InitialFunction
     }
     trait Cones extends Category {
       override type O = Cone
@@ -233,8 +233,8 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       override def compose(c1: ConeMap, c2: ConeMap) = new ConeMap {
         override val source = c1.source
         override val target = c2.target
-        override val initialMap = new initialFunction {
-          override def toFunction = c1.initialMap.toFunction andThen c2.initialMap.toFunction
+        override val initialFunction = new InitialFunction {
+          override def toFunction = c1.initialFunction.toFunction andThen c2.initialFunction.toFunction
         }
       }
     }
@@ -248,8 +248,8 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       override def compose(c1: CoConeMap, c2: CoConeMap) = new CoConeMap {
         override val source = c1.source
         override val target = c2.target
-        override val terminalMap = new terminalFunction {
-          override def toFunction = c1.terminalMap.toFunction andThen c2.terminalMap.toFunction
+        override val terminalFunction = new TerminalFunction {
+          override def toFunction = c1.terminalFunction.toFunction andThen c2.terminalFunction.toFunction
         }
       }
     }

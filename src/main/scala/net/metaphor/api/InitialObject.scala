@@ -2,9 +2,9 @@ package net.metaphor.api
 
 trait TerminalObject { category: Category => 
   def terminalObject: category.O
-  def morphismFrom(o: category.O): category.M
+  def morphismToTerminalObject(o: category.O): category.M
 }
 trait InitialObject { category: Category => 
   def initialObject: category.O
-  def morphismTo(o: category.O): category.M
+  def morphismFromInitialObject(o: category.O): category.M
 }

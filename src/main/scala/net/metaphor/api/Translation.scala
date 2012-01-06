@@ -86,8 +86,8 @@ trait FiniteTranslation extends Translation { translation =>
         // Third, we need to build a cone for sourceData 
         val cone: sourceData.Cone = new sourceData.Cone {
           override val initialSet = targetLimitTerminalCone.initialSet
-          override def mapFromInitialSet(o: Fs.source.O) = {
-            val f = targetLimitTerminalCone.mapFromInitialSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
+          override def functionFromInitialSet(o: Fs.source.O) = {
+            val f = targetLimitTerminalCone.functionFromInitialSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
             new coneFunction(o) {
               override def toFunction = f.toFunction
             }
@@ -96,9 +96,9 @@ trait FiniteTranslation extends Translation { translation =>
 
         // Now, the source limit provides us with the desired map.
         val sourceLimit = sourceData.limit
-        val coneMap = sourceLimit.morphismFrom(cone)
+        val coneMap = sourceLimit.morphismToTerminalObject(cone)
 
-        coneMap.initialMap
+        coneMap.initialFunction
       }
     }).memo
     override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
@@ -143,8 +143,8 @@ trait FiniteTranslation extends Translation { translation =>
         // Third, we need to build a cone for sourceData 
         val cocone: sourceData.CoCone = new sourceData.CoCone {
           override val terminalSet = targetColimitInitialCoCone.terminalSet
-          override def mapToTerminalSet(o: Fs.source.O) = {
-            val f = targetColimitInitialCoCone.mapToTerminalSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
+          override def functionToTerminalSet(o: Fs.source.O) = {
+            val f = targetColimitInitialCoCone.functionToTerminalSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
             new coConeFunction(o) {
               override def toFunction = f.toFunction
             }
@@ -153,9 +153,9 @@ trait FiniteTranslation extends Translation { translation =>
 
         // Now, the source limit provides us with the desired map.
         val sourceColimit = sourceData.colimit
-        val coconeMap = sourceColimit.morphismTo(cocone)
+        val coconeMap = sourceColimit.morphismFromInitialObject(cocone)
 
-        coconeMap.terminalMap
+        coconeMap.terminalFunction
       }
 
     }).memo

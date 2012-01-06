@@ -113,8 +113,8 @@ trait Sets extends Category with InitialObject with TerminalObject {
 
   override val terminalObject: FSet = List("*")
   override val initialObject: FSet = Nil
-  override def morphismTo(s: FSet) = FFunction(s, terminalObject, { a => "*" })
-  override def morphismFrom(s: FSet) = FFunction(initialObject, s, { a => throw new IllegalArgumentException })
+  override def morphismToTerminalObject(s: FSet) = FFunction(s, terminalObject, { a => "*" })
+  override def morphismFromInitialObject(s: FSet) = FFunction(initialObject, s, { a => throw new IllegalArgumentException })
   
   def bijections(set1: FSet, set2: FSet): FSet = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {

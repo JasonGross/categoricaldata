@@ -163,18 +163,18 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       }
 
       new Cones with TerminalObject {
-        val terminalObject = new functorToSet.Cone {
+        override val terminalObject = new functorToSet.Cone {
           override val initialSet = resultSet
-          override def mapFromInitialSet(o: fgCategory.O) = new coneFunction(o) {
+          override def functionFromInitialSet(o: fgCategory.O) = new coneFunction(o) {
             override def toFunction = ({ s: Section => s.toFunction.asInstanceOf[fgCategory.O => Any] } andThen functions(o)).asInstanceOf[Any => Any]
           }
         }
-        def morphismFrom(other: functorToSet.Cone) = {
+        override def morphismToTerminalObject(other: functorToSet.Cone) = {
           new functorToSet.ConeMap {
             override val source = other
             override val target = terminalObject
-            override val initialMap = new initialFunction {
-              override def toFunction = { x: Any => new Section({ o: fgCategory.O => other.mapFromInitialSet(o).toFunction(x) }) }
+            override val initialFunction = new InitialFunction {
+              override def toFunction = { x: Any => new Section({ o: fgCategory.O => other.functionFromInitialSet(o).toFunction(x) }) }
             }
           }
         }
@@ -212,18 +212,18 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       }
 
       new CoCones with InitialObject {
-        val initialObject = new functorToSet.CoCone {
+        override val initialObject = new functorToSet.CoCone {
           override val terminalSet = resultSet
-          override def mapToTerminalSet(o: fgCategory.O) = new coConeFunction(o) {
+          override def functionToTerminalSet(o: fgCategory.O) = new coConeFunction(o) {
             override def toFunction = functions(o)
           }
         }
-        def morphismTo(other: functorToSet.CoCone) = {
+        override def morphismFromInitialObject(other: functorToSet.CoCone) = {
           new functorToSet.CoConeMap {
             override val source = initialObject
             override val target = other
-            override val terminalMap = new terminalFunction {
-              override def toFunction = { x: Set[(fgCategory.O, Any)] => { val h = x.head; other.mapToTerminalSet(h._1).toFunction(h._2) } }.asInstanceOf[Any => Any]
+            override val terminalFunction = new TerminalFunction {
+              override def toFunction = { x: Set[(fgCategory.O, Any)] => { val h = x.head; other.functionToTerminalSet(h._1).toFunction(h._2) } }.asInstanceOf[Any => Any]
             }
           }
         }
