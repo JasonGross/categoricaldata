@@ -250,9 +250,19 @@ object Ontologies extends Category with InitialObject with TerminalObject {
   override type M = Translation
   
   override val terminalObject = net.metaphor.examples.Examples.Chain(0)
-  override def morphismToTerminalObject(o: Ontology): Translation = ???
-  override val initialObject = net.metaphor.examples.Examples.Chain(-1)
-  override def morphismFromInitialObject(o: Ontology): Translation = ???
+  override def morphismToTerminalObject(ontology: Ontology): Translation = new Translation {
+    override val source: ontology.type = ontology
+    override val target: terminalObject.type = terminalObject
+    override def onObjects(o: Box) = terminalObject.objects.head
+    override def onGenerators(g: Arrow) = terminalObject.identity(terminalObject.objects.head)
+  }
+  override val initialObject = net.metaphor.examples.Examples.Chain(-1) 
+  override def morphismFromInitialObject(ontology: Ontology): Translation = new Translation {
+    override val source: initialObject.type = initialObject
+    override val target: ontology.type = ontology
+    override def onObjects(o: Box) = throw new IllegalArgumentException
+    override def onGenerators(g: Arrow) = throw new IllegalArgumentException
+  }
   
   override def identity(o: Ontology) = ???
   override def source(m: Translation) = m.source

@@ -1,6 +1,15 @@
 package net.metaphor.api
 
-trait Translation extends FinitelyGeneratedFunctor { translation =>
+trait FinitelyPresentedFunctor extends FinitelyGeneratedFunctor { fpFunctor =>
+ override val source: FinitelyPresentedCategory
+ override val target: FinitelyPresentedCategory
+ 
+ for(relation <- source.allRelations) {
+   require(target.pathEquality(fpFunctor.onMorphisms(source.pathAsMorphism(relation._1)).representative, fpFunctor.onMorphisms(source.pathAsMorphism(relation._2)).representative))
+ }
+}
+
+trait Translation extends FinitelyPresentedFunctor { translation =>
   override val source: Ontology
   override val target: Ontology
 
