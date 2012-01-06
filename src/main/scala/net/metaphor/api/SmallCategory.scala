@@ -15,15 +15,13 @@ trait SmallCategory extends Category { smallCategory =>
   def internalize(f: net.metaphor.api.FunctorToSet): F
   def internalize(t: net.metaphor.api.NaturalTransformationToSet): T
 
-  trait FunctorsToSet extends Category with InitialObject with TerminalObject {
+  trait FunctorsToSet extends net.metaphor.api.FunctorsToSet with InitialObject with TerminalObject {
     override type O >: F <: smallCategory.FunctorToSet
     override type M >: T <: smallCategory.NaturalTransformationToSet
-    
-    override def identity(o: O) = internalize(FunctorsToSet.identity(o))
-    override def source(m: M) = internalize(FunctorsToSet.source(m))
-    override def target(m: M) = internalize(FunctorsToSet.target(m))
-    override def compose(m1: M, m2: M) = internalize(FunctorsToSet.compose(m1, m2))
-    
+
+    override def internalize(f: net.metaphor.api.FunctorToSet) = smallCategory.internalize(f)
+    override def internalize(t: net.metaphor.api.NaturalTransformationToSet) = smallCategory.internalize(t)
+
     override def terminalObject = internalize(new FunctorToSet {
       override def onObjects(o: smallCategory.O) = Sets.terminalObject
       override def onMorphisms(m: smallCategory.M) = Sets.morphismTo(Sets.terminalObject)
@@ -43,7 +41,7 @@ trait SmallCategory extends Category { smallCategory =>
       override def apply(o: t.sourceCategory.O) = Sets.morphismFrom(f(o))
     })
   }
-  
+
   class SpecializedFunctorsToSet extends FunctorsToSet { functorsToSet =>
     override type O = smallCategory.F
     override type M = smallCategory.T
