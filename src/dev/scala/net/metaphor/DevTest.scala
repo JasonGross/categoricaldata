@@ -537,5 +537,21 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 //      println(RHS)
 //      LHS should beIsomorphicTo(RHS)
 //   }       
+  
+  "dataset" should "throw some exception if it does not conform to relations in the source" in {
+    val badData = Dataset (source = Examples.Isomorphism,
+        onObjects = Map (
+            "0" -> List ("x","y"),
+            "1" -> List ("z")),
+        onMorphisms = Map (
+            "0" --- "E01" --> "1" -> Map (
+                "x" -> "z",
+                "y" -> "z"),
+            "1" --- "E10" --> "0" -> Map (
+                "z" -> "x")
+        )
+    )
+    evaluating { badData } should produce [IllegalArgumentElementException]
+  }
    
 }
