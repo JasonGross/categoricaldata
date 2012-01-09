@@ -390,4 +390,38 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //	   val LHS = X.fullSubcategorySpannedBy(List("0","1","2","3")/*The fact that these are boxes should be inherent?*/)
   //	   LHS should equal(RHS)
   //   }
+        
+        
+   val OneTwoThree = Dataset(
+    source = Examples.Chain(1),
+    onObjects = Map(
+      "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+      "a pointed set" -> List("a", "b", "c")),
+    onMorphisms = Map(
+      ("an element" --- "is in" --> "a pointed set") -> Map(
+        "a1" -> "a",
+        "b1" -> "b",
+        "b2" -> "b",
+        "c1" -> "c",
+        "c2" -> "c",
+        "c3" -> "c"),
+      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+        "a" -> "a1",
+        "b" -> "b1",
+        "c" -> "c1")))      
+        
+  
+        
+  "__* along Chain1ToIsomorphism" should "take a function and return two sets isomorphic to its target." in {
+    println
+    println("Output from \"__* along Chain1ToIsomorphism should take a function and return two sets isomorphic to its target.\":")
+    println
+    val X = OneTwoThree
+    val LHS = SixElementsIso
+    val RHS = Examples.Chain1ToIsomorphism.__*(X)
+    println("Original function: "); println(X); println
+    println("Expected isomorphism: "); println(LHS); println
+    println("Right pushforward of original function: "); println(RHS)
+    LHS should beIsomorphicTo(RHS)
+  }
 }

@@ -269,6 +269,19 @@ object Examples {
     arrows = List(
       "0" --- "E01" --> "1",
       "1" --- "E10" --> "0")).assertFree
+      
+  val Chain1ToPointedSets = Translation(
+      source = Chain(1),
+      target= PointedSets,
+      onObjects = Map(
+          "V0" -> "an element",
+          "V1" -> "a pointed set"),
+      onMorphisms = Map(
+          ("V0" --- "E01" --> "V1") -> ("an element" --- "is in" --> "a pointed set")
+      )
+  )
+  
+  val Chain1ToIsomorphism = Ontologies.compose(Chain1ToPointedSets,PointedSetsToIsomorphism)
 
   val E2ToPointedSets = Translation(
     source = E2,
