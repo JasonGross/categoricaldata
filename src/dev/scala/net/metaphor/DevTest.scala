@@ -132,59 +132,59 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "b" -> "b1",
         "c" -> "c1")))
 
-  val OneTwoThree = Dataset(
-    source = Examples.Chain(1),
-    onObjects = Map(
-      "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
-      "a pointed set" -> List("a", "b", "c")),
-    onMorphisms = Map(
-      ("an element" --- "is in" --> "a pointed set") -> Map(
-        "a1" -> "a",
-        "b1" -> "b",
-        "b2" -> "b",
-        "c1" -> "c",
-        "c2" -> "c",
-        "c3" -> "c"),
-      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
-        "a" -> "a1",
-        "b" -> "b1",
-        "c" -> "c1")))      
-        
-  val SixElementsIso = Dataset(
-    source = Examples.Isomorphism,
-    onObjects = Map(
-      "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
-      "1" -> List("a1", "b1", "b2", "c1", "c2", "c3")),
-    onMorphisms = Map(
-      ("0" --- "E01" --> "1") -> Map(
-        "a1" -> "a1",
-        "b1" -> "b1",
-        "b2" -> "b2",
-        "c1" -> "c1",
-        "c2" -> "c2",
-        "c3" -> "c3"),
-      ("1" --- "E10" --> "0") -> Map(
-        "a1" -> "a1",
-        "b1" -> "b1",
-        "b2" -> "b2",
-        "c1" -> "c1",
-        "c2" -> "c2",
-        "c3" -> "c3")))
-
-  val ThreeElementsIso = Dataset(
-    source = Examples.Isomorphism,
-    onObjects = Map(
-      "0" -> List("a", "b", "c"),
-      "1" -> List("a", "b", "c")),
-    onMorphisms = Map(
-      ("0" --- "E01" --> "1") -> Map(
-        "a" -> "a",
-        "b" -> "b",
-        "c" -> "c"),
-      ("1" --- "E10" --> "0") -> Map(
-        "a" -> "a",
-        "b" -> "b",
-        "c" -> "c")))
+//  val OneTwoThree = Dataset(
+//    source = Examples.Chain(1),
+//    onObjects = Map(
+//      "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+//      "a pointed set" -> List("a", "b", "c")),
+//    onMorphisms = Map(
+//      ("an element" --- "is in" --> "a pointed set") -> Map(
+//        "a1" -> "a",
+//        "b1" -> "b",
+//        "b2" -> "b",
+//        "c1" -> "c",
+//        "c2" -> "c",
+//        "c3" -> "c"),
+//      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+//        "a" -> "a1",
+//        "b" -> "b1",
+//        "c" -> "c1")))      
+//        
+//  val SixElementsIso = Dataset(
+//    source = Examples.Isomorphism,
+//    onObjects = Map(
+//      "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+//      "1" -> List("a1", "b1", "b2", "c1", "c2", "c3")),
+//    onMorphisms = Map(
+//      ("0" --- "E01" --> "1") -> Map(
+//        "a1" -> "a1",
+//        "b1" -> "b1",
+//        "b2" -> "b2",
+//        "c1" -> "c1",
+//        "c2" -> "c2",
+//        "c3" -> "c3"),
+//      ("1" --- "E10" --> "0") -> Map(
+//        "a1" -> "a1",
+//        "b1" -> "b1",
+//        "b2" -> "b2",
+//        "c1" -> "c1",
+//        "c2" -> "c2",
+//        "c3" -> "c3")))
+//
+//  val ThreeElementsIso = Dataset(
+//    source = Examples.Isomorphism,
+//    onObjects = Map(
+//      "0" -> List("a", "b", "c"),
+//      "1" -> List("a", "b", "c")),
+//    onMorphisms = Map(
+//      ("0" --- "E01" --> "1") -> Map(
+//        "a" -> "a",
+//        "b" -> "b",
+//        "c" -> "c"),
+//      ("1" --- "E10" --> "0") -> Map(
+//        "a" -> "a",
+//        "b" -> "b",
+//        "c" -> "c")))
 
   val DavidsFunkyFunction = Dataset(source = Examples.Chain(1),
     onObjects = Map(
@@ -554,6 +554,22 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 //      println(RHS)
 //      LHS should beIsomorphicTo(RHS)
 //   }       
+  
+  
+  //This test will fail because, first of all, because functor composition in general (in this case Chain1ToIsomorphism = Chain1ToPointedSets;PointedSetsToIsomorphism) is not defined.
+  //TODO Once functor composition is defined, check this test.
+   "__* along Chain1ToIsomorphism" should "take a function and return two sets isomorphic to its target." in { 
+    println
+    println("Output from \"__* along Chain1ToIsomorphism should take a function and return two sets isomorphic to its target.\":")
+    println
+    val X = OneTwoThree
+    val LHS = SixElementsIso
+    val RHS = Examples.Chain1ToIsomorphism.__*(X)
+    println("Original function: "); println(X); println
+    println("Expected isomorphism: "); println(LHS); println
+    println("Right pushforward of original function: "); println(RHS)
+    LHS should beIsomorphicTo(RHS)
+  }
   
   "dataset" should "throw some exception if it does not conform to relations in the source" in {
     lazy val badData = Dataset (source = Examples.Isomorphism,
