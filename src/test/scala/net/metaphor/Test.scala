@@ -412,16 +412,16 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         
   
         
-  "__* along Chain1ToIsomorphism" should "take a function and return two sets isomorphic to its target." in {
-    println
-    println("Output from \"__* along Chain1ToIsomorphism should take a function and return two sets isomorphic to its target.\":")
-    println
-    val X = OneTwoThree
-    val LHS = SixElementsIso
-    val RHS = Examples.Chain1ToIsomorphism.__*(X)
-    println("Original function: "); println(X); println
-    println("Expected isomorphism: "); println(LHS); println
-    println("Right pushforward of original function: "); println(RHS)
-    LHS should beIsomorphicTo(RHS)
-  }
+//  "__* along Chain1ToIsomorphism" should "take a function and return two sets isomorphic to its target." in {
+//    println
+//    println("Output from \"__* along Chain1ToIsomorphism should take a function and return two sets isomorphic to its target.\":")
+//    println
+//    val X = OneTwoThree
+//    val LHS = SixElementsIso
+//    val RHS = Examples.Chain1ToIsomorphism.__*(X)
+//    println("Original function: "); println(X); println
+//    println("Expected isomorphism: "); println(LHS); println
+//    println("Right pushforward of original function: "); println(RHS)
+//    LHS should beIsomorphicTo(RHS)
+//  }
 }
