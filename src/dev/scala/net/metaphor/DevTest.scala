@@ -539,7 +539,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 //   }       
   
   "dataset" should "throw some exception if it does not conform to relations in the source" in {
-    val badData = Dataset (source = Examples.Isomorphism,
+    lazy val badData = Dataset (source = Examples.Isomorphism,
         onObjects = Map (
             "0" -> List ("x","y"),
             "1" -> List ("z")),
@@ -551,7 +551,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
                 "z" -> "x")
         )
     )
-    evaluating { badData } should produce [IllegalArgumentElementException]
+    evaluating { badData } should produce [IllegalArgumentException]
   }
    
 }

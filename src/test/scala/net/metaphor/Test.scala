@@ -20,24 +20,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
 
-  val DavidsFunkyGraph = Dataset(source = Examples.Grph,
-    onObjects = Map(
-      "an edge" -> List("f", "g", "h", "i", "j"),
-      "a vertex" -> List("A", "B", "C", "D")),
-    onMorphisms = Map(
-      ("an edge" --- "has as source" --> "a vertex") -> Map(
-        "f" -> "A",
-        "g" -> "A",
-        "h" -> "B",
-        "i" -> "A",
-        "j" -> "C"),
-      ("an edge" --- "has as target" --> "a vertex") -> Map(
-        "f" -> "B",
-        "g" -> "B",
-        "h" -> "C",
-        "i" -> "C",
-        "j" -> "C")))
-
   val DavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
       "an element" -> List("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar")),
@@ -66,24 +48,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "h" -> "jbar",
         "i" -> "jbar",
         "j" -> "jbar")))
-
-  val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
-    onObjects = Map(
-      "an edge" -> List("f", "g", "h", "i", "j"),
-      "a vertex" -> List("A", "B", "C", "D")),
-    onMorphisms = Map(
-      ("an edge" --- "has as source" --> "a vertex") -> Map(
-        "f" -> "B",
-        "g" -> "B",
-        "h" -> "C",
-        "i" -> "C",
-        "j" -> "C"),
-      ("an edge" --- "has as target" --> "a vertex") -> Map(
-        "f" -> "A",
-        "g" -> "A",
-        "h" -> "B",
-        "i" -> "A",
-        "j" -> "C")))
 
   val FunkyE2Dataset = Dataset(
     source = Examples.E2,
@@ -169,17 +133,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "b" -> "b",
         "c" -> "c")))
 
-  val DavidsFunkyFunction = Dataset(source = Examples.Chain(1),
-    onObjects = Map(
-      "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
-      "V1" -> List("1978", "Scott's birthyear", "1868", "1861")),
-    onMorphisms = Map(
-      "V0" --- "E01" --> "V1" -> Map(
-        "David" -> "1978",
-        "Scott" -> "Scott's birthyear",
-        "UC Berkeley" -> "1868",
-        "MIT" -> "1861")))
-
   val DavidsFunkyFiniteCyclicMonoid = Dataset(
     source = Examples.FiniteCyclicMonoid(2, 1),
     onObjects = Map("an element" -> List("David", "Scott", "UC Berkeley", "MIT", "succDavid", "succScott", "succUC Berkeley", "succMIT")),
@@ -192,26 +145,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       "succScott" -> "succScott",
       "succUC Berkeley" -> "succUC Berkeley",
       "succMIT" -> "succMIT")))
-
-  val DavidsFunkySet1 = Dataset(source = Examples.Chain(0),
-    onObjects = Map(
-      "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
-    onMorphisms = Map())
-
-  val DavidsFunkySet2 = Dataset(source = Examples.Chain(0),
-    onObjects = Map(
-      "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
-    onMorphisms = Map())
-
-  "__*" should "work with terminal functor on 'function'" in {
-    val pushforward = Examples.TerminalFunctor(Examples.Chain(1)).__*(DavidsFunkyFunction)
-    pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
-  }
-
-  "__!" should "work with terminal functor on 'function'" in {
-    val shriek = Examples.TerminalFunctor(Examples.Chain(1)).__!(DavidsFunkyFunction)
-    shriek.isIsomorphicTo(DavidsFunkySet2) should equal(true)
-  }
 
   //   "__!" should "work (1)" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
@@ -235,16 +168,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //   }
 
 
-  "__!" should "work reverse graph as expected" in {
-    //    println
-    //    println("Output from \"__! should reverse graph as expected\":")
-
-    val LHS = Examples.ReverseGraph.__!(DavidsFunkyGraph)
-    val RHS = DavidsFunkyGraphReversed
-    //    println(LHS)
-    //    println(RHS)
-    LHS should beIsomorphicTo(RHS)
-  }
   // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
   // Scott: sure, if you have some supply of datasets, you could write
   /*
