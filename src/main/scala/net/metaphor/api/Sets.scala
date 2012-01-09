@@ -10,7 +10,7 @@ trait FSet { fset =>
     other match {
       case other: FSet => {
         hashCode == other.hashCode &&
-        toIterable == other.toIterable
+        toIterable.toSet == other.toIterable.toSet
       }
       case _ => false
     }
@@ -22,7 +22,7 @@ trait FSet { fset =>
 
   def finite: Boolean = sizeIfFinite.nonEmpty
   def sizeIfFinite: Option[Int]
-  def size: Int = sizeIfFinite.getOrElse(???) //???
+  def size: Int = sizeIfFinite.getOrElse(???)
 
   override def toString = toIterable.toSet[Any].toString
   override lazy val hashCode = toIterable.toSet[Any].hashCode

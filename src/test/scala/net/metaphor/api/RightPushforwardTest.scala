@@ -25,17 +25,14 @@ class RightPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatch
         "UC Berkeley" -> "1868",
         "MIT" -> "1861")))
 
-    val DavidsFunkySet1 = Dataset(source = Examples.Chain(0),
+  val DavidsFunkySet1 = Dataset(source = Examples.Chain(0),
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
     onMorphisms = Map())
 
-        
-    "__*" should "work with terminal functor on 'function'" in {
+  "__*" should "work with terminal functor on 'function'" in {
     val pushforward = Examples.TerminalFunctor(Examples.Chain(1)).__*(DavidsFunkyFunction)
     pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
   }
 
-
-  
 }

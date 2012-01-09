@@ -78,17 +78,31 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   "Dataset.findIsomorphismsTo" should "count automorphisms of Drawers" in {
     Drawers.findIsomorphismsTo(Drawers).size should equal(6)
   }
-  
+
   "Dataset.isIsomorphicTo" should "find that even a complex dataset is isomorphic to itself" in {
     /*
-     *  Scott to David:
+     *  FIXME Scott to David:
      *  Test is a class, not an object, so you can't refer to its members (e.g. DavidsFunkyGraph) without creating an instance.
      *  Either write new Test.DavidsFunkyGraph, or, better, move DavidsFunkyGraph to a companion object.
      *  You'll also need to import Test, as it lives in a different package.
      *  
      *  To make matters worse, I've just moved Test.scala to /src/dev/, so you shouldn't refer to it from stuff in /src/test/. Ask me. :-)
      */
-//    Examples.ReverseGraph.__*(Test.DavidsFunkyGraph) should beIsomorphicTo(Examples.ReverseGraph.__*(Test.DavidsFunkyGraph))
+    //    Examples.ReverseGraph.__*(Test.DavidsFunkyGraph) should beIsomorphicTo(Examples.ReverseGraph.__*(Test.DavidsFunkyGraph))
+  }
+
+  "dataset" should "throw an exception if it does not conform to relations in the source" in {
+    lazy val badData = Dataset(source = Examples.Isomorphism,
+      onObjects = Map(
+        "0" -> List("x", "y"),
+        "1" -> List("z")),
+      onMorphisms = Map(
+        "0" --- "E01" --> "1" -> Map(
+          "x" -> "z",
+          "y" -> "z"),
+        "1" --- "E10" --> "0" -> Map(
+          "z" -> "x")))
+    evaluating { badData } should produce[IllegalArgumentException]
   }
 
 }

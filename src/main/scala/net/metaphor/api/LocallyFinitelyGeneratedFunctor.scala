@@ -33,6 +33,7 @@ trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
           case _ => false
         }
       }
+      override def hashCode = (right, morphism).hashCode
       require(lfgFunctor.target.target(morphism) == lfgFunctor.apply(right))
       require(lfgFunctor.target.source(morphism) == onLeft)
     }
@@ -46,6 +47,7 @@ trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
           case _ => false
         }
       }
+      override def hashCode = (source, target, generator).hashCode
       require(lfgFunctor.source.generatorSource(generator) == source.right)
       require(lfgFunctor.source.generatorTarget(generator) == target.right)
       require(lfgFunctor.target.compose(source.morphism, lfgFunctor.onGenerators(generator)) == target.morphism)
@@ -85,6 +87,7 @@ trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
           case _ => false
         }
       }
+      override def hashCode = (left, morphism).hashCode
       require(lfgFunctor.target.source(morphism) == lfgFunctor.apply(left))
       require(lfgFunctor.target.target(morphism) == onRight)
     }
@@ -98,7 +101,7 @@ trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
           case _ => false
         }
       }
-
+      override def hashCode = (source, target, generator).hashCode
       require(lfgFunctor.source.generatorSource(generator) == source.left)
       require(lfgFunctor.source.generatorTarget(generator) == target.left)
       require(lfgFunctor.target.compose(lfgFunctor.onGenerators(generator), target.morphism) == source.morphism)
