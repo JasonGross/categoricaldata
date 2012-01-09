@@ -6,7 +6,6 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
 import net.metaphor.api.Ontology
-import net.metaphor.api.FiniteTranslation
 import net.metaphor.api.FiniteMorphisms
 import net.metaphor.api.Ontologies
 import net.metaphor.examples.Examples
@@ -154,7 +153,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph).isIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem) should equal(true)
   //  }
 
-
   //   "__*" should "preserve the terminal dataset" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
   //	   should equal 
@@ -167,7 +165,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
   //   }
 
-
   // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
   // Scott: sure, if you have some supply of datasets, you could write
   /*
@@ -179,6 +176,14 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
    */
   "colimit and __!" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have colim(D)=TerminalFunctor(C).__!(D)
+    for (
+      dataset <- List[Ontology#Dataset]()
+    ) {
+      val C = dataset.source
+      val T = Ontologies.morphismToTerminalObject(C)
+      val x = T.target.objects.head // the target only has one object, so this hack to get it is okay.
+      dataset.colimitSet should equal(T.__!(dataset)(x))
+    }
   }
   "limit and __*" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
@@ -358,8 +363,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "db" -> "cd",
         "dc" -> "dd",
         "dd" -> "dd")))
-
-  
 
   //    
   //    "__!" should "provide a 'half-speed' FCM20_19" in {

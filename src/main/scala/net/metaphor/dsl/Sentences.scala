@@ -2,7 +2,6 @@ package net.metaphor.dsl
 import net.metaphor.api.Arrow
 import net.metaphor.api.Box
 import net.metaphor.api.FiniteMorphisms
-import net.metaphor.api.FiniteTranslation
 import net.metaphor.api.Ontology
 import net.metaphor.api.Ontologies
 import net.metaphor.api.Translation
@@ -97,9 +96,9 @@ object Sentences {
     override def onGenerators(a: source.G) = morphismMap(a)
   }
 
-  def Translation(source: Ontology, target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath): FiniteTranslation = {
+  def Translation(source: Ontology, target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
     // construct a new translation object
-    new ConcreteTranslation(source, target, onObjects, onMorphisms) with FiniteTranslation
+    new ConcreteTranslation(source, target, onObjects, onMorphisms)
   }
 
   def Dataset(source: Ontology, onObjects: String => Traversable[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
@@ -114,6 +113,9 @@ object Sentences {
     }).toMap
 
     (new source.Dataset {
+      
+      verifyRelations
+      
       override def onObjects(o: source.O) = objectMap(o)
       // WEIRD: changing source.G to Arrow (which should be fine) results in AbstractMethodError at runtime. Compiler bug?
       override def onGenerators(a: source.G): FFunction = new DatasetFunction(a) {

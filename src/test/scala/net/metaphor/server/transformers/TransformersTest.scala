@@ -20,7 +20,7 @@ class TransformersTest extends FlatSpec with ShouldMatchers {
   }
   "Translation" should "pass through the Bowler transformer successfully" in {
     for (translation <- List(Examples.PointedSetsToIsomorphism, Examples.ReverseGraph)) {
-      new FiniteTranslationTransformer().toValue(write(translation.toJSON)) should equal(Some(translation))
+      new TranslationTransformer().toValue(write(translation.toJSON)) should equal(Some(translation))
     }
     
    val literal = """{
@@ -98,7 +98,7 @@ class TransformersTest extends FlatSpec with ShouldMatchers {
   ]
 }"""
      
-     new FiniteTranslationTransformer().toValue(literal) should not be('isEmpty)
+     new TranslationTransformer().toValue(literal) should not be('isEmpty)
   }
   "Dataset" should "pass through the Bowler transformer successfully" in {
     for (dataset <- List(Examples.TerminalBigraph)) {

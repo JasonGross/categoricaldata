@@ -188,7 +188,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
       target.compose(start, morphisms)
     }
-
+    
     trait CoCone {
       val terminalSet: FSet
       abstract class coConeFunction(o: O) extends FFunction {

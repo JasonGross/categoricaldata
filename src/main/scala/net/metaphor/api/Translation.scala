@@ -30,17 +30,13 @@ trait Translation extends FinitelyPresentedFunctor { translation =>
       "  onObjects = " + source.objects.map(o => o -> this(o)).toMap.toString + ",\n" +
       "  onMorphisms = " + source.allGenerators.map(g => g -> this.onGenerators(g)).toMap.toString + ")"
   }
-}
-
-trait FiniteTranslation extends Translation { translation =>
-  override val target: Ontologies.Finite
 
   class FiniteSliceCategory(onRight: translation.target.O) extends SliceCategory(
-    translation.target.maximumWordLength,
+    translation.target.asInstanceOf[Ontologies.Finite].maximumWordLength,
     onRight)
 
   class FiniteCosliceCategory(onLeft: translation.target.O) extends CosliceCategory(
-    translation.target.maximumWordLength,
+    translation.target.asInstanceOf[Ontologies.Finite].maximumWordLength,
     onLeft)
 
   class SliceFunctor extends super.SliceFunctor {

@@ -4,9 +4,9 @@ import org.bowlerframework.controller.Controller
 import org.bowlerframework.controller.FunctionNameConventionRoutes
 import org.bowlerframework.Request
 import net.metaphor.examples.Examples
-import net.metaphor.api.FiniteTranslation
 import net.metaphor.api.Ontology
 import net.metaphor.api.Dataset
+import net.metaphor.api.Translation
 
 class MetaphorController extends Controller with FunctionNameConventionRoutes {
 
@@ -17,7 +17,7 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   def `GET /metaphor/examples/translations/ReverseGraph` = Examples.ReverseGraph.toJSON
 
 
-  def `GET /metaphor/compute/leftPushforward`(translation: FiniteTranslation, dataset: Dataset): net.metaphor.json.Dataset = {
+  def `GET /metaphor/compute/leftPushforward`(translation: Translation, dataset: Dataset): net.metaphor.json.Dataset = {
     val i = translation.source.internalize(dataset)
     translation.leftPushforward(i).toJSON
   }

@@ -6,7 +6,6 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
 import net.metaphor.api.Ontology
-import net.metaphor.api.FiniteTranslation
 import net.metaphor.api.FiniteMorphisms
 import net.metaphor.api.Ontologies
 import net.metaphor.examples.Examples
