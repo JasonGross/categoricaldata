@@ -35,6 +35,7 @@ class DatasetDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     
     
     for (dataset <- List(Examples.ReverseGraph.__*(DavidsFunkyGraph))) {
+      println(dataset)
       // this works
       dataset should equal(dataset)
       // but this doesn't

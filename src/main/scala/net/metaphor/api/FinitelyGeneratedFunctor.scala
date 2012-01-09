@@ -12,13 +12,6 @@ trait FinitelyGeneratedFunctor extends LocallyFinitelyGeneratedFunctorWithLocall
   class SliceCategory(maximumPathLength: Int, onLeft: fgFunctor.target.O) extends super.SliceCategory(onLeft) {
     override val maximumLevel: Int = fgFunctor.source.maximumLevel + maximumPathLength
     
-    trait FunctorToSet extends super.FunctorToSet {
-      // ACHTUNG this might be an expensive test:
-      for(o1 <- objects; o2 <- objects; if o1 == o2) {
-        require(onObjects(o1) == onObjects(o2))
-      }
-    }
-    
     override def internalize(f: net.metaphor.api.FunctorToSet) = new FunctorToSet {
       require(f.source == source)
       override def onObjects(o: O) = f.onObjects(o.asInstanceOf[f.source.O])
@@ -28,13 +21,6 @@ trait FinitelyGeneratedFunctor extends LocallyFinitelyGeneratedFunctorWithLocall
   class CosliceCategory(maximumPathLength: Int, onRight: fgFunctor.target.O) extends super.CosliceCategory(onRight) {
     override val maximumLevel: Int = fgFunctor.source.maximumLevel + maximumPathLength
 
-    trait FunctorToSet extends super.FunctorToSet {
-      // ACHTUNG this might be an expensive test:
-      for(o1 <- objects; o2 <- objects; if o1 == o2) {
-        require(onObjects(o1) == onObjects(o2))
-      }
-    }
-    
     override def internalize(f: net.metaphor.api.FunctorToSet) = new FunctorToSet {
       require(f.source == source)
       override def onObjects(o: O) = f.onObjects(o.asInstanceOf[f.source.O])
