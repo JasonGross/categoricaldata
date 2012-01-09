@@ -19,23 +19,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
 
-  val DavidsFunkyGraph = Dataset(source = Examples.Grph,
-    onObjects = Map(
-      "an edge" -> List("f", "g", "h", "i", "j"),
-      "a vertex" -> List("A", "B", "C", "D")),
-    onMorphisms = Map(
-      ("an edge" --- "has as source" --> "a vertex") -> Map(
-        "f" -> "A",
-        "g" -> "A",
-        "h" -> "B",
-        "i" -> "A",
-        "j" -> "C"),
-      ("an edge" --- "has as target" --> "a vertex") -> Map(
-        "f" -> "B",
-        "g" -> "B",
-        "h" -> "C",
-        "i" -> "C",
-        "j" -> "C")))
 
   val DavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
@@ -66,93 +49,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "i" -> "jbar",
         "j" -> "jbar")))
 
-  val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
-    onObjects = Map(
-      "an edge" -> List("f", "g", "h", "i", "j"),
-      "a vertex" -> List("A", "B", "C", "D")),
-    onMorphisms = Map(
-      ("an edge" --- "has as source" --> "a vertex") -> Map(
-        "f" -> "B",
-        "g" -> "B",
-        "h" -> "C",
-        "i" -> "C",
-        "j" -> "C"),
-      ("an edge" --- "has as target" --> "a vertex") -> Map(
-        "f" -> "A",
-        "g" -> "A",
-        "h" -> "B",
-        "i" -> "A",
-        "j" -> "C")))
-
-  val FunkyE2Dataset = Dataset(
-    source = Examples.E2,
-    onObjects = Map(
-      "0" -> List("a", "b", "c", "d"),
-      "1" -> List("1", "2", "3")),
-    onMorphisms = Map(
-      "0" --- "E01" --> "1" -> Map(
-        "a" -> "1",
-        "b" -> "1",
-        "c" -> "2",
-        "d" -> "3"),
-      "1" --- "E10" --> "0" -> Map(
-        "1" -> "a",
-        "2" -> "b",
-        "3" -> "d")))
-
-  val E2ToPointedSetsRPushFunky = Dataset(
-    source = Examples.PointedSets,
-    onObjects = Map(
-      "an element" -> List("a1a", "b1a", "d3d"),
-      "a pointed set" -> List("a1", "d3")),
-    onMorphisms = Map(
-      ("an element" --- "is in" --> "a pointed set") -> Map(
-        "a1a" -> "a1",
-        "ba1" -> "a1",
-        "d3d" -> "d3"),
-      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
-        "a1" -> "a1a",
-        "d3" -> "d3d")))
-
-  val OneTwoThreePointed = Dataset(
-    source = Examples.PointedSets,
-    onObjects = Map(
-      "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
-      "a pointed set" -> List("a", "b", "c")),
-    onMorphisms = Map(
-      ("an element" --- "is in" --> "a pointed set") -> Map(
-        "a1" -> "a",
-        "b1" -> "b",
-        "b2" -> "b",
-        "c1" -> "c",
-        "c2" -> "c",
-        "c3" -> "c"),
-      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
-        "a" -> "a1",
-        "b" -> "b1",
-        "c" -> "c1")))
-
-  val SixElementsIso = Dataset(
-    source = Examples.Isomorphism,
-    onObjects = Map(
-      "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
-      "1" -> List("a1", "b1", "b2", "c1", "c2", "c3")),
-    onMorphisms = Map(
-      ("0" --- "E01" --> "1") -> Map(
-        "a1" -> "a1",
-        "b1" -> "b1",
-        "b2" -> "b2",
-        "c1" -> "c1",
-        "c2" -> "c2",
-        "c3" -> "c3"),
-      ("1" --- "E10" --> "0") -> Map(
-        "a1" -> "a1",
-        "b1" -> "b1",
-        "b2" -> "b2",
-        "c1" -> "c1",
-        "c2" -> "c2",
-        "c3" -> "c3")))
-
+ 
   val ThreeElementsIso = Dataset(
     source = Examples.Isomorphism,
     onObjects = Map(
@@ -202,9 +99,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
       "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
     onMorphisms = Map())
 
-  "__*" should "work nicely with the map from E2 to PointedSets" in {
-    Examples.E2ToPointedSets.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetsRPushFunky)
-  }
 
   //   "__!" should "work (1)" in {
   //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
@@ -226,48 +120,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //	   should equal 
   //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
   //   }
-
-  
-
-  "__*" should "reverse graph as expected" in {
-    println
-    println("Output from \"__* should reverse graph as expected\":")
-
-    val X = DavidsFunkyGraph
-    val LHS = DavidsFunkyGraphReversed
-    val RHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
-    println("Original graph: " + X)
-    println("Reversed graph: " + LHS)
-    println("Right pushforward of original: " + RHS)
-    LHS should beIsomorphicTo(RHS)
-  }
-
-  
-  // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
-  // Scott: sure, if you have some supply of datasets, you could write
-  /*
-   * for(dataset <- dataset; C = dataset.source) {
-   *    val T = TerminalFunctor(C)
-   *    val x = T.target.allObjects.head 									// the target only has one object, so this hack to get it is okay.
-   * 	dataset.colimitSet should equal(TerminalFunctor(C).__!(dataset)(x))
-   * }
-   */
-  
-
-  "__* along PointedSetsToIsomorphism" should "take a retraction and return two sets isomorphic to its base." in {
-    println
-    println("Output from \"__* along PointedSetsToIsomorphism should take a retraction and return two sets isomorphic to its base.\":")
-    println
-    val X = OneTwoThreePointed
-    val LHS = SixElementsIso
-    val RHS = Examples.PointedSetsToIsomorphism.__*(X)
-    println("Original retraction: "); println(X); println
-    println("Expected isomorphism: "); println(LHS); println
-    println("Right pushforward of original retraction: "); println(RHS)
-    LHS should beIsomorphicTo(RHS)
-  }
-
-  
   
   val SaturatedCommutativeTriangle = { 
     val ArrowsList=List (
@@ -293,7 +145,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         ("V0" --- "E01" --> "V1" --- "E12" --> "V2") === ("V0" --- "E02" --> "V2"))
     
     Ontology(
-  
       objects = List("V0","V1","V2"),
       arrows = ArrowsList,
       relations = List.concat(RelationsId0,RelationsId1,RelationsId2,Comp012)
@@ -395,7 +246,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
           "c" -> "d",
           "d" -> "d")))
     
-    val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
+    lazy val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
       onObjects = Map(
         "an element" -> List("a1","b1","c1","d1","a2","b2","c2","d2")),      
       onMorphisms = Map(
@@ -456,7 +307,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c" -> "d",
         "d" -> "d")))
 
-  val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(7,6),
+  lazy  val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(7,6),
     onObjects = Map(
       "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
     onMorphisms = Map(
@@ -537,20 +388,5 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 //      LHS should beIsomorphicTo(RHS)
 //   }       
   
-  "dataset" should "throw some exception if it does not conform to relations in the source" in {
-    lazy val badData = Dataset (source = Examples.Isomorphism,
-        onObjects = Map (
-            "0" -> List ("x","y"),
-            "1" -> List ("z")),
-        onMorphisms = Map (
-            "0" --- "E01" --> "1" -> Map (
-                "x" -> "z",
-                "y" -> "z"),
-            "1" --- "E10" --> "0" -> Map (
-                "z" -> "x")
-        )
-    )
-    evaluating { badData } should produce [IllegalArgumentException]
-  }
    
 }

@@ -74,6 +74,7 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
 
     val LHS = Examples.ReverseGraph.__!(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
+    println(LHS)
     LHS should beIsomorphicTo(RHS)
   }
 
