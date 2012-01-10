@@ -9,7 +9,6 @@ trait FSet { fset =>
   override def equals(other: Any) = {
     other match {
       case other: FSet => {
-        hashCode == other.hashCode &&
         toIterable.toSet == other.toIterable.toSet
       }
       case _ => false
@@ -72,6 +71,7 @@ trait FFunction { function =>
       }
     }
   }
+  override def hashCode = (source, target, toMap).hashCode
 
   override def toString = {
     toMap.toString

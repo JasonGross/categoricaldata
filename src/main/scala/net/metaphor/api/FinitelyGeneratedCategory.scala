@@ -157,7 +157,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         { o: fgCategory.O => functorToSet(o).toIterable },
         { s: fgCategory.O => { t: fgCategory.O => { a: Any => (for (g <- generators(s, t)) yield functorToSet(g).toFunction(a)).toSet } } })
 
-      val resultSet = new FSet {
+      val resultSet: FSet = new FSet {
         override def sizeIfFinite = Some(maps.size)
         override def toIterable = maps.map(new Section(_))
       }
