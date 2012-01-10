@@ -94,6 +94,18 @@ trait SmallCategory extends Category { smallCategory =>
   }
 
   def categoriesOver: CategoriesOver = new CategoriesOver {}
+
+  trait Opposite extends Category {
+    type O = smallCategory.O
+    type M = smallCategory.M
+    override def identity(o: smallCategory.O) = smallCategory.identity(o)
+    override def source(m: smallCategory.M) = smallCategory.target(m)
+    override def target(m: smallCategory.M) = smallCategory.source(m)
+    override def compose(m1: smallCategory.M, m2: smallCategory.M) = smallCategory.compose(m2, m1)
+  }
+
+  val opposite: SmallCategory
+
 }
 
 object SmallCategories {

@@ -92,13 +92,13 @@ case class IdentityFunction(set: FSet) extends FFunction {
 }
 
 object FFunction {
-  def apply(source: FSet, target: FSet, function: Any => Any) = {
+  def apply[A](source: FSet, target: FSet, function: A => Any) = {
     val source_ = source
     val target_ = target
     new FFunction {
       override val source = source_
       override val target = target_
-      override val toFunction = function
+      override val toFunction = function.asInstanceOf[Any => Any]
     }
   }
 }
@@ -113,8 +113,8 @@ trait Sets extends Category with InitialObject with TerminalObject {
 
   override val terminalObject: FSet = List("*")
   override val initialObject: FSet = Nil
-  override def morphismToTerminalObject(s: FSet) = FFunction(s, terminalObject, { a => "*" })
-  override def morphismFromInitialObject(s: FSet) = FFunction(initialObject, s, { a => throw new IllegalArgumentException })
+  override def morphismToTerminalObject(s: FSet) = FFunction(s, terminalObject, { a: Any => "*" })
+  override def morphismFromInitialObject(s: FSet) = FFunction(initialObject, s, { a: Any => throw new IllegalArgumentException })
   
   def bijections(set1: FSet, set2: FSet): FSet = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
