@@ -48,59 +48,6 @@ class RightPushforwardDevTest extends FlatSpec with ShouldMatchers with CustomMa
     Examples.E2ToPointedSets.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetsRPushFunky)
   }
 
-  
-  // This one is failing because isomorphism testing is broken (not even reflexive!)
-  "__*" should "reverse graph as expected" in {
-
-    val DavidsFunkyGraph = Dataset(source = Examples.Grph,
-      onObjects = Map(
-        "an edge" -> List("f", "g", "h", "i", "j"),
-        "a vertex" -> List("A", "B", "C", "D")),
-      onMorphisms = Map(
-        ("an edge" --- "has as source" --> "a vertex") -> Map(
-          "f" -> "A",
-          "g" -> "A",
-          "h" -> "B",
-          "i" -> "A",
-          "j" -> "C"),
-        ("an edge" --- "has as target" --> "a vertex") -> Map(
-          "f" -> "B",
-          "g" -> "B",
-          "h" -> "C",
-          "i" -> "C",
-          "j" -> "C")))
-
-    val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
-      onObjects = Map(
-        "an edge" -> List("f", "g", "h", "i", "j"),
-        "a vertex" -> List("A", "B", "C", "D")),
-      onMorphisms = Map(
-        ("an edge" --- "has as source" --> "a vertex") -> Map(
-          "f" -> "B",
-          "g" -> "B",
-          "h" -> "C",
-          "i" -> "C",
-          "j" -> "C"),
-        ("an edge" --- "has as target" --> "a vertex") -> Map(
-          "f" -> "A",
-          "g" -> "A",
-          "h" -> "B",
-          "i" -> "A",
-          "j" -> "C")))
-
-    println
-    println("Output from \"__* should reverse graph as expected\":")
-
-    val X = DavidsFunkyGraph
-    val LHS = DavidsFunkyGraphReversed
-    val RHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
-    println("Original graph: " + X)
-    println("Reversed graph: " + LHS)
-    println("Right pushforward of original: " + RHS)
-    
-    LHS should beIsomorphicTo(RHS)
-  }
-  
   "__* along PointedSetsToIsomorphism" should "take a retraction and return two sets isomorphic to its base." in {
 
     val OneTwoThreePointed = Dataset(
@@ -142,9 +89,8 @@ class RightPushforwardDevTest extends FlatSpec with ShouldMatchers with CustomMa
           "c2" -> "c2",
           "c3" -> "c3")))
 
-          
     // Scott: I think this is the wrong test, per my email 2012-01-09.
-          
+
     println
     println("Output from \"__* along PointedSetsToIsomorphism should take a retraction and return two sets isomorphic to its base.\":")
     println

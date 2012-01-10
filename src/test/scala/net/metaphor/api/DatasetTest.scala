@@ -49,8 +49,26 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "Item 7" -> "Left Drawer",
         "Item 8" -> "Left Drawer")))
 
+  val DavidsFunkyGraph = Dataset(source = Examples.Grph,
+    onObjects = Map(
+      "an edge" -> List("f", "g", "h", "i", "j"),
+      "a vertex" -> List("A", "B", "C", "D")),
+    onMorphisms = Map(
+      ("an edge" --- "has as source" --> "a vertex") -> Map(
+        "f" -> "A",
+        "g" -> "A",
+        "h" -> "B",
+        "i" -> "A",
+        "j" -> "C"),
+      ("an edge" --- "has as target" --> "a vertex") -> Map(
+        "f" -> "B",
+        "g" -> "B",
+        "h" -> "C",
+        "i" -> "C",
+        "j" -> "C")))
+
   "Dataset.isIsomorphicTo" should "be reflexive" in {
-    for (dataset <- List(Drawers /* TODO add some more? */ )) {
+    for (dataset <- List(Drawers, Examples.ReverseGraph.__*(DavidsFunkyGraph) /* TODO add some more? */ )) {
       dataset should beIsomorphicTo(dataset)
     }
   }

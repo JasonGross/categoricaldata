@@ -35,4 +35,49 @@ class RightPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatch
     pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
   }
 
+  "__*" should "reverse graph as expected" in {
+
+    val DavidsFunkyGraph = Dataset(source = Examples.Grph,
+      onObjects = Map(
+        "an edge" -> List("f", "g", "h", "i", "j"),
+        "a vertex" -> List("A", "B", "C", "D")),
+      onMorphisms = Map(
+        ("an edge" --- "has as source" --> "a vertex") -> Map(
+          "f" -> "A",
+          "g" -> "A",
+          "h" -> "B",
+          "i" -> "A",
+          "j" -> "C"),
+        ("an edge" --- "has as target" --> "a vertex") -> Map(
+          "f" -> "B",
+          "g" -> "B",
+          "h" -> "C",
+          "i" -> "C",
+          "j" -> "C")))
+
+    val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
+      onObjects = Map(
+        "an edge" -> List("f", "g", "h", "i", "j"),
+        "a vertex" -> List("A", "B", "C", "D")),
+      onMorphisms = Map(
+        ("an edge" --- "has as source" --> "a vertex") -> Map(
+          "f" -> "B",
+          "g" -> "B",
+          "h" -> "C",
+          "i" -> "C",
+          "j" -> "C"),
+        ("an edge" --- "has as target" --> "a vertex") -> Map(
+          "f" -> "A",
+          "g" -> "A",
+          "h" -> "B",
+          "i" -> "A",
+          "j" -> "C")))
+
+    val X = DavidsFunkyGraph
+    val LHS = DavidsFunkyGraphReversed
+    val RHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
+
+    LHS should beIsomorphicTo(RHS)
+  }
+
 }
