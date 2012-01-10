@@ -18,6 +18,8 @@ trait FunctorsToSet extends Category {
   override def source(m: M) = internalize(m.source)
   override def target(m: M) = internalize(m.target)
   override def compose(m1: M, m2: M) = internalize(???)
+  
+//  override lazy val opposite = new Opposite { }
 }
 
 object FunctorsToSet extends FunctorsToSet {

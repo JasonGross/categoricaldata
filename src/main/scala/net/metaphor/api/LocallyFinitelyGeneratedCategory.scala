@@ -146,13 +146,17 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     // reverse all the levels!
     override def objectsAtLevel(k: Int) = lfgCategory.objectsAtLevel(-k)
     override def generators(source: O, target: O) = lfgCategory.generators(target, source).map(reverseGenerator(_))
-
+    override def generatorsTo(target: O) = lfgCategory.generatorsFrom(target).map(reverseGenerator(_))
+    override def generatorsFrom(source: O) = lfgCategory.generatorsTo(source).map(reverseGenerator(_))
+    
     override def generatorSource(g: G) = lfgCategory.generatorTarget(unreverseGenerator(g))
     override def generatorTarget(g: G) = lfgCategory.generatorSource(unreverseGenerator(g))
 
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(unreverse(p1).representative, unreverse(p2).representative)
   }
 
+  override val opposite: OppositeLocallyFinitelyGeneratedCategory
+  
   protected trait Wrapper extends LocallyFinitelyGeneratedCategory {
     override type O = lfgCategory.O
     override type G = lfgCategory.G
@@ -268,19 +272,18 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 //    def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
   }
   
-  class YonedaFunctor(c: O) extends FunctorToSet {
-    override def onObjects(o: O): FSet = morphisms(o, c)
-    
-    override def onGenerators(g: G) = FFunction(onObjects(generatorSource(g)), onObjects(generatorTarget(g)), { m => compose(generatorAsMorphism(g), m) })
+  class YonedaFunctor(s: lfgCategory.O) extends FunctorToSet {
+    override def onObjects(t: lfgCategory.O): FSet = morphisms(s, t)
+    override def onGenerators(g: lfgCategory.G) = FFunction(onObjects(generatorSource(g)), onObjects(generatorTarget(g)), { m: lfgCategory.M => compose(m, generatorAsMorphism(g)) })
   }
-  class YonedaNaturalTransformation(g: G) extends NaturalTransformationToSet {
-    override val source = internalize(new YonedaFunctor(generatorSource(g)))
-    override val target = internalize(new YonedaFunctor(generatorTarget(g)))
-    override def apply(o: O) = ???
+  class YonedaNaturalTransformation(g: lfgCategory.opposite.G) extends NaturalTransformationToSet {
+    override val source = internalize(new YonedaFunctor(opposite.generatorSource(g)))
+    override val target = internalize(new YonedaFunctor(opposite.generatorTarget(g)))
+    override def apply(t: lfgCategory.O) = FFunction(source(t), target(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
   }
   
   lazy val yoneda = new Functor.withLocallyFinitelyGeneratedSource {
-    override val source: lfgCategory.type = lfgCategory
+    override val source: lfgCategory.opposite.type = lfgCategory.opposite
     override val target = functorsToSet
     override def onObjects(o: source.O) = internalize(new YonedaFunctor(o))
     override def onGenerators(g: source.G) = internalize(new YonedaNaturalTransformation(g))
