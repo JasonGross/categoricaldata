@@ -33,22 +33,49 @@ trait FSet { fset =>
       CachingIterable(fset.toIterable)
     }
   }
-  
+
   private class ForcedFSet extends FiniteFSet {
     val toIterable = fset.toIterable.toList
   }
-  
+
   def cache: FSet = new CachingFSet
   def force: FSet = new ForcedFSet
-  
+
   def toList = toIterable.toList
   def toStringList = toList.map(_.toString)
+
+  lazy val isEmpty = toIterable.isEmpty
 }
 
 trait FiniteFSet extends FSet {
   override def finite = true
   override lazy val size = toIterable.size
   override def sizeIfFinite = Some(size)
+}
+
+class ProductSet(sets: FSet*) extends FSet {
+  override def toIterable = sets.foldLeft(NonStrictIterable[List[Any]](Nil))({ case (i, s) => for (i0 <- i; s0 <- s.toIterable) yield s0 :: i0 }).map(_.reverse)
+  override lazy val sizeIfFinite = {
+    val sizes = sets.map(_.sizeIfFinite)
+    if (sizes.contains(Some(0))) {
+      Some(0)
+    } else if (sizes.contains(None)) {
+      None
+    } else {
+      Some(sizes.map(_.get).product)
+    }
+  }
+}
+class CoproductSet(sets: FSet*) extends FSet {
+  override def toIterable = sets.map(_.toIterable).flatten
+  override lazy val sizeIfFinite = {
+    val sizes = sets.map(_.sizeIfFinite)
+    if (sizes.contains(None)) {
+      None
+    } else {
+      Some(sizes.map(_.get).sum)
+    }
+  }
 }
 
 trait FFunction { function =>
@@ -76,14 +103,14 @@ trait FFunction { function =>
   override def toString = {
     toMap.toString
   }
-  
+
   def toMap: Map[Any, Any] = {
     val f = toFunction
     (for (o <- source.toIterable) yield (o -> f(o))).toMap
   }
-  
-  def toStringMap: Map[String, String] = 
-    toMap.map({ case (a,b) => a.toString -> b.toString })
+
+  def toStringMap: Map[String, String] =
+    toMap.map({ case (a, b) => a.toString -> b.toString })
 }
 case class IdentityFunction(set: FSet) extends FFunction {
   override def source = set
@@ -103,7 +130,7 @@ object FFunction {
   }
 }
 
-trait Sets extends Category with InitialObject with TerminalObject {
+trait Sets extends Category with InitialObject with TerminalObject with Products with Coproducts {
   type O = FSet
   type M = FFunction
   override def identity(set: FSet) = set.identity
@@ -115,7 +142,15 @@ trait Sets extends Category with InitialObject with TerminalObject {
   override val initialObject: FSet = Nil
   override def morphismToTerminalObject(s: FSet) = FFunction(s, terminalObject, { a: Any => "*" })
   override def morphismFromInitialObject(s: FSet) = FFunction(initialObject, s, { a: Any => throw new IllegalArgumentException })
-  
+
+  override def product(xs: FSet*) = new ProductSet(xs: _*)
+  override def productProjections(xs: FSet*): List[FFunction] = ???
+  override def productUniversality(o: FSet, ms: List[FFunction]) = ???
+
+  override def coproduct(xs: FSet*) = new CoproductSet(xs: _*)
+  override def coproductInjections(xs: FSet*): List[FFunction] = ???
+  override def coproductUniversality(o: FSet, ms: List[FFunction]) = ???
+
   def bijections(set1: FSet, set2: FSet): FSet = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
       case (Some(k), Some(l)) if k == l => {

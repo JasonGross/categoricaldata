@@ -122,4 +122,48 @@ class RightPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatch
     }
   }
 
+  "__* along Chain1ToIsomorphism" should "take a function and return two sets isomorphic to its target." in {
+
+    val OneTwoThree = Dataset(
+      source = Examples.Chain(1),
+      onObjects = Map(
+        "V0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+        "V1" -> List("a", "b", "c")),
+      onMorphisms = Map(
+        ("V0" --- "E01" --> "V1") -> Map(
+          "a1" -> "a",
+          "b1" -> "b",
+          "b2" -> "b",
+          "c1" -> "c",
+          "c2" -> "c",
+          "c3" -> "c")))
+
+    val SixElementsIso = Dataset(
+      source = Examples.Isomorphism,
+      onObjects = Map(
+        "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+        "1" -> List("a1", "b1", "b2", "c1", "c2", "c3")),
+      onMorphisms = Map(
+        ("0" --- "E01" --> "1") -> Map(
+          "a1" -> "a1",
+          "b1" -> "b1",
+          "b2" -> "b2",
+          "c1" -> "c1",
+          "c2" -> "c2",
+          "c3" -> "c3"),
+        ("1" --- "E10" --> "0") -> Map(
+          "a1" -> "a1",
+          "b1" -> "b1",
+          "b2" -> "b2",
+          "c1" -> "c1",
+          "c2" -> "c2",
+          "c3" -> "c3")))
+
+    val X = OneTwoThree
+    val LHS = SixElementsIso
+    val RHS = Examples.Chain1ToIsomorphism.__*(X)
+    LHS should beIsomorphicTo(RHS)
+
+  }
+
 }

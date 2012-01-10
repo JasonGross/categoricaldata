@@ -15,7 +15,7 @@ trait SmallCategory extends Category { smallCategory =>
   def internalize(f: net.metaphor.api.FunctorToSet): F
   def internalize(t: net.metaphor.api.NaturalTransformationToSet): T
 
-  trait FunctorsToSet extends net.metaphor.api.FunctorsToSet with InitialObject with TerminalObject {
+  trait FunctorsToSet extends net.metaphor.api.FunctorsToSet with InitialObject with TerminalObject with Products with Coproducts {
     override type O >: F <: smallCategory.FunctorToSet
     override type M >: T <: smallCategory.NaturalTransformationToSet
 
@@ -40,6 +40,27 @@ trait SmallCategory extends Category { smallCategory =>
       override val target = f
       override def apply(o: t.sourceCategory.O) = Sets.morphismFromInitialObject(f(o))
     })
+
+    override def product(xs: O*) = internalize(new FunctorToSet {
+      override def onObjects(o: smallCategory.O) = Sets.product(xs.map(_(o)):_*)
+      override def onMorphisms(m: smallCategory.M) = Sets.product(xs.map(_(m)):_*)
+    })
+    override def productProjections(xs: O*) = xs.toList.zipWithIndex map {
+      case (x, i) => internalize(new net.metaphor.api.NaturalTransformationToSet { t =>
+        override val source = product(xs:_*)
+        override val target = x
+        override def apply(o: t.sourceCategory.O) = Sets.productProjections(xs.map(_(o)))(i)
+      })
+    }
+    override def productUniversality(o: O, ms: List[M]) = ???
+
+    override def coproduct(xs: O*) = internalize(new FunctorToSet {
+      override def onObjects(o: smallCategory.O) = Sets.coproduct(xs.map(_(o)):_*)
+      override def onMorphisms(m: smallCategory.M) = Sets.coproduct(xs.map(_(m)):_*)
+    })
+    override def coproductInjections(xs: O*) = ???
+    override def coproductUniversality(o: O, ms: List[M]) = ???
+
   }
 
   class SpecializedFunctorsToSet extends FunctorsToSet { functorsToSet =>

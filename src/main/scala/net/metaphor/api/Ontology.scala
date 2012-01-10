@@ -285,7 +285,12 @@ object Ontologies extends Category with InitialObject with TerminalObject {
   override def identity(o: Ontology) = ???
   override def source(m: Translation) = m.source
   override def target(m: Translation) = m.target
-  override def compose(m1: Translation, m2: Translation): Translation = ???
+  override def compose(m1: Translation, m2: Translation): Translation = new Translation {
+    override val source: m1.source.type = m1.source
+    override val target: m2.target.type = m2.target
+    override def onObjects(o: source.O) = m2(m1(o).asInstanceOf[m2.source.O])
+    override def onGenerators(g: source.G) = m2(m1.onGenerators(g).asInstanceOf[m2.source.M])
+  }
 
   trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms
 
