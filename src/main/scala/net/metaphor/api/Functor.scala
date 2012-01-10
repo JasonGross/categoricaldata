@@ -31,14 +31,11 @@ object Functor {
   trait withSmallSource extends Functor {
     override val source: SmallCategory
   }
-
-  object withSmallSource {
-    trait withSmallTarget extends Functor.withSmallSource {
-      override val target: SmallCategory
-    }
+  trait withSmallTarget extends Functor {
+    override val target: SmallCategory
   }
 
-  trait withLocallyFinitelyGeneratedSource extends Functor {
+  trait withLocallyFinitelyGeneratedSource extends withSmallSource {
     override val source: LocallyFinitelyGeneratedCategory
     def onGenerators(g: source.G): target.M
     override def onMorphisms(m: source.M) = {
@@ -47,16 +44,49 @@ object Functor {
       target.compose(start, morphisms)
     }
   }
-
-  object withLocallyFinitelyGeneratedSource
-
-  trait withFinitelyGeneratedSource extends Functor {
-
+  trait withLocallyFinitelyGeneratedTarget extends withSmallTarget {
+    override val target: LocallyFinitelyGeneratedCategory
   }
 
-  object withFinitelyGeneratedSource
+  trait withFinitelyGeneratedSource extends withLocallyFinitelyGeneratedSource {
+    override val source: FinitelyGeneratedCategory
+  }
+  trait withFinitelyGeneratedTarget extends withLocallyFinitelyGeneratedTarget {
+    override val target: FinitelyGeneratedCategory
+  }
 
-  object withFinitelyPresentedSource
+  trait withFinitelyPresentedSource extends withFinitelyGeneratedSource {
+    override val source: FinitelyPresentedCategory
+  }
+  trait withFinitelyPresentedTarget extends withFinitelyGeneratedTarget {
+    override val target: FinitelyPresentedCategory
+  }
+
+  object withSmallSource {
+    trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarget
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withSmallSource with Functor.withLocallyFinitelyGeneratedTarget
+    trait withFinitelyGeneratedTarget extends Functor.withSmallSource with Functor.withFinitelyGeneratedTarget
+    trait withFinitelyPresentedTarget extends Functor.withSmallSource with Functor.withFinitelyPresentedTarget
+  }
+  object withLocallyFinitelyGeneratedSource {
+    trait withSmallTarget extends Functor.withLocallyFinitelyGeneratedSource with Functor.withSmallTarget
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withLocallyFinitelyGeneratedSource with Functor.withLocallyFinitelyGeneratedTarget
+    trait withFinitelyGeneratedTarget extends Functor.withLocallyFinitelyGeneratedSource with Functor.withFinitelyGeneratedTarget
+    trait withFinitelyPresentedTarget extends Functor.withLocallyFinitelyGeneratedSource with Functor.withFinitelyPresentedTarget
+  }
+  object withFinitelyGeneratedSource {
+    trait withSmallTarget extends Functor.withFinitelyGeneratedSource with Functor.withSmallTarget
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource with Functor.withLocallyFinitelyGeneratedTarget
+    trait withFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource with Functor.withFinitelyGeneratedTarget
+    trait withFinitelyPresentedTarget extends Functor.withFinitelyGeneratedSource with Functor.withFinitelyPresentedTarget
+  }
+  object withFinitelyPresentedSource {
+    trait withSmallTarget extends Functor.withFinitelyPresentedSource with Functor.withSmallTarget
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withFinitelyPresentedSource with Functor.withLocallyFinitelyGeneratedTarget
+    trait withFinitelyGeneratedTarget extends Functor.withFinitelyPresentedSource with Functor.withFinitelyGeneratedTarget
+    trait withFinitelyPresentedTarget extends Functor.withFinitelyPresentedSource with Functor.withFinitelyPresentedTarget
+  }
+
 }
 
 trait LeftAdjoint { functor: Functor =>
