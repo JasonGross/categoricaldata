@@ -380,10 +380,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      LHS should beIsomorphicTo(RHS)
   //   }       
 
-  //   "yoneda" should "exist for objects in FiniteCyclicMonoid" in { //TODO Activate this test when Yoneda has been made.
-  //     val FCM = Examples.FiniteCyclicMonoid(7,4)
-  //     FCM.Yoneda(box("V2")) should equal(FCM.Yoneda(box("V2")))
-  //   }
+  
 
   //   "fullSubcategorySpannedBy" should "take Chains to Chains" in {//TODO Make a working fullSubcategorySpannedBy method.
   //	   val X = Examples.Chain(5)
