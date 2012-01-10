@@ -80,4 +80,39 @@ class RightPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatch
     LHS should beIsomorphicTo(RHS)
   }
 
+    "__*" should "work nicely with the map from E2 to PointedSets" in {
+    val FunkyE2Dataset = Dataset(
+      source = Examples.E2,
+      onObjects = Map(
+        "0" -> List("a", "b", "c", "d"),
+        "1" -> List("1", "2", "3")),
+      onMorphisms = Map(
+        "0" --- "E01" --> "1" -> Map(
+          "a" -> "1",
+          "b" -> "1",
+          "c" -> "2",
+          "d" -> "3"),
+        "1" --- "E10" --> "0" -> Map(
+          "1" -> "a",
+          "2" -> "b",
+          "3" -> "d")))
+
+    val E2ToPointedSetsRPushFunky = Dataset(
+      source = Examples.PointedSets,
+      onObjects = Map(
+        "an element" -> List("a1a", "b1a", "d3d"),
+        "a pointed set" -> List("a1", "d3")),
+      onMorphisms = Map(
+        ("an element" --- "is in" --> "a pointed set") -> Map(
+          "a1a" -> "a1",
+          "b1a" -> "a1",
+          "d3d" -> "d3"),
+        ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+          "a1" -> "a1a",
+          "d3" -> "d3d")))
+
+    Examples.E2ToPointedSets.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetsRPushFunky)
+  }
+
+  
 }

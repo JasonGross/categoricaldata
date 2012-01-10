@@ -199,22 +199,9 @@ class PullbackDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
       "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
     onMorphisms = Map())
 
-  // TODO waiting on translations with infinite targets
-  //    "pullback" should "work with the GraphToDiscreteDynamicalSystem1 functor" in {
-  //      GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
-  //    }
-
-  {
-    val FCM = Examples.FiniteCyclicMonoid(10, 7)
-    val F: Translation = Ontologies.terminalObject.findAllTranslationsTo(FCM).head
-    "pullback" should "preserve the initial dataset" in {
-
-      F.^*(FCM.Datasets.initialObject) should equal(Ontologies.terminalObject.Datasets.initialObject)
-    }
-    "pullback" should "preserve the terminal dataset" in {
-
-      F.^*(FCM.Datasets.terminalObject) should equal(Ontologies.terminalObject.Datasets.terminalObject)
-    }
+  "pullback" should "work with the GraphToDiscreteDynamicalSystem1 functor" in {
+    Examples.GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
   }
+
 
 }

@@ -303,27 +303,25 @@ object Examples {
       ("an element" --- "is in" --> "a pointed set") -> ("0" --- "E01" --> "1"),
       ("a pointed set" --- "has as chosen" --> "an element") -> ("1" --- "E10" --> "0")))
 
-  // FIXME (Scott) Allow translations with infinite targets.
-  // Hmm, I've commented this out for now, as I'm only allowing Translations with finite targets.
-  //  val GraphToDiscreteDynamicalSystem1 = Translation(
-  //    source = Grph,
-  //    target = DiscreteDynamicalSystem,
-  //    onObjects = Map(
-  //      "an edge" -> "an element",
-  //      "a vertex" -> "an element"),
-  //    onMorphisms = Map(
-  //      ("an edge" --- "has as source" --> "a vertex") -> ("an element".identity),
-  //      ("an edge" --- "has as target" --> "a vertex") -> ("an element" --- "has as successor" --> "an element")))
+    val GraphToDiscreteDynamicalSystem1 = Translation(
+      source = Grph,
+      target = DiscreteDynamicalSystem,
+      onObjects = Map(
+        "an edge" -> "an element",
+        "a vertex" -> "an element"),
+      onMorphisms = Map(
+        ("an edge" --- "has as source" --> "a vertex") -> ("an element".identity),
+        ("an edge" --- "has as target" --> "a vertex") -> ("an element" --- "has as successor" --> "an element")))
 
-  //  val GraphToDiscreteDynamicalSystem2 = Translation(
-  //    source = Grph,
-  //    target = DiscreteDynamicalSystem,
-  //    onObjects = Map(
-  //      "an edge" -> "an element",
-  //      "a vertex" -> "an element"),
-  //    onMorphisms = Map(
-  //      ("an edge" --- "has as source" --> "a vertex") -> ("an element" --- "has as successor" --> "an element"),
-  //      ("an edge" --- "has as target" --> "a vertex") -> ("an element".identity)))
+    val GraphToDiscreteDynamicalSystem2 = Translation(
+      source = Grph,
+      target = DiscreteDynamicalSystem,
+      onObjects = Map(
+        "an edge" -> "an element",
+        "a vertex" -> "an element"),
+      onMorphisms = Map(
+        ("an edge" --- "has as source" --> "a vertex") -> ("an element" --- "has as successor" --> "an element"),
+        ("an edge" --- "has as target" --> "a vertex") -> ("an element".identity)))
 
   val IntegersMod2Group = Ontology(
     objects = List("an element"),

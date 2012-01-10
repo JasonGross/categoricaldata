@@ -228,5 +228,17 @@ class PullbackTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     Examples.ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
 
+  {
+    val FCM = Examples.FiniteCyclicMonoid(10, 7)
+    val F: Translation = Ontologies.terminalObject.findAllTranslationsTo(FCM).head
+
+    "pullback" should "preserve the initial dataset" in {
+      F.^*(FCM.Datasets.initialObject) should equal(Ontologies.terminalObject.Datasets.initialObject)
+    }
+
+    "pullback" should "preserve the terminal dataset" in {
+      F.^*(FCM.Datasets.terminalObject) should equal(Ontologies.terminalObject.Datasets.terminalObject)
+    }
+  }
 
 }

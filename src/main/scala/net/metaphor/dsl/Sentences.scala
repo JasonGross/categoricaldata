@@ -75,7 +75,7 @@ object Sentences {
     new ConcreteOntology(objects, arrows, relations)
   }
 
-  class ConcreteTranslation(override val source: Ontology, override val target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath) extends Translation {
+  class ConcreteTranslation(override val source: Ontology, override val target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath) extends Translation {
     private val objectMap: Map[Box, Box] = (for (s <- source.objects) yield {
       val t = target.objects.find(_.name == onObjects(s.name)).get
       s -> t
@@ -96,7 +96,7 @@ object Sentences {
     override def onGenerators(a: source.G) = morphismMap(a)
   }
 
-  def Translation(source: Ontology, target: Ontology with Ontologies.Finite, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
+  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
     // construct a new translation object
     new ConcreteTranslation(source, target, onObjects, onMorphisms)
   }
