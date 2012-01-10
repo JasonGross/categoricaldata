@@ -97,47 +97,34 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
       "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
     onMorphisms = Map())
 
-  //   "__!" should "work (1)" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should beIsomorphicTo (DavidsFunkyFiniteCyclicMonoid)
-  //   }
-  //
-  //  "__*" should "work (2)" in {
-  //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) shoudl beIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem)
-  //  }
-
-
-  val SaturatedCommutativeTriangle = {
-    val ArrowsList = List(
-      "V0" --- "E00" --> "V0",
-      "V0" --- "E01" --> "V1",
-      "V0" --- "E02" --> "V2",
-      "V1" --- "E11" --> "V1",
-      "V1" --- "E12" --> "V2",
-      "V2" --- "E22" --> "V2")
-    val RelationsId0 = List(
-      ("V0" --- "E00" --> "V0" --- "E00" --> "V0") === ("V0" --- "E00" --> "V0"),
-      ("V0" --- "E00" --> "V0" --- "E01" --> "V1") === ("V0" --- "E01" --> "V1"),
-      ("V0" --- "E00" --> "V0" --- "E02" --> "V2") === ("V0" --- "E02" --> "V2"))
-    val RelationsId1 = List(
-      ("V0" --- "E01" --> "V1" --- "E11" --> "V1") === ("V0" --- "E01" --> "V1"),
-      ("V1" --- "E11" --> "V1" --- "E11" --> "V1") === ("V1" --- "E11" --> "V1"),
-      ("V1" --- "E11" --> "V1" --- "E12" --> "V2") === ("V1" --- "E12" --> "V2"))
-    val RelationsId2 = List(
-      ("V0" --- "E02" --> "V2" --- "E22" --> "V2") === ("V0" --- "E02" --> "V2"),
-      ("V1" --- "E12" --> "V2" --- "E22" --> "V2") === ("V1" --- "E12" --> "V2"),
-      ("V2" --- "E22" --> "V2" --- "E22" --> "V2") === ("V2" --- "E22" --> "V2"))
-    val Comp012 = List(
-      ("V0" --- "E01" --> "V1" --- "E12" --> "V2") === ("V0" --- "E02" --> "V2"))
-
-    Ontology(
-      objects = List("V0", "V1", "V2"),
-      arrows = ArrowsList,
-      relations = RelationsId0 ::: RelationsId1 ::: RelationsId2 ::: Comp012)
+  // TODO (David) this one is working; give it a good name and move to LeftPushforwardTest
+  "__!" should "work (1)" in {
+    val F = Ontologies.terminalObject.findAllTranslationsTo(Examples.FiniteCyclicMonoid(2, 1)).head
+    F.__!(DavidsFunkySet1) should beIsomorphicTo(DavidsFunkyFiniteCyclicMonoid)
   }
-    
-    "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO Is this test in the right place? Does it work? Do we have BeIsomorphicAsCategoriesTo, or any other such guy?
-      Examples.Chain(2) should beIsomorphicTo(SaturatedCommutativeTriangle)
-    }
+
+  // TODO this doesn't work because the target is infinite!
+  "__*" should "convert a graph into a discrete dynamical system" in {
+    val DavidsFunkyGraph = Dataset(source = Examples.Grph,
+      onObjects = Map(
+        "an edge" -> List("f", "g", "h", "i", "j"),
+        "a vertex" -> List("A", "B", "C", "D")),
+      onMorphisms = Map(
+        ("an edge" --- "has as source" --> "a vertex") -> Map(
+          "f" -> "A",
+          "g" -> "A",
+          "h" -> "B",
+          "i" -> "A",
+          "j" -> "C"),
+        ("an edge" --- "has as target" --> "a vertex") -> Map(
+          "f" -> "B",
+          "g" -> "B",
+          "h" -> "C",
+          "i" -> "C",
+          "j" -> "C")))
+
+    Examples.GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) should beIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem)
+  }
 
   val DDS1 = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
@@ -185,40 +172,41 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dc" -> "dd",
         "dd" -> "dd")))
 
-  //      val DDSTimeLapse2 = Translation (
-  //        source = Examples.DiscreteDynamicalSystem,
-  //        target = Examples.DiscreteDynamicalSystem,
-  //        onObjects = Map ("an element" -> "an element"),
-  //        onMorphisms = Map (
-  //            ("an element" --- "has as successor" --> "an element") -> 
-  //            ("an element" --- "has as successor" --> "an element" --- "has as successor" --> "an element")))
-  //          	
-  //
-  //     "__*" should "provide a 'half-speed' DDS" in {
-  //      println
-  //      println("Output from \"__* should provide a 'half-speed' DDS\":")
-  //      
-  //      val X = DDS1
-  //      val LHS = DDSTimeLapse2.__*(X)
-  //      val RHS = DDS1Times2R
-  //      println(X)
-  //      println(LHS)
-  //      println(RHS)
-  //      LHS should beIsomorphicTo(RHS)
-  //   }      
-  //    
-  //    "__!" should "provide a 'half-speed' DDS" in {
-  //      println
-  //      println("Output from \"__! should provide a 'half-speed' DDS\":")
-  //      
-  //      val X = DDS1
-  //      val LHS = DDSTimeLapse2.__!(X)
-  //      val RHS = DDS1Times2L
-  //      println(X)
-  //      println(LHS)
-  //      println(RHS)
-  //      LHS should beIsomorphicTo(RHS)
-  //   }      
+  val DDSTimeLapse2 = Translation(
+    source = Examples.DiscreteDynamicalSystem,
+    target = Examples.DiscreteDynamicalSystem,
+    onObjects = Map("an element" -> "an element"),
+    onMorphisms = Map(
+      ("an element" --- "has as successor" --> "an element") ->
+        ("an element" --- "has as successor" --> "an element" --- "has as successor" --> "an element")))
+
+  // TODO this doesn't work because the target is infinite!
+  "__*" should "provide a 'half-speed' DDS" in {
+    println
+    println("Output from \"__* should provide a 'half-speed' DDS\":")
+
+    val X = DDS1
+    val LHS = DDSTimeLapse2.__*(X)
+    val RHS = DDS1Times2R
+    println(X)
+    println(LHS)
+    println(RHS)
+    LHS should beIsomorphicTo(RHS)
+  }
+
+  // TODO this doesn't work because the target is infinite!
+  "__!" should "provide a 'half-speed' DDS" in {
+    println
+    println("Output from \"__! should provide a 'half-speed' DDS\":")
+
+    val X = DDS1
+    val LHS = DDSTimeLapse2.__!(X)
+    val RHS = DDS1Times2L
+    println(X)
+    println(LHS)
+    println(RHS)
+    LHS should beIsomorphicTo(RHS)
+  }
 
   val FCM20_19 = Dataset(source = Examples.FiniteCyclicMonoid(20, 19),
     onObjects = Map(

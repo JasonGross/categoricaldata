@@ -26,8 +26,37 @@ object Functor {
     val target: functor2.target.type = functor2.target
     def onObjects(o: source.O) = functor2(functor1(o).asInstanceOf[functor2.source.O])
     def onMorphisms(m: source.M) = functor2(functor1(m).asInstanceOf[functor2.source.M])
+  }
+
+  trait withSmallSource extends Functor {
+    override val source: SmallCategory
+  }
+
+  object withSmallSource {
+    trait withSmallTarget extends Functor.withSmallSource {
+      override val target: SmallCategory
+    }
+  }
+
+  trait withLocallyFinitelyGeneratedSource extends Functor {
+    override val source: LocallyFinitelyGeneratedCategory
+    def onGenerators(g: source.G): target.M
+    override def onMorphisms(m: source.M) = {
+      val start = onObjects(source.source(m))
+      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
+      target.compose(start, morphisms)
+    }
+  }
+
+  object withLocallyFinitelyGeneratedSource
+
+  trait withFinitelyGeneratedSource extends Functor {
 
   }
+
+  object withFinitelyGeneratedSource
+
+  object withFinitelyPresentedSource
 }
 
 trait LeftAdjoint { functor: Functor =>

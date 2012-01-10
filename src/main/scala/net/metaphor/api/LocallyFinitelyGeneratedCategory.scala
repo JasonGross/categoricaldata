@@ -258,4 +258,21 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     def limitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).limit
     def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
   }
+  
+  class YonedaFunctor(c: O) extends FunctorToSet {
+    override def onObjects(o: O) = ???
+    override def onGenerators(g: G) = ???
+  }
+  class YonedaNaturalTransformation(g: G) extends NaturalTransformationToSet {
+    override val source = internalize(new YonedaFunctor(generatorSource(g)))
+    override val target = internalize(new YonedaFunctor(generatorTarget(g)))
+    override def apply(o: O) = ???
+  }
+  
+  lazy val yoneda = new Functor.withLocallyFinitelyGeneratedSource {
+    override val source: lfgCategory.type = lfgCategory
+    override val target = functorsToSet
+    override def onObjects(o: source.O) = internalize(new YonedaFunctor(o))
+    override def onGenerators(g: source.G) = internalize(new YonedaNaturalTransformation(g))
+  }
 }
