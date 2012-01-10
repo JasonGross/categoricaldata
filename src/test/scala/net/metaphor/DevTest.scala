@@ -10,6 +10,7 @@ import net.metaphor.api.FiniteMorphisms
 import net.metaphor.api.Ontologies
 import net.metaphor.examples.Examples
 import net.metaphor.util.CustomMatchers
+import net.metaphor.api.Box
 /*
  * This should always compile when checked in.
  */
@@ -344,6 +345,64 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     LHS should beIsomorphicTo(RHS)
   }
 
+    //This test will fail because, first of all, because functor composition in general (in this case Chain1ToIsomorphism = Chain1ToPointedSets;PointedSetsToIsomorphism) is not defined.
+  //TODO Once functor composition is defined, check this test.
+  "__* along Chain1ToIsomorphism" should "take a function and return two sets isomorphic to its target." in {
+    println("Output from \"__* along Chain1ToIsomorphism should take a function and return two sets isomorphic to its target.\":")
+    println
+    val X = OneTwoThree
+    val LHS = SixElementsIso
+    val RHS = Examples.Chain1ToIsomorphism.__*(X)
+    println("Original function: "); println(X); println
+    println("Expected isomorphism: "); println(LHS); println
+    println("Right pushforward of original function: "); println(RHS)
+    LHS should beIsomorphicTo(RHS)
+
+  }
+
+  "dataset" should "throw some exception if it does not conform to relations in the source" in {
+    lazy val badData = Dataset(source = Examples.Isomorphism,
+      onObjects = Map(
+        "0" -> List("x", "y"),
+        "1" -> List("z")),
+      onMorphisms = Map(
+        "0" --- "E01" --> "1" -> Map(
+          "x" -> "z",
+          "y" -> "z"),
+        "1" --- "E10" --> "0" -> Map(
+          "z" -> "x")))
+    evaluating { badData } should produce[IllegalArgumentException]
+
+  }
+  //    
+  //    "__!" should "provide a 'half-speed' FCM20_19" in {
+  //      println
+  //      println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
+  //      
+  //      val X = FCM20_19
+  //      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
+  //      val LHS = T.__!(X)
+  //      val RHS = FCM20_19Times2L
+  //      println(X)
+  //      println(LHS)
+  //      println(RHS)
+  //      LHS should beIsomorphicTo(RHS)
+  //   }    
+  
+  "Yoneda" should "give the right answer for V0 in Chain2" in {
+    println("Applying Yoneda to the first object in Chain(2) should output a terminal dataset.\":")
+    println(OneTwoThree)
+    val LHS = Examples.Chain(2).yoneda(Box("V0"))
+    val RHS = Examples.Chain(2).Datasets.terminalObject
+    println("Y(V0) on Chain(2): "); println(LHS); println
+    println("Terminal dataset on Chain(2): "); println(RHS); println
+    LHS should beIsomorphicTo(RHS)
+
+    
+  }
+  	
+
+  
   val FCM20_19 = Dataset(source = Examples.FiniteCyclicMonoid(20, 19),
     onObjects = Map(
       "an element" -> List("a", "b", "c", "d")),
@@ -495,61 +554,5 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      LHS should beIsomorphicTo(RHS)
   //   }       
 
-  //This test will fail because, first of all, because functor composition in general (in this case Chain1ToIsomorphism = Chain1ToPointedSets;PointedSetsToIsomorphism) is not defined.
-  //TODO Once functor composition is defined, check this test.
-  "__* along Chain1ToIsomorphism" should "take a function and return two sets isomorphic to its target." in {
-    println("Output from \"__* along Chain1ToIsomorphism should take a function and return two sets isomorphic to its target.\":")
-    println
-    val X = OneTwoThree
-    val LHS = SixElementsIso
-    val RHS = Examples.Chain1ToIsomorphism.__*(X)
-    println("Original function: "); println(X); println
-    println("Expected isomorphism: "); println(LHS); println
-    println("Right pushforward of original function: "); println(RHS)
-    LHS should beIsomorphicTo(RHS)
-
-  }
-
-  "dataset" should "throw some exception if it does not conform to relations in the source" in {
-    lazy val badData = Dataset(source = Examples.Isomorphism,
-      onObjects = Map(
-        "0" -> List("x", "y"),
-        "1" -> List("z")),
-      onMorphisms = Map(
-        "0" --- "E01" --> "1" -> Map(
-          "x" -> "z",
-          "y" -> "z"),
-        "1" --- "E10" --> "0" -> Map(
-          "z" -> "x")))
-    evaluating { badData } should produce[IllegalArgumentException]
-
-  }
-  //    
-  //    "__!" should "provide a 'half-speed' FCM20_19" in {
-  //      println
-  //      println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
-  //      
-  //      val X = FCM20_19
-  //      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
-  //      val LHS = T.__!(X)
-  //      val RHS = FCM20_19Times2L
-  //      println(X)
-  //      println(LHS)
-  //      println(RHS)
-  //      LHS should beIsomorphicTo(RHS)
-  //   }    
-  
-  "Yoneda" should "give the right answer for V0 in Chain2" in {
-    println("Applying Yoneda to the first object in Chain(2) should output a terminal dataset.\":")
-    println(OneTwoThree)
-    val LHS = Examples.Chain(2).yoneda("V0")
-    val RHS = Examples.Chain(2).Datasets.terminalObject
-    println("Y(V0) on Chain(2): "); println(LHS); println
-    println("Terminal dataset on Chain(2): "); println(RHS); println
-    LHS should beIsomorphicTo(RHS)
-
-    
-  }
-  	
 
 }
