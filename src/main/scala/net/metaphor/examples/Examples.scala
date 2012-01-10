@@ -281,7 +281,7 @@ object Examples {
       )
   )
   
-  val Chain1ToIsomorphism = Ontologies.compose(Chain1ToPointedSets,PointedSetsToIsomorphism)
+  lazy val Chain1ToIsomorphism = Ontologies.compose(Chain1ToPointedSets,PointedSetsToIsomorphism)
 
   val E2ToPointedSets = Translation(
     source = E2,
