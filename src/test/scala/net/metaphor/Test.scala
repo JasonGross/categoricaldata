@@ -318,7 +318,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      LHS should beIsomorphicTo(RHS)
   //   }      
 
-  val FCM20_19 = Dataset(source = Examples.FiniteCyclicMonoid(20, 19),
+  val FCM20_18 = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
     onObjects = Map(
       "an element" -> List("a", "b", "c", "d")),
     onMorphisms = Map(
@@ -328,8 +328,8 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c" -> "d",
         "d" -> "d")))
 
-        // FIXME (David) This doesn't satisfy the relations.  
-  val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+        // FIXME (David) This doesn't satisfy the relations.  //TODO check whether it works now.
+  val FCM20_18Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
     onObjects = Map(
       "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
     onMorphisms = Map(
@@ -343,7 +343,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c2" -> "d1",
         "d2" -> "d1")))
 
-  val FCM20_19Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20, 19),
+  val FCM20_18Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
     onObjects = Map(
       "an element" -> List("aa", "ab", "ac", "ad", "ba", "bb", "bc", "bd", "ca", "cb", "cc", "cd", "da", "db", "dc", "dd")),
     onMorphisms = Map(
@@ -365,20 +365,20 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dc" -> "dd",
         "dd" -> "dd")))
 
-  //    
-  //    "__!" should "provide a 'half-speed' FCM20_19" in {
-  //      println
-  //      println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
-  //      
-  //      val X = FCM20_19
-  //      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
-  //      val LHS = T.__!(X)
-  //      val RHS = FCM20_19Times2L
-  //      println(X)
-  //      println(LHS)
-  //      println(RHS)
-  //      LHS should beIsomorphicTo(RHS)
-  //   }       
+      
+      "__!" should "provide a 'half-speed' FCM20_18" in {
+        println
+        println("Output from \"__! should provide a 'half-speed' FCM20_18\":")
+        
+        val X = FCM20_18
+        val T = Examples.TranslationFiniteCyclicMonoids(20,18,20,18,2);
+        val LHS = T.__!(X)
+        val RHS = FCM20_18Times2L
+        println(X)
+        println(LHS)
+        println(RHS)
+        LHS should beIsomorphicTo(RHS)
+     }       
 
   
 

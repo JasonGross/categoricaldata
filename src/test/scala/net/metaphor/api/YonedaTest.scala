@@ -26,6 +26,6 @@ class YonedaTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     LHS should beIsomorphicTo(RHS)
   }
   
- 
+  
 
 }
