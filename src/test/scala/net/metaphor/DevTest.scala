@@ -359,47 +359,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     LHS should beIsomorphicTo(RHS)
 
   }
-
-  "dataset" should "throw some exception if it does not conform to relations in the source" in {
-    lazy val badData = Dataset(source = Examples.Isomorphism,
-      onObjects = Map(
-        "0" -> List("x", "y"),
-        "1" -> List("z")),
-      onMorphisms = Map(
-        "0" --- "E01" --> "1" -> Map(
-          "x" -> "z",
-          "y" -> "z"),
-        "1" --- "E10" --> "0" -> Map(
-          "z" -> "x")))
-    evaluating { badData } should produce[IllegalArgumentException]
-
-  }
-  //    
-  //    "__!" should "provide a 'half-speed' FCM20_19" in {
-  //      println
-  //      println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
-  //      
-  //      val X = FCM20_19
-  //      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
-  //      val LHS = T.__!(X)
-  //      val RHS = FCM20_19Times2L
-  //      println(X)
-  //      println(LHS)
-  //      println(RHS)
-  //      LHS should beIsomorphicTo(RHS)
-  //   }    
-  
-  "Yoneda" should "give the right answer for V0 in Chain2" in {
-    println("Applying Yoneda to the first object in Chain(2) should output a terminal dataset.\":")
-    println(OneTwoThree)
-    val LHS = Examples.Chain(2).yoneda(Box("V0"))
-    val RHS = Examples.Chain(2).Datasets.terminalObject
-    println("Y(V0) on Chain(2): "); println(LHS); println
-    println("Terminal dataset on Chain(2): "); println(RHS); println
-    LHS should beIsomorphicTo(RHS)
-
-    
-  }
   	
 
   
