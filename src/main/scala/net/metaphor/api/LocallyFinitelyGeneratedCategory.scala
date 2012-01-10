@@ -116,10 +116,18 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   def words(source: O, target: O) = wordsFrom(source).filter(_.target == target)
 
   def wordsUpToLength(k: Int)(source: O, target: O): List[Path] = for (n <- (0 to k).toList; w <- wordsOfLength(n)(source, target)) yield w
+  def wordsUpToLengthFrom(k: Int)(source: O): List[Path] = for(n <- (0 to k).toList; w <- wordsOfLengthFrom(n)(source)) yield w
 
+  def morphismsUpToLength(k: Int)(source: O, target: O): Set[M] = {
+    wordsUpToLength(k)(source, target).map(pathAsMorphism(_)).toSet
+  }
   // TODO this is very inefficient, we probably should memo some results.
   def morphismsOfLength(k: Int)(source: O, target: O): Set[M] = {
-   wordsUpToLength(k)(source, target).map(pathAsMorphism(_)).toSet -- wordsUpToLength(k-1)(source, target).map(pathAsMorphism(_)).toSet 
+   morphismsUpToLength(k)(source, target) -- morphismsUpToLength(k - 1)(source, target)
+  }
+  def morphisms(source: O, target: O): Iterable[M] = {
+    import net.tqft.toolkit.collections.RemoveDuplicates._
+    words(source, target).map(pathAsMorphism(_)).removeDuplicates()
   }
   
   trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory {
@@ -254,14 +262,16 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       }
     }
     
-    
-    def limitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).limit
-    def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
+
+    // FIXME (Scott) Why did this stop compiling?
+//    def limitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).limit
+//    def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
   }
   
   class YonedaFunctor(c: O) extends FunctorToSet {
-    override def onObjects(o: O) = ???
-    override def onGenerators(g: G) = ???
+    override def onObjects(o: O): FSet = morphisms(o, c)
+    
+    override def onGenerators(g: G) = FFunction(onObjects(generatorSource(g)), onObjects(generatorTarget(g)), { m => compose(generatorAsMorphism(g), m) })
   }
   class YonedaNaturalTransformation(g: G) extends NaturalTransformationToSet {
     override val source = internalize(new YonedaFunctor(generatorSource(g)))
