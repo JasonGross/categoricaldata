@@ -527,7 +527,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     println("Applying Yoneda to the first object in Chain(2) should output a terminal dataset.\":")
     printlnOneTwoThree
     val LHS = Chain(2).Yoneda("V0")
-    val RHS = TerminalDataset(Chain(2))
+    val RHS = Chain(2).Datasets.terminalObject
     println("Y(V0) on Chain(2): "); println(LHS); println
     println("Terminal dataset on Chain(2): "); println(RHS); println
     LHS should beIsomorphicTo(RHS)
