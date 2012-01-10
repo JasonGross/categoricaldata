@@ -128,6 +128,22 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "a" -> "a1",
         "b" -> "b1",
         "c" -> "c1")))
+        
+  val OneTwoThree = Dataset(
+    source = Examples.Chain(1),
+    onObjects = Map(
+      "V0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+      "V1" -> List("a", "b", "c")),
+    onMorphisms = Map(
+      ("V0" --- "E01" --> "V1") -> Map(
+        "a1" -> "a",
+        "b1" -> "b",
+        "b2" -> "b",
+        "c1" -> "c",
+        "c2" -> "c",
+        "c3" -> "c")
+    )
+  )
 
   //  val OneTwoThree = Dataset(
   //    source = Examples.Chain(1),
@@ -147,27 +163,27 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //        "b" -> "b1",
   //        "c" -> "c1")))      
   //        
-  //  val SixElementsIso = Dataset(
-  //    source = Examples.Isomorphism,
-  //    onObjects = Map(
-  //      "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
-  //      "1" -> List("a1", "b1", "b2", "c1", "c2", "c3")),
-  //    onMorphisms = Map(
-  //      ("0" --- "E01" --> "1") -> Map(
-  //        "a1" -> "a1",
-  //        "b1" -> "b1",
-  //        "b2" -> "b2",
-  //        "c1" -> "c1",
-  //        "c2" -> "c2",
-  //        "c3" -> "c3"),
-  //      ("1" --- "E10" --> "0") -> Map(
-  //        "a1" -> "a1",
-  //        "b1" -> "b1",
-  //        "b2" -> "b2",
-  //        "c1" -> "c1",
-  //        "c2" -> "c2",
-  //        "c3" -> "c3")))
-  //
+    val SixElementsIso = Dataset(
+      source = Examples.Isomorphism,
+      onObjects = Map(
+        "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+        "1" -> List("a1", "b1", "b2", "c1", "c2", "c3")),
+      onMorphisms = Map(
+        ("0" --- "E01" --> "1") -> Map(
+          "a1" -> "a1",
+          "b1" -> "b1",
+          "b2" -> "b2",
+          "c1" -> "c1",
+          "c2" -> "c2",
+          "c3" -> "c3"),
+        ("1" --- "E10" --> "0") -> Map(
+          "a1" -> "a1",
+          "b1" -> "b1",
+          "b2" -> "b2",
+          "c1" -> "c1",
+          "c2" -> "c2",
+          "c3" -> "c3")))
+  
   //  val ThreeElementsIso = Dataset(
   //    source = Examples.Isomorphism,
   //    onObjects = Map(
@@ -525,9 +541,9 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   
   "Yoneda" should "give the right answer for V0 in Chain2" in {
     println("Applying Yoneda to the first object in Chain(2) should output a terminal dataset.\":")
-    printlnOneTwoThree
-    val LHS = Chain(2).Yoneda("V0")
-    val RHS = Chain(2).Datasets.terminalObject
+    println(OneTwoThree)
+    val LHS = Examples.Chain(2).yoneda("V0")
+    val RHS = Examples.Chain(2).Datasets.terminalObject
     println("Y(V0) on Chain(2): "); println(LHS); println
     println("Terminal dataset on Chain(2): "); println(RHS); println
     LHS should beIsomorphicTo(RHS)
