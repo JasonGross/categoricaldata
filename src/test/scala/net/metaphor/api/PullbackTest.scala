@@ -207,23 +207,6 @@ class PullbackTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     Examples.Codomain.^*(DavidsFunkyFunction) should equal(DavidsFunkySet2)
   }
 
-  // TODO waiting on translations with infinite targets
-  //    "pullback" should "work with the GraphToDiscreteDynamicalSystem1 functor" in {
-  //      GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should equal(GraphFromDavidsFunkyDiscreteDynamicalSystem)
-  //    }
-
-  //   "pullback" should "preserve the initial dataset" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(InitialDataset(FiniteCyclicMonoid)) 
-  //	   should equal 
-  //	   (InitialDataset(TerminalCategory))
-  //   }
-  //   
-  //   "pullback" should "preserve the terminal dataset" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(10,7).^*(TerminalDataset(FiniteCyclicMonoid)) 
-  //	   should equal 
-  //	   (TerminalDataset(TerminalCategory))
-  //   }
-
   "pullback" should "reverse graph as expected" in {
     Examples.ReverseGraph.^*(DavidsFunkyGraph) should equal(DavidsFunkyGraphReversed)
   }
@@ -239,6 +222,10 @@ class PullbackTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     "pullback" should "preserve the terminal dataset" in {
       F.^*(FCM.Datasets.terminalObject) should equal(Ontologies.terminalObject.Datasets.terminalObject)
     }
+  }
+
+  "pullback" should "work with the GraphToDiscreteDynamicalSystem1 functor" in {
+    Examples.GraphToDiscreteDynamicalSystem1.^*(DavidsFunkyDiscreteDynamicalSystem) should beIsomorphicTo(GraphFromDavidsFunkyDiscreteDynamicalSystem)
   }
 
 }
