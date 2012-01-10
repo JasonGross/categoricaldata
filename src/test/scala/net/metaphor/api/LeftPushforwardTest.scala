@@ -32,7 +32,15 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
 
   "__!" should "work with terminal functor on 'function'" in {
     val shriek = Examples.TerminalFunctor(Examples.Chain(1)).__!(DavidsFunkyFunction)
-    shriek.isIsomorphicTo(DavidsFunkySet2) should equal(true)
+    shriek should beIsomorphicTo(DavidsFunkySet2)
+  }
+
+  "__!" should "preserve the initial dataset" in {
+    val FCM = Examples.FiniteCyclicMonoid(10, 7)
+    val F1 = Ontologies.terminalObject.findAllTranslationsTo(FCM).head
+    for (F <- List(F1)) {
+      F.__!(F.source.Datasets.initialObject) should beIsomorphicTo((F.target.Datasets.initialObject))
+    }
   }
 
   "__!" should "work reverse graph as expected" in {

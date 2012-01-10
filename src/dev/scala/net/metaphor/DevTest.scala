@@ -19,7 +19,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
 
-
   val DavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
       "an element" -> List("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar")),
@@ -98,62 +97,48 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
       "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
     onMorphisms = Map())
 
-
   //   "__!" should "work (1)" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
+  //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should beIsomorphicTo (DavidsFunkyFiniteCyclicMonoid)
   //   }
   //
   //  "__*" should "work (2)" in {
-  //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph).isIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem) should equal(true)
+  //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph) shoudl beIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem)
   //  }
 
-  //   
-  //   "__*" should "preserve the terminal dataset" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
-  //	   should equal 
-  //	   (TerminalDataset(FiniteCyclicMonoid(10,7)))
-  //   }
-  //   
-  //   "__!" should "preserve the initialdataset" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__!(InitialDataset(TerminalCategory)) 
-  //	   should equal 
-  //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
-  //   }
-  
-  val SaturatedCommutativeTriangle = { 
-    val ArrowsList=List (
-          "V0" --- "E00" --> "V0",
-          "V0" --- "E01" --> "V1",
-          "V0" --- "E02" --> "V2",
-          "V1" --- "E11" --> "V1",
-          "V1" --- "E12" --> "V2",
-          "V2" --- "E22" --> "V2")
-    val RelationsId0=List(
-        ("V0" --- "E00" --> "V0" --- "E00" --> "V0") === ("V0" --- "E00" --> "V0"),
-        ("V0" --- "E00" --> "V0" --- "E01" --> "V1") === ("V0" --- "E01" --> "V1"),
-        ("V0" --- "E00" --> "V0" --- "E02" --> "V2") === ("V0" --- "E02" --> "V2"))
-    val RelationsId1=List(
-        ("V0" --- "E01" --> "V1" --- "E11" --> "V1") === ("V0" --- "E01" --> "V1"),
-        ("V1" --- "E11" --> "V1" --- "E11" --> "V1") === ("V1" --- "E11" --> "V1"),
-        ("V1" --- "E11" --> "V1" --- "E12" --> "V2") === ("V1" --- "E12" --> "V2"))
-    val RelationsId2=List(
-        ("V0" --- "E02" --> "V2" --- "E22" --> "V2") === ("V0" --- "E02" --> "V2"),
-        ("V1" --- "E12" --> "V2" --- "E22" --> "V2") === ("V1" --- "E12" --> "V2"),
-        ("V2" --- "E22" --> "V2" --- "E22" --> "V2") === ("V2" --- "E22" --> "V2"))
-    val Comp012=List(
-        ("V0" --- "E01" --> "V1" --- "E12" --> "V2") === ("V0" --- "E02" --> "V2"))
-    
+
+  val SaturatedCommutativeTriangle = {
+    val ArrowsList = List(
+      "V0" --- "E00" --> "V0",
+      "V0" --- "E01" --> "V1",
+      "V0" --- "E02" --> "V2",
+      "V1" --- "E11" --> "V1",
+      "V1" --- "E12" --> "V2",
+      "V2" --- "E22" --> "V2")
+    val RelationsId0 = List(
+      ("V0" --- "E00" --> "V0" --- "E00" --> "V0") === ("V0" --- "E00" --> "V0"),
+      ("V0" --- "E00" --> "V0" --- "E01" --> "V1") === ("V0" --- "E01" --> "V1"),
+      ("V0" --- "E00" --> "V0" --- "E02" --> "V2") === ("V0" --- "E02" --> "V2"))
+    val RelationsId1 = List(
+      ("V0" --- "E01" --> "V1" --- "E11" --> "V1") === ("V0" --- "E01" --> "V1"),
+      ("V1" --- "E11" --> "V1" --- "E11" --> "V1") === ("V1" --- "E11" --> "V1"),
+      ("V1" --- "E11" --> "V1" --- "E12" --> "V2") === ("V1" --- "E12" --> "V2"))
+    val RelationsId2 = List(
+      ("V0" --- "E02" --> "V2" --- "E22" --> "V2") === ("V0" --- "E02" --> "V2"),
+      ("V1" --- "E12" --> "V2" --- "E22" --> "V2") === ("V1" --- "E12" --> "V2"),
+      ("V2" --- "E22" --> "V2" --- "E22" --> "V2") === ("V2" --- "E22" --> "V2"))
+    val Comp012 = List(
+      ("V0" --- "E01" --> "V1" --- "E12" --> "V2") === ("V0" --- "E02" --> "V2"))
+
     Ontology(
-      objects = List("V0","V1","V2"),
+      objects = List("V0", "V1", "V2"),
       arrows = ArrowsList,
-      relations = List.concat(RelationsId0,RelationsId1,RelationsId2,Comp012)
-    )
+      relations = RelationsId0 ::: RelationsId1 ::: RelationsId2 ::: Comp012)
   }
-//  
-//  "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO Is this test in the right place? Does it work? Do we have BeIsomorphicAsCategoriesTo, or any other such guy?
-//    chain(2) should BeIsomorphicAsCategoriesTo(SaturatedCommutativeTriangle)
-//  }
-      
+    
+    "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO Is this test in the right place? Does it work? Do we have BeIsomorphicAsCategoriesTo, or any other such guy?
+      Examples.Chain(2) should beIsomorphicTo(SaturatedCommutativeTriangle)
+    }
+
   val DDS1 = Dataset(source = Examples.DiscreteDynamicalSystem,
     onObjects = Map(
       "an element" -> List("a", "b", "c", "d")),
@@ -200,103 +185,42 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dc" -> "dd",
         "dd" -> "dd")))
 
-//      val DDSTimeLapse2 = Translation (
-//        source = Examples.DiscreteDynamicalSystem,
-//        target = Examples.DiscreteDynamicalSystem,
-//        onObjects = Map ("an element" -> "an element"),
-//        onMorphisms = Map (
-//            ("an element" --- "has as successor" --> "an element") -> 
-//            ("an element" --- "has as successor" --> "an element" --- "has as successor" --> "an element")))
-//          	
-//
-//     "__*" should "provide a 'half-speed' DDS" in {
-//      println
-//      println("Output from \"__* should provide a 'half-speed' DDS\":")
-//      
-//      val X = DDS1
-//      val LHS = DDSTimeLapse2.__*(X)
-//      val RHS = DDS1Times2R
-//      println(X)
-//      println(LHS)
-//      println(RHS)
-//      LHS should beIsomorphicTo(RHS)
-//   }      
-//    
-//    "__!" should "provide a 'half-speed' DDS" in {
-//      println
-//      println("Output from \"__! should provide a 'half-speed' DDS\":")
-//      
-//      val X = DDS1
-//      val LHS = DDSTimeLapse2.__!(X)
-//      val RHS = DDS1Times2L
-//      println(X)
-//      println(LHS)
-//      println(RHS)
-//      LHS should beIsomorphicTo(RHS)
-//   }      
+  //      val DDSTimeLapse2 = Translation (
+  //        source = Examples.DiscreteDynamicalSystem,
+  //        target = Examples.DiscreteDynamicalSystem,
+  //        onObjects = Map ("an element" -> "an element"),
+  //        onMorphisms = Map (
+  //            ("an element" --- "has as successor" --> "an element") -> 
+  //            ("an element" --- "has as successor" --> "an element" --- "has as successor" --> "an element")))
+  //          	
+  //
+  //     "__*" should "provide a 'half-speed' DDS" in {
+  //      println
+  //      println("Output from \"__* should provide a 'half-speed' DDS\":")
+  //      
+  //      val X = DDS1
+  //      val LHS = DDSTimeLapse2.__*(X)
+  //      val RHS = DDS1Times2R
+  //      println(X)
+  //      println(LHS)
+  //      println(RHS)
+  //      LHS should beIsomorphicTo(RHS)
+  //   }      
+  //    
+  //    "__!" should "provide a 'half-speed' DDS" in {
+  //      println
+  //      println("Output from \"__! should provide a 'half-speed' DDS\":")
+  //      
+  //      val X = DDS1
+  //      val LHS = DDSTimeLapse2.__!(X)
+  //      val RHS = DDS1Times2L
+  //      println(X)
+  //      println(LHS)
+  //      println(RHS)
+  //      LHS should beIsomorphicTo(RHS)
+  //   }      
 
-       val FCM20_19 = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
-      onObjects = Map(
-        "an element" -> List("a","b","c","d")),      
-      onMorphisms = Map(
-        "an element" --- "has as successor" --> "an element" -> Map(
-          "a" -> "c",
-          "b" -> "c",
-          "c" -> "d",
-          "d" -> "d")))
-    
-    lazy val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
-      onObjects = Map(
-        "an element" -> List("a1","b1","c1","d1","a2","b2","c2","d2")),      
-      onMorphisms = Map(
-        "an element" --- "has as successor" --> "an element" -> Map(
-          "a1" -> "a2",
-          "b1" -> "b2",
-          "c1" -> "c2",
-          "d1" -> "d2",
-          "a2" -> "c1",
-          "b2" -> "c1",
-          "c2" -> "d1",
-          "d2" -> "d1")))
-          
-    val FCM20_19Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20,19),
-      onObjects = Map(
-        "an element" -> List("aa","ab","ac","ad","ba","bb","bc","bd","ca","cb","cc","cd","da","db","dc","dd")),
-      onMorphisms = Map(
-        "an element" --- "has as successor" --> "an element" -> Map(
-          "aa" -> "ca",
-          "ab" -> "ca",
-          "ac" -> "da",
-          "ad" -> "da",
-          "ba" -> "cb",
-          "bb" -> "cb",
-          "bc" -> "db",
-          "bd" -> "db",
-          "ca" -> "cc",
-          "cb" -> "cc",
-          "cc" -> "dc",
-          "cd" -> "dc",
-          "da" -> "cd",
-          "db" -> "cd",
-          "dc" -> "dd",
-          "dd" -> "dd")))
-
-// These tests run forever. What's going on?
-//     "__*" should "provide a 'half-speed' FCM20_19" in {
-//      println
-//      println("Output from \"__* should provide a 'half-speed' FCM20_19\":")
-//      
-//      val X = FCM20_19
-//      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
-//      val LHS = T.__*(X)
-//      val RHS = FCM20_19Times2R
-//      println(X)
-//      println(LHS)
-//      println(RHS)
-//      LHS should beIsomorphicTo(RHS)
-//   }      
-          
-            val FCM7_6 = Dataset(source = Examples.FiniteCyclicMonoid(7,6),
+  val FCM20_19 = Dataset(source = Examples.FiniteCyclicMonoid(20, 19),
     onObjects = Map(
       "an element" -> List("a", "b", "c", "d")),
     onMorphisms = Map(
@@ -306,7 +230,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c" -> "d",
         "d" -> "d")))
 
-  lazy  val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(7,6),
+  lazy val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 19),
     onObjects = Map(
       "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
     onMorphisms = Map(
@@ -320,7 +244,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c2" -> "d1",
         "d2" -> "d1")))
 
-  val FCM7_6Times2R = Dataset(source = Examples.FiniteCyclicMonoid(7,6),
+  val FCM20_19Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20, 19),
     onObjects = Map(
       "an element" -> List("aa", "ab", "ac", "ad", "ba", "bb", "bc", "bd", "ca", "cb", "cc", "cd", "da", "db", "dc", "dd")),
     onMorphisms = Map(
@@ -342,7 +266,67 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dc" -> "dd",
         "dd" -> "dd")))
 
-  
+  // These tests run forever. What's going on?
+  //     "__*" should "provide a 'half-speed' FCM20_19" in {
+  //      println
+  //      println("Output from \"__* should provide a 'half-speed' FCM20_19\":")
+  //      
+  //      val X = FCM20_19
+  //      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
+  //      val LHS = T.__*(X)
+  //      val RHS = FCM20_19Times2R
+  //      println(X)
+  //      println(LHS)
+  //      println(RHS)
+  //      LHS should beIsomorphicTo(RHS)
+  //   }      
+
+  val FCM7_6 = Dataset(source = Examples.FiniteCyclicMonoid(7, 6),
+    onObjects = Map(
+      "an element" -> List("a", "b", "c", "d")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "a" -> "c",
+        "b" -> "c",
+        "c" -> "d",
+        "d" -> "d")))
+
+  lazy val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(7, 6),
+    onObjects = Map(
+      "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "a1" -> "a2",
+        "b1" -> "b2",
+        "c1" -> "c2",
+        "d1" -> "d2",
+        "a2" -> "c1",
+        "b2" -> "c1",
+        "c2" -> "d1",
+        "d2" -> "d1")))
+
+  val FCM7_6Times2R = Dataset(source = Examples.FiniteCyclicMonoid(7, 6),
+    onObjects = Map(
+      "an element" -> List("aa", "ab", "ac", "ad", "ba", "bb", "bc", "bd", "ca", "cb", "cc", "cd", "da", "db", "dc", "dd")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "aa" -> "ca",
+        "ab" -> "ca",
+        "ac" -> "da",
+        "ad" -> "da",
+        "ba" -> "cb",
+        "bb" -> "cb",
+        "bc" -> "db",
+        "bd" -> "db",
+        "ca" -> "cc",
+        "cb" -> "cc",
+        "cc" -> "dc",
+        "cd" -> "dc",
+        "da" -> "cd",
+        "db" -> "cd",
+        "dc" -> "dd",
+        "dd" -> "dd")))
+
   // These tests run forever. What's going on?
   //     "__*" should "provide a 'half-speed' FCM20_19" in {
   //      println
@@ -357,35 +341,33 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      println(RHS)
   //      LHS should beIsomorphicTo(RHS)
   //   }  
-        
-        
-       "__*" should "provide a 'half-speed' FCM7_6" in {
-        println
-        println("Output from \"__* should provide a 'half-speed' FCM7_6\":")
-        
-        val X = FCM7_6
-        val T = Examples.TranslationFiniteCyclicMonoids(7,6,7,6,2);
-        val LHS = T.__*(X)
-        val RHS = FCM7_6Times2R
-        println(X)
-        println(LHS)
-        println(RHS)
-        LHS should beIsomorphicTo(RHS)
-     }      
-//    
-//    "__!" should "provide a 'half-speed' FCM20_19" in {
-//      println
-//      println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
-//      
-//      val X = FCM20_19
-//      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
-//      val LHS = T.__!(X)
-//      val RHS = FCM20_19Times2L
-//      println(X)
-//      println(LHS)
-//      println(RHS)
-//      LHS should beIsomorphicTo(RHS)
-//   }       
-  
-   
+
+  "__*" should "provide a 'half-speed' FCM7_6" in {
+    println
+    println("Output from \"__* should provide a 'half-speed' FCM7_6\":")
+
+    val X = FCM7_6
+    val T = Examples.TranslationFiniteCyclicMonoids(7, 6, 7, 6, 2);
+    val LHS = T.__*(X)
+    val RHS = FCM7_6Times2R
+    println(X)
+    println(LHS)
+    println(RHS)
+    LHS should beIsomorphicTo(RHS)
+  }
+  //    
+  //    "__!" should "provide a 'half-speed' FCM20_19" in {
+  //      println
+  //      println("Output from \"__! should provide a 'half-speed' FCM20_19\":")
+  //      
+  //      val X = FCM20_19
+  //      val T = Examples.TranslationFiniteCyclicMonoids(20,19,20,19,2);
+  //      val LHS = T.__!(X)
+  //      val RHS = FCM20_19Times2L
+  //      println(X)
+  //      println(LHS)
+  //      println(RHS)
+  //      LHS should beIsomorphicTo(RHS)
+  //   }       
+
 }

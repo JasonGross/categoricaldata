@@ -80,7 +80,7 @@ class RightPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatch
     LHS should beIsomorphicTo(RHS)
   }
 
-    "__*" should "work nicely with the map from E2 to PointedSets" in {
+  "__*" should "work nicely with the map from E2 to PointedSets" in {
     val FunkyE2Dataset = Dataset(
       source = Examples.E2,
       onObjects = Map(
@@ -114,5 +114,12 @@ class RightPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatch
     Examples.E2ToPointedSets.__*(FunkyE2Dataset) should beIsomorphicTo(E2ToPointedSetsRPushFunky)
   }
 
-  
+  "__*" should "preserve the terminal dataset" in {
+    val FCM = Examples.FiniteCyclicMonoid(10, 7)
+    val F1 = Ontologies.terminalObject.findAllTranslationsTo(FCM).head
+    for (F <- List(F1)) {
+      F.__*(F.source.Datasets.terminalObject) should beIsomorphicTo((F.target.Datasets.terminalObject))
+    }
+  }
+
 }
