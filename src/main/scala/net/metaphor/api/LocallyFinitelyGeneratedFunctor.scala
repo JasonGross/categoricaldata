@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
+trait LocallyFinitelyGeneratedFunctor extends Functor.withLocallyFinitelyGeneratedSource.withSmallTarget { lfgFunctor =>
   override val source: LocallyFinitelyGeneratedCategory
 
   def onGenerators(g: source.G): target.M
