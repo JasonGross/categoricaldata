@@ -285,7 +285,7 @@ object Ontologies extends Category with InitialObject with TerminalObject {
   override def identity(o: Ontology) = ???
   override def source(m: Translation) = m.source
   override def target(m: Translation) = m.target
-  override def compose(m1: Translation, m2: Translation) = ???
+  override def compose(m1: Translation, m2: Translation): Translation = ???
 
   trait Finite extends Ontology with net.metaphor.api.FiniteMorphisms
 
