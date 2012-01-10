@@ -43,6 +43,10 @@ libraryDependencies ++= Seq(
 	"org.mortbay.jetty" % "jetty" % "6.1.22" % "container"
 )
 
+testOptions in Test += Tests.Filter(unitFilter)
+
+testOptions in DevTest += Tests.Filter(devFilter)
+
 seq(webSettings :_*)
 
 port in container.Configuration := 8081
