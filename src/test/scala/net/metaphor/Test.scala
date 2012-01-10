@@ -328,8 +328,8 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c" -> "d",
         "d" -> "d")))
 
-        // FIXME (David) This doesn't satisfy the relations.
-  lazy val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 19),
+        // FIXME (David) This doesn't satisfy the relations.  
+  val FCM20_19Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
     onObjects = Map(
       "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
     onMorphisms = Map(
@@ -390,24 +390,22 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //   }
         
         
-        // FIXME (David) This breaks; the objects of Chain(1) are called V0 and V1, not 'an element' and 'a pointed set'
-   lazy val OneTwoThree = Dataset(
+       
+   val OneTwoThree = Dataset(
     source = Examples.Chain(1),
     onObjects = Map(
       "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
       "a pointed set" -> List("a", "b", "c")),
     onMorphisms = Map(
-      ("an element" --- "is in" --> "a pointed set") -> Map(
+      ("V0" --- "E01" --> "V1") -> Map(
         "a1" -> "a",
         "b1" -> "b",
         "b2" -> "b",
         "c1" -> "c",
         "c2" -> "c",
-        "c3" -> "c"),
-      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
-        "a" -> "a1",
-        "b" -> "b1",
-        "c" -> "c1")))      
+        "c3" -> "c")
+     )
+   )      
         
   
         
