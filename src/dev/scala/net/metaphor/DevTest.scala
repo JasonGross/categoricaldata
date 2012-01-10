@@ -48,31 +48,27 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "i" -> "jbar",
         "j" -> "jbar")))
 
-<<<<<<< local
   val ThreeElementsIso = Dataset(
     source = Examples.Isomorphism,
-=======
-  val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
->>>>>>> other
     onObjects = Map(
-<<<<<<< local
-      "0" -> List("a", "b", "c"),
-      "1" -> List("a", "b", "c")),
-=======
-      "an edge" -> List("f", "g", "h", "i", "j"),
-      "a vertex" -> List("A", "B", "C", "D")),
->>>>>>> other
+    		"0" -> List("a", "b", "c"),
+    		"1" -> List("a", "b", "c")),
     onMorphisms = Map(
-<<<<<<< local
-      ("0" --- "E01" --> "1") -> Map(
+    		("0" --- "E01" --> "1") -> Map(
         "a" -> "a",
         "b" -> "b",
         "c" -> "c"),
       ("1" --- "E10" --> "0") -> Map(
         "a" -> "a",
         "b" -> "b",
-        "c" -> "c")))
-=======
+        "c" -> "c"))
+   )
+    		
+    val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
+    onObjects = Map(
+      "an edge" -> List("f", "g", "h", "i", "j"),
+      "a vertex" -> List("A", "B", "C", "D")),
+    onMorphisms = Map(
       ("an edge" --- "has as source" --> "a vertex") -> Map(
         "f" -> "B",
         "g" -> "B",
@@ -84,7 +80,8 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "g" -> "A",
         "h" -> "B",
         "i" -> "A",
-        "j" -> "C")))
+        "j" -> "C"))
+    )
 
   val FunkyE2Dataset = Dataset(
     source = Examples.E2,
@@ -187,7 +184,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 //        "a" -> "a",
 //        "b" -> "b",
 //        "c" -> "c")))
->>>>>>> other
 
   val DavidsFunkyFunction = Dataset(source = Examples.Chain(1),
     onObjects = Map(
@@ -455,25 +451,22 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      println(RHS)
   //      LHS should beIsomorphicTo(RHS)
   //   }  
-<<<<<<< local
 
   "__*" should "provide a 'half-speed' FCM7_6" in {
-=======
-        
-        
-       "__*" should "provide a 'half-speed' FCM7_6" in {
         println
         println("Output from \"__* should provide a 'half-speed' FCM7_6\":")
-        
-        val X = FCM7_6
-        val T = Examples.TranslationFiniteCyclicMonoids(7,6,7,6,2);
-        val LHS = T.__*(X)
-        val RHS = FCM7_6Times2R
-        println(X)
-        println(LHS)
-        println(RHS)
-        LHS should beIsomorphicTo(RHS)
-     }      
+
+    val X = FCM7_6
+    val T = Examples.TranslationFiniteCyclicMonoids(7, 6, 7, 6, 2);
+    val LHS = T.__*(X)
+    val RHS = FCM7_6Times2R
+    println(X)
+    println(LHS)
+    println(RHS)
+    LHS should beIsomorphicTo(RHS)
+  }
+
+    
 //    
 //    "__!" should "provide a 'half-speed' FCM20_19" in {
 //      println
@@ -493,19 +486,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //This test will fail because, first of all, because functor composition in general (in this case Chain1ToIsomorphism = Chain1ToPointedSets;PointedSetsToIsomorphism) is not defined.
   //TODO Once functor composition is defined, check this test.
    "__* along Chain1ToIsomorphism" should "take a function and return two sets isomorphic to its target." in { 
->>>>>>> other
-    println
-<<<<<<< local
-    println("Output from \"__* should provide a 'half-speed' FCM7_6\":")
-
-    val X = FCM7_6
-    val T = Examples.TranslationFiniteCyclicMonoids(7, 6, 7, 6, 2);
-    val LHS = T.__*(X)
-    val RHS = FCM7_6Times2R
-    println(X)
-    println(LHS)
-    println(RHS)
-=======
     println("Output from \"__* along Chain1ToIsomorphism should take a function and return two sets isomorphic to its target.\":")
     println
     val X = OneTwoThree
@@ -514,10 +494,8 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     println("Original function: "); println(X); println
     println("Expected isomorphism: "); println(LHS); println
     println("Right pushforward of original function: "); println(RHS)
->>>>>>> other
     LHS should beIsomorphicTo(RHS)
-<<<<<<< local
-=======
+
   }
   
   "dataset" should "throw some exception if it does not conform to relations in the source" in {
@@ -534,7 +512,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         )
     )
     evaluating { badData } should produce [IllegalArgumentException]
->>>>>>> other
+
   }
   //    
   //    "__!" should "provide a 'half-speed' FCM20_19" in {
