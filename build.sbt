@@ -43,9 +43,11 @@ libraryDependencies ++= Seq(
 	"org.mortbay.jetty" % "jetty" % "6.1.22" % "container"
 )
 
-testOptions in Test += Tests.Filter(unitFilter)
+parallelExecution in Test := false
 
-testOptions in DevTest += Tests.Filter(devFilter)
+testOptions in Test := Seq(Tests.Filter(unitFilter))
+
+testOptions in DevTest := Seq(Tests.Filter(devFilter))
 
 seq(webSettings :_*)
 
