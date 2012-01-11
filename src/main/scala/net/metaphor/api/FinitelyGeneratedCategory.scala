@@ -40,7 +40,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
   override lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite
 
-  trait FinitelyGeneratedCategoryOver extends CategoryOver with FinitelyGeneratedFunctor { categoryOver =>
+  trait FinitelyGeneratedCategoryOver extends CategoryOver with Functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget { categoryOver =>
     override val source: FinitelyGeneratedCategory
     def onGenerators(g: source.G): target.M
     override def onMorphisms(m: source.M) = {
@@ -62,7 +62,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   trait FinitelyGeneratedFunctorOver extends FunctorOver {
     override val source: FinitelyGeneratedCategoryOver
     override val target: FinitelyGeneratedCategoryOver
-    trait F extends super.F with FinitelyGeneratedFunctor
+    trait F extends super.F with Functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget
     override val functor: F
   }
 

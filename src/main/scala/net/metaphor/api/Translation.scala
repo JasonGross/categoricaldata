@@ -1,6 +1,6 @@
 package net.metaphor.api
 
-trait Translation extends FinitelyPresentedFunctor { translation =>
+trait Translation extends Functor.withFinitelyPresentedSource.withFinitelyPresentedTarget { translation =>
   override val source: Ontology
   override val target: Ontology
 

@@ -195,7 +195,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategories.StandardFunctorsToSet
 
-  class TruncationFunctor(maximumLevel: Int) extends FunctorWithFinitelyGeneratedSource  {
+  class TruncationFunctor(maximumLevel: Int) extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget  {
     override val source: Truncation = new ConcreteTruncation(maximumLevel)
     override val target: lfgCategory.type = lfgCategory
     override def onObjects(o: source.O) = o

@@ -1,0 +1,1 @@
+for file in `find . | grep \\.scala$`; do wc -l $file; done 2> /dev/null 
