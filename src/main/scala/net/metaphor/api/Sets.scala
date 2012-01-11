@@ -53,24 +53,29 @@ trait FiniteFSet extends FSet {
   override def sizeIfFinite = Some(size)
 }
 
-class ProductSet(sets: FSet*) extends FSet {
-  override def toIterable = sets.foldLeft(NonStrictIterable[List[Any]](Nil))({ case (i, s) => for (i0 <- i; s0 <- s.toIterable) yield s0 :: i0 }).map(_.reverse)
+class ProductSet(sets: Map[Any, FSet]) extends FSet {
+  def this(sets: FSet*) = this((sets.zipWithIndex map { case (x, i) => i -> x }).toMap[Any, FSet])
+  override def toIterable = sets.foldLeft(
+    NonStrictIterable[Map[Any, Any]](Map()))(
+      { case (iterable, (i, s)) => for (m <- iterable; s0 <- s.toIterable) yield m + (i -> s0) })
   override lazy val sizeIfFinite = {
-    val sizes = sets.map(_.sizeIfFinite)
-    if (sizes.contains(Some(0))) {
+    val sizes = sets.values.map(_.sizeIfFinite)
+    if (sizes.exists(_ == Some(0))) {
       Some(0)
-    } else if (sizes.contains(None)) {
+    } else if (sizes.exists(_ == None)) {
       None
     } else {
       Some(sizes.map(_.get).product)
     }
   }
 }
-class CoproductSet(sets: FSet*) extends FSet {
-  override def toIterable = sets.map(_.toIterable).flatten
+class CoproductSet(sets: Map[Any, FSet]) extends FSet {
+  def this(sets: FSet*) = this((sets.zipWithIndex map { case (x, i) => i -> x }).toMap[Any, FSet])
+
+  override def toIterable = for ((i, s) <- sets.view; x <- s.toIterable) yield (i, x)
   override lazy val sizeIfFinite = {
-    val sizes = sets.map(_.sizeIfFinite)
-    if (sizes.contains(None)) {
+    val sizes = sets.values.map(_.sizeIfFinite)
+    if (sizes.exists(_ == None)) {
       None
     } else {
       Some(sizes.map(_.get).sum)
@@ -144,12 +149,26 @@ trait Sets extends Category with InitialObject with TerminalObject with Products
   override def morphismFromInitialObject(s: FSet) = FFunction(initialObject, s, { a: Any => throw new IllegalArgumentException })
 
   override def product(xs: FSet*) = new ProductSet(xs: _*)
-  override def productProjections(xs: FSet*): List[FFunction] = ???
-  override def productUniversality(o: FSet, ms: List[FFunction]) = ???
+  override def productProjections(xs: FSet*): List[FFunction] = xs.toList map {
+    x: FSet => {
+      FFunction(product(xs), x, { m: Map[FSet, Any] => m(x) })
+    }
+  }
+  override def productUniversality(o: FSet, ms: List[FFunction]) = {
+    val xs = ms.map(_.target)  
+    FFunction(o, product(xs:_*), { e: Any => (for(m <- ms) yield m.target -> m.toFunction(o)).toMap })
+  }
 
   override def coproduct(xs: FSet*) = new CoproductSet(xs: _*)
-  override def coproductInjections(xs: FSet*): List[FFunction] = ???
-  override def coproductUniversality(o: FSet, ms: List[FFunction]) = ???
+  override def coproductInjections(xs: FSet*): List[FFunction] = xs.toList map {
+    x: FSet => {
+      FFunction(x, coproduct(xs), { e: Any => (x, e) })
+    }
+  }
+  override def coproductUniversality(o: FSet, ms: List[FFunction]) = {
+    val xs = ms.map(_.source)
+    FFunction(coproduct(xs), o, { p: (Int, Any) => ms(p._1).toFunction(p._2) })
+  }
 
   def bijections(set1: FSet, set2: FSet): FSet = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
