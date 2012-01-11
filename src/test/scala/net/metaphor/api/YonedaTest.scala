@@ -20,13 +20,12 @@ class YonedaTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     LHS should beIsomorphicTo(RHS)  
   }
 
-  // FIXME for some reason this is running forever. :-(
+// FIXME (Scott) for some reason this is running forever. :-(
 //  "yoneda" should "give the terminal dataset for Isomorphism" in {//This tests that yoneda understands relations.
 //    val LHS = Examples.Isomorphism.yoneda(Box("0"))
+//    LHS.verifyRelations should be true
 //    val RHS = Examples.Isomorphism.Datasets.terminalObject
 //    LHS should beIsomorphicTo(RHS)
 //  }
   
-  
-
 }
