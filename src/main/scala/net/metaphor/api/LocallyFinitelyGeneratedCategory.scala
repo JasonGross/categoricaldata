@@ -125,9 +125,21 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   def morphismsOfLength(k: Int)(source: O, target: O): Set[M] = {
    morphismsUpToLength(k)(source, target) -- morphismsUpToLength(k - 1)(source, target)
   }
-  def morphisms(source: O, target: O): Iterable[M] = {
-    import net.tqft.toolkit.collections.RemoveDuplicates._
-    words(source, target).map(pathAsMorphism(_)).removeDuplicates()
+  
+  // if there are infinitely many morphism from source to anywhere, this won't terminate.
+  def morphisms(source: O, target: O): Iterable[M] = {    
+    var morphisms = scala.collection.mutable.Set[M]()
+    def p(m: M) = {
+      if(morphisms.contains(m)) {
+        false
+      } else {
+        morphisms += m
+        true
+      }
+    }
+    (for (k <- NonStrictNaturalNumbers) yield {
+      wordsOfLengthFrom(k)(source).map(pathAsMorphism(_)).filter(p _)
+    }).takeWhile(_.nonEmpty).flatten.filter(lfgCategory.target(_) == target)
   }
   
   trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory {
