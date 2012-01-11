@@ -54,7 +54,7 @@ trait FiniteFSet extends FSet {
 }
 
 class ProductSet(sets: Map[Any, FSet]) extends FSet {
-  def this(sets: FSet*) = this((sets map { x => x -> x }).toMap[Any, FSet])
+  def this(sets: FSet*) = this((sets.zipWithIndex map { case (x, i) => i -> x }).toMap[Any, FSet])
   override def toIterable = sets.foldLeft(
     NonStrictIterable[Map[Any, Any]](Map()))(
       { case (iterable, (i, s)) => for (m <- iterable; s0 <- s.toIterable) yield m + (i -> s0) })
@@ -70,7 +70,7 @@ class ProductSet(sets: Map[Any, FSet]) extends FSet {
   }
 }
 class CoproductSet(sets: Map[Any, FSet]) extends FSet {
-  def this(sets: FSet*) = this((sets map { x => x -> x }).toMap[Any, FSet])
+  def this(sets: FSet*) = this((sets.zipWithIndex map { case (x, i) => i -> x }).toMap[Any, FSet])
 
   override def toIterable = for ((i, s) <- sets.view; x <- s.toIterable) yield (i, x)
   override lazy val sizeIfFinite = {
@@ -154,7 +154,10 @@ trait Sets extends Category with InitialObject with TerminalObject with Products
       FFunction(product(xs), x, { m: Map[FSet, Any] => m(x) })
     }
   }
-  override def productUniversality(o: FSet, ms: List[FFunction]) = ???
+  override def productUniversality(o: FSet, ms: List[FFunction]) = {
+    val xs = ms.map(_.target)  
+    FFunction(o, product(xs:_*), { e: Any => (for(m <- ms) yield m.target -> m.toFunction(o)).toMap })
+  }
 
   override def coproduct(xs: FSet*) = new CoproductSet(xs: _*)
   override def coproductInjections(xs: FSet*): List[FFunction] = xs.toList map {
@@ -162,7 +165,10 @@ trait Sets extends Category with InitialObject with TerminalObject with Products
       FFunction(x, coproduct(xs), { e: Any => (x, e) })
     }
   }
-  override def coproductUniversality(o: FSet, ms: List[FFunction]) = ???
+  override def coproductUniversality(o: FSet, ms: List[FFunction]) = {
+    val xs = ms.map(_.source)
+    FFunction(coproduct(xs), o, { p: (Int, Any) => ms(p._1).toFunction(p._2) })
+  }
 
   def bijections(set1: FSet, set2: FSet): FSet = {
     (set1.sizeIfFinite, set2.sizeIfFinite) match {
