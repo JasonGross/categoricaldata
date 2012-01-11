@@ -30,4 +30,55 @@ class CoproductProductTest extends FlatSpec with ShouldMatchers with CustomMatch
 //    LHS should beIsomorphicTo(RHS)
 //    
 //  }
+  
+//  "Coproduct of sets" should "correctly add 3 and 2" in 
+//    val Three: FSet = List ("1","2", "3")
+//    val Two: FSet = List ("a","b")
+//    val LHS = Sets.coproduct(Three,Two)
+//    val RHS = List("1","2","3","a","b")
+//    LHS should beIsomorphicTo(RHS)
+//    
+//  }
+  
+  val OneTwoThreePointed = Dataset(
+    source = Examples.PointedSets,
+    onObjects = Map(
+      "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+      "a pointed set" -> List("a", "b", "c")),
+    onMorphisms = Map(
+      ("an element" --- "is in" --> "a pointed set") -> Map(
+        "a1" -> "a",
+        "b1" -> "b",
+        "b2" -> "b",
+        "c1" -> "c",
+        "c2" -> "c",
+        "c3" -> "c"),
+      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+        "a" -> "a1",
+        "b" -> "b1",
+        "c" -> "c1")))
+
+  
+//  "Product of datasets" should "be taken pointwise on PointedSets" in { //TODO this doesn't compile for some unknown reason.
+//    val PS = Examples.PointedSets
+//    val X=OneTwoThreePointed
+//    val XX = PS.Datasets.product(X,X)
+//    val E =  X.onObjects("an element")
+//    val EE = Sets.product(E,E)
+//    val LHS=XX.onObjects("an element")
+//    val RHS=EE
+//    LHS should beIsomorphicTo(RHS)
+//  }
+//  
+//  "Coproduct of datasets" should "be taken pointwise on PointedSets" in { //TODO this doesn't compile for some unknown reason.
+//    val PS = Examples.PointedSets
+//    val X=OneTwoThreePointed
+//    val XX = PS.Datasets.coproduct(X,X)
+//    val E =  X.onObjects("an element")
+//    val EE = Sets.coproduct(E,E)
+//    val LHS=XX.onObjects("an element")
+//    val RHS=EE
+//    LHS should beIsomorphicTo(RHS)
+//  }
+//  
 }
