@@ -149,11 +149,19 @@ trait Sets extends Category with InitialObject with TerminalObject with Products
   override def morphismFromInitialObject(s: FSet) = FFunction(initialObject, s, { a: Any => throw new IllegalArgumentException })
 
   override def product(xs: FSet*) = new ProductSet(xs: _*)
-  override def productProjections(xs: FSet*): List[FFunction] = ???
+  override def productProjections(xs: FSet*): List[FFunction] = xs.toList map {
+    x: FSet => {
+      FFunction(product(xs), x, { m: Map[FSet, Any] => m(x) })
+    }
+  }
   override def productUniversality(o: FSet, ms: List[FFunction]) = ???
 
   override def coproduct(xs: FSet*) = new CoproductSet(xs: _*)
-  override def coproductInjections(xs: FSet*): List[FFunction] = ???
+  override def coproductInjections(xs: FSet*): List[FFunction] = xs.toList map {
+    x: FSet => {
+      FFunction(x, coproduct(xs), { e: Any => (x, e) })
+    }
+  }
   override def coproductUniversality(o: FSet, ms: List[FFunction]) = ???
 
   def bijections(set1: FSet, set2: FSet): FSet = {
