@@ -59,7 +59,7 @@ class CoproductProductTest extends FlatSpec with ShouldMatchers with CustomMatch
         "c" -> "c1")))
 
   
-//  "Product of datasets" should "be taken pointwise on PointedSets" in { //TODO this doesn't compile for some unknown reason.
+//  "Product of datasets" should "be taken pointwise on PointedSets" in { //TODO this doesn't compile, probably because my use of onObjects.
 //    val PS = Examples.PointedSets
 //    val X=OneTwoThreePointed
 //    val XX = PS.Datasets.product(X,X)
@@ -70,7 +70,7 @@ class CoproductProductTest extends FlatSpec with ShouldMatchers with CustomMatch
 //    LHS should beIsomorphicTo(RHS)
 //  }
 //  
-//  "Coproduct of datasets" should "be taken pointwise on PointedSets" in { //TODO this doesn't compile for some unknown reason.
+//  "Coproduct of datasets" should "be taken pointwise on PointedSets" in { //TODO this doesn't compile, probably because my use of onObjects.
 //    val PS = Examples.PointedSets
 //    val X=OneTwoThreePointed
 //    val XX = PS.Datasets.coproduct(X,X)

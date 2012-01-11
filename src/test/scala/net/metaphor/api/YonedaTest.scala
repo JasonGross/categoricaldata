@@ -19,6 +19,13 @@ class YonedaTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     val RHS = Examples.Chain(2).Datasets.terminalObject
     LHS should beIsomorphicTo(RHS)  
   }
+  
+//  "yoneda of V1" should "assign the emptyset to V0" in {//TODO this doesn't compile, probably because my use of onObjects.
+//    val X:Dataset = Examples.Chain(2).yoneda(Box("V1"))
+//    val LHS = X.onObjects(Box("V0"))
+//    val RHS = Sets.initialObject
+//    LHS should beIsomorphicTo(RHS)  
+//  }
 
   "yoneda" should "give the terminal dataset for Isomorphism" in {//This tests that yoneda understands relations.
     val LHS = Examples.Isomorphism.yoneda(Box("0"))
