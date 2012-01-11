@@ -366,30 +366,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dd" -> "dd")))
 
       
-        // Scott: I've commented this out again 2012-01-11, as it still runs forever. It shouldn't be here in Test.scala, anyway.
-//      "__!" should "provide a 'half-speed' FCM20_18" in {
-//        println
-//        println("Output from \"__! should provide a 'half-speed' FCM20_18\":")
-//        
-//        val X = FCM20_18
-//        val T = Examples.TranslationFiniteCyclicMonoids(20,18,20,18,2);
-//        val LHS = T.__!(X)
-//        val RHS = FCM20_18Times2L
-//        println(X)
-//        println(LHS)
-//        println(RHS)
-//        LHS should beIsomorphicTo(RHS)
-//     }       
-
-  
-
-  //   "fullSubcategorySpannedBy" should "take Chains to Chains" in {//TODO Make a working fullSubcategorySpannedBy method.
-  //	   val X = Examples.Chain(5)
-  //	   val RHS = Examples.Chain(3)
-  //	   val LHS = X.fullSubcategorySpannedBy(List("0","1","2","3")/*The fact that these are boxes should be inherent?*/)
-  //	   LHS should equal(RHS)
-  //   }
-        
+    
 
         //TODO (David): Make a test for commutative diagram of ontologies. 
         //Let A=Span, B=non-commuting triangle, C=Chain(1), and D=commuting triangle. 
