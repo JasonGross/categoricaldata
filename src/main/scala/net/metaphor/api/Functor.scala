@@ -169,8 +169,13 @@ object Functor {
     override val target: FinitelyGeneratedCategory
   }
 
-  trait withFinitelyPresentedSource extends withFinitelyGeneratedSource {
+  trait withFinitelyPresentedSource extends withFinitelyGeneratedSource { functor =>
     override val source: FinitelyPresentedCategory
+    def verifyRelations = {
+      for (relation <- source.allRelations) {
+        require(functor.onMorphisms(source.pathAsMorphism(relation._1)) == functor.onMorphisms(source.pathAsMorphism(relation._2)))
+      }
+    }
   }
   trait withFinitelyPresentedTarget extends withFinitelyGeneratedTarget {
     override val target: FinitelyPresentedCategory
@@ -350,13 +355,7 @@ object Functor {
   }
   object withFinitelyPresentedSource {
     trait withSmallTarget extends Functor.withFinitelyGeneratedSource.withSmallTarget with Functor.withFinitelyPresentedSource
-    trait withLocallyFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget with Functor.withFinitelyPresentedSource.withSmallTarget { functor =>
-      def verifyRelations = {
-        for (relation <- source.allRelations) {
-          require(target.pathEquality(functor.onMorphisms(source.pathAsMorphism(relation._1)).representative, functor.onMorphisms(source.pathAsMorphism(relation._2)).representative))
-        }
-      }
-    }
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget with Functor.withFinitelyPresentedSource.withSmallTarget
     trait withFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget with Functor.withFinitelyPresentedSource.withLocallyFinitelyGeneratedTarget
     trait withFinitelyPresentedTarget extends Functor.withFinitelyGeneratedSource.withFinitelyPresentedTarget with Functor.withFinitelyPresentedSource.withFinitelyGeneratedTarget
   }

@@ -53,24 +53,29 @@ trait FiniteFSet extends FSet {
   override def sizeIfFinite = Some(size)
 }
 
-class ProductSet(sets: FSet*) extends FSet {
-  override def toIterable = sets.foldLeft(NonStrictIterable[List[Any]](Nil))({ case (i, s) => for (i0 <- i; s0 <- s.toIterable) yield s0 :: i0 }).map(_.reverse)
+class ProductSet(sets: Map[Any, FSet]) extends FSet {
+  def this(sets: FSet*) = this((sets map { x => x -> x }).toMap[Any, FSet])
+  override def toIterable = sets.foldLeft(
+    NonStrictIterable[Map[Any, Any]](Map()))(
+      { case (iterable, (i, s)) => for (m <- iterable; s0 <- s.toIterable) yield m + (i -> s0) })
   override lazy val sizeIfFinite = {
-    val sizes = sets.map(_.sizeIfFinite)
-    if (sizes.contains(Some(0))) {
+    val sizes = sets.values.map(_.sizeIfFinite)
+    if (sizes.exists(_ == Some(0))) {
       Some(0)
-    } else if (sizes.contains(None)) {
+    } else if (sizes.exists(_ == None)) {
       None
     } else {
       Some(sizes.map(_.get).product)
     }
   }
 }
-class CoproductSet(sets: FSet*) extends FSet {
-  override def toIterable = sets.map(_.toIterable).flatten
+class CoproductSet(sets: Map[Any, FSet]) extends FSet {
+  def this(sets: FSet*) = this((sets map { x => x -> x }).toMap[Any, FSet])
+
+  override def toIterable = for ((i, s) <- sets.view; x <- s.toIterable) yield (i, x)
   override lazy val sizeIfFinite = {
-    val sizes = sets.map(_.sizeIfFinite)
-    if (sizes.contains(None)) {
+    val sizes = sets.values.map(_.sizeIfFinite)
+    if (sizes.exists(_ == None)) {
       None
     } else {
       Some(sizes.map(_.get).sum)
