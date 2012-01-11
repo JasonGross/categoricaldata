@@ -390,4 +390,9 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //	   val LHS = X.fullSubcategorySpannedBy(List("0","1","2","3")/*The fact that these are boxes should be inherent?*/)
   //	   LHS should equal(RHS)
   //   }
+        
+        //TODO (David): Make a test for commutative diagram of ontologies. 
+        //Let A=Span, B=non-commuting triangle, C=Chain(1), and D=commuting triangle. 
+        //A-->B gives two paths start to end, A-->C is obvious, B-->D is obvious, C-->D is hypotenuse. 
+        //Check that this diagram commutes.
 }
