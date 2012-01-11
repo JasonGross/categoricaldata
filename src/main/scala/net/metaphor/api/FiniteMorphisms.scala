@@ -4,11 +4,6 @@ import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 trait NormalForm { fpCategory: FinitelyPresentedCategory =>
   def normalForm(p: Path): Path
 
-  def normalWordsOfLength(k: Int)(source: fpCategory.O, target: fpCategory.O): List[Path] = {
-    wordsOfLength(k)(source, target).filter(inNormalForm _)
-  }
-
-  def inNormalForm(p: Path) = p == normalForm(p)
   override def pathEquality(p1: fpCategory.Path, p2: fpCategory.Path) = {
     normalForm(p1) == normalForm(p2)
   }
@@ -17,10 +12,7 @@ trait NormalForm { fpCategory: FinitelyPresentedCategory =>
 
 trait FiniteMorphisms extends NormalForm { fpCategory: FinitelyPresentedCategory =>
   def maximumWordLength(source: fpCategory.O, target: fpCategory.O): Int
-  def maximumWordLength: Int = (for (s <- objects; t <- objects) yield maximumWordLength(s, t)).max
-  def normalWords(source: fpCategory.O, target: fpCategory.O) = (for (k <- 0 to maximumWordLength(source, target); w <- normalWordsOfLength(k)(source, target)) yield w).toList
-
-  def normalForm(p: Path): Path
+  lazy val maximumWordLength: Int = (for (s <- objects; t <- objects) yield maximumWordLength(s, t)).max
 }
 
 trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCategory =>
