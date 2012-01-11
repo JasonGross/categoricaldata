@@ -20,3 +20,5 @@ trait Equalizers { category: Category =>
   def equalizerObject(ms: category.M*): O = category.source(equalizerMorphism(ms: _*))
   def equalizerUniversality(m: category.M, ms: category.M*): M
 }
+
+// TODO Coequalizers
