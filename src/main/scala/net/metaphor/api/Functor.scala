@@ -63,43 +63,82 @@ object Functor {
   }
 
   object withSmallSource {
-    trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarget
-    trait withLocallyFinitelyGeneratedTarget extends Functor.withSmallSource with Functor.withLocallyFinitelyGeneratedTarget
-    trait withFinitelyGeneratedTarget extends Functor.withSmallSource with Functor.withFinitelyGeneratedTarget
-    trait withFinitelyPresentedTarget extends Functor.withSmallSource with Functor.withFinitelyPresentedTarget
+    trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarget { smallFunctor =>
+      trait ContravariantDataFunctor extends Functor {
+        override val source = smallFunctor.target.AllFunctorsToSet
+        override val target: smallFunctor.source.SpecializedFunctorsToSet = smallFunctor.source.functorsToSet
+        def andThen(g: CovariantDataFunctor) = DataFunctors.compose(this, g)
+      }
+      trait CovariantDataFunctor extends Functor {
+        override val source = smallFunctor.source.AllFunctorsToSet
+        override val target: smallFunctor.target.SpecializedFunctorsToSet = smallFunctor.target.functorsToSet
+        def andThen(g: ContravariantDataFunctor) = DataFunctors.compose(this, g)
+      }
+
+      object DataFunctors {
+        class TargetComposition(f: ContravariantDataFunctor, g: CovariantDataFunctor) extends Functor {
+          override val source: f.source.type = f.source
+          override val target: g.target.type = g.target
+          override def onObjects(o: source.O): target.O = g(f(o))
+          override def onMorphisms(m: source.M): target.M = g(f(m))
+        }
+        class SourceComposition(f: CovariantDataFunctor, g: ContravariantDataFunctor) extends Functor {
+          override val source: f.source.type = f.source
+          override val target: g.target.type = g.target
+          override def onObjects(o: source.O): target.O = g(f(o))
+          override def onMorphisms(m: source.M): target.M = g(f(m))
+        }
+
+        def compose(f: ContravariantDataFunctor, g: CovariantDataFunctor) = new TargetComposition(f, g)
+        def compose(f: CovariantDataFunctor, g: ContravariantDataFunctor) = new SourceComposition(f, g)
+      }
+
+      trait Pullback extends ContravariantDataFunctor {
+        override def onObjects(i: smallFunctor.target.FunctorToSet) = smallFunctor.source.internalize(new smallFunctor.source.FunctorToSet {
+          def onObjects(o: smallFunctor.source.O) = i(smallFunctor.apply(o))
+          def onMorphisms(m: smallFunctor.source.M) = i(smallFunctor.apply(m))
+        })
+        override def onMorphisms(m: smallFunctor.target.NaturalTransformationToSet) = smallFunctor.source.internalize(new smallFunctor.source.NaturalTransformationToSet {
+          val source = onObjects(m.target)
+          val target = onObjects(m.source)
+          def apply(o: smallFunctor.source.O) = m(smallFunctor.apply(o))
+        })
+      }
+
+      lazy val pullback = new Pullback {}
+
+      lazy val ^* = new Functor {
+        override val source = FunctorsToSet
+        override val target = smallFunctor.source.functorsToSet
+        def onObjects(i: FunctorToSet) = pullback.apply(smallFunctor.target.internalize(i))
+        def onMorphisms(t: NaturalTransformationToSet) = pullback.apply(smallFunctor.target.internalize(t))
+      }
+
+    }
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withSmallSource.withSmallTarget with Functor.withLocallyFinitelyGeneratedTarget
+    trait withFinitelyGeneratedTarget extends Functor.withSmallSource.withLocallyFinitelyGeneratedTarget with Functor.withFinitelyGeneratedTarget
+    trait withFinitelyPresentedTarget extends Functor.withSmallSource.withFinitelyGeneratedTarget with Functor.withFinitelyPresentedTarget
   }
   object withLocallyFinitelyGeneratedSource {
-    trait withSmallTarget extends Functor.withLocallyFinitelyGeneratedSource with Functor.withSmallTarget
-    trait withLocallyFinitelyGeneratedTarget extends Functor.withLocallyFinitelyGeneratedSource with Functor.withLocallyFinitelyGeneratedTarget
-    trait withFinitelyGeneratedTarget extends Functor.withLocallyFinitelyGeneratedSource with Functor.withFinitelyGeneratedTarget
-    trait withFinitelyPresentedTarget extends Functor.withLocallyFinitelyGeneratedSource with Functor.withFinitelyPresentedTarget
+    trait withSmallTarget extends Functor.withSmallSource.withSmallTarget with Functor.withLocallyFinitelyGeneratedSource
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withSmallSource.withLocallyFinitelyGeneratedTarget with Functor.withLocallyFinitelyGeneratedSource
+    trait withFinitelyGeneratedTarget extends Functor.withSmallSource.withFinitelyGeneratedTarget with Functor.withLocallyFinitelyGeneratedSource
+    trait withFinitelyPresentedTarget extends Functor.withSmallSource.withFinitelyPresentedTarget with Functor.withLocallyFinitelyGeneratedSource
   }
   object withFinitelyGeneratedSource {
-    trait withSmallTarget extends Functor.withFinitelyGeneratedSource with Functor.withSmallTarget
-    trait withLocallyFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource with Functor.withLocallyFinitelyGeneratedTarget
-    trait withFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource with Functor.withFinitelyGeneratedTarget
-    trait withFinitelyPresentedTarget extends Functor.withFinitelyGeneratedSource with Functor.withFinitelyPresentedTarget
+    trait withSmallTarget extends Functor.withLocallyFinitelyGeneratedSource.withSmallTarget with Functor.withFinitelyGeneratedSource
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withLocallyFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget with Functor.withFinitelyGeneratedSource
+    trait withFinitelyGeneratedTarget extends Functor.withLocallyFinitelyGeneratedSource.withFinitelyGeneratedTarget with Functor.withFinitelyGeneratedSource
+    trait withFinitelyPresentedTarget extends Functor.withLocallyFinitelyGeneratedSource.withFinitelyPresentedTarget with Functor.withFinitelyGeneratedSource
   }
   object withFinitelyPresentedSource {
-    trait withSmallTarget extends Functor.withFinitelyPresentedSource with Functor.withSmallTarget
-    trait withLocallyFinitelyGeneratedTarget extends Functor.withFinitelyPresentedSource with Functor.withLocallyFinitelyGeneratedTarget
-    trait withFinitelyGeneratedTarget extends Functor.withFinitelyPresentedSource with Functor.withFinitelyGeneratedTarget
-    trait withFinitelyPresentedTarget extends Functor.withFinitelyPresentedSource with Functor.withFinitelyPresentedTarget
+    trait withSmallTarget extends Functor.withFinitelyGeneratedSource.withSmallTarget with Functor.withFinitelyPresentedSource
+    trait withLocallyFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget with Functor.withFinitelyPresentedSource
+    trait withFinitelyGeneratedTarget extends Functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget with Functor.withFinitelyPresentedSource
+    trait withFinitelyPresentedTarget extends Functor.withFinitelyGeneratedSource.withFinitelyPresentedTarget with Functor.withFinitelyPresentedSource
   }
-
 }
 
-trait LeftAdjoint { functor: Functor =>
-  def rightAdjoint: RightAdjoint
-  def rightUnit: NaturalTransformation
-  def rightCounit: NaturalTransformation
-}
-
-trait RightAdjoint { functor: Functor =>
-  def leftAdjoint: LeftAdjoint
-  def leftUnit: NaturalTransformation
-  def leftCounit: NaturalTransformation
-}
 
 trait MemoFunctor extends Functor {
   import net.tqft.toolkit.functions.Memo

@@ -1,14 +1,6 @@
 package net.metaphor.api
 
-trait LocallyFinitelyGeneratedFunctor extends SmallFunctor { lfgFunctor =>
-  override val source: LocallyFinitelyGeneratedCategory
-
-  def onGenerators(g: source.G): target.M
-  override def onMorphisms(m: source.M) = {
-    val start = onObjects(source.source(m))
-    val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
-    target.compose(start, morphisms)
-  }
+trait LocallyFinitelyGeneratedFunctor extends Functor.withLocallyFinitelyGeneratedSource.withSmallTarget { lfgFunctor =>
 
   /**
    * This is a little confusing. SliceCategory is abstract, but always has to be a FinitelyGeneratedCategory.
@@ -133,11 +125,8 @@ trait LocallyFinitelyGeneratedFunctorWithLocallyFinitelyGeneratedTarget extends 
       for (
         l <- (lfgFunctor.source.minimumLevel to k).toList;
         right <- lfgFunctor.source.objectsAtLevel(l);
-// the next two lines should be swapped out for the following two, but I want to wait for a test        
         path <- lfgFunctor.target.wordsOfLength(k - l)(onLeft, lfgFunctor.apply(right))
       ) yield ObjectRightOf(right, lfgFunctor.target.pathAsMorphism(path))
-//        morphism <- lfgFunctor.target.morphismsOfLength(k - l)(onLeft, lfgFunctor.apply(right))
-//      ) yield ObjectRightOf(right, morphism)
     }
   }
   abstract class CosliceCategory(onRight: lfgFunctor.target.O) extends super.CosliceCategory(onRight) {
@@ -145,11 +134,8 @@ trait LocallyFinitelyGeneratedFunctorWithLocallyFinitelyGeneratedTarget extends 
       for (
         l <- (lfgFunctor.source.minimumLevel to k).toList;
         left <- lfgFunctor.source.objectsAtLevel(l);
-// the next two lines should be swapped out for the following two       
         path <- lfgFunctor.target.wordsOfLength(k - l)(lfgFunctor.apply(left), onRight)
       ) yield ObjectLeftOf(left, lfgFunctor.target.pathAsMorphism(path))
-//        morphism <- lfgFunctor.target.morphismsOfLength(k - l)(lfgFunctor.apply(left), onRight)
-//      ) yield ObjectLeftOf(left, morphism)
     }
   }
 
