@@ -43,6 +43,8 @@ libraryDependencies ++= Seq(
 	"org.mortbay.jetty" % "jetty" % "6.1.22" % "container"
 )
 
+// scalacOptions += "-Ytyper-debug"
+
 testOptions in Test := Seq(Tests.Filter(unitFilter))
 
 testOptions in DevTest := Seq(Tests.Filter(devFilter))
