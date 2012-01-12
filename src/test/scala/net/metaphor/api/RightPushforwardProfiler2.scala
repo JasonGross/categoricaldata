@@ -10,7 +10,7 @@ object RightPushforwardProfiler2 extends App with Profiler {
   //            28ms: Path.hashCode as a lazy val.
   // 			23ms: FinitelyGeneratedCategory.FunctorToSet.Section builds a map immediately, and overrides equality
   //			above times are irrelevant; we were looking for dataset isomorphisms incorrectly
-  //			307ms
+  //			5ms: kawow, something got a whole lot better. No point profiling further here.
   
   for (
     t <- movingTimingAverages(10) {

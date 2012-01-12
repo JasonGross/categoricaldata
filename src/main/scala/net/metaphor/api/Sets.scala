@@ -205,7 +205,7 @@ trait Sets extends Category with InitialObject with TerminalObject with Products
       NonStrictIterable[Map[Any, Any]](Map()))(
         {
           case (iterable, a) => for (m <- iterable; s0 <- set2.toIterable) yield {
-            ???
+//            ???
             m + (a -> s0)
           }
         })
