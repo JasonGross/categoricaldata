@@ -231,7 +231,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       relations = List.concat(RelationsId0, RelationsId1, RelationsId2, Comp012))
   }
 
-  //  "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO Is this test in the right place? Does it work? Do we have BeIsomorphicAsCategoriesTo, or any other such guy?
+  //  "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO (Scott) Is this test in the right place? Do we have BeIsomorphicAsCategoriesTo?
   //    Examples.Chain(2) should BeIsomorphicAsCategoriesTo(SaturatedCommutativeTriangle)
   //  }
 
