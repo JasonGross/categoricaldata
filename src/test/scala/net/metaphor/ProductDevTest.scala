@@ -23,27 +23,25 @@ import net.metaphor.api.FSet
 class ProductDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
-  
-  "Product of sets" should "correctly multiply 3 by 2" in { 
-    val Three: FSet = List ("1","2", "3")
-    val Two: FSet = List ("a","b")
-    val LHS = Sets.product(Three,Two)
-    val RHS = List("1a","1b","2a","2b","3a","3b")
+
+  "Product of sets" should "correctly multiply 3 by 2" in {
+    val Three: FSet = List("1", "2", "3")
+    val Two: FSet = List("a", "b")
+    val LHS = Sets.product(Three, Two)
+    val RHS = List("1a", "1b", "2a", "2b", "3a", "3b")
     // TODO
-//    LHS should beIsomorphicTo(RHS)
-    
+    //    LHS should beIsomorphicTo(RHS)
   }
-  
+
   "Coproduct of sets" should "correctly add 3 and 2" in {
-    val Three: FSet = List ("1","2", "3")
-    val Two: FSet = List ("a","b")
-    val LHS = Sets.coproduct(Three,Two)
-    val RHS = List("1","2","3","a","b")
+    val Three: FSet = List("1", "2", "3")
+    val Two: FSet = List("a", "b")
+    val LHS = Sets.coproduct(Three, Two)
+    val RHS = List("1", "2", "3", "a", "b")
     // TODO
-//    LHS should beIsomorphicTo(RHS)
-    
+    //    LHS should beIsomorphicTo(RHS)
   }
-  
+
   val OneTwoThreePointed = Dataset(
     source = Examples.PointedSets,
     onObjects = Map(
@@ -62,29 +60,28 @@ class ProductDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "b" -> "b1",
         "c" -> "c1")))
 
-  
-  "Product of datasets" should "be taken pointwise on PointedSets" in { 
+  "Product of datasets" should "be taken pointwise on PointedSets" in {
     val PS: Examples.PointedSets.type = Examples.PointedSets
-    val X=OneTwoThreePointed
-    val XX = PS.Datasets.product(X,X)
-    val E =  X(Box("an element"))
-    val EE = Sets.product(E,E)
-    val LHS=XX(Box("an element"))
-    val RHS=EE
+    val X = OneTwoThreePointed
+    val XX = PS.Datasets.product(X, X)
+    val E = X(Box("an element"))
+    val EE = Sets.product(E, E)
+    val LHS = XX(Box("an element"))
+    val RHS = EE
     //TODO this doesn't compile; because beIsomorphicTo doesn't do FSets
-//    LHS should beIsomorphicTo(RHS)
+    //    LHS should beIsomorphicTo(RHS)
   }
-  
+
   "Coproduct of datasets" should "be taken pointwise on PointedSets" in {
-    val PS:Examples.PointedSets.type = Examples.PointedSets
-    val X=OneTwoThreePointed
-    val XX = PS.Datasets.coproduct(X,X)
-    val E =  X(Box("an element"))
-    val EE = Sets.coproduct(E,E)
-    val LHS=XX(Box("an element"))
-    val RHS=EE
+    val PS: Examples.PointedSets.type = Examples.PointedSets
+    val X = OneTwoThreePointed
+    val XX = PS.Datasets.coproduct(X, X)
+    val E = X(Box("an element"))
+    val EE = Sets.coproduct(E, E)
+    val LHS = XX(Box("an element"))
+    val RHS = EE
     //TODO this doesn't compile; because beIsomorphicTo doesn't do FSets
-//    LHS should beIsomorphicTo(RHS)
+    //    LHS should beIsomorphicTo(RHS)
   }
-  
+
 }
