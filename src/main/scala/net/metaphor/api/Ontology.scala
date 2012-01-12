@@ -180,7 +180,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       }
     }
   }
-      
+
   override def internalize(t: net.metaphor.api.NaturalTransformationToSet) = {
     t match {
       case t: Datamap => t
@@ -235,7 +235,16 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
   }
 
-  class OntologyWrapper extends super.Wrapper with Ontology
+  trait OntologyWrapper extends super.Wrapper with Ontology
+
+  class FullSubcategory(spannedBy: O*) extends super.FullSubcategory(objects: _*) with OntologyWrapper
+
+  class FullSubcategoryInclusion(spannedBy: O*) extends super.FullSubcategoryInclusion with Translation {
+    override val source = new FullSubcategory(spannedBy: _*)
+  }
+
+  override def fullSubcategoryInclusion(spannedBy: O*) = new FullSubcategoryInclusion(spannedBy: _*)
+  override def fullSubcategory(spannedBy: O*) = fullSubcategoryInclusion(spannedBy: _*).source
 
   def findAllTranslationsTo(other: Ontology): Iterable[Translation] = {
     trait TranslationToOther extends Translation {

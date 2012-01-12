@@ -182,7 +182,38 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(p1, p2)
   }
+  
+  abstract class FullSubcategory(spannedBy: O*) extends Wrapper with FinitelyGeneratedCategory {
+    private val objectsAtLevelMap: Map[Int, List[O]] = {
+      case class Accumulator(k: Int, map: Map[Int, List[O]], remaining: List[O]) {
+        def next = remaining.partition(lfgCategory.objectsAtLevel(k).contains(_)) match {
+          case (found, notfound) => Accumulator(k + 1, map + (k -> found), notfound) 
+        }
+        def finish: Map[Int, List[O]] = if(remaining.isEmpty) {
+          map
+        } else {
+          next.finish
+        }
+      }
+      
+      Accumulator(minimumLevel, Map(), spannedBy.toList).finish
+    }
+    override def objectsAtLevel(k: Int) = objectsAtLevelMap.get(k).getOrElse(Nil)
+    override val maximumLevel = (objectsAtLevelMap.keySet + minimumLevel).max
+  }
+  
+  class ConcreteFullCategory(spannedBy: O*) extends FullSubcategory with FinitelyGeneratedCategories.StandardFunctorsToSet
 
+  class FullSubcategoryInclusion(spannedBy: O*) extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
+    override val source: FullSubcategory = new ConcreteFullCategory(spannedBy:_*)
+    override val target: lfgCategory.type = lfgCategory
+    override def onObjects(o: source.O) = o
+    override def onGenerators(g: source.G) = g    
+  } 
+  
+  def fullSubcategoryInclusion(spannedBy: O*) = new FullSubcategoryInclusion(spannedBy:_*)
+  def fullSubcategory(spannedBy: O*) = fullSubcategoryInclusion(spannedBy:_*).source
+  
   trait Truncation extends Wrapper with FinitelyGeneratedCategory {
     override def objectsAtLevel(k: Int) = {
       if (k <= maximumLevel) {
@@ -195,6 +226,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategories.StandardFunctorsToSet
 
+  
   class TruncationFunctor(maximumLevel: Int) extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget  {
     override val source: Truncation = new ConcreteTruncation(maximumLevel)
     override val target: lfgCategory.type = lfgCategory
