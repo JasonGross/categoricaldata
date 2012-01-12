@@ -112,7 +112,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "a1" -> "a1a",
         "d3" -> "d3d")))
 
-      val OneTwoThreePointed = Dataset(
+  val OneTwoThreePointed = Dataset(
     source = Examples.PointedSets,
     onObjects = Map(
       "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
@@ -142,35 +142,55 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "UC Berkeley" -> "1868",
         "MIT" -> "1861")))
 
-  val DavidsFunkyFiniteCyclicMonoid = Dataset(
-    source = Examples.FiniteCyclicMonoid(2, 1),
-    onObjects = Map("an element" -> List("David", "Scott", "UC Berkeley", "MIT", "succDavid", "succScott", "succUC Berkeley", "succMIT")),
-    onMorphisms = Map("an element" --- "has as successor" --> "an element" -> Map(
-      "David" -> "succDavid",
-      "Scott" -> "succScott",
-      "UC Berkeley" -> "succUC Berkeley",
-      "MIT" -> "succMIT",
-      "succDavid" -> "succDavid",
-      "succScott" -> "succScott",
-      "succUC Berkeley" -> "succUC Berkeley",
-      "succMIT" -> "succMIT")))
-
-  val DavidsFunkySet1 = Dataset(source = Examples.Chain(0),
-    onObjects = Map(
-      "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
-    onMorphisms = Map())
-
-  val DavidsFunkySet2 = Dataset(source = Examples.Chain(0),
-    onObjects = Map(
-      "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
-    onMorphisms = Map())
-
-  // TODO (David) this one is working; give it a good name and move to LeftPushforwardTest
-  "__!" should "work (1)" in {
-    val F = Ontologies.terminalObject.findAllTranslationsTo(Examples.FiniteCyclicMonoid(2, 1)).head
-    F.__!(DavidsFunkySet1) should beIsomorphicTo(DavidsFunkyFiniteCyclicMonoid)
-  }
-
+  
+  // TODO (David) Graph to FCM2_1.
+        
+  val GrphToFCM2_1 = Translation (
+      source = Examples.Grph,
+      target = Examples.FiniteCyclicMonoid(2,1),
+      onObjects = Map (
+          "an edge" -> "an element", 
+          "a vertex" -> "an element"),
+      onMorphisms = Map (
+          ("an edge" --- "has as source" --> "a vertex") -> ("an element" --- "has as successor" --> "an element"),
+          ("an edge" --- "has as target" --> "a vertex") -> ("an element".identity)
+      )
+  )
+  
+  val DavidsGrph = Dataset (source = Examples.Grph,
+      onObjects = Map(
+          "an edge" -> List ("0","1","2","3"),
+          "a vertex" -> List ("a", "b", "c", "d")),
+      onMorphisms = Map (
+          ("an edge" --- "has as source" --> "a vertex") -> Map (
+              "a" -> "0",
+              "b" -> "0",
+              "c" -> "0",
+              "d" -> "2"),
+          ("an edge" --- "has as target" --> "a vertex") -> Map (
+              "a" -> "1",
+              "b" -> "2",
+              "c" -> "2",
+              "d" -> "2")
+      )
+ )
+  
+// val DavidsGrphLFCM2_1 = Dataset(source = Examples.FiniteCyclicMonoid(2,1)) //TODO (David) Define these two FCM2_1 datasets to make the following two tests work.
+// val DavidsGrphRFCM2_1 = Dataset(source = Examples.FiniteCyclicMonoid(2,1))
+// 
+// "__!" should "when applied to DavidsGraph, return the correct FCM2_1" in {
+//    val LHS = GrphToFCM2_1__!(DavidsGrph)
+//    val RHS = DavidsGrphLFCM2_1
+//    LHS should beIsomorphicTo(RHS)
+//  }
+//  
+// "__*" should "when applied to DavidsGraph, return the correct FCM2_1" in {
+//    val LHS = GrphToFCM2_1__*(DavidsGrph)
+//    val RHS = DavidsGrphRFCM2_1
+//    LHS should beIsomorphicTo(RHS)
+//  }
+      
+          
   // TODO this doesn't work because the target is infinite!
   "__*" should "convert a graph into a discrete dynamical system" in {
     val DavidsFunkyGraph = Dataset(source = Examples.Grph,
@@ -347,7 +367,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c" -> "d",
         "d" -> "d")))
 
-  lazy val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(7, 6),
+  val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(8, 6),
     onObjects = Map(
       "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
     onMorphisms = Map(
