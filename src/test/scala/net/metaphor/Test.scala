@@ -202,7 +202,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     LHS should beIsomorphicTo(RHS)
   }
 
-  val SaturatedCommutativeTriangle = { //TODO (Scott) This test compiles, but it somehow breaks JUnit. Any idea? // Scott: It's not breaking anything for me. Can you explain?
+  val SaturatedCommutativeTriangle = {
     val ArrowsList = List(
       "V0" --- "E00" --> "V0",
       "V0" --- "E01" --> "V1",
@@ -232,7 +232,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   }
 
   //  "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO Is this test in the right place? Does it work? Do we have BeIsomorphicAsCategoriesTo, or any other such guy?
-  //    Chain(2) should BeIsomorphicAsCategoriesTo(SaturatedCommutativeTriangle)
+  //    Examples.Chain(2) should BeIsomorphicAsCategoriesTo(SaturatedCommutativeTriangle)
   //  }
 
   val DDS1 = Dataset(source = Examples.DiscreteDynamicalSystem,
