@@ -1,13 +1,10 @@
 package net.metaphor
 
 package object api {
-	def ??? = throw new NoSuchMethodException //???
+	def ??? = throw new NoSuchMethodException
 	
 	implicit def asSet(i: Iterable[Any]): FSet = new FSet {
 	  override def toIterable = i
 	  override def sizeIfFinite = Some(i.size)
 	}
-//	implicit def asFunction(f: Any => Any): Function = new Function {
-//	  override def toFunction = f
-//	}
 }

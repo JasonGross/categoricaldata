@@ -278,8 +278,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       }
     }
     
-
-    // FIXME (Scott) Why did this stop compiling?
+// FIXME these seems to drastically increase compile time; investigate
 //    def limitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).limit
 //    def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
   }

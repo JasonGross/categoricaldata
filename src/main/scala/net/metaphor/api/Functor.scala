@@ -222,6 +222,8 @@ object Functor {
           val target = onObjects(m.source)
           def apply(o: smallFunctor.source.O) = m(smallFunctor.apply(o))
         })
+
+        // c.f. Functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget.Pullback, which adds limitMorphism
       }
 
       lazy val pullback = new Pullback {}
@@ -350,6 +352,14 @@ object Functor {
         def buildCosliceCategory(onLeft: fgFunctor.target.opposite.O): CosliceCategory
       }
 
+      trait Pullback extends super.Pullback {
+        def limitMorphism(i: fgFunctor.target.FunctorToSet) = FFunction(
+          source = onObjects(i).limitSet,
+          target = i.limitSet,
+          function = { x: Map[fgFunctor.source.O, Any] => ??? /* TODO build something, via the universal property */ })
+      }
+
+      override lazy val pullback = new Pullback {}
     }
     trait withFinitelyPresentedTarget extends Functor.withLocallyFinitelyGeneratedSource.withFinitelyPresentedTarget with Functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget
   }
