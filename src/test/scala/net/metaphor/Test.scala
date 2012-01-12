@@ -202,37 +202,35 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
     LHS should beIsomorphicTo(RHS)
   }
 
-//    val SaturatedCommutativeTriangle = { //TODO (Scott) This test compiles, but it somehow breaks JUnit. Any idea? 
-//      val ArrowsList=List (
-//            "V0" --- "E00" --> "V0",
-//            "V0" --- "E01" --> "V1",
-//            "V0" --- "E02" --> "V2",
-//            "V1" --- "E11" --> "V1",
-//            "V1" --- "E12" --> "V2",
-//            "V2" --- "E22" --> "V2")
-//      val RelationsId0=List(
-//          ("V0" --- "E00" --> "V0" --- "E00" --> "V0") === ("V0" --- "E00" --> "V0"),
-//          ("V0" --- "E00" --> "V0" --- "E01" --> "V1") === ("V0" --- "E01" --> "V1"),
-//          ("V0" --- "E00" --> "V0" --- "E02" --> "V2") === ("V0" --- "E02" --> "V2"))
-//      val RelationsId1=List(
-//          ("V0" --- "E01" --> "V1" --- "E11" --> "V1") === ("V0" --- "E01" --> "V1"),
-//          ("V1" --- "E11" --> "V1" --- "E11" --> "V1") === ("V1" --- "E11" --> "V1"),
-//          ("V1" --- "E11" --> "V1" --- "E12" --> "V2") === ("V1" --- "E12" --> "V2"))
-//      val RelationsId2=List(
-//          ("V0" --- "E02" --> "V2" --- "E22" --> "V2") === ("V0" --- "E02" --> "V2"),
-//          ("V1" --- "E12" --> "V2" --- "E22" --> "V2") === ("V1" --- "E12" --> "V2"),
-//          ("V2" --- "E22" --> "V2" --- "E22" --> "V2") === ("V2" --- "E22" --> "V2"))
-//      val Comp012=List(
-//          ("V0" --- "E01" --> "V1" --- "E12" --> "V2") === ("V0" --- "E02" --> "V2"))
-//      
-//      Ontology(
-//    
-//        objects = List("V0","V1","V2"),
-//        arrows = ArrowsList,
-//        relations = List.concat(RelationsId0,RelationsId1,RelationsId2,Comp012)
-//      )
-//    }
-    
+  val SaturatedCommutativeTriangle = { //TODO (Scott) This test compiles, but it somehow breaks JUnit. Any idea? // Scott: It's not breaking anything for me. Can you explain?
+    val ArrowsList = List(
+      "V0" --- "E00" --> "V0",
+      "V0" --- "E01" --> "V1",
+      "V0" --- "E02" --> "V2",
+      "V1" --- "E11" --> "V1",
+      "V1" --- "E12" --> "V2",
+      "V2" --- "E22" --> "V2")
+    val RelationsId0 = List(
+      ("V0" --- "E00" --> "V0" --- "E00" --> "V0") === ("V0" --- "E00" --> "V0"),
+      ("V0" --- "E00" --> "V0" --- "E01" --> "V1") === ("V0" --- "E01" --> "V1"),
+      ("V0" --- "E00" --> "V0" --- "E02" --> "V2") === ("V0" --- "E02" --> "V2"))
+    val RelationsId1 = List(
+      ("V0" --- "E01" --> "V1" --- "E11" --> "V1") === ("V0" --- "E01" --> "V1"),
+      ("V1" --- "E11" --> "V1" --- "E11" --> "V1") === ("V1" --- "E11" --> "V1"),
+      ("V1" --- "E11" --> "V1" --- "E12" --> "V2") === ("V1" --- "E12" --> "V2"))
+    val RelationsId2 = List(
+      ("V0" --- "E02" --> "V2" --- "E22" --> "V2") === ("V0" --- "E02" --> "V2"),
+      ("V1" --- "E12" --> "V2" --- "E22" --> "V2") === ("V1" --- "E12" --> "V2"),
+      ("V2" --- "E22" --> "V2" --- "E22" --> "V2") === ("V2" --- "E22" --> "V2"))
+    val Comp012 = List(
+      ("V0" --- "E01" --> "V1" --- "E12" --> "V2") === ("V0" --- "E02" --> "V2"))
+
+    Ontology(
+      objects = List("V0", "V1", "V2"),
+      arrows = ArrowsList,
+      relations = List.concat(RelationsId0, RelationsId1, RelationsId2, Comp012))
+  }
+
   //  "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO Is this test in the right place? Does it work? Do we have BeIsomorphicAsCategoriesTo, or any other such guy?
   //    Chain(2) should BeIsomorphicAsCategoriesTo(SaturatedCommutativeTriangle)
   //  }
@@ -328,7 +326,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c" -> "d",
         "d" -> "d")))
 
-        // FIXME (David) This doesn't satisfy the relations.  //TODO check whether it works now.
+  // FIXME (David) This doesn't satisfy the relations.  //TODO check whether it works now.
   val FCM20_18Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
     onObjects = Map(
       "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
@@ -365,11 +363,8 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dc" -> "dd",
         "dd" -> "dd")))
 
-      
-    
-
-        //TODO (David): Make a test for commutative diagram of ontologies. 
-        //Let A=Span, B=non-commuting triangle, C=Chain(1), and D=commuting triangle. 
-        //A-->B gives two paths start to end, A-->C is obvious, B-->D is obvious, C-->D is hypotenuse. 
-        //Check that this diagram commutes.
+  //TODO (David): Make a test for commutative diagram of ontologies. 
+  //Let A=Span, B=non-commuting triangle, C=Chain(1), and D=commuting triangle. 
+  //A-->B gives two paths start to end, A-->C is obvious, B-->D is obvious, C-->D is hypotenuse. 
+  //Check that this diagram commutes.
 }
