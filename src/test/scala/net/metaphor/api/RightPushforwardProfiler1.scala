@@ -1,8 +1,9 @@
 package net.metaphor.api
 import net.metaphor.examples.Examples
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
+import net.tqft.toolkit.Profiler
 
-object RightPushforwardProfiler extends App {
+object RightPushforwardProfiler1 extends App with Profiler {
   import net.metaphor.dsl.Sentences._
 
   val DavidsFunkyGraph = Dataset(source = Examples.Grph,
@@ -40,11 +41,11 @@ object RightPushforwardProfiler extends App {
         "i" -> "A",
         "j" -> "C")))
 
-  for (n <- NonStrictNaturalNumbers) {
+        
+  for(t <- movingTimingAverages(10) {
     val LHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
     val RHS = DavidsFunkyGraphReversed
     LHS.isIsomorphicTo(RHS)
-    println(n)
-  }
+  }) println(t)
 
 }
