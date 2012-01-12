@@ -84,5 +84,31 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
     val RHS = DavidsFunkyGraphReversed
     LHS should beIsomorphicTo(RHS)
   }
+  
+  val DavidsFunkyFiniteCyclicMonoid = Dataset(
+    source = Examples.FiniteCyclicMonoid(2, 1),
+    onObjects = Map("an element" -> List("David", "Scott", "UC Berkeley", "MIT", "succDavid", "succScott", "succUC Berkeley", "succMIT")),
+    onMorphisms = Map("an element" --- "has as successor" --> "an element" -> Map(
+      "David" -> "succDavid",
+      "Scott" -> "succScott",
+      "UC Berkeley" -> "succUC Berkeley",
+      "MIT" -> "succMIT",
+      "succDavid" -> "succDavid",
+      "succScott" -> "succScott",
+      "succUC Berkeley" -> "succUC Berkeley",
+      "succMIT" -> "succMIT")))
+
+  val DavidsFunkySet1 = Dataset(source = Examples.Chain(0),
+    onObjects = Map(
+      "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
+    onMorphisms = Map())
+
+
+  // TODO (David) this one is working; give it a good name and move to LeftPushforwardTest
+  
+  "__!" should "properly convert a set to a step-and-hold FCM2_1" in {
+    val F = Ontologies.terminalObject.findAllTranslationsTo(Examples.FiniteCyclicMonoid(2, 1)).head
+    F.__!(DavidsFunkySet1) should beIsomorphicTo(DavidsFunkyFiniteCyclicMonoid)
+  }
 
 }

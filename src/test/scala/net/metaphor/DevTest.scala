@@ -142,34 +142,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "UC Berkeley" -> "1868",
         "MIT" -> "1861")))
 
-  val DavidsFunkyFiniteCyclicMonoid = Dataset(
-    source = Examples.FiniteCyclicMonoid(2, 1),
-    onObjects = Map("an element" -> List("David", "Scott", "UC Berkeley", "MIT", "succDavid", "succScott", "succUC Berkeley", "succMIT")),
-    onMorphisms = Map("an element" --- "has as successor" --> "an element" -> Map(
-      "David" -> "succDavid",
-      "Scott" -> "succScott",
-      "UC Berkeley" -> "succUC Berkeley",
-      "MIT" -> "succMIT",
-      "succDavid" -> "succDavid",
-      "succScott" -> "succScott",
-      "succUC Berkeley" -> "succUC Berkeley",
-      "succMIT" -> "succMIT")))
-
-  val DavidsFunkySet1 = Dataset(source = Examples.Chain(0),
-    onObjects = Map(
-      "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
-    onMorphisms = Map())
-
-  val DavidsFunkySet2 = Dataset(source = Examples.Chain(0),
-    onObjects = Map(
-      "V0" -> List("1978", "Scott's birthyear", "1868", "1861")),
-    onMorphisms = Map())
-
-  // TODO (David) this one is working; give it a good name and move to LeftPushforwardTest
-  "__!" should "work (1)" in {
-    val F = Ontologies.terminalObject.findAllTranslationsTo(Examples.FiniteCyclicMonoid(2, 1)).head
-    F.__!(DavidsFunkySet1) should beIsomorphicTo(DavidsFunkyFiniteCyclicMonoid)
-  }
+  
 
   // TODO this doesn't work because the target is infinite!
   "__*" should "convert a graph into a discrete dynamical system" in {
@@ -347,7 +320,7 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c" -> "d",
         "d" -> "d")))
 
-  lazy val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(7, 6),
+  val FCM7_6Times2L = Dataset(source = Examples.FiniteCyclicMonoid(8, 6),
     onObjects = Map(
       "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
     onMorphisms = Map(
