@@ -7,7 +7,10 @@ object RightPushforwardProfiler2 extends App with Profiler {
   import net.metaphor.dsl.Sentences._
 
   // 2012-01-12 41ms
-  //            25ms: Path.hashCode as a lazy val.
+  //            28ms: Path.hashCode as a lazy val.
+  // 			23ms: FinitelyGeneratedCategory.FunctorToSet.Section builds a map immediately, and overrides equality
+  //			above times are irrelevant; we were looking for dataset isomorphisms incorrectly
+  //			307ms
   
   for (
     t <- movingTimingAverages(10) {

@@ -398,28 +398,28 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "bb" -> "bb")))
 
     "__*" should "provide a 'half-speed' FCM-thing" in {
-        println
-        println("Output from \"__* should take a dataset on FCM4_3, cut its speed in half, and return a dataset on FCM5_3\":")
+//        println
+//        println("Output from \"__* should take a dataset on FCM4_3, cut its speed in half, and return a dataset on FCM5_3\":")
         
         val X = FCM4_3
         val LHS = Examples.TranslationFiniteCyclicMonoids(4,3,5,3,2)__*(X)
         val RHS = FCM4_3Times2RToFCM5_3
-        println(X)
-        println(LHS)
-        println(RHS)
+//        println(X)
+//        println(LHS)
+//        println(RHS)
         LHS should beIsomorphicTo(RHS)
      }      
       
       "__!" should "provide a 'half-speed' FCM-thing" in {
-        println
-        println("Output from \"__! should take a dataset on FCM4_3, cut its speed in half, and return a dataset on FCM5_3\":")
+//        println
+//        println("Output from \"__! should take a dataset on FCM4_3, cut its speed in half, and return a dataset on FCM5_3\":")
         
         val X = FCM4_3
         val LHS = Examples.TranslationFiniteCyclicMonoids(4,3,5,3,2).__!(X)
         val RHS = FCM4_3Times2LToFCM5_3
-        println(X)
-        println(LHS)
-        println(RHS)
+//        println(X)
+//        println(LHS)
+//        println(RHS)
         LHS should beIsomorphicTo(RHS)
      }      
 

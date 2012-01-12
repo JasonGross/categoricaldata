@@ -22,7 +22,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     for (s <- objects; t <- objects; w <- wordsOfLength(k)(s, t)) yield w
   }
   def allWordsUpToLength(k: Int): List[Path] = for (n <- (0 to k).toList; w <- allWordsOfLength(n)) yield w
-  
+
   def allWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k)).takeWhile(_.nonEmpty).flatten
   def allNontrivialWords = (for (k <- NonStrictNaturalNumbers) yield allWordsOfLength(k + 1)).takeWhile(_.nonEmpty).flatten
 
@@ -56,7 +56,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         override def onGenerators(g: categoryOver.source.G) = categoryOver.source.generatorAsMorphism(g)
       }
     }
-    
+
   }
 
   trait FinitelyGeneratedFunctorOver extends FunctorOver {
@@ -85,6 +85,11 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   override type T <: NaturalTransformationToSet
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
+//        def verify: this.type = {
+//          for(g <- allGenerators; f = functorToSet.onGenerators(g)) f.verify
+//          this
+//        }
+
     lazy val totalSet = new FiniteFSet {
       def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
@@ -92,7 +97,16 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     class Section(m: O => Any) extends FFunction {
       override val source = fgCategory.objectSet
       override val target = totalSet
-      override val toFunction = m.asInstanceOf[Any => Any]
+      override val toFunction = {
+        val f = m.asInstanceOf[Any => Any]
+        source.toSet.map(x => (x -> f(x))).toMap
+      }
+      override def equals(other: Any) = {
+        other match {
+          case other: Section => toFunction == other.toFunction
+          case _ => super.equals(other)
+        }
+      }
     }
 
     def colimitCoCone = colimit.initialObject
@@ -101,6 +115,8 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     def limitSet = limitCone.initialSet
 
     lazy val limit: Cones with TerminalObject = {
+      //      verify // FIXME 
+
       // this is where all the work happens.
       def concreteLimit[A](objects: Iterable[fgCategory.O], sets: fgCategory.O => Iterable[A], functions: fgCategory.O => (fgCategory.O => (A => Set[A]))): (Iterable[fgCategory.O => A], fgCategory.O => ((fgCategory.O => A) => A)) = {
         /**
@@ -126,7 +142,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
           private def productWith(o: fgCategory.O) = {
             if (processedObjects.contains(o)) this
             else {
-              Intermediate(o :: processedObjects, processedPairs, for (m <- maps; a <- sets(o)) yield m + (o -> a))
+              Intermediate(o :: processedObjects, processedPairs, for (m <- maps; a <- sets(o)) yield {
+                //                require(functorToSet(o).toList.contains(a)) // FIXME
+                m + (o -> a)
+              })
             }
           }
           def processPair(pair: (fgCategory.O, fgCategory.O)): Intermediate = {
@@ -135,7 +154,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
                 val newMaps = for (m <- maps; cr <- functionsCompatibleResults(pair._1, pair._2)(m(pair._1), Some(m(pair._2)))) yield m
                 Intermediate(processedObjects, pair :: processedPairs, newMaps)
               } else {
-                val newMaps = for (m <- maps; cr <- functionsCompatibleResults(pair._1, pair._2)(m(pair._1))) yield m + (pair._2 -> cr)
+                val newMaps = for (m <- maps; cr <- functionsCompatibleResults(pair._1, pair._2)(m(pair._1))) yield {
+                  //                  require(functorToSet(pair._2).toList.contains(cr)) // FIXME
+                  m + (pair._2 -> cr)
+                }
                 Intermediate(pair._2 :: processedObjects, pair :: processedPairs, newMaps)
               }
             } else {
@@ -145,7 +167,42 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         }
         val start = Intermediate(Nil, Nil, NonStrictIterable(Map.empty[fgCategory.O, A]))
 
-        val finish = (for (o1 <- objects; o2 <- objects) yield (o1, o2)).foldLeft(start)({ _.processPair(_) })
+        case class PartialPairOrdering(processedObjects: List[fgCategory.O], processingObjects: List[fgCategory.O], remainingObjects: List[fgCategory.O], pairOrdering: List[(fgCategory.O, fgCategory.O)]) {
+          def finish: List[(fgCategory.O, fgCategory.O)] = {
+            if (processingObjects.isEmpty && remainingObjects.isEmpty) {
+              pairOrdering
+            } else {
+              next.finish
+            }
+          }
+
+          def next = {
+            processingObjects match {
+              case s :: tail => {
+                val targets = (s :: fgCategory.generatorsFrom(s).map(fgCategory.generatorTarget(_))).distinct
+                val newTargets = (targets filterNot ((s :: processedObjects).contains(_)))
+                PartialPairOrdering(
+                  s :: processedObjects,
+                  newTargets ::: tail,
+                  remainingObjects filterNot (targets contains),
+                  pairOrdering ::: (targets map { t => s -> t }))
+              }
+              case Nil => {
+                remainingObjects match {
+                  case nextObject :: others => {
+                    PartialPairOrdering(processedObjects, nextObject :: Nil, others, pairOrdering)
+                  }
+                  case Nil => throw new RuntimeException("Unreachable code, reached!")
+                }
+
+              }
+            }
+          }
+        }
+
+        val pairOrdering = PartialPairOrdering(Nil, Nil, objects.toList, Nil).finish
+
+        val finish = pairOrdering.foldLeft(start)({ _.processPair(_) })
 
         def resultFunctions(o: fgCategory.O)(map: fgCategory.O => A) = map(o)
 
@@ -155,7 +212,31 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       val (maps, functions) = concreteLimit(
         objects,
         { o: fgCategory.O => functorToSet(o).toIterable },
-        { s: fgCategory.O => { t: fgCategory.O => { a: Any => (for (g <- generators(s, t)) yield functorToSet(g).toFunction(a)).toSet } } })
+        { s: fgCategory.O =>
+          { t: fgCategory.O =>
+            {
+              val fs = for (g <- generators(s, t)) yield functorToSet.onGenerators(g) /* FIXME .verify*/ .toFunction
+              a: Any => {
+                //   FIXME         require(functorToSet(s).toList.contains(a)) 
+                fs.map(_(a)).toSet
+              }
+            }
+          }
+        })
+
+      //      val (maps, functions) = concreteLimit(
+      //        objects,
+      //        { o: fgCategory.O => functorToSet(o).toIterable },
+      //        (for (s <- objects) yield {
+      //          s -> (for (t <- objects) yield {
+      //            t -> {
+      //              val fs = for(g <- generators(s, t)) yield functorToSet.onGenerators(g).toFunction
+      //              (for(a <- functorToSet(s).toIterable) yield {
+      //                a -> fs.map(_(a)).toSet
+      //              }).toMap
+      //            }
+      //          }).toMap
+      //        }).toMap)
 
       val resultSet: FSet = new FSet {
         override def sizeIfFinite = Some(maps.size)
@@ -167,7 +248,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
           override val initialSet = resultSet
           override def functionFromInitialSet(o: fgCategory.O) = new coneFunction(o) {
             override def toFunction = ({ s: Section => s.toFunction.asInstanceOf[fgCategory.O => Any] } andThen functions(o)).asInstanceOf[Any => Any]
-          }
+          } // FIXME .verify
         }
         override def morphismToTerminalObject(other: functorToSet.Cone) = {
           new functorToSet.ConeMap {
@@ -175,7 +256,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
             override val target = terminalObject
             override val initialFunction = new InitialFunction {
               override def toFunction = { x: Any => new Section({ o: fgCategory.O => other.functionFromInitialSet(o).toFunction(x) }) }
-            }
+            } // FIXME .verify
           }
         }
       }

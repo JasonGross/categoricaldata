@@ -1,7 +1,7 @@
 package net.metaphor.api
 
 trait FunctorToSet extends Functor {
-  override val target: Sets.type = Sets
+  override val target: Sets.type = Sets  
 }
 trait NaturalTransformationToSet extends NaturalTransformation {
   override val source: FunctorToSet

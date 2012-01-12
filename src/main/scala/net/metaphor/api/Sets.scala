@@ -23,8 +23,8 @@ trait FSet { fset =>
   def sizeIfFinite: Option[Int]
   def size: Int = sizeIfFinite.getOrElse(???)
 
-  override def toString = toIterable.toSet[Any].toString
-  override lazy val hashCode = toIterable.toSet[Any].hashCode
+  override def toString = toSet.toString
+  override lazy val hashCode = toSet.hashCode
 
   private class CachingFSet extends FSet {
     def sizeIfFinite = fset.sizeIfFinite
@@ -42,6 +42,7 @@ trait FSet { fset =>
   def force: FSet = new ForcedFSet
 
   def toList = toIterable.toList
+  def toSet = toIterable.toSet
   def toStringList = toList.map(_.toString)
 
   lazy val isEmpty = toIterable.isEmpty
@@ -55,9 +56,11 @@ trait FiniteFSet extends FSet {
 
 class ProductSet(sets: Map[Any, FSet]) extends FSet {
   def this(sets: FSet*) = this((sets.zipWithIndex map { case (x, i) => i -> x }).toMap[Any, FSet])
-  override def toIterable = sets.foldLeft(
-    NonStrictIterable[Map[Any, Any]](Map()))(
-      { case (iterable, (i, s)) => for (m <- iterable; s0 <- s.toIterable) yield m + (i -> s0) })
+  override def toIterable = {
+    sets.foldLeft(
+      NonStrictIterable[Map[Any, Any]](Map()))(
+        { case (iterable, (i, s)) => for (m <- iterable; s0 <- s.toIterable) yield m + (i -> s0) })
+  }
   override lazy val sizeIfFinite = {
     val sizes = sets.values.map(_.sizeIfFinite)
     if (sizes.exists(_ == Some(0))) {
@@ -87,6 +90,12 @@ trait FFunction { function =>
   def source: FSet
   def target: FSet
   def toFunction: Any => Any
+
+//    def verify: this.type = {
+//      for (x <- source.toIterable) require(target.toList.contains(toFunction(x)))
+//      this
+//    }
+
   def andThen[C](other: FFunction) = new FFunction {
     def source = function.source
     def target = other.target
@@ -116,7 +125,9 @@ trait FFunction { function =>
 
   def toStringMap: Map[String, String] =
     toMap.map({ case (a, b) => a.toString -> b.toString })
+
 }
+
 case class IdentityFunction(set: FSet) extends FFunction {
   override def source = set
   override def target = set
@@ -127,11 +138,13 @@ object FFunction {
   def apply[A](source: FSet, target: FSet, function: A => Any) = {
     val source_ = source
     val target_ = target
-    new FFunction {
+    val result = new FFunction {
       override val source = source_
       override val target = target_
       override val toFunction = function.asInstanceOf[Any => Any]
     }
+    //    result.verify
+    result
   }
 }
 
@@ -150,20 +163,22 @@ trait Sets extends Category with InitialObject with TerminalObject with Products
 
   override def product(xs: FSet*) = new ProductSet(xs: _*)
   override def productProjections(xs: FSet*): List[FFunction] = xs.toList map {
-    x: FSet => {
-      FFunction(product(xs), x, { m: Map[FSet, Any] => m(x) })
-    }
+    x: FSet =>
+      {
+        FFunction(product(xs), x, { m: Map[FSet, Any] => m(x) })
+      }
   }
   override def productUniversality(o: FSet, ms: List[FFunction]) = {
-    val xs = ms.map(_.target)  
-    FFunction(o, product(xs:_*), { e: Any => (for(m <- ms) yield m.target -> m.toFunction(o)).toMap })
+    val xs = ms.map(_.target)
+    FFunction(o, product(xs: _*), { e: Any => (for (m <- ms) yield m.target -> m.toFunction(o)).toMap })
   }
 
   override def coproduct(xs: FSet*) = new CoproductSet(xs: _*)
   override def coproductInjections(xs: FSet*): List[FFunction] = xs.toList map {
-    x: FSet => {
-      FFunction(x, coproduct(xs), { e: Any => (x, e) })
-    }
+    x: FSet =>
+      {
+        FFunction(x, coproduct(xs), { e: Any => (x, e) })
+      }
   }
   override def coproductUniversality(o: FSet, ms: List[FFunction]) = {
     val xs = ms.map(_.source)
@@ -181,8 +196,20 @@ trait Sets extends Category with InitialObject with TerminalObject with Products
           FFunction(set1, set2, m)
         }
       }
-      case _ => NonStrictIterable()
+      case _ => ???
     }
+  }
+
+  def functions(set1: FSet, set2: FSet): FSet = {
+    val maps = set1.toIterable.foldLeft(
+      NonStrictIterable[Map[Any, Any]](Map()))(
+        {
+          case (iterable, a) => for (m <- iterable; s0 <- set2.toIterable) yield {
+            ???
+            m + (a -> s0)
+          }
+        })
+    maps.map(m => FFunction(set1, set2, m))
   }
 }
 

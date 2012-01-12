@@ -71,7 +71,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     // TODO provide some way to let the user help out. 
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
-      require(other.source == dataset.source)
+      require(other.source == ontology)
 
       val compositionDiagram = new Ontology with Ontologies.FreeAcyclic {
         lazy val unbox: Map[Box, Either[Box, Arrow]] = {
@@ -79,13 +79,20 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
             (for (a <- ontology.allGenerators) yield Box(a.toString) -> Right(a))).toMap
         }
 
-        val minimumLevel = 0
-        val maximumLevel = 0
-        def objectsAtLevel(k: Int) = {
+        override val minimumLevel = 0
+        override val maximumLevel = 1
+        override def objectsAtLevel(k: Int) = {
           k match {
             case 0 => {
-              unbox.keys.toList
+              ontology.objects ::: (ontology.allGenerators.map { a => Box(a.toString) })
             }
+            // FIXME why isn't this work !?
+//            case 0 => {
+//              ontology.objects
+//            }
+//            case 1 => {
+//              ontology.allGenerators.map { a => Box(a.toString) }
+//            }
             case _ => Nil
           }
         }
@@ -104,7 +111,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         }
         def relations(source: Box, target: Box) = Nil
       }
-
+      
       val noninvariantBijections = (new compositionDiagram.Dataset {
         def onObjects(o: Box) = {
           compositionDiagram.unbox(o) match {
@@ -112,7 +119,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
               Sets.bijections(dataset(box), other(box))
             }
             case Right(Arrow(a, b, _)) => {
-              Sets.bijections(dataset(a), other(b))
+              Sets.functions(dataset(a), other(b))
             }
           }
         }
@@ -134,7 +141,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
             }
           }
         }
-      }).memo
+      }).memo//  .verify //FIXME
 
       for (bijection <- noninvariantBijections.limitSet.toIterable) yield {
         new Datamap {

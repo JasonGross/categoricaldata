@@ -31,16 +31,16 @@ trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCa
     }).toSet
   }
 
-  private val cachedEquivalenceClasses = net.tqft.toolkit.functions.Memo({ (s: O, t: O) => allEquivalenceClasses._2.filter(c => c.head.source == s && c.head.target == t) })
-
-  private val allEquivalenceClasses: (Int, Set[Set[Path]]) = {    
+  // returns a k, and a collection of sets of equivalence paths, such that every path of length <= k appears in some set
+  // and every path of length exactly k appears in a set also containing a shorter element.
+  private val allEquivalenceClasses: (Int, Set[Set[Path]]) = {
     def equivalenceClassesUpToLength(k: Int): Set[Set[Path]] = {
       def combineClumps[B](clumps: Set[Set[B]], clump: Set[B]): Set[Set[B]] = {
         val (toCombine, toLeave) = clumps.partition(c => c.intersect(clump).nonEmpty)
         toLeave ++ Set(toCombine.flatten.toSet)
       }
       val words = allWordsUpToLength(k).toSet
-      
+
       words.map(p => adjacentPaths(p) + p).foldLeft(words.map(Set(_)))(combineClumps _)
     }
 
@@ -51,16 +51,25 @@ trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCa
     NonStrictNaturalNumbers.map(n => (n, equivalenceClassesUpToLength(n))).find({ case (n, ec) => checkLongPathsShorten(n, ec) }).get
   }
 
-  // a collection of sets of equivalent paths, such that for k = maximumWordLength(s, t) + 1, every path of length <= k appears in some set,
-  // and every path of length exactly k appears in a set also containing a shorter element.
-  private def pathEquivalenceClasses(s: O, t: O): Set[Set[Path]] = cachedEquivalenceClasses(s, t)
+  val (uniformMaximumWordLength, cachedNormalForms) = allEquivalenceClasses match {
+    case (k, equivalenceClasses) => {
+      (k - 1,
+        (equivalenceClasses.groupBy(c => (c.head.source, c.head.target)).map {
+          case ((s, t), classes: Set[Set[Path]]) =>
+            {
+              (s,t) -> ((for (ec <- classes; choice = ec.toList.sortBy(_.length).head; x <- ec) yield (x -> choice)).toMap)
+            }
+        }))
+    }
+  }
+
 
   // maximumWordLength is actually just constant, in the current implementation
-  override def maximumWordLength(s: O, t: O) = allEquivalenceClasses._1 - 1
+  override def maximumWordLength(s: O, t: O) = uniformMaximumWordLength
 
   override def normalForm(m: Path): Path = {
     if (m.length <= maximumWordLength(m.source, m.target) + 1) {
-      pathEquivalenceClasses(m.source, m.target).find(_.contains(m)).get.toList.sortBy(_.length).head
+      cachedNormalForms(m.source, m.target)(m)
     } else {
       val s = m.subpath(0, m.length - 1)
       val ns = normalForm(s)
@@ -85,16 +94,16 @@ trait Acyclic extends FiniteMorphisms { fpCategory: FinitelyPresentedCategory =>
   }
   private val cachedMaximumWordLength = net.tqft.toolkit.functions.Memo(computeMaximumWordLength _)
   override def maximumWordLength(s: O, t: O) = cachedMaximumWordLength(s, t)
-  
+
   require(verifyAcyclicity)
 }
 
 trait Free { fpCategory: FinitelyPresentedCategory =>
   require(allRelations.isEmpty)
-  
+
   override def pathEquality(p1: Path, p2: Path) = p1 == p2
 }
 
-trait FreeAcyclic extends Free with Acyclic { fpCategory: FinitelyPresentedCategory => 
+trait FreeAcyclic extends Free with Acyclic { fpCategory: FinitelyPresentedCategory =>
   override def normalForm(p: Path) = p
 }

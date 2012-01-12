@@ -96,7 +96,7 @@ trait Translation extends Functor.withFinitelyPresentedSource.withFinitelyPresen
 
         coneMap.initialFunction
       }
-    }).memo
+    }).memo // .verify FIXME
     override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
@@ -154,7 +154,7 @@ trait Translation extends Functor.withFinitelyPresentedSource.withFinitelyPresen
         coconeMap.terminalFunction
       }
 
-    }).memo
+    }).memo // .verify FIXME
     override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
       override val source = onObjects(m.source)
       override val target = onObjects(m.target)
