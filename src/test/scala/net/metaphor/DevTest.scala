@@ -131,21 +131,6 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c" -> "c1")))
 
 
-  //  val ThreeElementsIso = Dataset(
-  //    source = Examples.Isomorphism,
-  //    onObjects = Map(
-  //      "0" -> List("a", "b", "c"),
-  //      "1" -> List("a", "b", "c")),
-  //    onMorphisms = Map(
-  //      ("0" --- "E01" --> "1") -> Map(
-  //        "a" -> "a",
-  //        "b" -> "b",
-  //        "c" -> "c"),
-  //      ("1" --- "E10" --> "0") -> Map(
-  //        "a" -> "a",
-  //        "b" -> "b",
-  //        "c" -> "c")))
-
   val DavidsFunkyFunction = Dataset(source = Examples.Chain(1),
     onObjects = Map(
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
@@ -413,20 +398,24 @@ class DevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      LHS should beIsomorphicTo(RHS)
   //   }  
 
-  "__*" should "provide a 'half-speed' FCM7_6" in {
-    println
-    println("Output from \"__* should provide a 'half-speed' FCM7_6\":")
+//  "__*" should "provide a 'half-speed' FCM7_6" in {// RUns forever I guess. Finding a smaller example below.
+//    println
+//    println("Output from \"__* should provide a 'half-speed' FCM7_6\":")
+//
+//    val X = FCM7_6
+//    val T = Examples.TranslationFiniteCyclicMonoids(7, 6, 7, 6, 2);
+//    val LHS = T.__*(X)
+//    val RHS = FCM7_6Times2R
+//    println(X)
+//    println(LHS)
+//    println(RHS)
+//    LHS should beIsomorphicTo(RHS)
+//  }
 
-    val X = FCM7_6
-    val T = Examples.TranslationFiniteCyclicMonoids(7, 6, 7, 6, 2);
-    val LHS = T.__*(X)
-    val RHS = FCM7_6Times2R
-    println(X)
-    println(LHS)
-    println(RHS)
-    LHS should beIsomorphicTo(RHS)
-  }
 
+
+        
+  
   //    
   //    "__!" should "provide a 'half-speed' FCM20_19" in {
   //      println

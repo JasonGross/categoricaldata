@@ -281,7 +281,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "dc" -> "dd",
         "dd" -> "dd")))
 
-  //      val DDSTimeLapse2 = Translation (
+  //      val DDSTimeLapse2 = Translation ( //TODO: This was commented out because the categories are infinite. But it should work.
   //        source = Examples.DiscreteDynamicalSystem,
   //        target = Examples.DiscreteDynamicalSystem,
   //        onObjects = Map ("an element" -> "an element"),
@@ -316,52 +316,112 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      LHS should beIsomorphicTo(RHS)
   //   }      
 
-  val FCM20_18 = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+        
+ 
+        
+//The following was commented out because it doesn't work, and I can find a simpler example. I'll put it back in when FCM4_2 works, as an example of a "Big computation".        
+        
+//  val FCM20_18 = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+//    onObjects = Map(
+//      "an element" -> List("a", "b", "c", "d")),
+//    onMorphisms = Map(
+//      "an element" --- "has as successor" --> "an element" -> Map(
+//        "a" -> "c",
+//        "b" -> "c",
+//        "c" -> "d",
+//        "d" -> "d")))
+//
+//  
+//  val FCM20_18Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+//    onObjects = Map(
+//      "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
+//    onMorphisms = Map(
+//      "an element" --- "has as successor" --> "an element" -> Map(
+//        "a1" -> "a2",
+//        "b1" -> "b2",
+//        "c1" -> "c2",
+//        "d1" -> "d2",
+//        "a2" -> "c1",
+//        "b2" -> "c1",
+//        "c2" -> "d1",
+//        "d2" -> "d1")))
+//
+//  val FCM20_18Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+//    onObjects = Map(
+//      "an element" -> List("aa", "ab", "ac", "ad", "ba", "bb", "bc", "bd", "ca", "cb", "cc", "cd", "da", "db", "dc", "dd")),
+//    onMorphisms = Map(
+//      "an element" --- "has as successor" --> "an element" -> Map(
+//        "aa" -> "ca",
+//        "ab" -> "ca",
+//        "ac" -> "da",
+//        "ad" -> "da",
+//        "ba" -> "cb",
+//        "bb" -> "cb",
+//        "bc" -> "db",
+//        "bd" -> "db",
+//        "ca" -> "cc",
+//        "cb" -> "cc",
+//        "cc" -> "dc",
+//        "cd" -> "dc",
+//        "da" -> "cd",
+//        "db" -> "cd",
+//        "dc" -> "dd",
+//        "dd" -> "dd")))
+        
+           val FCM4_3 = Dataset(source = Examples.FiniteCyclicMonoid(4, 3),
     onObjects = Map(
-      "an element" -> List("a", "b", "c", "d")),
+      "an element" -> List("a", "b")),
     onMorphisms = Map(
       "an element" --- "has as successor" --> "an element" -> Map(
-        "a" -> "c",
-        "b" -> "c",
-        "c" -> "d",
-        "d" -> "d")))
+        "a" -> "b",
+        "b" -> "b")))
 
-  // FIXME (David) This doesn't satisfy the relations.  //TODO check whether it works now.
-  val FCM20_18Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+  
+  val FCM4_3Times2LToFCM5_3 = Dataset(source = Examples.FiniteCyclicMonoid(5, 3),
     onObjects = Map(
-      "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
+      "an element" -> List("a1", "b1", "a2", "b2")),
     onMorphisms = Map(
       "an element" --- "has as successor" --> "an element" -> Map(
         "a1" -> "a2",
         "b1" -> "b2",
-        "c1" -> "c2",
-        "d1" -> "d2",
-        "a2" -> "c1",
-        "b2" -> "c1",
-        "c2" -> "d1",
-        "d2" -> "d1")))
+        "a2" -> "b1",
+        "b2" -> "b1")))
 
-  val FCM20_18Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+  val FCM4_3Times2RToFCM5_3 = Dataset(source = Examples.FiniteCyclicMonoid(5, 3),
     onObjects = Map(
-      "an element" -> List("aa", "ab", "ac", "ad", "ba", "bb", "bc", "bd", "ca", "cb", "cc", "cd", "da", "db", "dc", "dd")),
+      "an element" -> List("aa", "ab", "ba", "bb")),
     onMorphisms = Map(
       "an element" --- "has as successor" --> "an element" -> Map(
-        "aa" -> "ca",
-        "ab" -> "ca",
-        "ac" -> "da",
-        "ad" -> "da",
-        "ba" -> "cb",
-        "bb" -> "cb",
-        "bc" -> "db",
-        "bd" -> "db",
-        "ca" -> "cc",
-        "cb" -> "cc",
-        "cc" -> "dc",
-        "cd" -> "dc",
-        "da" -> "cd",
-        "db" -> "cd",
-        "dc" -> "dd",
-        "dd" -> "dd")))
+        "aa" -> "ba",
+        "ab" -> "ba",
+        "ba" -> "bb",
+        "bb" -> "bb")))
+
+    "__*" should "provide a 'half-speed' FCM-thing" in {
+        println
+        println("Output from \"__* should take a dataset on FCM4_3, cut its speed in half, and return a dataset on FCM5_3\":")
+        
+        val X = FCM4_3
+        val LHS = Examples.TranslationFiniteCyclicMonoids(4,3,5,3,2)__*(X)
+        val RHS = FCM4_3Times2RToFCM5_3
+        println(X)
+        println(LHS)
+        println(RHS)
+        LHS should beIsomorphicTo(RHS)
+     }      
+      
+      "__!" should "provide a 'half-speed' FCM-thing" in {
+        println
+        println("Output from \"__! should take a dataset on FCM4_3, cut its speed in half, and return a dataset on FCM5_3\":")
+        
+        val X = FCM4_3
+        val LHS = Examples.TranslationFiniteCyclicMonoids(4,3,5,3,2).__!(X)
+        val RHS = FCM4_3Times2LToFCM5_3
+        println(X)
+        println(LHS)
+        println(RHS)
+        LHS should beIsomorphicTo(RHS)
+     }      
 
   //TODO (David): Make a test for commutative diagram of ontologies. 
   //Let A=Span, B=non-commuting triangle, C=Chain(1), and D=commuting triangle. 
