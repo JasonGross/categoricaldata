@@ -243,8 +243,11 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     override val source = new FullSubcategory(spannedBy: _*)
   }
 
-  override def fullSubcategoryInclusion(spannedBy: O*) = new FullSubcategoryInclusion(spannedBy: _*)
-  override def fullSubcategory(spannedBy: O*) = fullSubcategoryInclusion(spannedBy: _*).source
+  override def fullSubcategoryInclusion(spannedBy: O*): FullSubcategoryInclusion = new FullSubcategoryInclusion(spannedBy: _*)
+  override def fullSubcategory(spannedBy: O*): FullSubcategory = fullSubcategoryInclusion(spannedBy: _*).source
+  
+  def fullSubcategoryInclusion(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategoryInclusion = fullSubcategoryInclusion(spannedBy.map(Box(_)):_*)
+  def fullSubcategory(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategory = fullSubcategory(spannedBy.map(Box(_)):_*)
 
   def findAllTranslationsTo(other: Ontology): Iterable[Translation] = {
     trait TranslationToOther extends Translation {
