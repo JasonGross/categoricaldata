@@ -43,6 +43,8 @@ object RightPushforwardProfiler1 extends App with Profiler {
 
         // 2011-01-13	807ms
         //				546ms improving FunctorToSet.Section.equals
+        //				468ms SliceCategory now comes 'with CachingGenerators'
+        //				442ms removing redundant Set.toList
         
   for (	
     t <- movingTimingAverages(10) {

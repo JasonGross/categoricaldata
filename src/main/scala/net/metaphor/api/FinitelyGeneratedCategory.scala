@@ -90,10 +90,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     //          this
     //        }
 
-    try {
-    ???
-    } catch { case e: Exception => }
-    
     lazy val totalSet = new FiniteFSet {
       def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
@@ -132,16 +128,16 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
          * 			 Some(b) if all morphisms send a to b.
          */
         def functionsCompatibleResults(o1: fgCategory.O, o2: fgCategory.O)(a: A, constrainedValue: Option[A] = None): Iterable[A] = {
-          val results = functions(o1)(o2)(a).toList
-          results match {
-            case h :: t => {
-              val candidate = t.foldLeft[Option[A]](Some(h))({ case (Some(b), c) if b == c => Some(b); case _ => None })
+          val results = functions(o1)(o2)(a)
+          results.headOption match {
+            case Some(h) => {
+              val candidate = results.foldLeft[Option[A]](Some(h))({ case (Some(b), c) if b == c => Some(b); case _ => None })
               constrainedValue match {
                 case None => candidate
                 case Some(value) => candidate.filter(_ == value)
               }
             }
-            case Nil => constrainedValue.map(List(_)).getOrElse(sets(o2))
+            case None => constrainedValue.map(List(_)).getOrElse(sets(o2))
           }
         }
 

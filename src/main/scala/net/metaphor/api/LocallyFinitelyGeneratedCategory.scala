@@ -12,7 +12,7 @@ case class Path[O, G](source: O, target: O, morphisms: List[G]) {
 
   // This is purely a micro-optimization.
   override lazy val hashCode = morphisms.hashCode
-  
+
   override def toString = {
     val afterFirstQuote = """".*"( --- ".*" --> ".*")""".r
     source.toString + (for (m <- morphisms; s = m.toString) yield afterFirstQuote.unapplySeq(s).get.head).mkString
@@ -69,7 +69,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   def generatorsFrom(source: O): List[G]
   def generatorsTo(target: O): List[G]
 
-  implicit def generatorAsPath(g: G) = Path(generatorSource(g), generatorTarget(g), List(g))
+  implicit def generatorAsPath(g: G) = Path(generatorSource(g), generatorTarget(g), g :: Nil)
   implicit def pathAsMorphism(p: Path) = PathEquivalenceClass(p)
   implicit def generatorAsMorphism(g: G): M = pathAsMorphism(generatorAsPath(g))
 
@@ -333,4 +333,10 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def onObjects(o: source.O) = internalize(new YonedaFunctor(o))
     override def onGenerators(g: source.G) = internalize(new YonedaNaturalTransformation(g))
   }
+}
+
+trait CachingGenerators extends LocallyFinitelyGeneratedCategory { lfgCategory =>
+  import net.tqft.toolkit.functions.Memo
+  private val generatorsCache = Memo({ (s: lfgCategory.O, t: lfgCategory.O) => super.generators(s, t) })
+  abstract override def generators(s: lfgCategory.O, t: lfgCategory.O) = generatorsCache(s, t)
 }
