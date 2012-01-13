@@ -6,10 +6,11 @@ trait FSet { fset =>
   def toIterable: Iterable[Any]
   def identity: FFunction = IdentityFunction(this)
 
-  override def equals(other: Any) = {
+  override def equals(other: Any): Boolean = {
     other match {
       case other: FSet => {
-        toIterable.toSet == other.toIterable.toSet
+        if(hashCode != other.hashCode) return false
+        toSet == other.toSet
       }
       case _ => false
     }

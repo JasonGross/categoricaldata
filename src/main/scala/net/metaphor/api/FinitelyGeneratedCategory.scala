@@ -90,6 +90,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     //          this
     //        }
 
+    try {
+    ???
+    } catch { case e: Exception => }
+    
     lazy val totalSet = new FiniteFSet {
       def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
@@ -103,8 +107,12 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       }
       override def equals(other: Any) = {
         other match {
-          case other: Section => toFunction == other.toFunction
-          case _ => super.equals(other)
+          // We have to use FunctorToSet#Section, rather than just Section here, because it seems impossible to avoid having duplicate FunctorToSets.
+          case other: FunctorToSet#Section => toFunction == other.toFunction
+          case _ => {
+            ???
+            super.equals(other)
+          }
         }
       }
     }
@@ -208,10 +216,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         (finish.maps, resultFunctions _)
       }
 
-      val (maps, functions) = concreteLimit(
-        objects,
-        { o: fgCategory.O => functorToSet(o).toIterable },
-        { s: fgCategory.O =>
+      val (maps, functions) = {
+        val sets = { o: fgCategory.O => functorToSet(o).toIterable }
+        import net.tqft.toolkit.functions.Memo
+        val functions = { s: fgCategory.O =>
           { t: fgCategory.O =>
             {
               val fs = for (g <- generators(s, t)) yield functorToSet.onGenerators(g).toFunction
@@ -221,21 +229,36 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
               }
             }
           }
-        })
+        }
 
-      //      val (maps, functions) = concreteLimit(
-      //        objects,
-      //        { o: fgCategory.O => functorToSet(o).toIterable },
-      //        (for (s <- objects) yield {
-      //          s -> (for (t <- objects) yield {
-      //            t -> {
-      //              val fs = for(g <- generators(s, t)) yield functorToSet.onGenerators(g).toFunction
-      //              (for(a <- functorToSet(s).toIterable) yield {
-      //                a -> fs.map(_(a)).toSet
-      //              }).toMap
-      //            }
-      //          }).toMap
-      //        }).toMap)
+        concreteLimit(
+          objects,
+          sets,
+          functions)
+      }
+      // NOTE --- one might think that some caching here (as below) might be useful, but it isn't.
+      //      val (maps, functions) = {
+      //        val sets = { o: fgCategory.O => functorToSet(o).toIterable }
+      //        import net.tqft.toolkit.functions.Memo
+      //        val functions = (for (s <- objects) yield {
+      //          s -> Memo({
+      //            t: fgCategory.O =>
+      //              {
+      //                val fs = for (g <- generators(s, t)) yield functorToSet.onGenerators(g).toFunction
+      //                if (fs.isEmpty) {
+      //                  { a: Any => Set[Any]() }
+      //                } else Memo({
+      //                  a: Any => fs.map(_(a)).toSet
+      //                })
+      //              }
+      //          })
+      //        }).toMap
+      //
+      //        concreteLimit(
+      //          objects,
+      //          sets,
+      //          functions)
+      //      }
 
       val resultSet: FSet = new FSet {
         override def sizeIfFinite = Some(maps.size)

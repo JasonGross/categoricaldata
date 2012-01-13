@@ -296,7 +296,7 @@ object Functor {
         override def onMorphisms(m: source.M): SliceFunctorOver = new SliceFunctorOver(m)
 
         class SliceCategoryOver(onLeft: fgFunctor.target.opposite.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver { // (d | F) --> C
-          override val source = getSliceCategory(onLeft)
+          override val source = buildSliceCategory(onLeft)
           override def onObjects(o: source.ObjectRightOf) = o.right
           override def onGenerators(g: source.ObjectRightOfMap) = {
             import fgFunctor.source.generatorAsMorphism
@@ -316,8 +316,7 @@ object Functor {
           }
         }
 
-        val getSliceCategory = buildSliceCategory _
-        def buildSliceCategory(onLeft: fgFunctor.target.O): SliceCategory
+        def buildSliceCategory: fgFunctor.target.O => SliceCategory
       }
 
       abstract class CosliceFunctor extends Functor { cosliceFunctor => // D --> Cat_{/C}
@@ -327,7 +326,7 @@ object Functor {
         override def onMorphisms(m: source.M): CosliceFunctorOver = new CosliceFunctorOver(m)
 
         class CosliceCategoryOver(onRight: fgFunctor.target.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver { // (F | d) --> C
-          override val source = getCosliceCategory(onRight)
+          override val source = buildCosliceCategory(onRight)
           override def onObjects(o: source.ObjectLeftOf) = o.left
           override def onGenerators(g: source.ObjectLeftOfMap) = {
             import fgFunctor.source.generatorAsMorphism
@@ -348,8 +347,7 @@ object Functor {
           }
         }
 
-        val getCosliceCategory = buildCosliceCategory _
-        def buildCosliceCategory(onLeft: fgFunctor.target.opposite.O): CosliceCategory
+        def buildCosliceCategory: fgFunctor.target.opposite.O => CosliceCategory
       }
 
       trait Pullback extends super.Pullback {

@@ -31,19 +31,21 @@ trait Translation extends Functor.withFinitelyPresentedSource.withFinitelyPresen
       "  onMorphisms = " + source.allGenerators.map(g => g -> this.onGenerators(g)).toMap.toString + ")"
   }
 
-  class FiniteSliceCategory(onRight: translation.target.O) extends SliceCategory(
+  private class FiniteSliceCategory(onRight: translation.target.O) extends SliceCategory(
     translation.target.asInstanceOf[Ontologies.Finite].maximumWordLength,
     onRight)
 
-  class FiniteCosliceCategory(onLeft: translation.target.O) extends CosliceCategory(
+  private class FiniteCosliceCategory(onLeft: translation.target.O) extends CosliceCategory(
     translation.target.asInstanceOf[Ontologies.Finite].maximumWordLength,
     onLeft)
 
   class SliceFunctor extends super.SliceFunctor {
-    override def buildSliceCategory(onRight: Box) = new FiniteSliceCategory(onRight)
+    import net.tqft.toolkit.functions.Memo
+    override val buildSliceCategory: Box => SliceCategory = Memo({ onRight: Box => new FiniteSliceCategory(onRight) })
   }
   class CosliceFunctor extends super.CosliceFunctor {
-    override def buildCosliceCategory(onLeft: Box) = new FiniteCosliceCategory(onLeft)
+    import net.tqft.toolkit.functions.Memo
+    override val buildCosliceCategory: Box => CosliceCategory = Memo({ onLeft: Box => new FiniteCosliceCategory(onLeft) })
   }
 
   lazy val slice: SliceFunctor = new SliceFunctor

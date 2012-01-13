@@ -41,11 +41,17 @@ object RightPushforwardProfiler1 extends App with Profiler {
         "i" -> "A",
         "j" -> "C")))
 
+        // 2011-01-13	807ms
+        //				546ms improving FunctorToSet.Section.equals
         
-  for(t <- movingTimingAverages(10) {
-    val LHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
-    val RHS = DavidsFunkyGraphReversed
-    LHS.isIsomorphicTo(RHS)
-  }) println(t)
+  for (	
+    t <- movingTimingAverages(10) {
+      for (n <- 0 until 1000) {
+        val LHS = Examples.ReverseGraph.__*(DavidsFunkyGraph)
+        val RHS = DavidsFunkyGraphReversed
+        LHS.isIsomorphicTo(RHS)
+      }
+    }
+  ) println(t)
 
 }
