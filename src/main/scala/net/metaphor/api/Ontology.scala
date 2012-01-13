@@ -107,7 +107,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         }
         def relations(source: Box, target: Box) = Nil
       }
-      
+
       val noninvariantBijections = (new compositionDiagram.Dataset {
         def onObjects(o: Box) = {
           compositionDiagram.unbox(o) match {
@@ -150,6 +150,30 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
 
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
+
+    lazy val grothendieck: Ontology = new Ontology {
+      val unboxMap = scala.collection.mutable.Map[Box, (Box, Any)]()
+      override def objectsAtLevel(k: Int) = {
+        for (o <- dataset.source.objectsAtLevel(k); x <- dataset(o).toIterable) yield {
+          val newBox = Box("(" + o.name + ": " + x.toString + ")")
+          unboxMap += newBox -> (o, x)
+          newBox
+        }
+      }
+      override val minimumLevel = dataset.source.minimumLevel
+      override val maximumLevel = dataset.source.maximumLevel
+      override def generators(s: Box, t: Box) = {
+        (unboxMap(s), unboxMap(t)) match {
+          case ((so, sx), (to, tx)) => {
+            for (g <- dataset.source.generators(so, to); if dataset.onGenerators(g).toFunction(sx) == tx) yield Arrow(s, t, g.name)
+          }
+        }
+      }
+      override def relations(s: Box, t: Box) = {
+        ??? // MATH what are the relations in the grothendieck construction
+      }
+      override def pathEquality(p1: Path, p2: Path) = ???
+    }
 
     class DatasetMemo extends Dataset {
       import net.tqft.toolkit.functions.Memo
@@ -248,9 +272,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   override def fullSubcategoryInclusion(spannedBy: List[O]): FullSubcategoryInclusion = new FullSubcategoryInclusion(spannedBy)
   override def fullSubcategory(spannedBy: List[O]): FullSubcategory = fullSubcategoryInclusion(spannedBy).source
-  
+
   def fullSubcategoryInclusion(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategoryInclusion = fullSubcategoryInclusion(spannedBy.toList.map(Box(_)))
-  def fullSubcategory(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategory = fullSubcategoryInclusion(spannedBy:_*).source
+  def fullSubcategory(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategory = fullSubcategoryInclusion(spannedBy: _*).source
 
   def findAllTranslationsTo(other: Ontology): Iterable[Translation] = {
     trait TranslationToOther extends Translation {
