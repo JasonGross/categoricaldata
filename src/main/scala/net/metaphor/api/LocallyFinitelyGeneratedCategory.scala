@@ -186,7 +186,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(p1, p2)
   }
 
-  abstract class FullSubcategory(val spannedBy: O*) extends Wrapper with FinitelyGeneratedCategory {
+  abstract class FullSubcategory(val spannedBy: List[O]) extends Wrapper with FinitelyGeneratedCategory {
     private val objectsAtLevelMap: Map[Int, List[O]] = {
       case class Accumulator(k: Int, map: Map[Int, List[O]], remaining: List[O]) {
         def next = remaining.partition(lfgCategory.objectsAtLevel(k).contains(_)) match {
@@ -199,23 +199,23 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
         }
       }
 
-      Accumulator(minimumLevel, Map(), spannedBy.toList).finish
+      Accumulator(minimumLevel, Map(), spannedBy).finish
     }
     override def objectsAtLevel(k: Int) = objectsAtLevelMap.get(k).getOrElse(Nil)
     override val maximumLevel = (objectsAtLevelMap.keySet + minimumLevel).max
   }
 
-  class ConcreteFullCategory(spannedBy: O*) extends FullSubcategory(spannedBy:_*) with FinitelyGeneratedCategories.StandardFunctorsToSet
+  class ConcreteFullCategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategories.StandardFunctorsToSet
 
-  class FullSubcategoryInclusion(spannedBy: O*) extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
-    override val source: FullSubcategory = new ConcreteFullCategory(spannedBy: _*)
+  class FullSubcategoryInclusion(spannedBy: List[O]) extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
+    override val source: FullSubcategory = new ConcreteFullCategory(spannedBy)
     override val target: lfgCategory.type = lfgCategory
     override def onObjects(o: source.O) = o
     override def onGenerators(g: source.G) = g
   }
 
-  def fullSubcategoryInclusion(spannedBy: O*) = new FullSubcategoryInclusion(spannedBy: _*)
-  def fullSubcategory(spannedBy: O*) = fullSubcategoryInclusion(spannedBy: _*).source
+  def fullSubcategoryInclusion(spannedBy: List[O]) = new FullSubcategoryInclusion(spannedBy)
+  def fullSubcategory(spannedBy: List[O]) = fullSubcategoryInclusion(spannedBy).source
 
   trait Truncation extends Wrapper with FinitelyGeneratedCategory {
     override def objectsAtLevel(k: Int) = {

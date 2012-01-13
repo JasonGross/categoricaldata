@@ -38,18 +38,18 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =
     override def relations(s: O, t: O) = fpCategory.relations(s, t)
   }
 
-  abstract class FullSubcategory(spannedBy: O*) extends super.FullSubcategory(spannedBy: _*) with FinitelyPresentedCategory {
+  abstract class FullSubcategory(spannedBy: List[O]) extends super.FullSubcategory(spannedBy) with FinitelyPresentedCategory {
     override def relations(s: O, t: O) = fpCategory.relations(s, t)
   }
 
-  class ConcreteFullSubcategory(spannedBy: O*) extends FullSubcategory(spannedBy: _*) with FinitelyGeneratedCategories.StandardFunctorsToSet
+  class ConcreteFullSubcategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategories.StandardFunctorsToSet
 
-  class FullSubcategoryInclusion(spannedBy: O*) extends super.FullSubcategoryInclusion(spannedBy:_*) with Functor.withFinitelyPresentedSource.withFinitelyPresentedTarget {
-    override val source: FullSubcategory = new ConcreteFullSubcategory(spannedBy: _*)
+  class FullSubcategoryInclusion(spannedBy: List[O]) extends super.FullSubcategoryInclusion(spannedBy) with Functor.withFinitelyPresentedSource.withFinitelyPresentedTarget {
+    override val source: FullSubcategory = new ConcreteFullSubcategory(spannedBy)
   }
 
-  override def fullSubcategoryInclusion(spannedBy: O*): FullSubcategoryInclusion = new FullSubcategoryInclusion(spannedBy: _*)
-  override def fullSubcategory(spannedBy: O*): FullSubcategory = fullSubcategoryInclusion(spannedBy: _*).source
+  override def fullSubcategoryInclusion(spannedBy: List[O]): FullSubcategoryInclusion = new FullSubcategoryInclusion(spannedBy)
+  override def fullSubcategory(spannedBy: List[O]): FullSubcategory = fullSubcategoryInclusion(spannedBy).source
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
     def verifyRelations {

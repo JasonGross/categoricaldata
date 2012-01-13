@@ -240,17 +240,17 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   trait OntologyWrapper extends super.Wrapper with Ontology
 
-  class FullSubcategory(spannedBy: O*) extends super.FullSubcategory(spannedBy: _*) with Ontology
+  class FullSubcategory(spannedBy: List[O]) extends super.FullSubcategory(spannedBy) with Ontology
 
-  class FullSubcategoryInclusion(spannedBy: O*) extends super.FullSubcategoryInclusion(spannedBy:_*) with Translation {
-    override val source = new FullSubcategory(spannedBy: _*)
+  class FullSubcategoryInclusion(spannedBy: List[O]) extends super.FullSubcategoryInclusion(spannedBy) with Translation {
+    override val source = new FullSubcategory(spannedBy)
   }
 
-  override def fullSubcategoryInclusion(spannedBy: O*): FullSubcategoryInclusion = new FullSubcategoryInclusion(spannedBy: _*)
-  override def fullSubcategory(spannedBy: O*): FullSubcategory = fullSubcategoryInclusion(spannedBy: _*).source
+  override def fullSubcategoryInclusion(spannedBy: List[O]): FullSubcategoryInclusion = new FullSubcategoryInclusion(spannedBy)
+  override def fullSubcategory(spannedBy: List[O]): FullSubcategory = fullSubcategoryInclusion(spannedBy).source
   
-  def fullSubcategoryInclusion(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategoryInclusion = fullSubcategoryInclusion(spannedBy.map(Box(_)):_*)
-  def fullSubcategory(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategory = fullSubcategory(spannedBy.map(Box(_)):_*)
+  def fullSubcategoryInclusion(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategoryInclusion = fullSubcategoryInclusion(spannedBy.toList.map(Box(_)))
+  def fullSubcategory(spannedBy: String*)(implicit d: DummyImplicit): FullSubcategory = fullSubcategoryInclusion(spannedBy:_*).source
 
   def findAllTranslationsTo(other: Ontology): Iterable[Translation] = {
     trait TranslationToOther extends Translation {
