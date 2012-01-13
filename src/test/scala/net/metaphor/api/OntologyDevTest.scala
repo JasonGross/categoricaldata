@@ -52,12 +52,5 @@ class OntologyDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     Examples.Chain(2) should beIsomorphicTo(SaturatedCommutativeTriangle)
   }
 
-  "fullSubcategory" should "take Chains to Chains" in {
-    val X = Examples.Chain(5)
-    val LHS = X.fullSubcategory("V0", "V1", "V2", "V3")
-    println(LHS.objectsAtLevel(0))
-    val RHS = Examples.Chain(3)
-    LHS should equal(RHS)
-  }
 
 }

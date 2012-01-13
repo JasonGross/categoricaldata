@@ -50,4 +50,11 @@ class OntologyTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     }
   }
 
+  "fullSubcategory" should "take Chains to Chains" in {
+    val X = Examples.Chain(5)
+    val LHS = X.fullSubcategory("V0", "V1", "V2", "V3")
+    val RHS = Examples.Chain(3)
+    LHS should equal(RHS)
+  }
+
 }
