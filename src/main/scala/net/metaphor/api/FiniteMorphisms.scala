@@ -81,11 +81,11 @@ trait FiniteByExhaustion extends FiniteMorphisms { category: FinitelyPresentedCa
 }
 
 trait Acyclic extends FiniteMorphisms { fpCategory: FinitelyPresentedCategory =>
-  private def verifyAcyclicity: Boolean = {
+  def verifyAcyclic: fpCategory.type = {
     for (w <- allNontrivialWords) {
-      if (w.source == w.target) return false
+      require(w.source != w.target)
     }
-    return true
+    this
   }
 
   private def computeMaximumWordLength(s: O, t: O) = {
@@ -95,11 +95,13 @@ trait Acyclic extends FiniteMorphisms { fpCategory: FinitelyPresentedCategory =>
   private val cachedMaximumWordLength = net.tqft.toolkit.functions.Memo(computeMaximumWordLength _)
   override def maximumWordLength(s: O, t: O) = cachedMaximumWordLength(s, t)
 
-  require(verifyAcyclicity)
 }
 
 trait Free { fpCategory: FinitelyPresentedCategory =>
-  require(allRelations.isEmpty)
+  def verifyFree: fpCategory.type = {
+    require(allRelations.isEmpty)
+    this
+  }
 
   override def pathEquality(p1: Path, p2: Path) = p1 == p2
 }

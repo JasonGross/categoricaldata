@@ -33,11 +33,11 @@ object Ontologies extends Category with InitialObject with TerminalObject {
 
   trait Acyclic extends net.metaphor.api.Acyclic with Finite { ontology: Ontology =>
     override def assertAcyclic = this
-    override def assertFree: Ontology with Ontologies.FreeAcyclic = new ontology.OntologyWrapper with FreeAcyclic
+    override def assertFree: Ontology with Ontologies.FreeAcyclic = (new ontology.OntologyWrapper with FreeAcyclic).verifyFree
 
   }
   trait Free extends net.metaphor.api.Free { ontology: Ontology =>
-    override def assertAcyclic: Ontology with Ontologies.FreeAcyclic = new ontology.OntologyWrapper with FreeAcyclic
+    override def assertAcyclic: Ontology with Ontologies.FreeAcyclic = (new ontology.OntologyWrapper with FreeAcyclic).verifyAcyclic
     override def assertFree = this
   }
   trait FreeAcyclic extends net.metaphor.api.FreeAcyclic with Acyclic with Free { ontology: Ontology =>

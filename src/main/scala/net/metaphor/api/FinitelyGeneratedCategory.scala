@@ -142,7 +142,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
             if (processedObjects.contains(o)) this
             else {
               Intermediate(o :: processedObjects, processedPairs, for (m <- maps; a <- sets(o)) yield {
-                                require(functorToSet(o).toList.contains(a)) // FIXME
+//                                require(functorToSet(o).toList.contains(a)) // FIXME
                 m + (o -> a)
               })
             }
@@ -154,7 +154,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
                 Intermediate(processedObjects, pair :: processedPairs, newMaps)
               } else {
                 val newMaps = for (m <- maps; cr <- functionsCompatibleResults(pair._1, pair._2)(m(pair._1))) yield {
-                                    require(functorToSet(pair._2).toList.contains(cr)) // FIXME
+//                                    require(functorToSet(pair._2).toList.contains(cr)) // FIXME
                   m + (pair._2 -> cr)
                 }
                 Intermediate(pair._2 :: processedObjects, pair :: processedPairs, newMaps)

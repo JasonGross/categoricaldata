@@ -84,15 +84,11 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         override def objectsAtLevel(k: Int) = {
           k match {
             case 0 => {
-              ontology.objects ::: (ontology.allGenerators.map { a => Box(a.toString) })
+              ontology.objects
             }
-            // FIXME why isn't this work !?
-//            case 0 => {
-//              ontology.objects
-//            }
-//            case 1 => {
-//              ontology.allGenerators.map { a => Box(a.toString) }
-//            }
+            case 1 => {
+              ontology.allGenerators.map { a => Box(a.toString) }
+            }
             case _ => Nil
           }
         }
@@ -225,14 +221,14 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   def assertAcyclic: Ontology with Ontologies.Acyclic = {
     this match {
       case o: Ontologies.Acyclic => o
-      case _ => new OntologyWrapper with Ontologies.Acyclic with FiniteByExhaustion
+      case _ => (new OntologyWrapper with Ontologies.Acyclic with FiniteByExhaustion).verifyAcyclic
     }
   }
   def assertFree: Ontology with Ontologies.Free = {
     this match {
       case o: Ontologies.Free => o
       case _ =>
-        new OntologyWrapper with Ontologies.Free
+        (new OntologyWrapper with Ontologies.Free).verifyFree
     }
   }
   def assertFinite: Ontology with Ontologies.Finite = {
