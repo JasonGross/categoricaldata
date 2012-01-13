@@ -137,7 +137,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
             }
           }
         }
-      }).memo//  .verify //FIXME
+      }).memo
 
       for (bijection <- noninvariantBijections.limitSet.toIterable) yield {
         new Datamap {
@@ -240,9 +240,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   trait OntologyWrapper extends super.Wrapper with Ontology
 
-  class FullSubcategory(spannedBy: O*) extends super.FullSubcategory(objects: _*) with OntologyWrapper
+  class FullSubcategory(spannedBy: O*) extends super.FullSubcategory(spannedBy: _*) with Ontology
 
-  class FullSubcategoryInclusion(spannedBy: O*) extends super.FullSubcategoryInclusion with Translation {
+  class FullSubcategoryInclusion(spannedBy: O*) extends super.FullSubcategoryInclusion(spannedBy:_*) with Translation {
     override val source = new FullSubcategory(spannedBy: _*)
   }
 

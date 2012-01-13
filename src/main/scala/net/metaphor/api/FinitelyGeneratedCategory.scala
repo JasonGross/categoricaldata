@@ -85,10 +85,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   override type T <: NaturalTransformationToSet
 
   trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-//        def verify: this.type = {
-//          for(g <- allGenerators; f = functorToSet.onGenerators(g)) f.verify
-//          this
-//        }
+    //        def verify: this.type = {
+    //          for(g <- allGenerators; f = functorToSet.onGenerators(g)) f.verify
+    //          this
+    //        }
 
     lazy val totalSet = new FiniteFSet {
       def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
@@ -142,7 +142,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
             if (processedObjects.contains(o)) this
             else {
               Intermediate(o :: processedObjects, processedPairs, for (m <- maps; a <- sets(o)) yield {
-//                                require(functorToSet(o).toList.contains(a)) // FIXME
+                // require(functorToSet(o).toList.contains(a)) 
                 m + (o -> a)
               })
             }
@@ -154,7 +154,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
                 Intermediate(processedObjects, pair :: processedPairs, newMaps)
               } else {
                 val newMaps = for (m <- maps; cr <- functionsCompatibleResults(pair._1, pair._2)(m(pair._1))) yield {
-//                                    require(functorToSet(pair._2).toList.contains(cr)) // FIXME
+                  // require(functorToSet(pair._2).toList.contains(cr)) 
                   m + (pair._2 -> cr)
                 }
                 Intermediate(pair._2 :: processedObjects, pair :: processedPairs, newMaps)
@@ -214,9 +214,9 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         { s: fgCategory.O =>
           { t: fgCategory.O =>
             {
-              val fs = for (g <- generators(s, t)) yield functorToSet.onGenerators(g) /* FIXME .verify*/ .toFunction
+              val fs = for (g <- generators(s, t)) yield functorToSet.onGenerators(g).toFunction
               a: Any => {
-                //   FIXME         require(functorToSet(s).toList.contains(a)) 
+                // require(functorToSet(s).toList.contains(a)) 
                 fs.map(_(a)).toSet
               }
             }
@@ -247,7 +247,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
           override val initialSet = resultSet
           override def functionFromInitialSet(o: fgCategory.O) = new coneFunction(o) {
             override def toFunction = ({ s: Section => s.toFunction.asInstanceOf[fgCategory.O => Any] } andThen functions(o)).asInstanceOf[Any => Any]
-          } // FIXME .verify
+          }
         }
         override def morphismToTerminalObject(other: functorToSet.Cone) = {
           new functorToSet.ConeMap {
@@ -255,7 +255,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
             override val target = terminalObject
             override val initialFunction = new InitialFunction {
               override def toFunction = { x: Any => new Section({ o: fgCategory.O => other.functionFromInitialSet(o).toFunction(x) }) }
-            } // FIXME .verify
+            }
           }
         }
       }
