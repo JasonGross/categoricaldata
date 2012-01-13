@@ -94,8 +94,8 @@ object Examples {
     onObjects = Map("V0" -> "V1"),
     onMorphisms = Map())
 
-  def Skip(n: Int, k: Int) = {
-    //require (n>=k) //TODO David: explain why this require isn't working. Scott: Can you show me it not working? 
+  def Skip(n: Int, k: Int) = { // Chain(n) --> Chain(n+1) by skipping object k.
+    require (n>=k) 
 
     val FirstOnMorphisms = (for (i <- 0 to k - 1) yield {
       (("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)) ->
@@ -108,7 +108,7 @@ object Examples {
         (("V" + (i + 1).toString) --- ("E" + (i + 1).toString + (i + 2).toString) --> ("V" + (i + 2).toString))
     }).toMap
 
-    Translation( // [n] --> [n+1] by skipping object k.
+    Translation( 
       source = Examples.Chain(n),
       target = Examples.Chain(n + 1),
       onObjects =
