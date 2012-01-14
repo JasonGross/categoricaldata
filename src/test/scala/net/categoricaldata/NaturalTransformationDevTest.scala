@@ -25,36 +25,41 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //  "leftUnit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph
 //    val D=Examples.Grph
+//    val X=Graph120114
 //    val F=Examples.ReverseGraph
-//    IsNaturalIsomorphism(F.leftUnit) should equal(True)
+//    IsNaturalIsomorphism(F.leftUnit(X)) should equal(True)
 //  }
 //  
 //  "leftCounit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph
 //    val D=Examples.Grph
+//    val X=Graph120114
 //    val F=Examples.ReverseGraph
-//    IsNaturalIsomorphism(F.leftCounit) should equal(True)
+//    IsNaturalIsomorphism(F.leftCounit(X)) should equal(True)
 //  }
 //  
 //  "rightUnit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph
 //    val D=Examples.Grph
+//    val X=Graph120114
 //    val F=Examples.ReverseGraph
-//    IsNaturalIsomorphism(F.rightUnit) should equal(True)
+//    IsNaturalIsomorphism(F.rightUnit(X)) should equal(True)
 //  }
 //  
 //  "rightCounit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph
 //    val D=Examples.Grph
+//    val X=Graph120114
 //    val F=Examples.ReverseGraph
-//    IsNaturalIsomorphism(F.rightCounit) should equal(True)
+//    IsNaturalIsomorphism(F.rightCounit(X)) should equal(True)
 //  }
 //  
 //  "leftUnit" should "be an isomorphism for translations that are equivalences" in {
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
+//    val X=Graph120114
 //    val F=Examples.TerminalFunctor(C)
-//    IsNaturalIsomorphism(F.leftUnit) should equal(True)
+//    IsNaturalIsomorphism(F.leftUnit(X)) should equal(True)
 //  }
 //  
 //   "leftCounit" should "be an isomorphism for translations that are equivalences" in {
@@ -91,7 +96,24 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //    val F=Examples.Skip(3,2)
 //    IsNaturalIsomorphism(F.leftCounit) should equal(True)
 //  } 
-  
+ 
+  val Graph120114 = Dataset(source = Examples.Grph,
+    onObjects = Map(
+      "an edge" -> List("f", "g", "h", "i", "j"),
+      "a vertex" -> List("A", "B", "C", "D")),
+    onMorphisms = Map(
+      ("an edge" --- "has as source" --> "a vertex") -> Map(
+        "f" -> "B",
+        "g" -> "B",
+        "h" -> "C",
+        "i" -> "C",
+        "j" -> "C"),
+      ("an edge" --- "has as target" --> "a vertex") -> Map(
+        "f" -> "A",
+        "g" -> "A",
+        "h" -> "B",
+        "i" -> "A",
+        "j" -> "C")))
   
   
 }
