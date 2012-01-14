@@ -89,15 +89,17 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //  "leftUnit" should "be an isomorphism for fully faithful transformations" in {
 //    val C=Examples.Chain(3)
 //    val D=Examples.Chain(4)
+// 	  val X=Chain3Dataset120114
 //    val F=Examples.Skip(3,2)
-//    IsNaturalIsomorphism(F.leftUnit) should equal(True)
+//    IsNaturalIsomorphism(F.leftUnit(X)) should equal(True)
 //  } 
 //  
 //  "leftcoUnit" should "be an isomorphism for fully faithful transformations" in {
 //    val C=Examples.Chain(3)
 //    val D=Examples.Chain(4)
+//	  val X=Chain3Dataset120114  
 //    val F=Examples.Skip(3,2)
-//    IsNaturalIsomorphism(F.leftCounit) should equal(True)
+//    IsNaturalIsomorphism(F.leftCounit(X)) should equal(True)
 //  } 
  
   val GraphDataset120114 = Dataset(source = Examples.Grph,
@@ -200,10 +202,29 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     )
   )
   
-  val Chain3Dataset120114 = Dataset(source=Examples.Chain(3))
+  val Chain3Dataset120114 = Dataset(source=Examples.Chain(3),
   	 onObjects = Map(
-      "V0" -> List("f", "g", "h", "i", "j"),
-      "V1" -> List("A", "B", "C", "D"),
-      ),
-
+      "V0" -> List(),//Deliberately left as empty list, representing empty-set.
+      "V1" -> List("1a","1b","1c","1d","1e"),
+      "V2" -> List ("2f","2g","2h"),
+      "V3" -> List ("3i", "3j","3k","3l")
+     ),
+     onMorphisms = Map(
+       ("V0" --- "E01" --> "V1") -> Map(
+       ), //Deliberately left empty.
+       ("V1" --- "E01" --> "V2") -> Map(
+           "1a" -> "2f",
+           "1b" -> "2g",
+           "1c" -> "2g",
+           "1d" -> "2h",
+           "1e" -> "2h"
+       ),
+       ("V2" --- "E01" --> "V3") -> Map(
+           "2f" -> "3i",
+           "2g" -> "3k",
+           "2h" -> "3l"
+       )
+    )
+ )
+          
 }
