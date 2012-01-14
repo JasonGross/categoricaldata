@@ -41,13 +41,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   override lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite
 
   trait FinitelyGeneratedCategoryOver extends CategoryOver with Functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget { categoryOver =>
-    override val source: FinitelyGeneratedCategory
-    def onGenerators(g: source.G): target.M
-    override def onMorphisms(m: source.M) = {
-      val start = onObjects(source.source(m))
-      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
-      target.compose(start, morphisms)
-    }
     trait Identity extends FinitelyGeneratedFunctorOver {
       override val source: categoryOver.type = categoryOver
       override val target: categoryOver.type = categoryOver
@@ -84,7 +77,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   override type F <: FunctorToSet
   override type T <: NaturalTransformationToSet
 
-  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
+  trait FunctorToSet extends super.FunctorToSet with FunctorToSet.withFinitelyGeneratedSource { functorToSet =>
     //        def verify: this.type = {
     //          for(g <- allGenerators; f = functorToSet.onGenerators(g)) f.verify
     //          this
@@ -346,8 +339,8 @@ object FinitelyGeneratedCategories {
 
     def internalize(f: net.metaphor.api.FunctorToSet): F = new FunctorToSet {
       require(f.source == source)
-      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
-      def onGenerators(g: G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
+      def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
+      def onGenerators(g: source.G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
     }
     def internalize(t: net.metaphor.api.NaturalTransformationToSet): T = new NaturalTransformationToSet {
       require(t.sourceCategory == source)

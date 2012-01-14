@@ -51,13 +51,7 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =
   override def fullSubcategoryInclusion(spannedBy: List[O]): FullSubcategoryInclusion = new FullSubcategoryInclusion(spannedBy)
   override def fullSubcategory(spannedBy: List[O]): FullSubcategory = fullSubcategoryInclusion(spannedBy).source
 
-  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    def verifyRelations {
-      for (relation <- fpCategory.allRelations) {
-        require(functorToSet.onMorphisms(source.pathAsMorphism(relation._1)) == functorToSet.onMorphisms(source.pathAsMorphism(relation._2)))
-      }
-    }
-  }
+  trait FunctorToSet extends super.FunctorToSet with FunctorToSet.withFinitelyPresentedSource
 }
 
 

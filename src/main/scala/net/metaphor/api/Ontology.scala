@@ -9,8 +9,8 @@ case class Arrow(source: Box, target: Box, name: String) {
   override def toString = source.toString + " --- \"" + name + "\" --> " + target.toString
 }
 
-trait Dataset extends net.metaphor.api.FunctorToSet {
-
+trait Dataset extends FunctorToSet.withFinitelyPresentedSource {
+	override val source: Ontology
 }
 
 trait Ontology extends FinitelyPresentedCategory { ontology =>
@@ -109,7 +109,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       }
 
       val noninvariantBijections = (new compositionDiagram.Dataset {
-        def onObjects(o: Box) = {
+        def onObjects(o: source.O) = {
           compositionDiagram.unbox(o) match {
             case Left(box) => {
               Sets.bijections(dataset(box), other(box))
@@ -119,7 +119,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
             }
           }
         }
-        def onGenerators(g: Arrow) = {
+        def onGenerators(g: source.G) = {
           g match {
             case Arrow(s, t, direction) => {
               (compositionDiagram.unbox(t), direction) match {
@@ -179,8 +179,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       import net.tqft.toolkit.functions.Memo
       val memoOnObjects = Memo(dataset.onObjects _)
       val memoOnGenerators = Memo(dataset.onGenerators _)
-      override def onObjects(o: O) = memoOnObjects(o)
-      override def onGenerators(g: G) = memoOnGenerators(g)
+      override def onObjects(o: source.O) = memoOnObjects(o)
+      override def onGenerators(g: source.G) = memoOnGenerators(g)
     }
 
     lazy val memo: ontology.Dataset = new DatasetMemo
@@ -200,7 +200,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       case _ => {
         require(f.source == this)
         new Dataset {
-          override def onObjects(o: Box) = f(o.asInstanceOf[f.source.O])
+          override def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
           // and yet another weird one: replacing this with Arrow causes an AbstractMethodError
           override def onGenerators(a: source.G) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
         }
@@ -288,8 +288,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         generators(e, e) match {
           case Nil => {
             for (x <- other.objects) yield new TranslationToOther {
-              override def onObjects(o: Box) = x
-              override def onGenerators(g: Arrow) = throw new IllegalArgumentException
+              override def onObjects(o: source.O) = x
+              override def onGenerators(g: source.G) = throw new IllegalArgumentException
             }
           }
           case _ => ???
