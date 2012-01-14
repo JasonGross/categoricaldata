@@ -38,7 +38,7 @@ object Functor {
   trait withLocallyFinitelyGeneratedSource extends withSmallSource { functor =>
     override val source: LocallyFinitelyGeneratedCategory
     def onGenerators(g: source.G): target.M
-    final override def onMorphisms(m: source.M) = {
+    override def onMorphisms(m: source.M) = {
       val start = onObjects(source.source(m))
       val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
       target.compose(start, morphisms)
@@ -274,8 +274,8 @@ object Functor {
 
         override def internalize(f: net.metaphor.api.FunctorToSet) = new FunctorToSet {
           require(f.source == source)
-          override def onObjects(o: source.O) = f.onObjects(o.asInstanceOf[f.source.O])
-          override def onGenerators(g: source.G) = f.onMorphisms(generatorAsMorphism(g).asInstanceOf[f.source.M])
+          override def onObjects(o: O) = f.onObjects(o.asInstanceOf[f.source.O])
+          override def onGenerators(g: G) = f.onMorphisms(generatorAsMorphism(g).asInstanceOf[f.source.M])
         }
       }
       class CosliceCategory(maximumPathLength: Int, onRight: functor.target.O) extends super.CosliceCategory(onRight) {
@@ -283,8 +283,8 @@ object Functor {
 
         override def internalize(f: net.metaphor.api.FunctorToSet) = new FunctorToSet {
           require(f.source == source)
-          override def onObjects(o: source.O) = f.onObjects(o.asInstanceOf[f.source.O])
-          override def onGenerators(g: source.G) = f.onMorphisms(generatorAsMorphism(g).asInstanceOf[f.source.M])
+          override def onObjects(o: O) = f.onObjects(o.asInstanceOf[f.source.O])
+          override def onGenerators(g: G) = f.onMorphisms(generatorAsMorphism(g).asInstanceOf[f.source.M])
         }
       }
     }
@@ -297,8 +297,8 @@ object Functor {
 
         class SliceCategoryOver(onLeft: fgFunctor.target.opposite.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver { // (d | F) --> C
           override val source = buildSliceCategory(onLeft)
-          override def onObjects(o: source.O) = o.right
-          override def onGenerators(g: source.G) = {
+          override def onObjects(o: source.ObjectRightOf) = o.right
+          override def onGenerators(g: source.ObjectRightOfMap) = {
             import fgFunctor.source.generatorAsMorphism
             g.generator
           }
@@ -307,10 +307,10 @@ object Functor {
           override val source = sliceFunctor.onObjects(fgFunctor.target.opposite.source(m))
           override val target = sliceFunctor.onObjects(fgFunctor.target.opposite.target(m))
           override val functor = new F {
-            override def onObjects(o: source.O): target.ObjectRightOf = {
+            override def onObjects(o: source.ObjectRightOf): target.ObjectRightOf = {
               target.ObjectRightOf(right = o.right, morphism = fgFunctor.target.compose(fgFunctor.target.opposite.unreverse(m), o.morphism))
             }
-            override def onGenerators(g: source.G): target.M = {
+            override def onGenerators(g: source.ObjectRightOfMap): target.M = {
               target.generatorAsMorphism(target.ObjectRightOfMap(onObjects(g.source), onObjects(g.target), g.generator))
             }
           }
@@ -327,8 +327,8 @@ object Functor {
 
         class CosliceCategoryOver(onRight: fgFunctor.target.O) extends fgFunctor.source.FinitelyGeneratedCategoryOver { // (F | d) --> C
           override val source = buildCosliceCategory(onRight)
-          override def onObjects(o: source.O) = o.left
-          override def onGenerators(g: source.G) = {
+          override def onObjects(o: source.ObjectLeftOf) = o.left
+          override def onGenerators(g: source.ObjectLeftOfMap) = {
             import fgFunctor.source.generatorAsMorphism
             g.generator
           }
@@ -338,10 +338,10 @@ object Functor {
           override val source = cosliceFunctor.onObjects(fgFunctor.target.source(m))
           override val target = cosliceFunctor.onObjects(fgFunctor.target.target(m))
           override val functor = new F {
-            override def onObjects(o: source.O): target.ObjectLeftOf = {
+            override def onObjects(o: source.ObjectLeftOf): target.ObjectLeftOf = {
               target.ObjectLeftOf(left = o.left, morphism = fgFunctor.target.compose(o.morphism, m))
             }
-            override def onGenerators(g: source.G): target.M = {
+            override def onGenerators(g: source.ObjectLeftOfMap): target.M = {
               target.generatorAsMorphism(target.ObjectLeftOfMap(onObjects(g.target), onObjects(g.source), g.generator))
             }
           }

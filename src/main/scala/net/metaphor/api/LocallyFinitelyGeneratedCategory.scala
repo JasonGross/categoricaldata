@@ -13,7 +13,7 @@ case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   // This is purely a micro-optimization.
   override lazy val hashCode = morphisms.hashCode
 
-  override val toString = {
+  override def toString = {
     val afterFirstQuote = """".*"( --- ".*" --> ".*")""".r
     source.toString + (for (m <- morphisms; s = m.toString) yield afterFirstQuote.unapplySeq(s).get.head).mkString
   }
@@ -239,7 +239,14 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   def truncationFunctorAtLevel(maximumLevel: Int): TruncationFunctor = new TruncationFunctor(maximumLevel)
   def truncateAtLevel(maximumLevel: Int): FinitelyGeneratedCategory = truncationFunctorAtLevel(maximumLevel).source
 
-  trait FunctorToSet extends super.FunctorToSet with FunctorToSet.withLocallyFinitelyGeneratedSource { functorToSet =>
+  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
+    def onGenerators(g: G): FFunction
+    override def onMorphisms(m: M) = {
+      val start = onObjects(source.source(m))
+      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
+      target.compose(start, morphisms)
+    }
+
     trait CoCone {
       val terminalSet: FSet
       abstract class coConeFunction(o: O) extends FFunction {
