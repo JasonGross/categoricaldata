@@ -20,7 +20,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
   
-  def IsNaturalIsomorphism(t:NaturalTransformation) : Boolean ={???}}
+  def IsNaturalIsomorphism(t:NaturalTransformation) : Boolean ={???}
 
   "leftUnit" should "be an isomorphism for translations that are isomorphisms" in {
     val C=Examples.Grph

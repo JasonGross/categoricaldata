@@ -7,11 +7,11 @@ object Examples {
   // NOTE to use the DSL, you need this line:
   import net.metaphor.dsl.Sentences._
 
-  def DiscreteCategoryOn(n: Int) = Ontology(
+  def DiscreteCategory(n: Int) = Ontology(
     objects = for (i <- 1 to n) yield "V" + i.toString,
     arrows = List()).assertFree
 
-  def IndiscreteCategoryOn(n: Int) = {
+  def IndiscreteCategory(n: Int) = {
     val forward = for (i <- 1 to n - 1) yield {
       ("V" + i.toString) --- ("E" + i.toString + (i + 1).toString) --> ("V" + (i + 1).toString)
     }
