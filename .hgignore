@@ -1,8 +1,17 @@
-bin
+# use glob syntax.
+syntax: glob
 
-# dropbox stuff
-.dropbox
-Icon
+# temporary latex files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.nav
+*.snm
+*.xyc
+
+bin
 
 # temporary eclipse files
 .classpath

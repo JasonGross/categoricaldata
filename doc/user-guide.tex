@@ -1,0 +1,135 @@
+\documentclass{amsart}
+
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,calc,positioning}
+
+\newcommand{\type}[1]{{\tt #1}}
+\newcommand{\code}[1]{{\tt #1}}
+
+
+\title{User Guide}
+\author{Scott Morrison and David Spivak}
+
+\begin{document}
+
+\maketitle
+
+\section{Scala}
+
+\subsection{Class hierarchies}
+This section contains an overview of the important types in the Scala library. You should read this section in conjunction with the \href{}{Scaladocs}.
+
+The three most important types are
+\begin{itemize}
+\item {\color{gray}\type{net.metaphor.api.}}\type{Ontology}
+
+All database schemas have type \type{Ontology}. 
+
+\item {\color{gray}\type{net.metaphor.api.}}\type{Translation}
+
+A \type{Translation} is a functor between two \type{Ontology}s
+
+\item {\color{gray}\type{net.metaphor.api.}}\type{Ontology\#Dataset}
+
+A \type{Dataset} is a functor from an \type{Ontology} to \type{Set}. 
+(Recall in Scala the \# denotes an inner class --- thus every \type{Dataset} is attached to a particular \type{Ontology} instance.) 
+\end{itemize}
+
+\type{Ontology} is a subtype of a long sequence of more general classes of categories, illustrated in Figure \ref{fig:ontology-hierarchy}.
+
+\tikzset{type/.style={rectangle, rounded corners, draw, fill=red!20, node distance=3cm, inner sep=5pt, align=left}}
+\tikzset{companion/.style={rectangle, rounded corners, draw, fill=green!20}}
+
+\begin{figure}[ht]    
+\begin{tikzpicture}
+\tikzset{type/.append style={text width=8.5cm}, anchor=north}
+
+% the Category hierarchy
+\node[type] (Category) {
+\vspace{-0.3cm}
+\begin{verbatim}
+trait Category {
+    type O
+    type M
+    
+    def identity(o: O): M
+    def source(m: M): O
+    def target(m: M): O
+    def compose(m1: M, m2: M): M
+    ...
+}
+\end{verbatim}
+};
+\node[type] at ($(Category.south)+(0,-1)$) (SmallCategory) {
+\vspace{-0.3cm}
+\begin{verbatim}
+trait SmallCategory {
+    trait FunctorToSet { ... }
+    ...
+}
+\end{verbatim}
+};
+\node[type] at ($(SmallCategory.south)+(0,-1)$) (LocallyFinitelyGeneratedCategory) {
+\vspace{-0.3cm}
+\begin{verbatim}
+trait LocallyFinitelyGeneratedCategory { 
+    type G
+    override type M = PathEquivalenceClass
+    def pathEquality(p1: Path, p2: Path): Boolean
+    
+    override def compose(m1: M, m2: M) = ...
+    
+    def objectsAtLevel(k: Int): List[O]
+    val minimumLevel: Int
+    def generators(s: O, t: O): List[G]
+    ...
+}
+\end{verbatim}
+};
+\node[type] at ($(LocallyFinitelyGeneratedCategory.south)+(0,-1)$) (FinitelyGeneratedCategory) {
+\vspace{-0.3cm}
+\begin{verbatim}
+trait FinitelyGeneratedCategory {
+    val maximumLevel: Int
+    ...   
+}
+\end{verbatim}
+};
+\node[type] at ($(FinitelyGeneratedCategory.south)+(0,-1)$) (FinitelyPresentedCategory) {
+\vspace{-0.3cm}
+\begin{verbatim}
+trait FinitelyPresentedCategory {
+    def relations(s: O, t: O): List[(Path, Path)]
+    ...
+}
+\end{verbatim}
+};
+\node[type] (Ontology) at ($(FinitelyPresentedCategory.south)+(0,-1)$)  {
+\vspace{-0.3cm}
+\begin{verbatim}
+trait Ontology { ... }
+\end{verbatim}
+};
+\node[companion,text width=4cm,anchor=west] (Ontology-companion) at ($(Ontology.east)+(1,0)$) {
+\vspace{-0.3cm}
+\begin{verbatim}
+object Ontology { ... }
+\end{verbatim}
+};
+
+% inheritances
+\draw[->] (Ontology) -- (FinitelyPresentedCategory);
+\draw[->] (FinitelyPresentedCategory) -- (FinitelyGeneratedCategory);
+\draw[->] (FinitelyGeneratedCategory) -- (LocallyFinitelyGeneratedCategory);
+\draw[->] (LocallyFinitelyGeneratedCategory) -- (SmallCategory);
+\draw[->] (SmallCategory) -- (Category);
+\draw[dashed] (Ontology) -- (Ontology-companion);
+\end{tikzpicture}
+\label{fig:ontology-hierarchy}
+\caption{The \type{Ontology} type hierarchy.}
+\end{figure}
+
+\end{document}
