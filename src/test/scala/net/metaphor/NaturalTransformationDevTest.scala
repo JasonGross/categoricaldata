@@ -53,28 +53,28 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   "leftUnit" should "be an isomorphism for translations that are equivalences" in {
     val C=Examples.IndiscreteCategory(3)
     val D=Examples.TerminalCategory
-    val F=Examples.TerminalFunctor
+    val F=Examples.TerminalFunctor(C)
     IsNaturalIsomorphism(F.leftUnit) should equal(True)
   }
   
    "leftCounit" should "be an isomorphism for translations that are equivalences" in {
     val C=Examples.IndiscreteCategory(3)
     val D=Examples.TerminalCategory
-    val F=Examples.TerminalFunctor
+    val F=Examples.TerminalFunctor(C)
     IsNaturalIsomorphism(F.leftCounit) should equal(True)
   }
    
     "rightUnit" should "be an isomorphism for translations that are equivalences" in {
     val C=Examples.IndiscreteCategory(3)
     val D=Examples.TerminalCategory
-    val F=Examples.TerminalFunctor
+    val F=Examples.TerminalFunctor(C)
     IsNaturalIsomorphism(F.rightUnit) should equal(True)
   }
     
      "rightCounit" should "be an isomorphism for translations that are equivalences" in {
     val C=Examples.IndiscreteCategory(3)
     val D=Examples.TerminalCategory
-    val F=Examples.TerminalFunctor
+    val F=Examples.TerminalFunctor(C)
     IsNaturalIsomorphism(F.rightCounit) should equal(True)
   }
   
