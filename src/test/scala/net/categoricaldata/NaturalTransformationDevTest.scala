@@ -58,7 +58,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
 //    val X=GraphDataset120114
-//    val F=Examples.TerminalFunctor(C)
+//    val F=Ontologies.morphismToTerminalObject(C)
 //    IsNaturalIsomorphism(F.leftUnit(X)) should equal(True)
 //  }
 //  
@@ -66,7 +66,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
 //    val X=Indiscrete3Dataset120113  
-//    val F=Examples.TerminalFunctor(C)
+//    val F=Ontologies.morphismToTerminalObject(C)
 //    IsNaturalIsomorphism(F.leftCounit(X)) should equal(True)
 //  }
 //   
@@ -74,7 +74,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
 //    val X=Indiscrete3Dataset120113
-//    val F=Examples.TerminalFunctor(C)
+//    val F=Ontologies.morphismToTerminalObject(C)
 //    IsNaturalIsomorphism(F.rightUnit(X)) should equal(True)
 //  }
 //    
@@ -82,7 +82,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
 //    val X=Indiscrete3Dataset120113
-//    val F=Examples.TerminalFunctor(C)
+//    val F=Ontologies.morphismToTerminalObject(C)
 //    IsNaturalIsomorphism(F.rightCounit) should equal(True)
 //  }
 //  

@@ -31,7 +31,7 @@ class RightPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatch
     onMorphisms = Map())
 
   "__*" should "work with terminal functor on 'function'" in {
-    val pushforward = Examples.TerminalFunctor(Examples.Chain(1)).__*(DavidsFunkyFunction)
+    val pushforward = Ontologies.morphismToTerminalObject(Examples.Chain(1)).__*(DavidsFunkyFunction)
     pushforward.isIsomorphicTo(DavidsFunkySet1) should equal(true)
   }
 

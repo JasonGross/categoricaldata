@@ -31,7 +31,7 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
     onMorphisms = Map())
 
   "__!" should "work with terminal functor on 'function'" in {
-    val shriek = Examples.TerminalFunctor(Examples.Chain(1)).__!(DavidsFunkyFunction)
+    val shriek = Ontologies.morphismToTerminalObject(Examples.Chain(1)).__!(DavidsFunkyFunction)
     shriek should beIsomorphicTo(DavidsFunkySet2)
   }
 

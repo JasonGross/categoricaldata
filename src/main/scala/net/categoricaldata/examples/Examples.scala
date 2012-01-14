@@ -180,12 +180,8 @@ object Examples {
 
   val TerminalCategory = Examples.Chain(0)
 
-  def TerminalFunctor(c: Ontology) = Translation(
-    source = c,
-    target = TerminalCategory,
-    onObjects = (for (b <- c.objects) yield (b.name -> "V0")).toMap,
-    onMorphisms = (for (a <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) -> stringAsPath("V0")).toMap 
-    )
+  def TerminalFunctor(c: Ontology) = Ontologies.morphismToTerminalObject(c)
+  
 
   def TerminalDataset(c: Ontology) = Dataset(
     source = c,
