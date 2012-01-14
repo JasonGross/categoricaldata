@@ -25,7 +25,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //  "leftUnit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph
 //    val D=Examples.Grph
-//    val X=Graph120114
+//    val X=GraphDataset120114
 //    val F=Examples.ReverseGraph
 //    IsNaturalIsomorphism(F.leftUnit(X)) should equal(True)
 //  }
@@ -33,7 +33,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //  "leftCounit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph
 //    val D=Examples.Grph
-//    val X=Graph120114
+//    val X=GraphDataset120114
 //    val F=Examples.ReverseGraph
 //    IsNaturalIsomorphism(F.leftCounit(X)) should equal(True)
 //  }
@@ -41,7 +41,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //  "rightUnit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph
 //    val D=Examples.Grph
-//    val X=Graph120114
+//    val X=GraphDataset120114
 //    val F=Examples.ReverseGraph
 //    IsNaturalIsomorphism(F.rightUnit(X)) should equal(True)
 //  }
@@ -49,7 +49,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //  "rightCounit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph
 //    val D=Examples.Grph
-//    val X=Graph120114
+//    val X=GraphDataset120114
 //    val F=Examples.ReverseGraph
 //    IsNaturalIsomorphism(F.rightCounit(X)) should equal(True)
 //  }
@@ -57,7 +57,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //  "leftUnit" should "be an isomorphism for translations that are equivalences" in {
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
-//    val X=Graph120114
+//    val X=GraphDataset120114
 //    val F=Examples.TerminalFunctor(C)
 //    IsNaturalIsomorphism(F.leftUnit(X)) should equal(True)
 //  }
@@ -65,20 +65,23 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //   "leftCounit" should "be an isomorphism for translations that are equivalences" in {
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
+//    val X=Indiscrete3Dataset120113  
 //    val F=Examples.TerminalFunctor(C)
-//    IsNaturalIsomorphism(F.leftCounit) should equal(True)
+//    IsNaturalIsomorphism(F.leftCounit(X)) should equal(True)
 //  }
 //   
 //    "rightUnit" should "be an isomorphism for translations that are equivalences" in {
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
+//    val X=Indiscrete3Dataset120113
 //    val F=Examples.TerminalFunctor(C)
-//    IsNaturalIsomorphism(F.rightUnit) should equal(True)
+//    IsNaturalIsomorphism(F.rightUnit(X)) should equal(True)
 //  }
 //    
 //     "rightCounit" should "be an isomorphism for translations that are equivalences" in {
 //    val C=Examples.IndiscreteCategory(3)
 //    val D=Examples.TerminalCategory
+//    val X=Indiscrete3Dataset120113
 //    val F=Examples.TerminalFunctor(C)
 //    IsNaturalIsomorphism(F.rightCounit) should equal(True)
 //  }
@@ -97,7 +100,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 //    IsNaturalIsomorphism(F.leftCounit) should equal(True)
 //  } 
  
-  val Graph120114 = Dataset(source = Examples.Grph,
+  val GraphDataset120114 = Dataset(source = Examples.Grph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
       "a vertex" -> List("A", "B", "C", "D")),
@@ -115,5 +118,92 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
         "i" -> "A",
         "j" -> "C")))
   
+  val Indiscrete3Dataset120113 = Dataset(
+    source = Examples.Isomorphism,
+    onObjects = Map(
+      "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+      "1" -> List("A1", "B1", "B2", "C1", "C2", "C3"),
+      "2" -> List("u", "v", "w", "x", "y", "z")
+    ),
+    onMorphisms = Map(
+      ("0" --- "E00" --> "0") -> Map(
+        "a1" -> "a1",
+        "b1" -> "b1",
+        "b2" -> "b2",
+        "c1" -> "c1",
+        "c2" -> "c2",
+        "c3" -> "c3"
+      ),("0" --- "E01" --> "1") -> Map(
+        "a1" -> "A1",
+        "b1" -> "B1",
+        "b2" -> "B2",
+        "c1" -> "C1",
+        "c2" -> "C2",
+        "c3" -> "C3"
+      ),
+      ("0" --- "E02" --> "2") -> Map(
+        "a1" -> "u",
+        "b1" -> "v",
+        "b2" -> "w",
+        "c1" -> "x",
+        "c2" -> "y",
+        "c3" -> "z"
+      ),
+      ("1" --- "E10" --> "0") -> Map(
+        "A1" -> "a1",
+        "B1" -> "b1",
+        "B2" -> "b2",
+        "C1" -> "c1",
+        "C2" -> "c2",
+        "C3" -> "c3"
+      ),
+      ("1" --- "E11" --> "1") -> Map(
+        "A1" -> "A1",
+        "B1" -> "B1",
+        "B2" -> "B2",
+        "C1" -> "C1",
+        "C2" -> "C2",
+        "C3" -> "C3"
+      ),
+      ("1" --- "E12" --> "2") -> Map(
+        "A1" -> "u",
+        "B1" -> "v",
+        "B2" -> "w",
+        "C1" -> "x",
+        "C2" -> "y",
+        "C3" -> "z"
+      ),
+      ("2" --- "E20" --> "0") -> Map(
+        "u" -> "a1",
+        "v" -> "b1",
+        "w" -> "b2",
+        "x" -> "c1",
+        "y" -> "c2",
+        "z" -> "c3"
+      ),
+      ("2" --- "E21" --> "1") -> Map(
+        "u" -> "A1",
+        "v" -> "B1",
+        "w" -> "B2",
+        "x" -> "C1",
+        "y" -> "C2",
+        "z" -> "C3"
+      ),
+      ("2" --- "E10" --> "2") -> Map(
+        "u" -> "u",
+        "v" -> "v",
+        "w" -> "w",
+        "x" -> "x",
+        "y" -> "y",
+        "z" -> "z"
+      )
+    )
+  )
   
+  val Chain3Dataset120114 = Dataset(source=Examples.Chain(3))
+  	 onObjects = Map(
+      "V0" -> List("f", "g", "h", "i", "j"),
+      "V1" -> List("A", "B", "C", "D"),
+      ),
+
 }
