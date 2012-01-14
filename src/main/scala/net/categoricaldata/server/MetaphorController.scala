@@ -18,6 +18,7 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   def `GET /metaphor/examples/ontologies/Chain/:n`(n: Int): Ontology = Examples.Chain(n)
   def `GET /metaphor/examples/ontologies/Isomorphism`: Ontology = Examples.Isomorphism
   def `GET /metaphor/examples/ontologies/Grph`: Ontology = Examples.Grph
+  def `GET /metaphor/examples/ontologies/FiniteCyclicMonoid/:n/:k` (n: Int, k:Int): Ontology = Examples.FiniteCyclicMonoid (n,k)
   def `GET /metaphor/examples/datasets/TerminalBigraph`: Dataset = Examples.TerminalBigraph
   def `GET /metaphor/examples/translations/ReverseGraph`: Translation = Examples.ReverseGraph
 
