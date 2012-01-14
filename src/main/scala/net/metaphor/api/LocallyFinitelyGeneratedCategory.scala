@@ -13,7 +13,8 @@ case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   // This is purely a micro-optimization.
   override lazy val hashCode = morphisms.hashCode
 
-  override def toString = {
+  // FIXME making this a val for a moment, looking for errors
+  override val toString = {
     val afterFirstQuote = """".*"( --- ".*" --> ".*")""".r
     source.toString + (for (m <- morphisms; s = m.toString) yield afterFirstQuote.unapplySeq(s).get.head).mkString
   }
