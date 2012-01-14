@@ -8,7 +8,7 @@ import org.mortbay.jetty.nio._
 object RunWebApp extends App {
   val server = new Server
   val scc = new SelectChannelConnector
-  scc.setPort(8081)
+  scc.setPort(8083)
   server.setConnectors(Array(scc))
 
   val context = new WebAppContext()

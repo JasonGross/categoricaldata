@@ -51,7 +51,7 @@ testOptions in DevTest := Seq(Tests.Filter(devFilter))
 
 seq(webSettings :_*)
 
-port in container.Configuration := 8081
+port in container.Configuration := 8083
 
 scalacOptions ++= Seq("-Xexperimental")
 
