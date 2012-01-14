@@ -368,7 +368,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
 //        "dc" -> "dd",
 //        "dd" -> "dd")))
         
-           val FCM4_3 = Dataset(source = Examples.FiniteCyclicMonoid(4, 3),
+  val FCM4_3 = Dataset(source = Examples.FiniteCyclicMonoid(4, 3),
     onObjects = Map(
       "an element" -> List("a", "b")),
     onMorphisms = Map(
