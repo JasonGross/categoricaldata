@@ -17,6 +17,15 @@
 
 \maketitle
 
+\section{Recipes}
+
+\section{Metaphor}
+The Metaphor server (currently running at \url{http://categoricaldata.net/metaphor}) provides an interface to the underlying Scala library. It works as both a RESTful web service, transmitting objects as JSON data, and as a user interface accessible through a web browser.
+
+The primary objects in Metaphor are \emph{ontologies}, \emph{datasets} and \emph{translations}. Every ontology, dataset or ontology has a JSON representation (a quasi-human readable, machine parseable format). Nearly all of the URLs provided by the Metaphor server correspond to one of these three types of objects. If a client requests such a URL, with the header \code{Accept: application/json}, the server will respond with the JSON representation of the corresponding object. If you load such a URL in a web browser (which will typically provide a header like \code{Accept: text/html}) then a human readable web page displaying the object will be returned. (Note that this means you can always copy and paste a Metaphor URL from your browser into any input field, or pass it as an argument just as if it were pure JSON.)
+
+\subsection{JSON formats}
+
 \section{Scala}
 
 \subsection{Class hierarchies}
@@ -131,5 +140,136 @@ object Ontology { ... }
 \label{fig:ontology-hierarchy}
 \caption{The \type{Ontology} type hierarchy.}
 \end{figure}
+
+\subsection{Categories}
+At the top of the hierarchy of categories is \type{Category}. It contains two abstract type members, \code{O} and \code{M}, which represent the types of objects and morphisms for the category. (If a type has an abstract type member, it cannot be instantiated --- some subtype will override these type members, specifying concrete types.) Essentially the only other functionality in \type{Category} are the methods \code{identity}, \code{source}, \code{target} and \code{compose}, which provide the basic operations on objects and morphisms.
+
+Below \type{Category} we have \type{SmallCategory}. For our purposes, a \type{SmallCategory} is a category for which we can talk about the category of functors to \type{Set}. In particular, \type{SmallCategory} contains an inner type \type{FunctorToSet}. (This will eventually be specialized to the inner type \type{Dataset} in \type{Ontology}.)
+
+Below \type{SmallCategory} we have \type{LocallyFinitelyGeneratedCategory}. Mathematically, a locally finitely generated category is a category with a finite set of `generators' between each pair of objects, such that every morphism can be obtained by composing some sequence of generators. Moreover, we insist that the set of generators with a fixed source but arbitrary target is finite (even when there are infinitely many objects), and similarly for a fixed target.
+
+In Scala, we implement this by introducing a new abstract type member \code{G} to represent generators, and override the type \code{M}, defining it once and for all to be \code{PathEquivalenceClass}. Further, \type{LocallyFinitelyGeneratedCategory} provides definitions of \code{identity}, \code{source}, \code{target} and \code{compose}, the basic operations from \type{Category}. An implementation of a \type{LocallyFinitelyGeneratedCategory} must provide a number of new methods, instead. The most important of these is \code{def generators(s: O, t: O): List[G]}, specifying the generators between two objects. Further, the category must provide a method \code{def pathEquality(p1: Path, p2: Path): Boolean}, which determines whether two compositions of generators are equal. (Override the method \code{def pathHashCode(p: Path): Int} is highly recommended as well.)
+
+Below \type{LocallyFinitelyGeneratedCategory} we have \type{FinitelyGeneratedCategory}. Now we insist that there are finitely many objects.
+
+Below \type{FinitelyGeneratedCategory} we have \type{FinitelyPresentedCategory}, which provides a method \code{def relations(s: O, t: O): List[(Path, Path)]}. In principle at least, \type{FinitelyPresentedCategory} could provide an implementation of the method \code{pathEquality}, but since this is potentially a hard (!) problem we defer this to traits which use particular strategies to decide path equality.
+
+Finally, an \type{Ontology} inherits from \type{FinitelyPresentedCategory}.
+
+\subsection{Functors}
+The basic \type{Functor} type is
+\begin{verbatim}
+trait Functor {
+    val source: Category
+    val target: Category
+    
+    def onObjects(source.O): target.O
+    def onMorphisms(source.M): target.M
+}
+\end{verbatim}
+
+It also comes with some convenience \code{apply} methods, so if \code{F} is a functor we can simply write \code{F(o)} or \code{F(m)} to apply it to an object or morphism. Implementations, however, should override \code{onObjects} and \code{onMorphisms}.
+
+The type hierarchy is quite complicated, and two-dimensional rather than linear! Most of the relevant types are traits contained in the object \type{Functor}. In particular, we have
+\begin{itemize}
+\item \type{Functor.withSmallSource}
+\item \type{Functor.withLocallyFinitelyGeneratedSource}
+\item \type{Functor.withFinitelyGeneratedSource}
+\item \type{Functor.withFinitelyPresentedSource}
+\end{itemize}
+and 
+\begin{itemize}
+\item \type{Functor.withSmallTarget}
+\item \type{Functor.withLocallyFinitelyGeneratedTarget}
+\item \type{Functor.withFinitelyGeneratedTarget}
+\item \type{Functor.withFinitelyPresentedTarget}
+\end{itemize}
+along with the combined types \code{Functor.withXXXSource.withYYYTarget}, for each of the possible values of \code{XXX} and \code{YYY}.
+
+\type{Functor.withLocallyFinitelyGeneratedSource} (and all its descendants) provides an implementation of \code{onMorphisms}, but has a new abstract method \code{def onGenerators(source.G): target.M} which must be implemented by instances.
+
+See below in \S \ref{sec:datafunctors} for a description of where in this type hierarchy the various data functors (pullback, left and right pushforwards) are defined.
+
+
+\begin{figure}[ht]
+\begin{tikzpicture}[rotate=90,scale=0.85]
+\tikzset{type/.append style={text width=4cm}, anchor=north east, transform shape}
+\node[type] (Functor) at (0,0) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+\end{verbatim}
+};
+\node[type] (Functor.ss) at (5,0) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+  .withSmallSource
+\end{verbatim}
+};
+\node[type] (Functor.lfgs) at (10,0) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+  .withLocallyFinitely
+     GeneratedSource
+\end{verbatim}
+};
+\node[type] (Functor.fgs) at (15,0) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+  .withFinitely
+     GeneratedSource
+\end{verbatim}
+};
+\node[type] (Functor.fps) at (20,0) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+  .withFinitely
+     PresentedSource
+\end{verbatim}
+};
+\node[type] (Functor.st) at (0,-3) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+  .withSmallTarget
+\end{verbatim}
+};
+\node[type] (Functor.lfgt) at (0,-6) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+  .withLocallyFinitely
+    GeneratedTarget
+\end{verbatim}
+};
+\node[type] (Functor.fgt) at (0,-9) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+  .withFinitely
+    GeneratedTarget
+\end{verbatim}
+};
+\node[type] (Functor.fpt) at (0,-12) {
+\vspace{-0.3cm}
+\begin{verbatim}
+Functor
+  .withFinitely
+    PresentedTarget
+\end{verbatim}
+};
+\end{tikzpicture}
+\label{fig:functor-hierarchy}
+\caption{The \type{Functor} type hierarchy.}
+\end{figure}
+
+\subsection{Functors to \type{Set}}
+
+\subsection{Data functors}
+
 
 \end{document}
