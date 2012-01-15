@@ -8,7 +8,7 @@
 
 \newcommand{\type}[1]{{\tt #1}}
 \newcommand{\code}[1]{{\tt #1}}
-
+\newcommand{\metaphor}[1]{\href{http://categoricaldata.net/metaphor/#1}{\tt #1}}
 
 \title{User Guide}
 \author{Scott Morrison and David Spivak}
@@ -17,14 +17,55 @@
 
 \maketitle
 
+\section{TODO}
+\begin{itemize}
+\item Write this TODO list.
+\item Write some 'recipes'; essentially whatever is currently the most impressive demo.
+\end{itemize}
+
+\subsection{Metaphor}
+\begin{itemize}
+\item The Metaphor section is getting ahead of reality; add trello TODO items.
+\end{itemize}
+\subsection{Scala}
+\begin{itemize}
+\item Have the \verb+\type{...}+ command actually link directly to the Scaladoc.
+\item Explain about \code{objectsAtLevel}.
+\item Draw more of the \type{Functor} type hierarchy.
+\end{itemize}
+
 \section{Recipes}
 
 \section{Metaphor}
-The Metaphor server (currently running at \url{http://categoricaldata.net/metaphor}) provides an interface to the underlying Scala library. It works as both a RESTful web service, transmitting objects as JSON data, and as a user interface accessible through a web browser.
+The Metaphor server (running at \url{http://categoricaldata.net/metaphor}) provides an interface to the underlying Scala library. It works both as a user interface accessible through a web browser and as a RESTful web service, transmitting objects as JSON data. 
 
-The primary objects in Metaphor are \emph{ontologies}, \emph{datasets} and \emph{translations}. Every ontology, dataset or ontology has a JSON representation (a quasi-human readable, machine parseable format). Nearly all of the URLs provided by the Metaphor server correspond to one of these three types of objects. If a client requests such a URL, with the header \code{Accept: application/json}, the server will respond with the JSON representation of the corresponding object. If you load such a URL in a web browser (which will typically provide a header like \code{Accept: text/html}) then a human readable web page displaying the object will be returned. (Note that this means you can always copy and paste a Metaphor URL from your browser into any input field, or pass it as an argument just as if it were pure JSON.)
+The primary objects in Metaphor are \emph{ontologies}, \emph{datasets} and \emph{translations}. Nearly all of the URLs provided by the Metaphor server correspond to one of these three types of objects.  Every ontology, dataset or ontology has a JSON representation (a quasi-human readable, machine parseable format, c.f. \S \ref{sec:JSON}).  If a client requests such a URL, with the header \code{Accept: application/json}, the server will respond with the JSON representation of the corresponding object. If you load such a URL in a web browser (which will typically provide a header like \code{Accept: text/html}) then a human readable web page displaying the object will be returned instead. (Note that this means you can always copy and paste a Metaphor URL from your browser into any input field, or pass it as an argument just as if it were pure JSON.)
+
+\subsection{Examples}
+Currently the Metaphor server provides a small supply of example data. See
+\begin{itemize}
+\item \metaphor{examples/ontologies}
+\item \metaphor{examples/datasets}
+\item \metaphor{examples/translations}
+\end{itemize}
+for lists of examples, or go directly to \metaphor{examples/translations/Skip/5/3}.
+
+\subsection{Computations}
+The Metaphor server currently supports computation of the three basic data functors (pullback, left and right pushforward), via requests to
+\begin{itemize}
+\item \metaphor{compute/pullback}
+\item \metaphor{compute/leftPushforward}
+\item \metaphor{compute/rightPushforward}
+\end{itemize}
+Each of these requests requires two parameters, \code{translation} and \code{dataset}. The value of these parameters may either be a JSON encoded object or an encoded URL. If it is a URL, the Metaphor server will make the necessary requests to obtain the desired object. (In fact, it might take some shortcuts, if it's a URL pointing to the same Metaphor server.)
+
+Requesting these URLs with missing or invalid parameters from a browser will produce a form asking for further input.
+
+\subsection{External URLs}
+It's perfectly possible to store ontologies, translations and datasets outside of the Metaphor server. Any URL that resolves to a JSON encoded object will do.
 
 \subsection{JSON formats}
+\label{sec:JSON}
 
 \section{Scala}
 
@@ -137,8 +178,8 @@ object Ontology { ... }
 \draw[->] (SmallCategory) -- (Category);
 \draw[dashed] (Ontology) -- (Ontology-companion);
 \end{tikzpicture}
-\label{fig:ontology-hierarchy}
 \caption{The \type{Ontology} type hierarchy.}
+\label{fig:ontology-hierarchy}
 \end{figure}
 
 \subsection{Categories}
@@ -177,16 +218,16 @@ The type hierarchy is quite complicated, and two-dimensional rather than linear!
 \item \type{Functor.withFinitelyGeneratedSource}
 \item \type{Functor.withFinitelyPresentedSource}
 \end{itemize}
-and 
+(each inheriting from the last) and 
 \begin{itemize}
 \item \type{Functor.withSmallTarget}
 \item \type{Functor.withLocallyFinitelyGeneratedTarget}
 \item \type{Functor.withFinitelyGeneratedTarget}
 \item \type{Functor.withFinitelyPresentedTarget}
 \end{itemize}
-along with the combined types \code{Functor.withXXXSource.withYYYTarget}, for each of the possible values of \code{XXX} and \code{YYY}.
+along with the combined types \code{Functor.withXXXSource.withYYYTarget}, for each of the possible values of \code{XXX} and \code{YYY}. This two-dimensional hierarchy, along with the most important features of some types, is shown in Figure \ref{fig:functor-hierarchy}.
 
-\type{Functor.withLocallyFinitelyGeneratedSource} (and all its descendants) provides an implementation of \code{onMorphisms}, but has a new abstract method \code{def onGenerators(source.G): target.M} which must be implemented by instances.
+\type{Functor.withLocallyFinitelyGeneratedSource} (and hence all its descendants) provides an implementation of \code{onMorphisms}, but has a new abstract method \code{def onGenerators(source.G): target.M} which must be implemented by instances.
 
 See below in \S \ref{sec:datafunctors} for a description of where in this type hierarchy the various data functors (pullback, left and right pushforwards) are defined.
 
@@ -263,13 +304,17 @@ Functor
 \end{verbatim}
 };
 \end{tikzpicture}
-\label{fig:functor-hierarchy}
 \caption{The \type{Functor} type hierarchy.}
+\label{fig:functor-hierarchy}
 \end{figure}
 
+\subsection{The category of \type{Set}s}
+
 \subsection{Functors to \type{Set}}
+\label{sec:functorstoset}
 
 \subsection{Data functors}
+\label{sec:datafunctors}
 
 
 \end{document}
