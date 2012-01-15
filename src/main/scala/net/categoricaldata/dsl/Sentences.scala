@@ -43,7 +43,7 @@ object Sentences {
 
   case class StringRelation(left: StringPath, right: StringPath)
 
-  class ConcreteOntology(_objects: Traversable[String], _arrows: Traversable[StringArrow], _relations: Traversable[StringRelation]) extends Ontology {
+  class ConcreteOntology(_objects: Traversable[String], _arrows: Traversable[StringArrow], _relations: Traversable[StringRelation], _json: Option[String]) extends Ontology {
     private val boxes = _objects.toList map { Box(_) }
 
     private implicit def stringToBox(s: String) = boxes.find(_.name == s).get
@@ -68,11 +68,13 @@ object Sentences {
     override def relations(source: Box, target: Box) = relationsMap(source, target)
     
     override def pathEquality(p1: Path, p2: Path) = ???
+    
+    override def toJSON = super.toJSON.copy(json = _json)
   }
 
-  def Ontology(objects: Traversable[String], arrows: Traversable[StringArrow], relations: Traversable[StringRelation] = Nil): Ontology = {
+  def Ontology(objects: Traversable[String], arrows: Traversable[StringArrow], relations: Traversable[StringRelation] = Nil, json: Option[String] = None): Ontology = {
     // Construct a new ontology object
-    new ConcreteOntology(objects, arrows, relations)
+    new ConcreteOntology(objects, arrows, relations, json)
   }
 
   class ConcreteTranslation(override val source: Ontology, override val target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath) extends Translation {

@@ -15,6 +15,14 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   // TODO toJSON should embed the request URL
   // TODO when extracting from JSON, should store the original representation
 
+  // each entry contains the name of an Ontology, and a list of parameter names and example values.
+  val exampleOntologies: List[(String, List[(String, String)])] = List(
+      ("Chain", List(("n", "4"))),
+      ("Isomorphism", Nil),
+      ("Grph", Nil),
+      ("FiniteCyclicMonoid", List(("n", "5"), ("m", "3"))))
+  def `GET /metaphor/examples` = ??? // work out how to render exampleOntologies as some HTML
+  
   def `GET /metaphor/examples/ontologies/Chain/:n`(n: Int): Ontology = Examples.Chain(n)
   def `GET /metaphor/examples/ontologies/Isomorphism`: Ontology = Examples.Isomorphism
   def `GET /metaphor/examples/ontologies/Grph`: Ontology = Examples.Grph
@@ -24,5 +32,11 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
 
   def `GET /metaphor/compute/leftPushforward`(translation: Translation, dataset: Dataset): Dataset = {
     translation.__!(dataset)
+  }
+  def `GET /metaphor/compute/rightPushforward`(translation: Translation, dataset: Dataset): Dataset = {
+    translation.__*(dataset)
+  }
+  def `GET /metaphor/compute/pullback`(translation: Translation, dataset: Dataset): Dataset = {
+    translation.^*(dataset)
   }
 }

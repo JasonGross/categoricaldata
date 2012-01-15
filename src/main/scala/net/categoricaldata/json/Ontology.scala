@@ -4,7 +4,7 @@ case class Arrow(source: String, target: String, label: String)
 
 case class Relation(left: List[Arrow], right: List[Arrow])
 
-case class Ontology(objects: List[String], arrows: List[Arrow], relations: List[Relation]) {
+case class Ontology(objects: List[String], arrows: List[Arrow], relations: List[Relation], json: Option[String] = None) {
   def unpack: net.categoricaldata.api.Ontology = {
     val stringArrows = arrows.map(a => net.categoricaldata.dsl.Sentences.StringArrow(a.source, a.target, a.label))
     val stringRelations = relations.map({
@@ -16,6 +16,6 @@ case class Ontology(objects: List[String], arrows: List[Arrow], relations: List[
       }
 
     })
-    net.categoricaldata.dsl.Sentences.Ontology(objects, stringArrows, stringRelations)
+    net.categoricaldata.dsl.Sentences.Ontology(objects, stringArrows, stringRelations, json)
   }
 }

@@ -299,6 +299,6 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
   }
 
-  lazy val toJSON = net.categoricaldata.json.Pack.packOntology(this)
+  def toJSON = net.categoricaldata.json.Pack.packOntology(this)
 }
 

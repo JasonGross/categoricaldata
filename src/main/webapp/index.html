@@ -25,11 +25,13 @@ Next, specify a translation with the same source.
 <textarea id="translation-display" rows="12" cols="60"></textarea>
 
 <hr>
-Finally, you can ask the server to compute the left pushforward.<br/>
-<button type="button" onclick="computeLeftPushforward()">Compute pushforward</button>
+Finally, you can ask the server to compute any of the following data migration functors:<br/>
+<button type="button" onclick="compute('pullback')">the pullback</button>
+<button type="button" onclick="compute('leftPushforward')">the left pushforward</button>
+<button type="button" onclick="compute('rightPushforward')">the right pushforward</button>
 <br/>
 
-<textarea id="leftPushforward-result" rows="30" cols="120"></textarea>
+<textarea id="result" rows="30" cols="120"></textarea>
 
 <script>
 function prettyPrint(json) {
@@ -75,13 +77,13 @@ $.ajax({
 </script>
 
 <script>
-function computeLeftPushforward() {
+function compute(datafunctor) {
 $.ajax({
 	type: "GET",
-	url: "/metaphor/compute/leftPushforward",
+	url: "/metaphor/compute/" + datafunctor,
 	data: { "translation": $("#translation-display").val(), "dataset": $("#dataset-display").val() },
 	success: function(data){
-		$("#leftPushforward-result").val(prettyPrint(data));
+		$("#result").val(prettyPrint(data));
 	},
 	error:function (xhr, ajaxOptions, thrownError){
                     alert("An error occurred on the server. Response code " + xhr.status + ". " + thrownError);
