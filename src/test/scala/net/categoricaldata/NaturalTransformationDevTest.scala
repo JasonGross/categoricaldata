@@ -22,7 +22,11 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   
 //  def IsNaturalIsomorphism(t:NaturalTransformation) : Boolean ={???}
 //
-//  "leftUnit" should "be an isomorphism for translations that are isomorphisms" in {
+//TODO (Scott) These are good tests, I think. Can you make them compile? 
+//  Knowing that unit and counit work correctly will validate a lot of code, I think. 
+  
+  
+//  "leftUnit" should "be an isomorphism for translations that are isomorphisms" in
 //    val C=Examples.Grph
 //    val D=Examples.Grph
 //    val X=GraphDataset120114
