@@ -13,11 +13,11 @@ class TranslationTransformer extends StringValueTransformer[net.categoricaldata.
   implicit val formats = net.liftweb.json.DefaultFormats
   import net.liftweb.json.JsonParser.parse
 
-  def toValue(from: String): Option[net.categoricaldata.api.Translation] = Some(parse(from).extract[net.categoricaldata.json.Translation]).map(_.unpack)
+  def toValue(from: String): Option[net.categoricaldata.api.Translation] = Some(parse(from).extract[net.categoricaldata.json.Translation].copy(json = Some(from))).map(_.unpack)
 }
 class DatasetTransformer extends StringValueTransformer[net.categoricaldata.api.Dataset] {
   implicit val formats = net.liftweb.json.DefaultFormats
   import net.liftweb.json.JsonParser.parse
 
-  def toValue(from: String): Option[net.categoricaldata.api.Dataset] = Some(parse(from).extract[net.categoricaldata.json.Dataset]).map(_.unpack)
+  def toValue(from: String): Option[net.categoricaldata.api.Dataset] = Some(parse(from).extract[net.categoricaldata.json.Dataset].copy(json = Some(from))).map(_.unpack)
 }

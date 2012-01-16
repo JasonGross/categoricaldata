@@ -13,7 +13,7 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   // TODO use reflection to look up methods on Examples (also, to generate lists)
 
   // TODO toJSON should embed the request URL
-  // TODO when extracting from JSON, should store the original representation
+  // TODO when extracting from JSON, should store the original representation (in progress)
 
   // each entry contains the name of an Ontology, and a list of parameter names and example values.
   val exampleOntologies: List[(String, List[(String, String)])] = List(

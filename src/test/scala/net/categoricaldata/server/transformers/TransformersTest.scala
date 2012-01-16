@@ -41,7 +41,8 @@ class TransformersTest extends FlatSpec with ShouldMatchers {
         "label": "has as target"
       }
     ],
-    "relations": []
+    "relations": [],
+    "extra": "arbitrary text along for the ride"
   },
   "target": {
     "objects": [
@@ -97,8 +98,9 @@ class TransformersTest extends FlatSpec with ShouldMatchers {
     }
   ]
 }"""
-     
-     new TranslationTransformer().toValue(literal) should not be('isEmpty)
+     val transformed = new TranslationTransformer().toValue(literal)
+     transformed should not be('isEmpty)
+     transformed.get.toJSON.source.json.get.contains("extra") should equal (true)
   }
   "Dataset" should "pass through the Bowler transformer successfully" in {
     for (dataset <- List(Examples.TerminalBigraph)) {

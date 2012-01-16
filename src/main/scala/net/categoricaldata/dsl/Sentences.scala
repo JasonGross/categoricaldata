@@ -48,27 +48,27 @@ object Sentences {
 
     private implicit def stringToBox(s: String) = boxes.find(_.name == s).get
     private implicit def stringArrow2Arrow(sa: StringArrow) = Arrow(sa.source, sa.target, sa.label)
-    
+
     private val allArrows: List[Arrow] = for (sa <- _arrows.toList) yield stringArrow2Arrow(sa)
     private val arrowMap = allArrows.groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
 
-    private val _allRelations: List[(Path, Path)] = (for(StringRelation(lhs, rhs) <- _relations.toList) yield {
+    private val _allRelations: List[(Path, Path)] = (for (StringRelation(lhs, rhs) <- _relations.toList) yield {
       val source: Box = lhs.source
       val target: Box = lhs.target
       val leftMorphisms = lhs.arrows.map(stringArrow2Arrow(_))
       val rightMorphisms = rhs.arrows.map(stringArrow2Arrow(_))
       (Path(source, target, leftMorphisms), Path(source, target, rightMorphisms))
     })
-    private val relationsMap = _allRelations.groupBy(a => (a._1.source,a._1.target)).withDefaultValue(Nil)
-    
+    private val relationsMap = _allRelations.groupBy(a => (a._1.source, a._1.target)).withDefaultValue(Nil)
+
     val minimumLevel = 0
     val maximumLevel = 0
     def objectsAtLevel(k: Int) = if (k == 0) boxes else Nil
     override def generators(source: Box, target: Box) = arrowMap(source, target)
     override def relations(source: Box, target: Box) = relationsMap(source, target)
-    
+
     override def pathEquality(p1: Path, p2: Path) = ???
-    
+
     override def toJSON = super.toJSON.copy(json = _json)
   }
 
@@ -77,7 +77,7 @@ object Sentences {
     new ConcreteOntology(objects, arrows, relations, json)
   }
 
-  class ConcreteTranslation(override val source: Ontology, override val target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath) extends Translation {
+  class ConcreteTranslation(override val source: Ontology, override val target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath, _json: Option[String] = None) extends Translation {
     private val objectMap: Map[Box, Box] = (for (s <- source.objects) yield {
       val t = target.objects.find(_.name == onObjects(s.name)).get
       s -> t
@@ -92,18 +92,21 @@ object Sentences {
     }).toMap
 
     verifyRelations
-    
+
     override def onObjects(o: Box) = objectMap(o)
     // And again, replacing source.G with the apparently equivalent Arrow causes an AbstractMethodError
     override def onGenerators(a: source.G) = morphismMap(a)
+
+    override def toJSON = super.toJSON.copy(json = _json)
+
   }
 
-  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath): Translation = {
+  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath, json: Option[String] = None): Translation = {
     // construct a new translation object
-    new ConcreteTranslation(source, target, onObjects, onMorphisms)
+    new ConcreteTranslation(source, target, onObjects, onMorphisms, json)
   }
 
-  def Dataset(source: Ontology, onObjects: String => Traversable[String], onMorphisms: StringArrow => (String => String)): source.Dataset = {
+  def Dataset(source: Ontology, onObjects: String => Traversable[String], onMorphisms: StringArrow => (String => String), _json: Option[String] = None): source.Dataset = {
 
     val objectMap = (for (s <- source.objects) yield {
       s -> onObjects(s.name).toList
@@ -115,14 +118,16 @@ object Sentences {
     }).toMap
 
     (new source.Dataset {
-      
+
       verifyRelations
-      
+
       override def onObjects(o: source.O) = objectMap(o)
       // WEIRD: changing source.G to Arrow (which should be fine) results in AbstractMethodError at runtime. Compiler bug?
       override def onGenerators(a: source.G): FFunction = new DatasetFunction(a) {
         override def toFunction = morphismMap(a)
       }
+
+      override def toJSON = super.toJSON.copy(json = _json)
     }).memo
   }
 }
