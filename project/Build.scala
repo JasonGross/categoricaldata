@@ -10,5 +10,4 @@ object MetaphorBuild extends Build {
 
    lazy val DevTest = config("dev") extend (Test)
 	
-
 }
