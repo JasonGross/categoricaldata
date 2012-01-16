@@ -22,7 +22,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   
 //  def IsNaturalIsomorphism(t:NaturalTransformation) : Boolean ={???}
 //
-//TODO (Scott) These are good tests, I think. Can you make them compile? 
+//TODO (Scott) These are important tests. Can you make them compile? 
 //  Knowing that unit and counit work correctly will validate a lot of code, I think. 
   
   

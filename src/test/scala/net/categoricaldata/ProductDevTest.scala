@@ -26,10 +26,10 @@ class ProductDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 
   "Product of sets" should "correctly multiply 3 by 2" in {
     val Three: FSet = List("1", "2", "3")
-    val Two: FSet = List("a", "b")
+    val Two: FSet = List("a","b")
     val LHS = Sets.product(Three, Two)
     val RHS = List("1a", "1b", "2a", "2b", "3a", "3b")
-    // TODO this doesn't compile; because beIsomorphicTo doesn't do FSets
+    // TODO (Scott) this doesn't compile; because beIsomorphicTo doesn't do FSets
     //    LHS should beIsomorphicTo(RHS)
   }
 
@@ -38,7 +38,7 @@ class ProductDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     val Two: FSet = List("a", "b")
     val LHS = Sets.coproduct(Three, Two)
     val RHS = List("1", "2", "3", "a", "b")
-    // TODO this doesn't compile; because beIsomorphicTo doesn't do FSets
+    // TODO (Scott) this doesn't compile; because beIsomorphicTo doesn't do FSets
     //    LHS should beIsomorphicTo(RHS)
   }
 
@@ -68,7 +68,7 @@ class ProductDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     val EE = Sets.product(E, E)
     val LHS = XX(Box("an element"))
     val RHS = EE
-    //TODO this doesn't compile; because beIsomorphicTo doesn't do FSets
+    //TODO (Scott) this doesn't compile; because beIsomorphicTo doesn't do FSets
     //    LHS should beIsomorphicTo(RHS)
   }
 
@@ -80,7 +80,7 @@ class ProductDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     val EE = Sets.coproduct(E, E)
     val LHS = XX(Box("an element"))
     val RHS = EE
-    //TODO this doesn't compile; because beIsomorphicTo doesn't do FSets
+    //TODO (Scott) this doesn't compile; because beIsomorphicTo doesn't do FSets
     //    LHS should beIsomorphicTo(RHS)
   }
 
