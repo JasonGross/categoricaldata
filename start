@@ -1,0 +1,2 @@
+cd `dirname $0`
+exec ./sbt ~container:start >> metaphor.log 2>> metaphor_error.log

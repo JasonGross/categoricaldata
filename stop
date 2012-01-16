@@ -1,0 +1,12 @@
+if [ "`uname`" == "Darwin" ]; then
+	PROCESSES=`ps -A | grep java | grep container:start | grep metaphor | cut -f 3 -d ' '`
+else
+	PROCESSES=`./javaps -noflags | grep container:start | grep metaphor | cut -f 1`
+fi
+
+echo Found processes: "$PROCESSES". Killing them!
+for process in $PROCESSES;
+do
+	kill -9 $process
+done
+
