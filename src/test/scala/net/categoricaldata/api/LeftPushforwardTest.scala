@@ -104,7 +104,6 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
     onMorphisms = Map())
 
 
-
   
   "__!" should "properly convert a set to a step-and-hold FCM2_1" in {
     val F = Ontologies.terminalObject.findAllTranslationsTo(Examples.FiniteCyclicMonoid(2, 1)).head
