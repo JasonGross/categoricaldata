@@ -1,6 +1,5 @@
 package net.categoricaldata.examples
-import net.categoricaldata.api.Ontology
-import net.categoricaldata.api.Ontologies
+import net.categoricaldata.ontology._
 
 object Examples {
 

@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 trait FunctorToSet extends Functor {
   override val target: Sets.type = Sets  
@@ -11,8 +11,8 @@ trait FunctorsToSet extends Category {
   type O <: FunctorToSet
   type M <: NaturalTransformationToSet
 
-  def internalize(f: net.categoricaldata.api.FunctorToSet): O
-  def internalize(t: net.categoricaldata.api.NaturalTransformationToSet): M
+  def internalize(f: net.categoricaldata.category.FunctorToSet): O
+  def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): M
 
   override def identity(o: O) = internalize(???)
   override def source(m: M) = internalize(m.source)

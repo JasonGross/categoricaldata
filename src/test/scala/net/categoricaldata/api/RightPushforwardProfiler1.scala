@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 import net.categoricaldata.examples.Examples
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 import net.tqft.toolkit.Profiler

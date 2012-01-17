@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 trait Category { category =>
   type O

@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
 case class Path[O, G](source: O, target: O, morphisms: List[G]) {
@@ -32,7 +32,7 @@ case class Path[O, G](source: O, target: O, morphisms: List[G]) {
 trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   override type M = PathEquivalenceClass
   type G
-  type Path = net.categoricaldata.api.Path[O, G]
+  type Path = net.categoricaldata.category.Path[O, G]
 
   protected implicit def path2RichPath(path: Path) = new RichPath(path)
   protected class RichPath(path: Path) {

@@ -1,11 +1,11 @@
 package net.categoricaldata.dsl
-import net.categoricaldata.api.Arrow
-import net.categoricaldata.api.Box
-import net.categoricaldata.api.Ontology
-import net.categoricaldata.api.Ontologies
-import net.categoricaldata.api.Translation
-import net.categoricaldata.api.FFunction
-import net.categoricaldata.api.Path
+import net.categoricaldata.ontology.Arrow
+import net.categoricaldata.ontology.Box
+import net.categoricaldata.ontology.Ontology
+import net.categoricaldata.ontology.Ontologies
+import net.categoricaldata.ontology.Translation
+import net.categoricaldata.category.FFunction
+import net.categoricaldata.category.Path
 
 object Sentences {
   implicit def stringAsPath(s: String) = StringSource(s)

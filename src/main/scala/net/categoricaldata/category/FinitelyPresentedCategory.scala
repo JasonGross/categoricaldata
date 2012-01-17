@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
 trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =>

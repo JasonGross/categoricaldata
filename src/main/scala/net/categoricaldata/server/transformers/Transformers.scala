@@ -3,21 +3,21 @@ import com.recursivity.commons.bean.StringValueTransformer
 
 
 
-class OntologyTransformer extends StringValueTransformer[net.categoricaldata.api.Ontology] {
+class OntologyTransformer extends StringValueTransformer[net.categoricaldata.ontology.Ontology] {
   implicit val formats = net.liftweb.json.DefaultFormats
   import net.liftweb.json.JsonParser.parse
 
-  def toValue(from: String): Option[net.categoricaldata.api.Ontology] = Some(parse(from).extract[net.categoricaldata.json.Ontology].copy(json = Some(from))).map(_.unpack)
+  def toValue(from: String): Option[net.categoricaldata.ontology.Ontology] = Some(parse(from).extract[net.categoricaldata.json.Ontology].copy(json = Some(from))).map(_.unpack)
 }
-class TranslationTransformer extends StringValueTransformer[net.categoricaldata.api.Translation] {
+class TranslationTransformer extends StringValueTransformer[net.categoricaldata.ontology.Translation] {
   implicit val formats = net.liftweb.json.DefaultFormats
   import net.liftweb.json.JsonParser.parse
 
-  def toValue(from: String): Option[net.categoricaldata.api.Translation] = Some(parse(from).extract[net.categoricaldata.json.Translation].copy(json = Some(from))).map(_.unpack)
+  def toValue(from: String): Option[net.categoricaldata.ontology.Translation] = Some(parse(from).extract[net.categoricaldata.json.Translation].copy(json = Some(from))).map(_.unpack)
 }
-class DatasetTransformer extends StringValueTransformer[net.categoricaldata.api.Dataset] {
+class DatasetTransformer extends StringValueTransformer[net.categoricaldata.ontology.Dataset] {
   implicit val formats = net.liftweb.json.DefaultFormats
   import net.liftweb.json.JsonParser.parse
 
-  def toValue(from: String): Option[net.categoricaldata.api.Dataset] = Some(parse(from).extract[net.categoricaldata.json.Dataset].copy(json = Some(from))).map(_.unpack)
+  def toValue(from: String): Option[net.categoricaldata.ontology.Dataset] = Some(parse(from).extract[net.categoricaldata.json.Dataset].copy(json = Some(from))).map(_.unpack)
 }

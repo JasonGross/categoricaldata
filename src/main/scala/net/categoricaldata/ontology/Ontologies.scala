@@ -1,4 +1,5 @@
-package net.categoricaldata.api
+package net.categoricaldata.ontology
+import net.categoricaldata.category.{ Category, InitialObject, TerminalObject }
 
 object Ontologies extends Category with InitialObject with TerminalObject {
   override type O = Ontology

@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 trait Equalizers { category: Category =>
   class Cones(ms: category.M*) extends Category {

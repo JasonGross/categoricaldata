@@ -10,7 +10,7 @@ case class Translation(source: Ontology, target: Ontology, onObjects: Map[String
   require(onGenerators != null)
   for (a <- source.arrows) require(onGenerators.exists(_.arrow == a))
 
-  def unpack: net.categoricaldata.api.Translation = {
+  def unpack: net.categoricaldata.ontology.Translation = {
     net.categoricaldata.dsl.Sentences.Translation(
       source.unpack,
       target.unpack.assertFinite,

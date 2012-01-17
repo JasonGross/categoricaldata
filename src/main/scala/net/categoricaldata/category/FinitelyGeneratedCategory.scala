@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
@@ -344,12 +344,12 @@ object FinitelyGeneratedCategories {
     override type F = FunctorToSet
     override type T = NaturalTransformationToSet
 
-    def internalize(f: net.categoricaldata.api.FunctorToSet): F = new FunctorToSet {
+    def internalize(f: net.categoricaldata.category.FunctorToSet): F = new FunctorToSet {
       require(f.source == source)
       def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
       def onGenerators(g: G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
     }
-    def internalize(t: net.categoricaldata.api.NaturalTransformationToSet): T = new NaturalTransformationToSet {
+    def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): T = new NaturalTransformationToSet {
       require(t.sourceCategory == source)
       val source = internalize(t.source)
       val target = internalize(t.target)

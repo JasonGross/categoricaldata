@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 trait Equivalence { equivalence =>
 	val source: Category

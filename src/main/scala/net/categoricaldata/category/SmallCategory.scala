@@ -1,32 +1,32 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 trait SmallCategory extends Category { smallCategory =>
 
-  trait FunctorToSet extends FunctorFrom with net.categoricaldata.api.FunctorToSet
+  trait FunctorToSet extends FunctorFrom with net.categoricaldata.category.FunctorToSet
 
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet
 
-  trait NaturalTransformationToSet extends NaturalTransformationFrom with net.categoricaldata.api.NaturalTransformationToSet {
+  trait NaturalTransformationToSet extends NaturalTransformationFrom with net.categoricaldata.category.NaturalTransformationToSet {
     override val source: F
     override val target: F
   }
 
-  def internalize(f: net.categoricaldata.api.FunctorToSet): F
-  def internalize(t: net.categoricaldata.api.NaturalTransformationToSet): T
+  def internalize(f: net.categoricaldata.category.FunctorToSet): F
+  def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): T
 
-  trait FunctorsToSet extends net.categoricaldata.api.FunctorsToSet with InitialObject with TerminalObject with Products with Coproducts {
+  trait FunctorsToSet extends net.categoricaldata.category.FunctorsToSet with InitialObject with TerminalObject with Products with Coproducts {
     override type O >: F <: smallCategory.FunctorToSet
     override type M >: T <: smallCategory.NaturalTransformationToSet
 
-    override def internalize(f: net.categoricaldata.api.FunctorToSet) = smallCategory.internalize(f)
-    override def internalize(t: net.categoricaldata.api.NaturalTransformationToSet) = smallCategory.internalize(t)
+    override def internalize(f: net.categoricaldata.category.FunctorToSet) = smallCategory.internalize(f)
+    override def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = smallCategory.internalize(t)
 
     override def terminalObject = internalize(new FunctorToSet {
       override def onObjects(o: smallCategory.O) = Sets.terminalObject
       override def onMorphisms(m: smallCategory.M) = Sets.morphismToTerminalObject(Sets.terminalObject)
     })
-    override def morphismToTerminalObject(f: O) = internalize(new net.categoricaldata.api.NaturalTransformationToSet { t =>
+    override def morphismToTerminalObject(f: O) = internalize(new net.categoricaldata.category.NaturalTransformationToSet { t =>
       override val source = f
       override val target = terminalObject
       override def apply(o: t.sourceCategory.O) = Sets.morphismToTerminalObject(f(o))
@@ -35,7 +35,7 @@ trait SmallCategory extends Category { smallCategory =>
       override def onObjects(o: smallCategory.O) = Sets.initialObject
       override def onMorphisms(m: smallCategory.M) = Sets.morphismFromInitialObject(Sets.initialObject)
     })
-    override def morphismFromInitialObject(f: O) = internalize(new net.categoricaldata.api.NaturalTransformationToSet { t =>
+    override def morphismFromInitialObject(f: O) = internalize(new net.categoricaldata.category.NaturalTransformationToSet { t =>
       override val source = initialObject
       override val target = f
       override def apply(o: t.sourceCategory.O) = Sets.morphismFromInitialObject(f(o))
@@ -46,7 +46,7 @@ trait SmallCategory extends Category { smallCategory =>
       override def onMorphisms(m: smallCategory.M) = Sets.product(xs.map(_(m)):_*)
     })
     override def productProjections(xs: O*) = xs.toList.zipWithIndex map {
-      case (x, i) => internalize(new net.categoricaldata.api.NaturalTransformationToSet { t =>
+      case (x, i) => internalize(new net.categoricaldata.category.NaturalTransformationToSet { t =>
         override val source = product(xs:_*)
         override val target = x
         override def apply(o: t.sourceCategory.O) = Sets.productProjections(xs.map(_(o)))(i)
@@ -136,12 +136,12 @@ object SmallCategories {
     override type F = FunctorToSet
     override type T = NaturalTransformationToSet
 
-    def internalize(f: net.categoricaldata.api.FunctorToSet): F = new FunctorToSet {
+    def internalize(f: net.categoricaldata.category.FunctorToSet): F = new FunctorToSet {
       require(f.source == source)
       def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
       def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
     }
-    def internalize(t: net.categoricaldata.api.NaturalTransformationToSet): T = new NaturalTransformationToSet {
+    def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): T = new NaturalTransformationToSet {
       require(t.sourceCategory == source)
       val source = internalize(t.source)
       val target = internalize(t.target)

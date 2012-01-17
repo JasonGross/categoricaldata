@@ -1,4 +1,5 @@
-package net.categoricaldata.api
+package net.categoricaldata.ontology
+import net.categoricaldata.category._
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
 case class Box(name: String) {
@@ -9,7 +10,7 @@ case class Arrow(source: Box, target: Box, name: String) {
   override def toString = source.toString + " --- \"" + name + "\" --> " + target.toString
 }
 
-trait Dataset extends net.categoricaldata.api.FunctorToSet {
+trait Dataset extends net.categoricaldata.category.FunctorToSet {
 
 }
 
@@ -26,8 +27,8 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     "Ontology(objects = " + (for (o <- objects) yield "\"" + o.name + "\"") + ", arrows = " + allGenerators + ", relations = " + allRelations.map(p => p._1 + " === " + p._2) + ")"
   }
 
-  trait Dataset extends FunctorToSet with net.categoricaldata.api.Dataset { dataset =>
-    abstract class DatasetFunction(g: G) extends net.categoricaldata.api.FFunction {
+  trait Dataset extends FunctorToSet with net.categoricaldata.ontology.Dataset { dataset =>
+    abstract class DatasetFunction(g: G) extends net.categoricaldata.category.FFunction {
       override def source = onObjects(generatorSource(g))
       override def target = onObjects(generatorTarget(g))
     }
@@ -194,7 +195,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   override type F = Dataset
   override type T = Datamap
 
-  override def internalize(f: net.categoricaldata.api.FunctorToSet) = {
+  override def internalize(f: net.categoricaldata.category.FunctorToSet) = {
     f match {
       case f: Dataset => f
       case _ => {
@@ -208,7 +209,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
   }
 
-  override def internalize(t: net.categoricaldata.api.NaturalTransformationToSet) = {
+  override def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = {
     t match {
       case t: Datamap => t
       case _ => {

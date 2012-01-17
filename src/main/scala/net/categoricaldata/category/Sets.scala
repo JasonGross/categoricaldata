@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
 
@@ -47,6 +47,13 @@ trait FSet { fset =>
   def toStringList = toList.map(_.toString)
 
   lazy val isEmpty = toIterable.isEmpty
+}
+
+object FSet {
+  	implicit def asSet(i: Iterable[Any]): FSet = new FSet {
+	  override def toIterable = i
+	  override def sizeIfFinite = Some(i.size)
+	}
 }
 
 trait FiniteFSet extends FSet {

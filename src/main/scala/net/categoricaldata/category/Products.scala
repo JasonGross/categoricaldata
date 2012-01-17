@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 trait Products { category: Category =>
   class MorphismsToSet(os: Seq[O]) extends Category {

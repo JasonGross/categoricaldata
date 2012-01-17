@@ -1,19 +1,19 @@
 package net.categoricaldata
 
-import net.categoricaldata.api.Box
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
-import net.categoricaldata.api.Ontology
-import net.categoricaldata.api.Sets
+import net.categoricaldata.ontology.Box
+import net.categoricaldata.ontology.Ontology
+import net.categoricaldata.ontology.Ontologies
+import net.categoricaldata.category.Sets
+import net.categoricaldata.category.FSet
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
-import net.categoricaldata.api.Ontologies
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers
-import net.categoricaldata.api.FSet
 /*
  * This should always compile when checked in.
  */
