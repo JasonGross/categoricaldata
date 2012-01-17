@@ -1,15 +1,15 @@
 package net.categoricaldata.category.functor.withSmallSource
 import net.categoricaldata.category._
 
-trait withSmallTarget extends functor.withSmallSource with functor.withSmallTarget { smallFunctor =>
+trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarget { smallFunctor =>
   trait ContravariantDataFunctor extends Functor {
-    override val source = smallfunctor.target.AllFunctorsToSet
-    override val target: smallfunctor.source.SpecializedFunctorsToSet = smallfunctor.source.functorsToSet
+    override val source = smallFunctor.target.AllFunctorsToSet
+    override val target: smallFunctor.source.SpecializedFunctorsToSet = smallFunctor.source.functorsToSet
     def andThen(g: CovariantDataFunctor) = DataFunctors.compose(this, g)
   }
   trait CovariantDataFunctor extends Functor {
-    override val source = smallfunctor.source.AllFunctorsToSet
-    override val target: smallfunctor.target.SpecializedFunctorsToSet = smallfunctor.target.functorsToSet
+    override val source = smallFunctor.source.AllFunctorsToSet
+    override val target: smallFunctor.target.SpecializedFunctorsToSet = smallFunctor.target.functorsToSet
     def andThen(g: ContravariantDataFunctor) = DataFunctors.compose(this, g)
   }
 
@@ -32,14 +32,14 @@ trait withSmallTarget extends functor.withSmallSource with functor.withSmallTarg
   }
 
   trait Pullback extends ContravariantDataFunctor {
-    override def onObjects(i: smallfunctor.target.FunctorToSet) = smallfunctor.source.internalize(new smallfunctor.source.FunctorToSet {
-      def onObjects(o: smallfunctor.source.O) = i(smallfunctor.apply(o))
-      def onMorphisms(m: smallfunctor.source.M) = i(smallfunctor.apply(m))
+    override def onObjects(i: smallFunctor.target.FunctorToSet) = smallFunctor.source.internalize(new smallFunctor.source.FunctorToSet {
+      def onObjects(o: smallFunctor.source.O) = i(smallFunctor.apply(o))
+      def onMorphisms(m: smallFunctor.source.M) = i(smallFunctor.apply(m))
     })
-    override def onMorphisms(m: smallfunctor.target.NaturalTransformationToSet) = smallfunctor.source.internalize(new smallfunctor.source.NaturalTransformationToSet {
+    override def onMorphisms(m: smallFunctor.target.NaturalTransformationToSet) = smallFunctor.source.internalize(new smallFunctor.source.NaturalTransformationToSet {
       val source = onObjects(m.target)
       val target = onObjects(m.source)
-      def apply(o: smallfunctor.source.O) = m(smallfunctor.apply(o))
+      def apply(o: smallFunctor.source.O) = m(smallFunctor.apply(o))
     })
 
     // c.f. functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget.Pullback, which adds limitMorphism
@@ -49,12 +49,12 @@ trait withSmallTarget extends functor.withSmallSource with functor.withSmallTarg
 
   lazy val ^* = new Functor {
     override val source = FunctorsToSet
-    override val target = smallfunctor.source.functorsToSet
-    def onObjects(i: FunctorToSet) = pullback.apply(smallfunctor.target.internalize(i))
-    def onMorphisms(t: NaturalTransformationToSet) = pullback.apply(smallfunctor.target.internalize(t))
+    override val target = smallFunctor.source.functorsToSet
+    def onObjects(i: FunctorToSet) = pullback.apply(smallFunctor.target.internalize(i))
+    def onMorphisms(t: NaturalTransformationToSet) = pullback.apply(smallFunctor.target.internalize(t))
   }
 
 }
-trait withLocallyFinitelyGeneratedTarget extends functor.withSmallSource.withSmallTarget with functor.withLocallyFinitelyGeneratedTarget
-trait withFinitelyGeneratedTarget extends functor.withSmallSource.withLocallyFinitelyGeneratedTarget with functor.withFinitelyGeneratedTarget
-trait withFinitelyPresentedTarget extends functor.withSmallSource.withFinitelyGeneratedTarget with functor.withFinitelyPresentedTarget
+trait withLocallyFinitelyGeneratedTarget extends functor.withSmallSource.withSmallTarget with Functor.withLocallyFinitelyGeneratedTarget
+trait withFinitelyGeneratedTarget extends functor.withSmallSource.withLocallyFinitelyGeneratedTarget with Functor.withFinitelyGeneratedTarget
+trait withFinitelyPresentedTarget extends functor.withSmallSource.withFinitelyGeneratedTarget with Functor.withFinitelyPresentedTarget

@@ -1,4 +1,4 @@
-package net.categoricaldata.category.Functor
+package net.categoricaldata.category.functor
 import net.categoricaldata.category._
 
 class IdentityFunctor(val category: Category) extends Functor {

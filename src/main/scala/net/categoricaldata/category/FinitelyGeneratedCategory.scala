@@ -51,10 +51,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     trait Identity extends FinitelyGeneratedFunctorOver {
       override val source: categoryOver.type = categoryOver
       override val target: categoryOver.type = categoryOver
-      override val functor = new F {
+      override val functor = ??? /* new F {
         override def onObjects(o: categoryOver.source.O) = o
         override def onGenerators(g: categoryOver.source.G) = categoryOver.source.generatorAsMorphism(g)
-      }
+      } */
     }
 
   }
@@ -62,7 +62,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   trait FinitelyGeneratedFunctorOver extends FunctorOver {
     override val source: FinitelyGeneratedCategoryOver
     override val target: FinitelyGeneratedCategoryOver
-    trait F extends super.F with functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget
+    trait F extends super.F with net.categoricaldata.category.functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget
     override val functor: F
   }
 

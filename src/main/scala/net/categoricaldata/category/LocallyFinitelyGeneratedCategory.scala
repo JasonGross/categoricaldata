@@ -328,7 +328,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def apply(t: lfgCategory.O) = FFunction(source(t), target(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
   }
 
-  lazy val yoneda = new functor.withLocallyFinitelyGeneratedSource {
+  lazy val yoneda = new Functor.withLocallyFinitelyGeneratedSource {
     override val source: lfgCategory.opposite.type = lfgCategory.opposite
     override val target = functorsToSet
     override def onObjects(o: source.O) = internalize(new YonedaFunctor(o))

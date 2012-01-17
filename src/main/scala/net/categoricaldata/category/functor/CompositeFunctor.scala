@@ -1,4 +1,4 @@
-package net.categoricaldata.category.Functor
+package net.categoricaldata.category.functor
 import net.categoricaldata.category._
 
 class CompositeFunctor(val functor1: Functor, val functor2: Functor) extends Functor {
