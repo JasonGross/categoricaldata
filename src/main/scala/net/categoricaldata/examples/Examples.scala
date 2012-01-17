@@ -193,7 +193,7 @@ object Examples {
     objects = List(),
     arrows = List())
 
-  def InitialFunctor(c: Ontology with Ontologies.Finite) = Translation(
+  def InitialFunctor(c: Ontology with Ontology.Finite) = Translation(
     source = InitialCategory,
     target = c,
     onObjects = Map(),

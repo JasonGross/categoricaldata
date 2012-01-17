@@ -73,7 +73,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
       require(other.source == ontology)
 
-      val compositionDiagram = new Ontology with Ontologies.FreeAcyclic {
+      val compositionDiagram = new Ontology with Ontology.FreeAcyclic {
         lazy val unbox: Map[Box, Either[Box, Arrow]] = {
           ((for (b <- ontology.objects) yield b -> Left(b)) :::
             (for (a <- ontology.allGenerators) yield Box(a.toString) -> Right(a))).toMap
@@ -242,23 +242,23 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   override lazy val opposite: OppositeOntology = new OppositeOntology {}
 
-  def assertAcyclic: Ontology with Ontologies.Acyclic = {
+  def assertAcyclic: Ontology with Ontology.Acyclic = {
     this match {
-      case o: Ontologies.Acyclic => o
-      case _ => (new OntologyWrapper with Ontologies.Acyclic with FiniteByExhaustion).verifyAcyclic
+      case o: Ontology.Acyclic => o
+      case _ => (new OntologyWrapper with Ontology.Acyclic with FinitelyPresentedCategory.FiniteByExhaustion).verifyAcyclic
     }
   }
-  def assertFree: Ontology with Ontologies.Free = {
+  def assertFree: Ontology with Ontology.Free = {
     this match {
-      case o: Ontologies.Free => o
+      case o: Ontology.Free => o
       case _ =>
-        (new OntologyWrapper with Ontologies.Free).verifyFree
+        (new OntologyWrapper with Ontology.Free).verifyFree
     }
   }
-  def assertFinite: Ontology with Ontologies.Finite = {
+  def assertFinite: Ontology with Ontology.Finite = {
     this match {
-      case o: Ontologies.Finite => o
-      case _ => new OntologyWrapper with Ontologies.Finite with FiniteByExhaustion
+      case o: Ontology.Finite => o
+      case _ => new OntologyWrapper with Ontology.Finite with FinitelyPresentedCategory.FiniteByExhaustion
     }
   }
 
@@ -300,5 +300,60 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   }
 
   def toJSON = net.categoricaldata.json.Pack.packOntology(this)
+}
+
+object Ontology {
+  trait Finite extends Ontology with FinitelyPresentedCategory.FiniteMorphisms
+
+  trait Acyclic extends FinitelyPresentedCategory.Acyclic with Finite { ontology: Ontology =>
+    override def assertAcyclic = this
+    override def assertFree: Ontology with Ontology.FreeAcyclic = (new ontology.OntologyWrapper with FreeAcyclic).verifyFree
+
+  }
+  trait Free extends FinitelyPresentedCategory.Free { ontology: Ontology =>
+    override def assertAcyclic: Ontology with Ontology.FreeAcyclic = (new ontology.OntologyWrapper with FreeAcyclic).verifyAcyclic
+    override def assertFree = this
+  }
+  trait FreeAcyclic extends FinitelyPresentedCategory.FreeAcyclic with Acyclic with Free { ontology: Ontology =>
+    override def assertAcyclic = this
+    override def assertFree = this
+  }
+
+  import net.categoricaldata.dsl.Sentences
+
+  def apply(objects: Traversable[String], arrows: Traversable[Sentences.StringArrow], relations: Traversable[Sentences.StringRelation] = Nil, json: Option[String] = None): Ontology = {
+    class ConcreteOntology(_objects: Traversable[String], _arrows: Traversable[Sentences.StringArrow], _relations: Traversable[Sentences.StringRelation], _json: Option[String]) extends Ontology {
+      private val boxes = _objects.toList map { Box(_) }
+
+      private implicit def stringToBox(s: String) = boxes.find(_.name == s).get
+      private implicit def stringArrow2Arrow(sa: Sentences.StringArrow) = Arrow(sa.source, sa.target, sa.label)
+
+      private val allArrows: List[Arrow] = for (sa <- _arrows.toList) yield stringArrow2Arrow(sa)
+      private val arrowMap = allArrows.groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
+
+      private val _allRelations: List[(Path, Path)] = (for (Sentences.StringRelation(lhs, rhs) <- _relations.toList) yield {
+        val source: Box = lhs.source
+        val target: Box = lhs.target
+        val leftMorphisms = lhs.arrows.map(stringArrow2Arrow(_))
+        val rightMorphisms = rhs.arrows.map(stringArrow2Arrow(_))
+        (Path(source, target, leftMorphisms), Path(source, target, rightMorphisms))
+      })
+      private val relationsMap = _allRelations.groupBy(a => (a._1.source, a._1.target)).withDefaultValue(Nil)
+
+      val minimumLevel = 0
+      val maximumLevel = 0
+      def objectsAtLevel(k: Int) = if (k == 0) boxes else Nil
+      override def generators(source: Box, target: Box) = arrowMap(source, target)
+      override def relations(source: Box, target: Box) = relationsMap(source, target)
+
+      override def pathEquality(p1: Path, p2: Path) = ???
+
+      override def toJSON = super.toJSON.copy(json = _json)
+    }
+
+    // Construct a new ontology object
+    new ConcreteOntology(objects, arrows, relations, json)
+  }
+
 }
 

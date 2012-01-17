@@ -32,11 +32,11 @@ trait Translation extends Functor.withFinitelyPresentedSource.withFinitelyPresen
   }
 
   private class FiniteSliceCategory(onRight: translation.target.O) extends SliceCategory(
-    translation.target.asInstanceOf[Ontologies.Finite].maximumWordLength,
+    translation.target.asInstanceOf[Ontology.Finite].maximumWordLength,
     onRight) with CachingGenerators
 
   private class FiniteCosliceCategory(onLeft: translation.target.O) extends CosliceCategory(
-    translation.target.asInstanceOf[Ontologies.Finite].maximumWordLength,
+    translation.target.asInstanceOf[Ontology.Finite].maximumWordLength,
     onLeft) with CachingGenerators
 
   class SliceFunctor extends super.SliceFunctor {

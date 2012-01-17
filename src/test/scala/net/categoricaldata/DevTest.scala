@@ -6,7 +6,6 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
 import net.categoricaldata.api.Ontology
-import net.categoricaldata.api.FiniteMorphisms
 import net.categoricaldata.api.Ontologies
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers

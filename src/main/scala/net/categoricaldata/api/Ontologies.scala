@@ -28,21 +28,5 @@ object Ontologies extends Category with InitialObject with TerminalObject {
     override def onObjects(o: source.O) = m2(m1(o).asInstanceOf[m2.source.O])
     override def onGenerators(g: source.G) = m2(m1.onGenerators(g).asInstanceOf[m2.source.M])
   }
-
-  trait Finite extends Ontology with net.categoricaldata.api.FiniteMorphisms
-
-  trait Acyclic extends net.categoricaldata.api.Acyclic with Finite { ontology: Ontology =>
-    override def assertAcyclic = this
-    override def assertFree: Ontology with Ontologies.FreeAcyclic = (new ontology.OntologyWrapper with FreeAcyclic).verifyFree
-
-  }
-  trait Free extends net.categoricaldata.api.Free { ontology: Ontology =>
-    override def assertAcyclic: Ontology with Ontologies.FreeAcyclic = (new ontology.OntologyWrapper with FreeAcyclic).verifyAcyclic
-    override def assertFree = this
-  }
-  trait FreeAcyclic extends net.categoricaldata.api.FreeAcyclic with Acyclic with Free { ontology: Ontology =>
-    override def assertAcyclic = this
-    override def assertFree = this
-  }
 }
 

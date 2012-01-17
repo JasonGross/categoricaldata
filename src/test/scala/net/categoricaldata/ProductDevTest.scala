@@ -10,7 +10,6 @@ import net.categoricaldata.api.Ontology
 import net.categoricaldata.api.Sets
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
-import net.categoricaldata.api.FiniteMorphisms
 import net.categoricaldata.api.Ontologies
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers

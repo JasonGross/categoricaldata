@@ -16,6 +16,6 @@ case class Ontology(objects: List[String], arrows: List[Arrow], relations: List[
       }
 
     })
-    net.categoricaldata.dsl.Sentences.Ontology(objects, stringArrows, stringRelations, json)
+    net.categoricaldata.api.Ontology(objects, stringArrows, stringRelations, json)
   }
 }
