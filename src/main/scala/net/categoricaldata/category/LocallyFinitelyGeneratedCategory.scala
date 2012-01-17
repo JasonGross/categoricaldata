@@ -208,7 +208,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   class ConcreteFullCategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategories.StandardFunctorsToSet
 
-  class FullSubcategoryInclusion(spannedBy: List[O]) extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
+  class FullSubcategoryInclusion(spannedBy: List[O]) extends functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
     override val source: FullSubcategory = new ConcreteFullCategory(spannedBy)
     override val target: lfgCategory.type = lfgCategory
     override def onObjects(o: source.O) = o
@@ -230,7 +230,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategories.StandardFunctorsToSet
 
-  class TruncationFunctor(maximumLevel: Int) extends Functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
+  class TruncationFunctor(maximumLevel: Int) extends functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
     override val source: Truncation = new ConcreteTruncation(maximumLevel)
     override val target: lfgCategory.type = lfgCategory
     override def onObjects(o: source.O) = o
@@ -328,7 +328,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def apply(t: lfgCategory.O) = FFunction(source(t), target(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
   }
 
-  lazy val yoneda = new Functor.withLocallyFinitelyGeneratedSource {
+  lazy val yoneda = new functor.withLocallyFinitelyGeneratedSource {
     override val source: lfgCategory.opposite.type = lfgCategory.opposite
     override val target = functorsToSet
     override def onObjects(o: source.O) = internalize(new YonedaFunctor(o))

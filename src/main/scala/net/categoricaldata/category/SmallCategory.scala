@@ -75,7 +75,7 @@ trait SmallCategory extends Category { smallCategory =>
 
   def functorsToSet: SpecializedFunctorsToSet
 
-  trait CategoryOver extends Functor.withSmallSource.withSmallTarget { categoryOver =>
+  trait CategoryOver extends functor.withSmallSource.withSmallTarget { categoryOver =>
     override val target: smallCategory.type = smallCategory
     trait Identity extends FunctorOver {
       override val source: categoryOver.type = categoryOver
