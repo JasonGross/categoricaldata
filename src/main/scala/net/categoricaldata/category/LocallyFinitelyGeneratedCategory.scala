@@ -207,7 +207,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override val maximumLevel = (objectsAtLevelMap.keySet + minimumLevel).max
   }
 
-  class ConcreteFullCategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategories.StandardFunctorsToSet
+  class ConcreteFullCategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategory.StandardFunctorsToSet
 
   class FullSubcategoryInclusion(spannedBy: List[O]) extends functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
     override val source: FullSubcategory = new ConcreteFullCategory(spannedBy)
@@ -229,7 +229,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     }
   }
 
-  private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategories.StandardFunctorsToSet
+  private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategory.StandardFunctorsToSet
 
   class TruncationFunctor(maximumLevel: Int) extends functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
     override val source: Truncation = new ConcreteTruncation(maximumLevel)

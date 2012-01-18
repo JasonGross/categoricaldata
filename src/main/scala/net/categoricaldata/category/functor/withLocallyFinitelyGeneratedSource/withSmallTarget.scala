@@ -6,7 +6,7 @@ trait withSmallTarget extends functor.withSmallSource.withSmallTarget with Funct
    * This is a little confusing. SliceCategory is abstract, but always has to be a FinitelyGeneratedCategory.
    * Lower down the hierarchy, the remaining methods can be filled in, either as a truncated SliceCategory, or the honest thing if that's really finite generated.
    */
-  abstract class SliceCategory(onLeft: functor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { sliceCategory =>
+  abstract class SliceCategory(onLeft: functor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategory.StandardFunctorsToSet { sliceCategory =>
     override type O = ObjectRightOf
     override type G = ObjectRightOfMap
 
@@ -60,7 +60,7 @@ trait withSmallTarget extends functor.withSmallSource.withSmallTarget with Funct
     }
   }
 
-  abstract class CosliceCategory(onRight: functor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategories.StandardFunctorsToSet { cosliceCategory =>
+  abstract class CosliceCategory(onRight: functor.target.O) extends FinitelyGeneratedCategory with FinitelyGeneratedCategory.StandardFunctorsToSet { cosliceCategory =>
     override type O = ObjectLeftOf
     override type G = ObjectLeftOfMap
 
