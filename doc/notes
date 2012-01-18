@@ -1,0 +1,7 @@
+To allow /reload/, in /etc/mercurial/hgrc add:
+[trusted]
+users = scott
+
+To intall HUDSON, follow the instructions at 
+http://blog.i18n.ro/complete-guide-for-installing-hudson-ci-on-os-x-10-6/
+http://henkelmann.eu/2010/11/14/sbt_hudson_with_test_integration
