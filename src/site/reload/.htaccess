@@ -1,7 +1,8 @@
 AuthName "Reload categoricaldata.net server"
 AuthType Basic
-AuthUserFile "/Users/scott/projects/metaphor/src/site/reload/.htpass"
+AuthUserFile "/Users/scott/projects/metaphor/src/.htpasswd"
 Require user categoricaldata
 
 Options +ExecCGI
 AddHandler cgi-script cgi
+DirectoryIndex index.cgi
