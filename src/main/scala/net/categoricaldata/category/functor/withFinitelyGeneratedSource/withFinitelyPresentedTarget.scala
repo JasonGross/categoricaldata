@@ -1,0 +1,4 @@
+package net.categoricaldata.category.functor.withFinitelyGeneratedSource
+import net.categoricaldata.category._
+
+trait withFinitelyPresentedTarget extends functor.withLocallyFinitelyGeneratedSource.withFinitelyPresentedTarget with functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget

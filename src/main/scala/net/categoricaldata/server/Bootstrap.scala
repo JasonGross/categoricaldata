@@ -16,9 +16,9 @@ class Bootstrap {
   })
   
   
-  TransformerRegistry.registerTransformer(classOf[net.categoricaldata.api.Ontology], classOf[net.categoricaldata.server.transformers.OntologyTransformer])
-  TransformerRegistry.registerTransformer(classOf[net.categoricaldata.api.Dataset], classOf[net.categoricaldata.server.transformers.DatasetTransformer])
-  TransformerRegistry.registerTransformer(classOf[net.categoricaldata.api.Translation], classOf[net.categoricaldata.server.transformers.TranslationTransformer])
+  TransformerRegistry.registerTransformer(classOf[net.categoricaldata.ontology.Ontology], classOf[net.categoricaldata.server.transformers.OntologyTransformer])
+  TransformerRegistry.registerTransformer(classOf[net.categoricaldata.ontology.Dataset], classOf[net.categoricaldata.server.transformers.DatasetTransformer])
+  TransformerRegistry.registerTransformer(classOf[net.categoricaldata.ontology.Translation], classOf[net.categoricaldata.server.transformers.TranslationTransformer])
   
   // I think we're ready to start and instantiate our Controller.
   val controller = new MetaphorController

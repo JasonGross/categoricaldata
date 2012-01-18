@@ -1,9 +1,10 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import net.categoricaldata.ontology._
 
 @RunWith(classOf[JUnitRunner])
 class ColimitTest extends FlatSpec with ShouldMatchers {

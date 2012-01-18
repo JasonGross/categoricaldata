@@ -1,5 +1,5 @@
 package net.categoricaldata.util
-import net.categoricaldata.api.Ontology
+import net.categoricaldata.ontology.Ontology
 import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
 

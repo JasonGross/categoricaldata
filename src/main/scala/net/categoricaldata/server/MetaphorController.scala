@@ -4,9 +4,9 @@ import org.bowlerframework.controller.Controller
 import org.bowlerframework.controller.FunctionNameConventionRoutes
 import org.bowlerframework.Request
 import net.categoricaldata.examples.Examples
-import net.categoricaldata.api.Ontology
-import net.categoricaldata.api.Dataset
-import net.categoricaldata.api.Translation
+import net.categoricaldata.ontology.Ontology
+import net.categoricaldata.ontology.Dataset
+import net.categoricaldata.ontology.Translation
 
 class MetaphorController extends Controller with FunctionNameConventionRoutes {
 

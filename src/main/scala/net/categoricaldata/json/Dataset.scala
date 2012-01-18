@@ -3,7 +3,7 @@ package net.categoricaldata.json
 case class DatasetOnArrow(arrow: Arrow, map: Map[String, String])
 
 case class Dataset(ontology: Ontology, onObjects: Map[String, List[String]], onMorphisms: List[DatasetOnArrow], json: Option[String] = None) {
-  def unpack: net.categoricaldata.api.Ontology#Dataset = {
+  def unpack: net.categoricaldata.ontology.Ontology#Dataset = {
     net.categoricaldata.dsl.Sentences.Dataset(
         ontology.unpack,
         onObjects,
