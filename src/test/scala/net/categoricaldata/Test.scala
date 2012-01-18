@@ -394,7 +394,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       "an element" --- "has as successor" --> "an element" -> Map(
         "aa" -> "ba",
         "ab" -> "ba",
-        "ba" -> "bb",
+        "ba" -> "ba",
         "bb" -> "bb")))
 
     "__*" should "provide a 'half-speed' FCM-thing" in {
