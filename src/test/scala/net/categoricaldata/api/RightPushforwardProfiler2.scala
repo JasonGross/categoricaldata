@@ -2,6 +2,7 @@ package net.categoricaldata.category
 import net.categoricaldata.examples.Examples
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 import net.tqft.toolkit.Profiler
+import net.categoricaldata.ontology.Dataset
 
 object RightPushforwardProfiler2 extends App with Profiler {
   import net.categoricaldata.dsl.Sentences._

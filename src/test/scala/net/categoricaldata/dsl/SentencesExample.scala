@@ -2,7 +2,7 @@ package net.categoricaldata.dsl
 
 object SentencesExample extends App {
   import Sentences._
-  import net.categoricaldata.ontology.Ontology
+  import net.categoricaldata.ontology._
 
   // "a fusion object" is "a simple object in a unitary tensor category with duals",
   val C = Ontology(

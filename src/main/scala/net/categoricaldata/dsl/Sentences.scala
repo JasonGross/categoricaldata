@@ -41,59 +41,5 @@ object Sentences {
   }
 
   case class StringRelation(left: StringPath, right: StringPath)
-
-  class ConcreteTranslation(override val source: Ontology, override val target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath, _json: Option[String] = None) extends Translation {
-    private val objectMap: Map[Box, Box] = (for (s <- source.objects) yield {
-      val t = target.objects.find(_.name == onObjects(s.name)).get
-      s -> t
-    }).toMap
-    private val morphismMap: Map[Arrow, target.M] = (for (
-      a <- source.allGenerators
-    ) yield {
-      val morphisms = for (StringArrow(ts, to, tp) <- onMorphisms(StringArrow(a.source.name, a.target.name, a.name)).arrows) yield {
-        target.generatorAsMorphism(target.allGenerators.find(a => a.source.name == ts && a.name == tp && a.target.name == to).get)
-      }
-      a -> target.compose(objectMap(source.generatorSource(a)), morphisms)
-    }).toMap
-
-    verifyRelations
-
-    override def onObjects(o: Box) = objectMap(o)
-    // And again, replacing source.G with the apparently equivalent Arrow causes an AbstractMethodError
-    override def onGenerators(a: source.G) = morphismMap(a)
-
-    override def toJSON = super.toJSON.copy(json = _json)
-
-  }
-
-  def Translation(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: StringArrow => StringPath, json: Option[String] = None): Translation = {
-    // construct a new translation object
-    new ConcreteTranslation(source, target, onObjects, onMorphisms, json)
-  }
-
-  def Dataset(source: Ontology, onObjects: String => Traversable[String], onMorphisms: StringArrow => (String => String), _json: Option[String] = None): source.Dataset = {
-
-    val objectMap = (for (s <- source.objects) yield {
-      s -> onObjects(s.name).toList
-    }).toMap
-    val morphismMap = (for (
-      a <- source.allGenerators
-    ) yield {
-      a -> onMorphisms(StringArrow(a.source.name, a.target.name, a.name)).asInstanceOf[Any => Any]
-    }).toMap
-
-    (new source.Dataset {
-
-      verifyRelations
-
-      override def onObjects(o: source.O) = objectMap(o)
-      // WEIRD: changing source.G to Arrow (which should be fine) results in AbstractMethodError at runtime. Compiler bug?
-      override def onGenerators(a: source.G): FFunction = new DatasetFunction(a) {
-        override def toFunction = morphismMap(a)
-      }
-
-      override def toJSON = super.toJSON.copy(json = _json)
-    }).memo
-  }
 }
 

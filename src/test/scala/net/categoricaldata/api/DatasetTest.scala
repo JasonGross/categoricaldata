@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.ontology
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers

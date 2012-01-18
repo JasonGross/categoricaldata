@@ -1,15 +1,11 @@
-package net.categoricaldata
+package net.categoricaldata.sets
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
-import net.categoricaldata.ontology.Box
-import net.categoricaldata.ontology.Ontology
-import net.categoricaldata.ontology.Ontologies
-import net.categoricaldata.sets.Sets
-import net.categoricaldata.sets.FSet
+import net.categoricaldata.ontology._
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
 import net.categoricaldata.examples.Examples

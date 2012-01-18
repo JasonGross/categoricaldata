@@ -9,6 +9,7 @@ import net.categoricaldata.ontology.Ontology
 import net.categoricaldata.ontology.Ontologies
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers
+import net.categoricaldata.ontology.Dataset
 /*
  * This should always compile when checked in.
  */

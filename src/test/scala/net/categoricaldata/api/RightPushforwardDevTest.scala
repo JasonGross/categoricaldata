@@ -8,6 +8,7 @@ import scala.math._
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers
 import net.tqft.toolkit.arithmetic.Factorial
+import net.categoricaldata.ontology.Dataset
 
 @RunWith(classOf[JUnitRunner])
 class RightPushforwardDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {

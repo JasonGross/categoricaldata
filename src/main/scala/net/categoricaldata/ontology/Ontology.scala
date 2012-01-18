@@ -11,10 +11,6 @@ case class Arrow(source: Box, target: Box, name: String) {
   override def toString = source.toString + " --- \"" + name + "\" --> " + target.toString
 }
 
-trait Dataset extends net.categoricaldata.category.FunctorToSet {
-
-}
-
 trait Ontology extends FinitelyPresentedCategory { ontology =>
   override type O = Box
   override type G = Arrow

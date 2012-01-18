@@ -1,6 +1,7 @@
 package net.categoricaldata.ontology
 import net.categoricaldata.category._
 import net.categoricaldata.sets._
+import net.categoricaldata.dsl.Sentences
 
 trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresentedTarget { translation =>
   override val source: Ontology
@@ -281,4 +282,37 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     override def onObjects(o: source.O) = translation.onObjects(o)
     override def onGenerators(g: source.G) = ???
   }
+}
+
+object Translation {
+    class ConcreteTranslation(override val source: Ontology, override val target: Ontology, onObjects: String => String, onMorphisms: Sentences.StringArrow => Sentences.StringPath, _json: Option[String] = None) extends Translation {
+    private val objectMap: Map[Box, Box] = (for (s <- source.objects) yield {
+      val t = target.objects.find(_.name == onObjects(s.name)).get
+      s -> t
+    }).toMap
+    private val morphismMap: Map[Arrow, target.M] = (for (
+      a <- source.allGenerators
+    ) yield {
+      val morphisms = for (Sentences.StringArrow(ts, to, tp) <- onMorphisms(Sentences.StringArrow(a.source.name, a.target.name, a.name)).arrows) yield {
+        target.generatorAsMorphism(target.allGenerators.find(a => a.source.name == ts && a.name == tp && a.target.name == to).get)
+      }
+      a -> target.compose(objectMap(source.generatorSource(a)), morphisms)
+    }).toMap
+
+    verifyRelations
+
+    override def onObjects(o: Box) = objectMap(o)
+    // And again, replacing source.G with the apparently equivalent Arrow causes an AbstractMethodError
+    override def onGenerators(a: source.G) = morphismMap(a)
+
+    override def toJSON = super.toJSON.copy(json = _json)
+
+  }
+
+  def apply(source: Ontology, target: Ontology, onObjects: String => String, onMorphisms: Sentences.StringArrow => Sentences.StringPath, json: Option[String] = None): Translation = {
+    // construct a new translation object
+    new ConcreteTranslation(source, target, onObjects, onMorphisms, json)
+  }
+
+  
 }

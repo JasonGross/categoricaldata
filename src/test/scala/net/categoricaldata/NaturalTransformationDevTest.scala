@@ -5,9 +5,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
-import net.categoricaldata.ontology.Ontology
-import net.categoricaldata.ontology.Ontologies
-import net.categoricaldata.ontology.Translation
+import net.categoricaldata.ontology._
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers
 /*
