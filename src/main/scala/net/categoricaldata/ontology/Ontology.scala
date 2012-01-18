@@ -1,5 +1,6 @@
 package net.categoricaldata.ontology
 import net.categoricaldata.category._
+import net.categoricaldata.sets._
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
 case class Box(name: String) {
@@ -28,7 +29,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   }
 
   trait Dataset extends FunctorToSet with net.categoricaldata.ontology.Dataset { dataset =>
-    abstract class DatasetFunction(g: G) extends net.categoricaldata.category.FFunction {
+    abstract class DatasetFunction(g: G) extends net.categoricaldata.sets.FFunction {
       override def source = onObjects(generatorSource(g))
       override def target = onObjects(generatorTarget(g))
     }

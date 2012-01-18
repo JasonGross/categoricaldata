@@ -1,4 +1,6 @@
 package net.categoricaldata.category
+import net.categoricaldata.universalalgebra._
+import net.categoricaldata.sets._
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 

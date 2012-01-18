@@ -8,8 +8,8 @@ import scala.math._
 import net.categoricaldata.ontology.Box
 import net.categoricaldata.ontology.Ontology
 import net.categoricaldata.ontology.Ontologies
-import net.categoricaldata.category.Sets
-import net.categoricaldata.category.FSet
+import net.categoricaldata.sets.Sets
+import net.categoricaldata.sets.FSet
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
 import net.categoricaldata.examples.Examples

@@ -1,4 +1,5 @@
-package net.categoricaldata.category
+package net.categoricaldata.universalalgebra
+import net.categoricaldata.category._
 
 trait Equalizers { category: Category =>
   class Cones(ms: category.M*) extends Category {

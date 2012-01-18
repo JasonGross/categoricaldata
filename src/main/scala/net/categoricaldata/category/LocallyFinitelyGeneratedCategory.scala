@@ -1,5 +1,6 @@
 package net.categoricaldata.category
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
+import net.categoricaldata.sets._
 
 case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   if (morphisms.isEmpty) require(source == target)

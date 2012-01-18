@@ -1,5 +1,6 @@
 package net.categoricaldata.ontology
-import net.categoricaldata.category.{ Category, InitialObject, TerminalObject }
+import net.categoricaldata.universalalgebra._
+import net.categoricaldata.category.Category
 
 object Ontologies extends Category with InitialObject with TerminalObject {
   override type O = Ontology

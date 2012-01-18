@@ -1,4 +1,5 @@
-package net.categoricaldata.category
+package net.categoricaldata.universalalgebra
+import net.categoricaldata.category._
 
 trait TerminalObject { category: Category => 
   def terminalObject: category.O

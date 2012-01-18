@@ -4,7 +4,7 @@ import net.categoricaldata.ontology.Box
 import net.categoricaldata.ontology.Ontology
 import net.categoricaldata.ontology.Ontologies
 import net.categoricaldata.ontology.Translation
-import net.categoricaldata.category.FFunction
+import net.categoricaldata.sets.FFunction
 import net.categoricaldata.category.Path
 
 object Sentences {

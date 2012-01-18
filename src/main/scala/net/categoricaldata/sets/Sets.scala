@@ -1,4 +1,7 @@
-package net.categoricaldata.category
+package net.categoricaldata.sets
+
+
+import net.categoricaldata.universalalgebra._
 import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
 
@@ -156,7 +159,7 @@ object FFunction {
   }
 }
 
-trait Sets extends Category with InitialObject with TerminalObject with Products with Coproducts {
+trait Sets extends net.categoricaldata.category.Category with InitialObject with TerminalObject with Products with Coproducts {
   type O = FSet
   type M = FFunction
   override def identity(set: FSet) = set.identity

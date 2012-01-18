@@ -1,5 +1,6 @@
 package net.categoricaldata.category.functor.withFinitelyGeneratedSource
 import net.categoricaldata.category._
+import net.categoricaldata.sets.{ FSet, FFunction }
 
 trait withFinitelyGeneratedTarget extends functor.withLocallyFinitelyGeneratedSource.withFinitelyGeneratedTarget with functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget { fgFunctor =>
   abstract class SliceFunctor extends Functor { sliceFunctor => // D^op --> Cat_{/C}

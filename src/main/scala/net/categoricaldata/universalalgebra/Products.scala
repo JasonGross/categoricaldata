@@ -1,4 +1,5 @@
-package net.categoricaldata.category
+package net.categoricaldata.universalalgebra
+import net.categoricaldata.category._
 
 trait Products { category: Category =>
   class MorphismsToSet(os: Seq[O]) extends Category {

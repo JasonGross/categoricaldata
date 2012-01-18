@@ -1,5 +1,8 @@
 package net.categoricaldata.category
 
+import net.categoricaldata.sets._
+import net.categoricaldata.universalalgebra._
+
 trait SmallCategory extends Category { smallCategory =>
 
   trait FunctorToSet extends FunctorFrom with net.categoricaldata.category.FunctorToSet

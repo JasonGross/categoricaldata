@@ -1,5 +1,6 @@
 package net.categoricaldata.ontology
 import net.categoricaldata.category._
+import net.categoricaldata.sets._
 
 trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresentedTarget { translation =>
   override val source: Ontology

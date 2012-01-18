@@ -1,5 +1,7 @@
 package net.categoricaldata.category
 
+import net.categoricaldata.sets._
+
 trait FunctorToSet extends Functor {
   override val target: Sets.type = Sets  
 }
