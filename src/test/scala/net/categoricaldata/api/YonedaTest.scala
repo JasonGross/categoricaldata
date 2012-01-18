@@ -1,4 +1,4 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
@@ -8,6 +8,7 @@ import scala.math._
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers
 import net.tqft.toolkit.arithmetic.Factorial
+import net.categoricaldata.ontology.Box
 
 @RunWith(classOf[JUnitRunner])
 class YonedaTest extends FlatSpec with ShouldMatchers with CustomMatchers {

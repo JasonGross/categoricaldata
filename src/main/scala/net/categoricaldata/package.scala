@@ -1,5 +1,5 @@
 package net
 
-package object metaphor {
+package object categoricaldata {
 	def ??? = throw new NoSuchMethodException
 }

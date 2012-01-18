@@ -1,10 +1,11 @@
-package net.categoricaldata.api
+package net.categoricaldata.category
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.math._
+import net.categoricaldata.ontology._
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers
 import net.tqft.toolkit.arithmetic.Factorial
