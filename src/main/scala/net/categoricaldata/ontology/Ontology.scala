@@ -187,7 +187,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     lazy val memo: ontology.Dataset = new DatasetMemo
 
-    def toJSON = net.categoricaldata.json.Pack.packDataset(this)
+    def toJSON = net.categoricaldata.server.json.Pack.packDataset(this)
   }
   trait Datamap extends NaturalTransformationToSet { datamap =>
     override def toString = "Datamap(\n  onObjects = Map(\n" + (for (o <- ontology.objects) yield "    " + o.toString + " -> " + datamap(o).toString).mkString(",\n    ") + "))"
@@ -301,7 +301,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
   }
 
-  def toJSON = net.categoricaldata.json.Pack.packOntology(this)
+  def toJSON = net.categoricaldata.server.json.Pack.packOntology(this)
 }
 
 object Ontology {

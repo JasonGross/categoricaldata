@@ -1,4 +1,4 @@
-package net.categoricaldata.json
+package net.categoricaldata.server.json
 
 object Pack {
   private def packArrow(arrow: net.categoricaldata.ontology.Arrow) = Arrow(arrow.source.name, arrow.target.name, arrow.name)

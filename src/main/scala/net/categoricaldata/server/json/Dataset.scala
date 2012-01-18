@@ -1,4 +1,4 @@
-package net.categoricaldata.json
+package net.categoricaldata.server.json
 
 case class DatasetOnArrow(arrow: Arrow, map: Map[String, String])
 

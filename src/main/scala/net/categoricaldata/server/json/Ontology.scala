@@ -1,4 +1,4 @@
-package net.categoricaldata.json
+package net.categoricaldata.server.json
 
 case class Arrow(source: String, target: String, label: String)
 

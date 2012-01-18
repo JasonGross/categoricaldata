@@ -6,7 +6,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   override val source: Ontology
   override val target: Ontology
 
-  def toJSON = net.categoricaldata.json.Pack.packTranslation(this)
+  def toJSON = net.categoricaldata.server.json.Pack.packTranslation(this)
 
   override def equals(other: Any): Boolean = {
     other match {

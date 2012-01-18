@@ -1,4 +1,4 @@
-package net.categoricaldata.json
+package net.categoricaldata.server.json
 
 case class TranslationOnArrow(arrow: Arrow, path: List[Arrow])
 
