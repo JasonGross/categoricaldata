@@ -41,6 +41,9 @@ trait FFunction { function =>
   def toStringMap: Map[String, String] =
     toMap.map({ case (a, b) => a.toString -> b.toString })
 
+  def isomorphism_? = {
+    toMap.values.toSet.size == source.size
+  }
 }
 
 case class IdentityFunction(set: FSet) extends FFunction {

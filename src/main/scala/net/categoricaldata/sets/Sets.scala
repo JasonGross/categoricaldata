@@ -49,7 +49,7 @@ trait Sets extends net.categoricaldata.category.Category with InitialObject with
           val m = (for ((x, i) <- set1.toIterable zip p) yield {
             x -> set2List(i)
           }).toMap
-          FFunction(set1, set2, m)
+          FFunction(set1, set2, m) // TODO declare these to be isomorphisms?
         }
       }
       case _ => ???

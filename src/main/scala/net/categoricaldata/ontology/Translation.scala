@@ -241,6 +241,8 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     lazy val leftUnit = new NaturalTransformation { leftUnit =>
       val source = pullback.source.identityFunctor
       val target = pullback andThen leftPushforward
+      // FIXME
+//      override lazy val sourceCategory = translation.target.functorsToSet
       def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */ ): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = leftUnit.source(o)

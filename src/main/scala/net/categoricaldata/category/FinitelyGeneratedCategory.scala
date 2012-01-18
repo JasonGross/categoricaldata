@@ -333,6 +333,12 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
   }
 
+  trait NaturalTransformationToSet extends super.NaturalTransformationToSet { t =>
+    override def isomorphism_? = {
+      (for(o <- objects) yield t(o).isomorphism_?).reduceOption(_ && _).getOrElse(true)
+    }
+  }
+  
   protected trait Wrapper extends super.Wrapper with FinitelyGeneratedCategory {
     override val maximumLevel = fgCategory.maximumLevel
   }

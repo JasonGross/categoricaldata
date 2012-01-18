@@ -17,19 +17,19 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   // NOTE to use the DSL, you need this line:
   import net.categoricaldata.dsl.Sentences._
   
-//  def IsNaturalIsomorphism(t:NaturalTransformation) : Boolean ={???}
-//
 //TODO (Scott) These are important tests. Can you make them compile? 
 //  Knowing that unit and counit work correctly will validate a lot of code, I think. 
   
   
-//  "leftUnit" should "be an isomorphism for translations that are isomorphisms" in
-//    val C=Examples.Grph
-//    val D=Examples.Grph
-//    val X=GraphDataset120114
-//    val F=Examples.ReverseGraph
-//    IsNaturalIsomorphism(F.leftUnit(X)) should equal(True)
-//  }
+  "leftUnit" should "be an isomorphism for translations that are isomorphisms" in {
+    val C=Examples.Grph
+    val D=Examples.Grph
+    val X=GraphDataset120114
+    val F=Examples.ReverseGraph
+    // FIXME (Scott) reduce boilerplate
+    val leftUnit = F.pullback.leftUnit
+    leftUnit(X.asInstanceOf[leftUnit.sourceCategory.O]).isomorphism_? should be (true)
+  }
 //  
 //  "leftCounit" should "be an isomorphism for translations that are isomorphisms" in {
 //    val C=Examples.Grph

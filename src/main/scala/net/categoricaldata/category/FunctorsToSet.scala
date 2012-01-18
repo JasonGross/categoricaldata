@@ -8,6 +8,8 @@ trait FunctorToSet extends Functor {
 trait NaturalTransformationToSet extends NaturalTransformation {
   override val source: FunctorToSet
   override val target: FunctorToSet
+  
+  def isomorphism_? : Boolean = ???
 }
 trait FunctorsToSet extends Category {
   type O <: FunctorToSet

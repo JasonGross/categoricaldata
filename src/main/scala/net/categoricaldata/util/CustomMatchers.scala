@@ -2,6 +2,7 @@ package net.categoricaldata.util
 import net.categoricaldata.ontology.Ontology
 import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
+import net.categoricaldata.category.NaturalTransformationToSet
 
 trait CustomMatchers {
   class DatasetIsomorphismMatcher(right: Ontology#Dataset) extends Matcher[Ontology#Dataset] {
@@ -28,8 +29,8 @@ trait CustomMatchers {
         "The ontologies are equivalent")
     }
   }
-
+  
   def beIsomorphicTo(d: Ontology#Dataset) = new DatasetIsomorphismMatcher(d)
   def beIsomorphicTo(o: Ontology) = new OntologyIsomorphismMatcher(o)
-  def beEquivalentTo(o: Ontology) = new OntologyEquivalenceMatcher(o)
+  def beEquivalentTo(o: Ontology) = new OntologyEquivalenceMatcher(o)  
 }
