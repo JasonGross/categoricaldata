@@ -55,6 +55,3 @@ trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarg
   }
 
 }
-trait withLocallyFinitelyGeneratedTarget extends functor.withSmallSource.withSmallTarget with Functor.withLocallyFinitelyGeneratedTarget
-trait withFinitelyGeneratedTarget extends functor.withSmallSource.withLocallyFinitelyGeneratedTarget with Functor.withFinitelyGeneratedTarget
-trait withFinitelyPresentedTarget extends functor.withSmallSource.withFinitelyGeneratedTarget with Functor.withFinitelyPresentedTarget
