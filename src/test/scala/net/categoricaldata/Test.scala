@@ -392,9 +392,9 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       "an element" -> List("aa", "ab", "ba", "bb")),
     onMorphisms = Map(
       "an element" --- "has as successor" --> "an element" -> Map(
-        "aa" -> "ba",
-        "ab" -> "ba",
-        "ba" -> "ba",
+        "aa" -> "ab",
+        "ab" -> "bb",
+        "ba" -> "ab",
         "bb" -> "bb")))
 
     "__*" should "provide a 'half-speed' FCM-thing" in {
