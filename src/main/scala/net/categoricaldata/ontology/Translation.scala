@@ -35,11 +35,11 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
 
   private class FiniteSliceCategory(onRight: translation.target.O) extends SliceCategory(
     translation.target.asInstanceOf[Ontology.Finite].maximumWordLength,
-    onRight) with CachingGenerators
+    onRight) with LocallyFinitelyGeneratedCategory.CachingGenerators
 
   private class FiniteCosliceCategory(onLeft: translation.target.O) extends CosliceCategory(
     translation.target.asInstanceOf[Ontology.Finite].maximumWordLength,
-    onLeft) with CachingGenerators
+    onLeft) with LocallyFinitelyGeneratedCategory.CachingGenerators
 
   class SliceFunctor extends super.SliceFunctor {
     import net.tqft.toolkit.functions.Memo

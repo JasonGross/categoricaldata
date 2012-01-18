@@ -337,8 +337,10 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   }
 }
 
-trait CachingGenerators extends LocallyFinitelyGeneratedCategory { lfgCategory =>
-  import net.tqft.toolkit.functions.Memo
-  private val generatorsCache = Memo({ (s: lfgCategory.O, t: lfgCategory.O) => super.generators(s, t) })
-  abstract override def generators(s: lfgCategory.O, t: lfgCategory.O) = generatorsCache(s, t)
+object LocallyFinitelyGeneratedCategory {
+  trait CachingGenerators extends LocallyFinitelyGeneratedCategory { lfgCategory =>
+    import net.tqft.toolkit.functions.Memo
+    private val generatorsCache = Memo({ (s: lfgCategory.O, t: lfgCategory.O) => super.generators(s, t) })
+    abstract override def generators(s: lfgCategory.O, t: lfgCategory.O) = generatorsCache(s, t)
+  }
 }
