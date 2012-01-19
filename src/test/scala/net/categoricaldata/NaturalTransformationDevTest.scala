@@ -83,7 +83,33 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     val F = Examples.Skip(3, 2)
     F.pullback.leftCounit(X) should be('isomorphism_?)
   }
-
+  
+  "leftCounit" should "be an injection for functor from Grph to Chain(1)" in {
+    val X=GraphDataset120114
+    val F = GraphToFunction
+    F.pullback.leftCounit(X) should be ('injection_?)
+  }
+  
+  "leftUnit" should "be a surjection for functor from Grph to Chain(1)" in {
+    val X=GraphDataset120114
+    val F = GraphToFunction
+    F.pullback.leftUnit(X) should be ('surjection_?)
+  }
+ 
+  "rightUnit" should "be an isomorphism for epi-like functors (?)" in {
+    //I don't have the internet, and I don't recall the name for this type of functor, but Grph-->Chain(1) would be sone.
+    val X = DavidsFunkyFunction
+    val F= GraphToFunction
+    F.pullback.rightUnit should be ('isomorphism_?)
+  }
+ 
+   "rightCounit" should "be an isomorphism for epi-like functors (?)" in {
+    //I don't have the internet, and I don't recall the name for this type of functor, but Grph-->Chain(1) would be sone.
+    val X = DavidsFunkyFunction
+    val F= GraphToFunction
+    F.pullback.rightCounit should be ('isomorphism_?)
+  }
+ 
   val GraphDataset120114 = Dataset(source = Examples.Grph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
@@ -181,15 +207,38 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
       "V3" -> List("3i", "3j", "3k", "3l")),
     onMorphisms = Map(
       ("V0" --- "E01" --> "V1") -> Map[String, String](), //Deliberately left empty.
-      ("V1" --- "E01" --> "V2") -> Map(
+      ("V1" --- "E12" --> "V2") -> Map(
         "1a" -> "2f",
         "1b" -> "2g",
         "1c" -> "2g",
         "1d" -> "2h",
         "1e" -> "2h"),
-      ("V2" --- "E01" --> "V3") -> Map(
+      ("V2" --- "E23" --> "V3") -> Map(
         "2f" -> "3i",
         "2g" -> "3k",
-        "2h" -> "3l")))
+        "2h" -> "3l")
+    )
+  )
+  
+  val GraphToFunction = Translation(
+    source = Examples.Grph,
+    target = Examples.Chain(1),
+    onObjects = Map(
+      "an edge" -> "V0",
+      "a vertex" -> "V1"),
+    onMorphisms = Map(
+      ("an edge" --- "has as source" --> "a vertex") -> ("V0" --- "E01" --> "V1"),
+      ("an edge" --- "has as target" --> "a vertex") -> ("V0" --- "E01" --> "V1")))
+
+  val DavidsFunkyFunction = Dataset(source = Examples.Chain(1),
+    onObjects = Map(
+      "V0" -> List("David", "Scott", "UC Berkeley", "MIT"),
+      "V1" -> List("1978", "Scott's birthyear", "1868", "1861")),
+    onMorphisms = Map(
+      "V0" --- "E01" --> "V1" -> Map(
+        "David" -> "1978",
+        "Scott" -> "Scott's birthyear",
+        "UC Berkeley" -> "1868",
+        "MIT" -> "1861")))
 
 }
