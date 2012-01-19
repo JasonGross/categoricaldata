@@ -180,7 +180,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
       "V2" -> List("2f", "2g", "2h"),
       "V3" -> List("3i", "3j", "3k", "3l")),
     onMorphisms = Map(
-      ("V0" --- "E01" --> "V1") -> Map(), //Deliberately left empty.
+      ("V0" --- "E01" --> "V1") -> Map[String, String](), //Deliberately left empty.
       ("V1" --- "E01" --> "V2") -> Map(
         "1a" -> "2f",
         "1b" -> "2g",
