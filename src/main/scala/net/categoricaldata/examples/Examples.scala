@@ -202,7 +202,8 @@ object Examples {
     source = c,
     onObjects = (for (b <- c.objects) yield b.name -> List()).toMap,
     onMorphisms = (for (a <- c.allGenerators) yield (a.source.name --- a.name --> a.target.name) ->
-      Map[String, String]()).toMap)
+      Map[String, String]()).toMap
+  )
 
   val SourceFunction = Translation(
     source = Chain(1),
