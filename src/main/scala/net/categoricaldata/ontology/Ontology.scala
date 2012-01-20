@@ -141,7 +141,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         new Datamap {
           override val source = dataset
           override val target = internalize(other)
-          // ACHTUNG --- this relies on the inner implementation of colimit; in particular that the set it produces is a set of FFunctions, each sending Boxes to FFunctions
+          // ACHTUNG --- this relies on the inner implementation of limit; in particular that the set it produces is a set of FFunctions, each sending Boxes to FFunctions
           override def apply(o: Box) = bijection.asInstanceOf[FFunction].toFunction.asInstanceOf[Box => FFunction](o)
         }
       }
@@ -228,7 +228,6 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   override val functorsToSet = Datasets
   sealed trait Datasets extends SpecializedFunctorsToSet
 
-  // weird, moving the definition of this object up to the sealed trait causes a compiler crash.
   object Datasets extends Datasets
 
   class OppositeOntology extends Ontology with OppositeFinitelyPresentedCategory { opposite =>
