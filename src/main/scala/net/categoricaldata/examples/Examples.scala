@@ -59,6 +59,16 @@ object Examples {
     arrows = List(
       "an edge" --- "has as source" --> "a vertex",
       "an edge" --- "has as target" --> "a vertex")).assertAcyclic.assertFree
+      
+  val GraphToFunction = Translation(
+    source = Examples.Graph,
+    target = Examples.Chain(1),
+    onObjects = Map(
+      "an edge" -> "V0",
+      "a vertex" -> "V1"),
+    onMorphisms = Map(
+      ("an edge" --- "has as source" --> "a vertex") -> ("V0" --- "E01" --> "V1"),
+      ("an edge" --- "has as target" --> "a vertex") -> ("V0" --- "E01" --> "V1")))
 
   val TerminalGraph = Dataset(source = Graph,
     onObjects = Map(
@@ -199,7 +209,7 @@ object Examples {
       ("R" --- "Col1" --> "Attrib1") -> ("V0" --- "E01" --> "V1"),
       ("R" --- "Col2" --> "Attrib2") -> "V0".identity))
 
-  //  def ChainToRelation (n:Int)= {//TODO (Scott) This doesn't compile; not sure why.  
+  //  def ChainToRelation (n:Int)= {//TODO (Scott) This doesn't compile; I'm not sure why.  
   //      def composition(i: Int) = (1 to i).foldLeft("V0")({ case (x, m) => x --- ("E"+(m-1).toString+m.toString) --> ("V"+ m.toString) })
   //      Translation(
   //          source = RelationArity(n),
@@ -288,6 +298,33 @@ object Examples {
       "V1" -> "a vertex"),
     onMorphisms = Map(
       ("V0" --- "E01" --> "V1") -> ("an edge" --- "has as target" --> "a vertex")))
+      
+  val BipartiteGraph = Ontology(
+      objects = List ("a left vertex","a right vertex","a forward edge","a backward edge"),
+      arrows = List(
+          "a forward edge" --- "has as source" -->"a left vertex",
+          "a forward edge" --- "has as target" -->"a right vertex",
+          "a backward edge" --- "has as source" -->"a right vertex",
+          "a backward edge" --- "has as target" -->"a left vertex"
+      )
+  ).assertFree
+  
+  val BipartiteGraphToGraph = Translation(
+      source = BipartiteGraph,
+      target = Graph,
+      onObjects=Map (
+          "a forward edge" -> "an edge",
+          "a left vertex" -> "a vertex",
+          "a right vertex" -> "a vertex",
+          "a backward edge" -> "a vertex"
+      ),
+      onMorphisms = Map (
+          ("a forward edge" --- "has as source" -->"a left vertex") -> ("an edge" --- "has as source" --> "a vertex"),
+          ("a forward edge" --- "has as target" -->"a right vertex") -> ("an edge" --- "has as target" --> "a vertex"),
+          ("a backward edge" --- "has as source" -->"a right vertex") -> "a vertex".identity,
+          ("a backward edge" --- "has as target" -->"a left vertex") -> "a vertex".identity
+      )
+)          
 
   val DiscreteDynamicalSystem = Ontology(
     objects = List("an element"),

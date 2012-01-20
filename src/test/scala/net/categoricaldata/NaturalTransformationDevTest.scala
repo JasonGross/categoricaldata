@@ -86,29 +86,32 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   
   "leftCounit" should "be an injection for functor from Graph to Chain(1)" in {
     val X=GraphDataset120114
-    val F = GraphToFunction
+    val F = Examples.GraphToFunction
     F.pullback.leftCounit(X) should be ('injection_?)
   }
   
   "leftUnit" should "be a surjection for functor from Graph to Chain(1)" in {
     val X=GraphDataset120114
-    val F = GraphToFunction
+    val F = Examples.GraphToFunction
     F.pullback.leftUnit(X) should be ('surjection_?)
   }
  
   "rightUnit" should "be an isomorphism for epi-like functors (?)" in {
     //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
     val X = DavidsFunkyFunction
-    val F= GraphToFunction
+    val F= Examples.GraphToFunction
     F.pullback.rightUnit should be ('isomorphism_?)
   }
  
    "rightCounit" should "be an isomorphism for epi-like functors (?)" in {
     //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
     val X = DavidsFunkyFunction
-    val F= GraphToFunction
+    val F= Examples.GraphToFunction
     F.pullback.rightCounit should be ('isomorphism_?)
   }
+   
+  
+
  
   val GraphDataset120114 = Dataset(source = Examples.Graph,
     onObjects = Map(
@@ -219,15 +222,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     )
   )
   
-  val GraphToFunction = Translation(
-    source = Examples.Graph,
-    target = Examples.Chain(1),
-    onObjects = Map(
-      "an edge" -> "V0",
-      "a vertex" -> "V1"),
-    onMorphisms = Map(
-      ("an edge" --- "has as source" --> "a vertex") -> ("V0" --- "E01" --> "V1"),
-      ("an edge" --- "has as target" --> "a vertex") -> ("V0" --- "E01" --> "V1")))
+  
 
   val DavidsFunkyFunction = Dataset(source = Examples.Chain(1),
     onObjects = Map(
