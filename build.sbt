@@ -60,8 +60,8 @@ port in container.Configuration := 8083
 scalacOptions ++= Seq("-Xexperimental")
 
 // The Scala X-Ray plugin produces nicely formatted source code.
-addCompilerPlugin("org.scala-tools.sxr" % "sxr_2.9.0" % "0.2.7")
+// addCompilerPlugin("org.scala-tools.sxr" % "sxr_2.9.0" % "0.2.7")
 
-scalacOptions <+= scalaSource in Compile map { "-P:sxr:base-directory:" + _.getAbsolutePath }
+// scalacOptions <+= scalaSource in Compile map { "-P:sxr:base-directory:" + _.getAbsolutePath }
 
 publishTo := Some(Resolver.sftp("tqft.net Maven repository", "tqft.net", "tqft.net/releases") as ("scottmorrison", new java.io.File("/Users/scott/.ssh/id_rsa")))
