@@ -106,7 +106,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
       override def apply(o: Box) = ??? // MATH what is the Rightpushforward of a Datamap?
-   /* 
+      /* 
     * Given a functor F: C-->D. 
     * Given datasets I,J: C-->Set
     * Given a natural transformation m:I-->J
@@ -116,9 +116,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     * Want: a function n(d): lim_{d | F} pi^*(I) --> lim_{d|F} pi^*(J) 
     * Provide: lim_{d | F} pi^*(m).  
     */
-      
-      
-      
+
     }
   }
 
@@ -164,7 +162,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       override val source = onObjects(m.source)
       override val target = onObjects(m.target)
       override def apply(o: Box) = ??? // MATH what is the Leftpushforward of a Datamap?
-   /* 
+      /* 
     * Given a functor F: C-->D. 
     * Given datasets I,J: C-->Set
     * Given a natural transformation m:I-->J
@@ -222,7 +220,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
           override val source = leftCounit.source(o)
           override val target = leftCounit.target(o)
           override def apply(o: translation.source.O): FFunction = ??? // MATH what is the left counit for pullback?
-   /* 
+          /* 
     * Given a functor F: C-->D. 
     * Given a dataset L: D-->Set
     * Want: epsilon:= F_!F^*(L) --> L.
@@ -286,10 +284,17 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     override def onObjects(o: source.O) = translation.onObjects(o)
     override def onGenerators(g: source.G) = ???
   }
+
+  def asPartialDataset: target.PartialDataset = new target.PartialDataset {
+    override val source = translation.source
+    override def onObjects(o: Box) = translation.onObjects(o)
+    override def onGenerators(g: Arrow) = translation.onGenerators(g)
+  }
+  
 }
 
 object Translation {
-    class ConcreteTranslation(override val source: Ontology, override val target: Ontology, onObjects: String => String, onMorphisms: Sentences.StringArrow => Sentences.StringPath, _json: Option[String] = None) extends Translation {
+  class ConcreteTranslation(override val source: Ontology, override val target: Ontology, onObjects: String => String, onMorphisms: Sentences.StringArrow => Sentences.StringPath, _json: Option[String] = None) extends Translation {
     private val objectMap: Map[Box, Box] = (for (s <- source.objects) yield {
       val t = target.objects.find(_.name == onObjects(s.name)).get
       s -> t
@@ -318,5 +323,4 @@ object Translation {
     new ConcreteTranslation(source, target, onObjects, onMorphisms, json)
   }
 
-  
 }

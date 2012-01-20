@@ -5,15 +5,14 @@ case class DataTables(tables: List[DataTable]) {
   val source: Ontology = {
     Ontology(objects = tables.map(_.primaryKey), arrows = ???, relations = Nil)
   }
-  def toPartialDataset: Translation = new Translation {
+  def toPartialDataset: source.PartialDataset = new source.PartialDataset {
     override val source = {
       Ontology(objects = ???, arrows = ???, relations = ???)
     }
-    override val target = source
     override def onObjects(o: Box) = ???
     override def onGenerators(g: Arrow) = ???
   }
-  def toDataset: source.Dataset = ???
+  def toDataset: source.Dataset = toPartialDataset.toDataset
 }
 
 case class DataTable(primaryKey: String, foreignKeys: List[String], rows: Map[String, List[String]])

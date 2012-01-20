@@ -298,6 +298,14 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   }
 
   def toJSON = net.categoricaldata.server.json.Pack.packOntology(this)
+
+  trait PartialDataset extends FinitelyGeneratedCategoryOver with Translation {
+    def complete_? : Boolean = ???
+    def valid_? : Boolean = ???
+    def wellDefined_? : Boolean = ???
+
+    def toDataset: ontology.Dataset = ???
+  }
 }
 
 object Ontology {
