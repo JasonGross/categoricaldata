@@ -5,7 +5,7 @@ import net.categoricaldata.universalalgebra._
 
 trait SmallCategory extends Category { smallCategory =>
 
-  trait FunctorToSet extends FunctorFrom with net.categoricaldata.category.FunctorToSet
+  trait FunctorToSet extends FunctorFrom with net.categoricaldata.category.FunctorToSet // /* uncommenting this mixin results in everything crashing with AbstractMethodErrors */ with Functor.withSmallSource
 
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet
