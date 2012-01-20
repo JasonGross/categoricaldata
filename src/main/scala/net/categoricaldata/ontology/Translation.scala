@@ -223,7 +223,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
           /* 
     * Given a functor F: C-->D. 
     * Given a dataset L: D-->Set
-    * Want: epsilon:= F_!F^*(L) --> L.
+    * Want: epsilon: F_!F^*(L) --> L.
     * Want: for each object d in D, a function epsilon(d): F_!F^*(L)(d) --> L(d)
     * Let pi: (F | d)-->C.
     * Want: a function n(d): colim_{F | d} pi^*F^*(L) --> L(d) 
