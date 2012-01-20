@@ -241,13 +241,17 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   def truncationFunctorAtLevel(maximumLevel: Int): TruncationFunctor = new TruncationFunctor(maximumLevel)
   def truncateAtLevel(maximumLevel: Int): FinitelyGeneratedCategory = truncationFunctorAtLevel(maximumLevel).source
 
-  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
-    def onGenerators(g: G): FFunction
-    override def onMorphisms(m: M) = {
-      val start = onObjects(source.source(m))
-      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
-      target.compose(start, morphisms)
-    }
+  trait FunctorToSet extends super.FunctorToSet with Functor.withLocallyFinitelyGeneratedSource { functorToSet =>
+    //    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
+    override val source: lfgCategory.type = lfgCategory
+    
+    
+//    def onGenerators(g: G): FFunction
+//    override def onMorphisms(m: M) = {
+//      val start = onObjects(source.source(m))
+//      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
+//      target.compose(start, morphisms)
+//    }
 
     trait CoCone {
       val terminalSet: FSet
