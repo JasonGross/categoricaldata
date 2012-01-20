@@ -30,6 +30,15 @@ object Examples {
       arrows = List.concat(forward, backward),
       relations = List.concat(isoL, isoR))
   }.assertFinite
+  
+  def RelationArity(n:Int) = Ontology (
+      objects = List ("R") ++ (for (i <- 1 to n) yield "Attrib" + i.toString),
+      arrows = for (i <- 1 to n) yield {
+    	  ("R" --- ("Col" + i.toString) --> ("Attrib" + i.toString))}
+    ).assertAcyclic.assertFree
+      
+      
+  val Span = RelationArity(2)
 
   val Graph = Ontology(
     objects = List("an edge", "a vertex"),
@@ -58,8 +67,8 @@ object Examples {
         "output" -> "species")))
 
   val ReverseGraph = Translation(
-    source = Examples.Graph,
-    target = Examples.Graph,
+    source = Graph,
+    target = Graph,
     onObjects = Map(
       "an edge" -> "an edge",
       "a vertex" -> "a vertex"),
@@ -75,6 +84,21 @@ object Examples {
       ("an edge" --- "has as source" --> "a vertex") -> Map(),
       ("an edge" --- "has as target" --> "a vertex") -> Map()))
 
+  val SpanToGraph = Translation(
+      source = Span,
+      target = Graph,
+      onObjects = Map(
+          "R" -> "an edge",
+          "Attrib1" -> "a vertex",
+          "Attrib2" -> "a vertex"
+      ),
+      onMorphisms = Map (
+          ("R" --- "Col1" --> "Attrib1") -> ("an edge" --- "has as source" --> "a vertex"),
+	      ("M" --- "Col2" --> "Attrib2") -> ("an edge" --- "has as target" --> "a vertex")
+	  )
+  )
+
+      
   def Chain(n: Int) = Ontology(
     objects = for (i <- 0 to n) yield "V" + i.toString,
     arrows = for (i <- 0 to n - 1) yield {
@@ -91,8 +115,9 @@ object Examples {
     source = Examples.Chain(0),
     target = Examples.Chain(1),
     onObjects = Map("V0" -> "V1"),
-    onMorphisms = Map())
-
+    onMorphisms = Map()
+  )
+    
   def Skip(n: Int, k: Int) = { // Chain(n) --> Chain(n+1) by skipping object k.
     require (n>=k) 
 
@@ -143,6 +168,34 @@ object Examples {
 
   def Codegeneracy(n: Int, k: Int) = Duplicate(n, k)
 
+  val FunctionalRelation =Translation(
+      source = Span,
+      target = Chain(1),
+      onObjects = Map (
+          "R" -> "V0",
+          "Attrib1" -> "V0",
+          "Attrib2" -> "V1"
+      ),
+      onMorphisms =Map(
+        ("R" --- "Col1" --> "Attrib1") -> "V0".identity,
+	    ("R" --- "Col2" --> "Attrib2") -> ("V0"---"E01"-->"V1")
+	  )
+  )
+  
+//  def ChainToRelation (n:Int)= {//TODO (Scott) This doesn't compile; not sure why.  
+//      def composition(i: Int) = (1 to i).foldLeft("V0")({ case (x, m) => x --- ("E"+(m-1).toString+m.toString) --> ("V"+ m.toString) })
+//      Translation(
+//          source = RelationArity(n),
+//          target = Chain(n),
+//          onObjects = Map ("R" -> "V0") ++ 
+//      		(for (i <- 1 to n) yield ("Attrib" + i.toString) -> ("V" + i.toString)).toMap,
+//      	  onMorphisms = (for (i <- 1 to n) yield 
+//      		("R" ---("Col" + i.toString)-->("Attrib"+i.toString)) -> composition(i)).toMap
+//      )
+//  }
+      			  
+          
+    
   def FiniteCyclicMonoid(n: Int, k: Int) = { //should have k < n. When k = 0, this is the cyclic group of order n.
     require(k < n)
     def composition(i: Int) = (1 to i).foldLeft("an element".identity)({ case (x, m) => x --- "has as successor" --> "an element" })

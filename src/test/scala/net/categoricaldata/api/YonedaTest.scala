@@ -34,5 +34,6 @@ class YonedaTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     val RHS = Examples.Isomorphism.Datasets.terminalObject
     LHS should beIsomorphicTo(RHS)
   }
-  
+
+//  "yoneda" should "have 17 elements on FCM17_3" in {}
 }
