@@ -198,7 +198,6 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
         "y" -> "y",
         "z" -> "z")))
 
-  // TODO (David) this is crashing, something is wrong.
   val Chain3Dataset120114 = Dataset(source = Examples.Chain(3),
     onObjects = Map(
       "V0" -> List(), //Deliberately left as empty list, representing empty-set.
