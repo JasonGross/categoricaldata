@@ -6,6 +6,8 @@ version := "0.1.0"
 
 scalaVersion := "2.9.1"
 
+// scalaVersion := "2.10.0-M1"
+
 retrieveManaged := true
 
 resolvers ++= Seq(
@@ -19,22 +21,22 @@ resolvers ++= Seq(
 // Project dependencies
 libraryDependencies ++= Seq(
 	"net.tqft.toolkit" %% "toolkit" % "0.1.1",
-	"org.bowlerframework" %% "core" % "0.5.1"
+	"org.bowlerframework" % "core_2.9.1" % "0.5.1"
 )
 
 // lift-json
 libraryDependencies ++= {
   val liftVersion = "2.4-M4" // Put the current/latest lift version here
   Seq(
-    "net.liftweb" %% "lift-json" % liftVersion % "compile->default",
-    "net.liftweb" %% "lift-json-ext" % liftVersion % "compile->default"
+    "net.liftweb" % "lift-json_2.9.1" % liftVersion % "compile->default",
+    "net.liftweb" % "lift-json-ext_2.9.1" % liftVersion % "compile->default"
     )
 }
 
 // Test dependencies
 libraryDependencies ++= Seq(
 	"junit" % "junit" % "4.8" % "test,dev",
-	"org.scalatest" %% "scalatest" % "1.6.1" % "compile,test,dev",
+	"org.scalatest" % "scalatest_2.9.1" % "1.7.RC1" % "compile,test,dev",
 	"org.mortbay.jetty" % "jetty" % "6.1.22" % "test,dev"
 )
 

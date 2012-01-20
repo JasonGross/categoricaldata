@@ -4,8 +4,11 @@ import net.categoricaldata.sets._
 import net.categoricaldata.universalalgebra._
 
 trait SmallCategory extends Category { smallCategory =>
-
-  trait FunctorToSet extends FunctorFrom with net.categoricaldata.category.FunctorToSet
+  
+  trait FunctorToSet extends FunctorFrom with net.categoricaldata.category.FunctorToSet with Functor.withSmallSource {
+//    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
+    override val source: smallCategory.type = smallCategory
+  }
 
   type F <: FunctorToSet
   type T <: NaturalTransformationToSet

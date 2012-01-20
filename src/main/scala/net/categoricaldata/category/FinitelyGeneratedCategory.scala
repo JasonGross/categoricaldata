@@ -86,7 +86,11 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   override type F <: FunctorToSet
   override type T <: NaturalTransformationToSet
 
-  trait FunctorToSet extends super.FunctorToSet { functorToSet =>
+  trait FunctorToSet extends super.FunctorToSet with Functor.withFinitelyGeneratedSource { functorToSet =>
+    //    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
+    override val source: fgCategory.type = fgCategory
+
+    
     //        def verify: this.type = {
     //          for(g <- allGenerators; f = functorToSet.onGenerators(g)) f.verify
     //          this
@@ -353,12 +357,12 @@ object FinitelyGeneratedCategory {
     override type T = NaturalTransformationToSet
 
     def internalize(f: net.categoricaldata.category.FunctorToSet): F = new FunctorToSet {
-      require(f.source == source)
+      require(f.source == C)
       def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
       def onGenerators(g: G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
     }
     def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): T = new NaturalTransformationToSet {
-      require(t.sourceCategory == source)
+      require(t.sourceCategory == C)
       val source = internalize(t.source)
       val target = internalize(t.target)
       def apply(o: O) = t(o.asInstanceOf[t.sourceCategory.O])
