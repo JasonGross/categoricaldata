@@ -49,7 +49,7 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "Item 7" -> "Left Drawer",
         "Item 8" -> "Left Drawer")))
 
-  val DavidsFunkyGraph = Dataset(source = Examples.Grph,
+  val DavidsFunkyGraph = Dataset(source = Examples.Graph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
       "a vertex" -> List("A", "B", "C", "D")),

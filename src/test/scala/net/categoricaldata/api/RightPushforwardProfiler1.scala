@@ -7,7 +7,7 @@ import net.categoricaldata.ontology.Dataset
 object RightPushforwardProfiler1 extends App with Profiler {
   import net.categoricaldata.dsl.Sentences._
 
-  val DavidsFunkyGraph = Dataset(source = Examples.Grph,
+  val DavidsFunkyGraph = Dataset(source = Examples.Graph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
       "a vertex" -> List("A", "B", "C", "D")),
@@ -24,7 +24,7 @@ object RightPushforwardProfiler1 extends App with Profiler {
         "h" -> "C",
         "i" -> "C",
         "j" -> "C")))
-  val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
+  val DavidsFunkyGraphReversed = Dataset(source = Examples.Graph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
       "a vertex" -> List("A", "B", "C", "D")),

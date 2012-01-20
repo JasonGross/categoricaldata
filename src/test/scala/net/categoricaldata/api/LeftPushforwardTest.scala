@@ -45,7 +45,7 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
   }
 
   "__!" should "work reverse graph as expected" in {
-    val DavidsFunkyGraph = Dataset(source = Examples.Grph,
+    val DavidsFunkyGraph = Dataset(source = Examples.Graph,
       onObjects = Map(
         "an edge" -> List("f", "g", "h", "i", "j"),
         "a vertex" -> List("A", "B", "C", "D")),
@@ -63,7 +63,7 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
           "i" -> "C",
           "j" -> "C")))
 
-    val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
+    val DavidsFunkyGraphReversed = Dataset(source = Examples.Graph,
       onObjects = Map(
         "an edge" -> List("f", "g", "h", "i", "j"),
         "a vertex" -> List("A", "B", "C", "D")),

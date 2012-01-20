@@ -84,33 +84,33 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     F.pullback.leftCounit(X) should be('isomorphism_?)
   }
   
-  "leftCounit" should "be an injection for functor from Grph to Chain(1)" in {
+  "leftCounit" should "be an injection for functor from Graph to Chain(1)" in {
     val X=GraphDataset120114
     val F = GraphToFunction
     F.pullback.leftCounit(X) should be ('injection_?)
   }
   
-  "leftUnit" should "be a surjection for functor from Grph to Chain(1)" in {
+  "leftUnit" should "be a surjection for functor from Graph to Chain(1)" in {
     val X=GraphDataset120114
     val F = GraphToFunction
     F.pullback.leftUnit(X) should be ('surjection_?)
   }
  
   "rightUnit" should "be an isomorphism for epi-like functors (?)" in {
-    //I don't have the internet, and I don't recall the name for this type of functor, but Grph-->Chain(1) would be sone.
+    //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
     val X = DavidsFunkyFunction
     val F= GraphToFunction
     F.pullback.rightUnit should be ('isomorphism_?)
   }
  
    "rightCounit" should "be an isomorphism for epi-like functors (?)" in {
-    //I don't have the internet, and I don't recall the name for this type of functor, but Grph-->Chain(1) would be sone.
+    //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
     val X = DavidsFunkyFunction
     val F= GraphToFunction
     F.pullback.rightCounit should be ('isomorphism_?)
   }
  
-  val GraphDataset120114 = Dataset(source = Examples.Grph,
+  val GraphDataset120114 = Dataset(source = Examples.Graph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
       "a vertex" -> List("A", "B", "C", "D")),
@@ -220,7 +220,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   )
   
   val GraphToFunction = Translation(
-    source = Examples.Grph,
+    source = Examples.Graph,
     target = Examples.Chain(1),
     onObjects = Map(
       "an edge" -> "V0",

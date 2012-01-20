@@ -30,7 +30,7 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "hjbar" -> "jbar",
         "jbar" -> "jbar")))
 
-  val GraphFromDavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.Grph,
+  val GraphFromDavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.Graph,
     onObjects = Map(
       "a vertex" -> List("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar"),
       "an edge" -> List("f", "g", "h", "i", "j")),

@@ -31,13 +31,13 @@ object Examples {
       relations = List.concat(isoL, isoR))
   }.assertFinite
 
-  val Grph = Ontology(
+  val Graph = Ontology(
     objects = List("an edge", "a vertex"),
     arrows = List(
       "an edge" --- "has as source" --> "a vertex",
       "an edge" --- "has as target" --> "a vertex")).assertAcyclic.assertFree
 
-  val TerminalGraph = Dataset(source = Grph,
+  val TerminalGraph = Dataset(source = Graph,
     onObjects = Map(
       "an edge" -> List("+1"),
       "a vertex" -> List("N")),
@@ -45,7 +45,7 @@ object Examples {
       ("an edge" --- "has as source" --> "a vertex") -> Map("+1" -> "N"),
       ("an edge" --- "has as target" --> "a vertex") -> Map("+1" -> "N")))
 
-  val TerminalBigraph = Dataset(source = Grph,
+  val TerminalBigraph = Dataset(source = Graph,
     onObjects = Map(
       "an edge" -> List("input", "output"),
       "a vertex" -> List("species", "transition")),
@@ -58,8 +58,8 @@ object Examples {
         "output" -> "species")))
 
   val ReverseGraph = Translation(
-    source = Examples.Grph,
-    target = Examples.Grph,
+    source = Examples.Graph,
+    target = Examples.Graph,
     onObjects = Map(
       "an edge" -> "an edge",
       "a vertex" -> "a vertex"),
@@ -67,7 +67,7 @@ object Examples {
       ("an edge" --- "has as source" --> "a vertex") -> ("an edge" --- "has as target" --> "a vertex"),
       ("an edge" --- "has as target" --> "a vertex") -> ("an edge" --- "has as source" --> "a vertex")))
 
-  val InitialGraph = Dataset(source = Grph,
+  val InitialGraph = Dataset(source = Graph,
     onObjects = Map(
       "an edge" -> List(),
       "a vertex" -> List()),
@@ -207,7 +207,7 @@ object Examples {
 
   val SourceFunction = Translation(
     source = Chain(1),
-    target = Grph,
+    target = Graph,
     onObjects = Map(
       "V0" -> "an edge",
       "V1" -> "a vertex"),
@@ -216,7 +216,7 @@ object Examples {
 
   val TargetFunction = Translation(
     source = Chain(1),
-    target = Grph,
+    target = Graph,
     onObjects = Map(
       "V0" -> "an edge",
       "V1" -> "a vertex"),
@@ -300,7 +300,7 @@ object Examples {
       ("a pointed set" --- "has as chosen" --> "an element") -> ("1" --- "E10" --> "0")))
 
     val GraphToDiscreteDynamicalSystem1 = Translation(
-      source = Grph,
+      source = Graph,
       target = DiscreteDynamicalSystem,
       onObjects = Map(
         "an edge" -> "an element",
@@ -310,7 +310,7 @@ object Examples {
         ("an edge" --- "has as target" --> "a vertex") -> ("an element" --- "has as successor" --> "an element")))
 
     val GraphToDiscreteDynamicalSystem2 = Translation(
-      source = Grph,
+      source = Graph,
       target = DiscreteDynamicalSystem,
       onObjects = Map(
         "an edge" -> "an element",

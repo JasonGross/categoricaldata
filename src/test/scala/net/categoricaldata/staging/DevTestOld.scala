@@ -31,7 +31,7 @@
 //        "hjbar" -> "jbar",
 //        "jbar" -> "jbar")))
 //
-//  val GraphFromDavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.Grph,
+//  val GraphFromDavidsFunkyDiscreteDynamicalSystem = Dataset(source = Examples.Graph,
 //    onObjects = Map(
 //      "a vertex" -> List("fhjbar", "ghjbar", "ijbar", "hjbar", "jbar"),
 //      "an edge" -> List("f", "g", "h", "i", "j")),
@@ -64,7 +64,7 @@
 //        "b" -> "b",
 //        "c" -> "c")))
 //
-//  val DavidsFunkyGraphReversed = Dataset(source = Examples.Grph,
+//  val DavidsFunkyGraphReversed = Dataset(source = Examples.Graph,
 //    onObjects = Map(
 //      "an edge" -> List("f", "g", "h", "i", "j"),
 //      "a vertex" -> List("A", "B", "C", "D")),
@@ -145,8 +145,8 @@
 //  
 //  // TODO (David) Graph to FCM2_1.
 //        
-//  val GrphToFCM2_1 = Translation (
-//      source = Examples.Grph,
+//  val GraphToFCM2_1 = Translation (
+//      source = Examples.Graph,
 //      target = Examples.FiniteCyclicMonoid(2,1),
 //      onObjects = Map (
 //          "an edge" -> "an element", 
@@ -157,7 +157,7 @@
 //      )
 //  )
 //  
-//  val DavidsGrph = Dataset (source = Examples.Grph,
+//  val DavidsGraph = Dataset (source = Examples.Graph,
 //      onObjects = Map(
 //          "an edge" -> List ("0","1","2","3"),
 //          "a vertex" -> List ("a", "b", "c", "d")),
@@ -175,25 +175,25 @@
 //      )
 // )
 //  
-//// val DavidsGrphLFCM2_1 = Dataset(source = Examples.FiniteCyclicMonoid(2,1)) //TODO (David) Define these two FCM2_1 datasets to make the following two tests work.
-//// val DavidsGrphRFCM2_1 = Dataset(source = Examples.FiniteCyclicMonoid(2,1))
+//// val DavidsGraphLFCM2_1 = Dataset(source = Examples.FiniteCyclicMonoid(2,1)) //TODO (David) Define these two FCM2_1 datasets to make the following two tests work.
+//// val DavidsGraphRFCM2_1 = Dataset(source = Examples.FiniteCyclicMonoid(2,1))
 //// 
 //// "__!" should "when applied to DavidsGraph, return the correct FCM2_1" in {
-////    val LHS = GrphToFCM2_1__!(DavidsGrph)
-////    val RHS = DavidsGrphLFCM2_1
+////    val LHS = GraphToFCM2_1__!(DavidsGraph)
+////    val RHS = DavidsGraphLFCM2_1
 ////    LHS should beIsomorphicTo(RHS)
 ////  }
 ////  
 //// "__*" should "when applied to DavidsGraph, return the correct FCM2_1" in {
-////    val LHS = GrphToFCM2_1__*(DavidsGrph)
-////    val RHS = DavidsGrphRFCM2_1
+////    val LHS = GraphToFCM2_1__*(DavidsGraph)
+////    val RHS = DavidsGraphRFCM2_1
 ////    LHS should beIsomorphicTo(RHS)
 ////  }
 //      
 //          
 //  // TODO this doesn't work because the target is infinite!
 //  "__*" should "convert a graph into a discrete dynamical system" in {
-//    val DavidsFunkyGraph = Dataset(source = Examples.Grph,
+//    val DavidsFunkyGraph = Dataset(source = Examples.Graph,
 //      onObjects = Map(
 //        "an edge" -> List("f", "g", "h", "i", "j"),
 //        "a vertex" -> List("A", "B", "C", "D")),

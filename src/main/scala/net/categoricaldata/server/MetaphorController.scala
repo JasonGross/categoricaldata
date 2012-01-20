@@ -19,13 +19,13 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   val exampleOntologies: List[(String, List[(String, String)])] = List(
       ("Chain", List(("n", "4"))),
       ("Isomorphism", Nil),
-      ("Grph", Nil),
+      ("Graph", Nil),
       ("FiniteCyclicMonoid", List(("n", "5"), ("m", "3"))))
   def `GET /metaphor/examples` = ??? // work out how to render exampleOntologies as some HTML
   
   def `GET /metaphor/examples/ontologies/Chain`(n: Int): Ontology = Examples.Chain(n)
   def `GET /metaphor/examples/ontologies/Isomorphism`: Ontology = Examples.Isomorphism
-  def `GET /metaphor/examples/ontologies/Grph`: Ontology = Examples.Grph
+  def `GET /metaphor/examples/ontologies/Graph`: Ontology = Examples.Graph
   def `GET /metaphor/examples/ontologies/FiniteCyclicMonoid` (n: Int, k:Int): Ontology = Examples.FiniteCyclicMonoid (n,k)
   def `GET /metaphor/examples/datasets/TerminalBigraph`: Dataset = Examples.TerminalBigraph
   def `GET /metaphor/examples/translations/ReverseGraph`: Translation = Examples.ReverseGraph
