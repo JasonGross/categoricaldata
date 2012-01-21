@@ -212,7 +212,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     lazy val rightAdjoint = rightPushforward
 
     lazy val leftCounit = new NaturalTransformation { leftCounit =>
-      override val source = leftPushforward andThen pullback
+      override val source = Functor.compose(leftPushforward, pullback)
       override val target = pullback.target.identityFunctor
       override def apply(L: translation.source.F /* e.g. Dataset */ ): translation.source.T /* e.g. Datamap */ = {
         translation.source.internalize(new NaturalTransformationToSet {
@@ -238,7 +238,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     }
     lazy val leftUnit = new NaturalTransformation { leftUnit =>
       override val source = pullback.source.identityFunctor
-      override val target = pullback andThen leftPushforward
+      override val target = Functor.compose(pullback, leftPushforward)
       override def apply(L: sourceCategory.O): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = leftUnit.source(L)
@@ -248,7 +248,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       }
     }
     lazy val rightCounit = new NaturalTransformation { rightCounit =>
-      override val source = pullback andThen rightPushforward
+      override val source = Functor.compose(pullback, rightPushforward)
       override val target = pullback.source.identityFunctor
       override def apply(L: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */ ): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
@@ -260,7 +260,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     }
     lazy val rightUnit = new NaturalTransformation { rightUnit =>
       override val source = translation.source.AllFunctorsToSet.identityFunctor
-      override val target = rightPushforward andThen pullback
+      override val target = Functor.compose(rightPushforward, pullback)
       override def apply(L: sourceCategory.O /* this is just translation.source.FunctorToSet, but the compiler is recalcitrant */ ): translation.source.T = {
         translation.source.internalize(new NaturalTransformationToSet {
           override val source = rightUnit.source(L)

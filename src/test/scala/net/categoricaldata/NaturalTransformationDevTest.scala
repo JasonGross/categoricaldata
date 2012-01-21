@@ -21,14 +21,15 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   //  Knowing that unit and counit work correctly will validate a lot of code, I think. 
 
   "leftUnit" should "be an isomorphism for translations that are isomorphisms" in {
-    val X = GraphDataset120114
     val F = Examples.ReverseGraph
-//    F.pullback.leftUnit(X) should be('isomorphism_?)
+    // Apologies for this circumlocution. The compiler can't deduce by itself that F.target and GraphDataset120114 are both 'Graph'.
+    val X = F.target.internalize(GraphDataset120114)
+    F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an isomorphism for translations that are isomorphisms" in {
-    val X = GraphDataset120114
     val F = Examples.ReverseGraph
+    val X = GraphDataset120114
 //    F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 

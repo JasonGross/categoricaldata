@@ -12,7 +12,20 @@ trait Functor {
   def onMorphisms(m: source.M): target.M
 }
 
+trait ParametrizedFunctor[SC <: Category, TC <: Category] extends Functor {
+  override val source: SC
+  override val target: TC
+}
+
 object Functor {
+    def compose(f: Functor, g: Functor): ParametrizedFunctor[f.source.type, g.target.type] = new ParametrizedFunctor[f.source.type, g.target.type] {
+      require(f.target == g.source)
+      override val source: f.source.type = f.source
+      override val target: g.target.type = g.target
+      override def onObjects(o: f.source.O): g.target.O = g(f(o).asInstanceOf[g.source.O])
+      override def onMorphisms(m: f.source.M): g.target.M = g(f(m).asInstanceOf[g.source.M])
+    }  
+  
   trait withFinitelyGeneratedSource extends withLocallyFinitelyGeneratedSource {
     override val source: FinitelyGeneratedCategory
   }
