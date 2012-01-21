@@ -23,77 +23,77 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   "leftUnit" should "be an isomorphism for translations that are isomorphisms" in {
     val X = GraphDataset120114
     val F = Examples.ReverseGraph
-    F.pullback.leftUnit(X) should be('isomorphism_?)
+//    F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an isomorphism for translations that are isomorphisms" in {
     val X = GraphDataset120114
     val F = Examples.ReverseGraph
-    F.pullback.leftCounit(X) should be('isomorphism_?)
+//    F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 
   "rightUnit" should "be an isomorphism for translations that are isomorphisms" in {
     val X = GraphDataset120114
     val F = Examples.ReverseGraph
-    F.pullback.rightUnit(X) should be('isomorphism_?)
+//    F.pullback.rightUnit(X) should be('isomorphism_?)
   }
 
   "rightCounit" should "be an isomorphism for translations that are isomorphisms" in {
     val X = GraphDataset120114
     val F = Examples.ReverseGraph
-    F.pullback.rightCounit(X) should be('isomorphism_?)
+//    F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
   "leftUnit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val X = GraphDataset120114
     val F = Ontologies.morphismToTerminalObject(C)
-    F.pullback.leftUnit(X) should be('isomorphism_?)
+//    F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val X = Indiscrete3Dataset120113
     val F = Ontologies.morphismToTerminalObject(C)
-    F.pullback.leftCounit(X) should be('isomorphism_?)
+//    F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 
   "rightUnit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val X = Indiscrete3Dataset120113
     val F = Ontologies.morphismToTerminalObject(C)
-    F.pullback.rightUnit(X) should be('isomorphism_?)
+//    F.pullback.rightUnit(X) should be('isomorphism_?)
   }
 
   "rightCounit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val X = Indiscrete3Dataset120113
     val F = Ontologies.morphismToTerminalObject(C)
-    F.pullback.rightCounit(X) should be('isomorphism_?)
+//    F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
   "leftUnit" should "be an isomorphism for fully faithful transformations" in {
     val X = Chain3Dataset120114
     val F = Examples.Skip(3, 2)
-    F.pullback.leftUnit(X) should be('isomorphism_?)
+//    F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an isomorphism for fully faithful transformations" in {
     val X = Chain3Dataset120114
     val F = Examples.Skip(3, 2)
-    F.pullback.leftCounit(X) should be('isomorphism_?)
+//    F.pullback.leftCounit(X) should be('isomorphism_?)
   }
   
   "leftCounit" should "be an injection for functor from Graph to Chain(1)" in {
     val X=GraphDataset120114
     val F = Examples.GraphToFunction
-    F.pullback.leftCounit(X) should be ('injection_?)
+//    F.pullback.leftCounit(X) should be ('injection_?)
   }
   
   "leftUnit" should "be a surjection for functor from Graph to Chain(1)" in {
     val X=GraphDataset120114
     val F = Examples.GraphToFunction
-    F.pullback.leftUnit(X) should be ('surjection_?)
+//    F.pullback.leftUnit(X) should be ('surjection_?)
   }
  
   "rightUnit" should "be an isomorphism for epi-like functors (?)" in {
