@@ -215,11 +215,11 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       override val source = leftPushforward andThen pullback
       override val target = pullback.target.identityFunctor
       def apply(L: net.categoricaldata.category.FunctorToSet)(implicit d: DummyImplicit): translation.target.T = apply(sourceCategory.internalize(L))
-      override def apply(o: translation.source.F /* e.g. Dataset */ ): translation.source.T /* e.g. Datamap */ = {
+      override def apply(L: translation.source.F /* e.g. Dataset */ ): translation.source.T /* e.g. Datamap */ = {
         translation.source.internalize(new NaturalTransformationToSet {
-          override val source = leftCounit.source(o)
-          override val target = leftCounit.target(o)
-          override def apply(o: translation.source.O): FFunction = ??? // MATH what is the left counit for pullback?
+          override val source = leftCounit.source(L)
+          override val target = leftCounit.target(L)
+          override def apply(d: translation.source.O): FFunction = ??? // MATH what is the left counit for pullback?
           /* 
     * Given a functor F: C-->D. 
     * Given a dataset L: D-->Set
@@ -245,7 +245,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = leftUnit.source(L)
           override val target = leftUnit.target(L)
-          override def apply(o: translation.target.O): FFunction = ??? // MATH what is the left unit for pullback?
+          override def apply(d: translation.target.O): FFunction = ??? // MATH what is the left unit for pullback?
         })
       }
     }
@@ -253,11 +253,11 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       override val source = pullback andThen rightPushforward
       override val target = pullback.source.identityFunctor
       def apply(L: net.categoricaldata.category.FunctorToSet)(implicit d: DummyImplicit): translation.target.T = apply(sourceCategory.internalize(L))
-      override def apply(o: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */ ): translation.target.T = {
+      override def apply(L: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */ ): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
-          override val source = rightCounit.source(o)
-          override val target = rightCounit.target(translation.target.internalize(o))
-          override def apply(o: translation.target.O): FFunction = ??? // MATH what is the right counit for pullback?
+          override val source = rightCounit.source(L)
+          override val target = rightCounit.target(translation.target.internalize(L))
+          override def apply(d: translation.target.O): FFunction = ??? // MATH what is the right counit for pullback?
         })
       }
     }
@@ -265,11 +265,11 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       override val source = translation.source.AllFunctorsToSet.identityFunctor
       override val target = rightPushforward andThen pullback
       def apply(L: net.categoricaldata.category.FunctorToSet)(implicit d: DummyImplicit): translation.target.T = apply(sourceCategory.internalize(L))
-      override def apply(o: sourceCategory.O /* this is just translation.source.FunctorToSet, but the compiler is recalcitrant */ ): translation.source.T = {
+      override def apply(L: sourceCategory.O /* this is just translation.source.FunctorToSet, but the compiler is recalcitrant */ ): translation.source.T = {
         translation.source.internalize(new NaturalTransformationToSet {
-          override val source = rightUnit.source(o)
-          override val target = rightUnit.target(o)
-          override def apply(o: translation.source.O): FFunction = ??? // MATH what is the right unit for pullback?
+          override val source = rightUnit.source(L)
+          override val target = rightUnit.target(L)
+          override def apply(d: translation.source.O): FFunction = ??? // MATH what is the right unit for pullback?
         })
       }
 
