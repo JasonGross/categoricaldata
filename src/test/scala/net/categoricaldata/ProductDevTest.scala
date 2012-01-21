@@ -10,9 +10,6 @@ import net.tqft.toolkit.collections.NonStrictIterable
 import net.tqft.toolkit.permutations.Permutations
 import net.categoricaldata.examples.Examples
 import net.categoricaldata.util.CustomMatchers
-/*
- * This should always compile when checked in.
- */
 
 @RunWith(classOf[JUnitRunner])
 class ProductDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
@@ -20,21 +17,13 @@ class ProductDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   import net.categoricaldata.dsl.Sentences._
 
   "Product of sets" should "correctly multiply 3 by 2" in {
-    val Three: FSet = List("1", "2", "3")
-    val Two: FSet = List("a","b")
-    val LHS = Sets.product(Three, Two)
-    val RHS = List("1a", "1b", "2a", "2b", "3a", "3b")
-    // TODO (Scott) this doesn't compile; because beIsomorphicTo doesn't do FSets
-    //    LHS should beIsomorphicTo(RHS)
+    Sets.product(List("1", "2", "3"), List("a","b")) should have size(6)
+    Sets.product(List("1", "2", "3"), List("2","3")) should have size(6)
   }
 
   "Coproduct of sets" should "correctly add 3 and 2" in {
-    val Three: FSet = List("1", "2", "3")
-    val Two: FSet = List("a", "b")
-    val LHS = Sets.coproduct(Three, Two)
-    val RHS = List("1", "2", "3", "a", "b")
-    // TODO (Scott) this doesn't compile; because beIsomorphicTo doesn't do FSets
-    //    LHS should beIsomorphicTo(RHS)
+    Sets.coproduct(List("1", "2", "3"), List("a", "b")) should have size(5)
+    Sets.coproduct(List("1", "2", "3"), List("1", "2")) should have size(5)
   }
 
   val OneTwoThreePointed = Dataset(

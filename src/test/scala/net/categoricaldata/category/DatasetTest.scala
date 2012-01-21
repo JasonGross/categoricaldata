@@ -68,7 +68,7 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
         "j" -> "C")))
 
   "Dataset.isIsomorphicTo" should "be reflexive" in {
-    for (dataset <- List(Drawers, Examples.ReverseGraph.__*(DavidsFunkyGraph) /* TODO add some more? */ )) {
+    for (dataset <- List(Drawers, Examples.ReverseGraph.__*(DavidsFunkyGraph))) {
       dataset should beIsomorphicTo(dataset)
     }
   }

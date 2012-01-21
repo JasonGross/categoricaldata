@@ -53,15 +53,18 @@ case class IdentityFunction(set: FSet) extends FFunction {
 }
 
 object FFunction {
-  def apply[A](source: FSet, target: FSet, function: A => Any) = {
+  def apply[A](source: FSet, target: FSet, function: A => Any) = construct(source, target, function)
+  def bijection[A](source: FSet, target: FSet, function: A => Any) = construct(source, target, function, Some(true))
+
+  def construct[A](source: FSet, target: FSet, function: A => Any, bijection: Option[Boolean] = None) = {
     val source_ = source
     val target_ = target
     val result = new FFunction {
       override val source = source_
       override val target = target_
       override val toFunction = function.asInstanceOf[Any => Any]
+      override def isomorphism_? = bijection.getOrElse(super.isomorphism_?)
     }
-    //    result.verify
     result
   }
 }
