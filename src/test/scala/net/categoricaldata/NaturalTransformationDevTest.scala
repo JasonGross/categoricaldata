@@ -73,10 +73,10 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
-  "rightUnit" should "be an isomorphism for fully faithful transformations" in {//I changed this from leftUnit to rightUnit
+  "rightUnit" should "be an isomorphism for fully faithful transformations" in {//I changed this from leftUnit to rightUnit // TODO (David) but you didn't actually change the code, below.
     val F = Examples.Skip(3, 2)
-    val X = F.target.internalize(Chain3Dataset120114) //TODO (Scott) I think this should be F.source.internalize, but that fails the compile.
-    F.pullback.leftUnit(X) should be('isomorphism_?)
+    val X = F.target.internalize(Chain3Dataset120114) //TODO (David) Change to F.source.internalize
+    F.pullback.leftUnit(X) should be('isomorphism_?) // TODO (David) Change to rightUnit
   }
 
   "leftCounit" should "be an isomorphism for fully faithful transformations" in {
