@@ -410,8 +410,10 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         val RHS = FCM4_3Times2LToFCM5_3
         LHS should beIsomorphicTo(RHS)
      }      
+      
 
-  //TODO (David): Make a test for commutative diagram of ontologies. 
+ 
+      //TODO (David): Make a test for commutative diagram of ontologies. 
   //Let A=Span, B=non-commuting triangle, C=Chain(1), and D=commuting triangle. 
   //A-->B gives two paths start to end, A-->C is obvious, B-->D is obvious, C-->D is hypotenuse. 
   //Check that this diagram commutes.
