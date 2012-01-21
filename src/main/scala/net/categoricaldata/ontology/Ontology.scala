@@ -3,9 +3,19 @@ import net.categoricaldata.category._
 import net.categoricaldata.sets._
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-case class Box(name: String, data: Map[String, String] = Map()) {
+trait Box {
+  def name: String
   override def toString = "\"" + name + "\""
 }
+
+object Box {
+  private case class i(name: String) extends Box
+  def apply(name: String): Box = i(name)
+}
+
+//case class Box(name: String, data: Map[String, String] = Map()) {
+//  override def toString = "\"" + name + "\""
+//}
 
 case class Arrow(source: Box, target: Box, name: String) {
   override def toString = source.toString + " --- \"" + name + "\" --> " + target.toString
