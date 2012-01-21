@@ -14,10 +14,15 @@ case class Path[O, G](source: O, target: O, morphisms: List[G]) {
   // This is purely a micro-optimization.
   override lazy val hashCode = morphisms.hashCode
 
-  // FIXME this is badly broken
   override def toString = {
-    val afterFirstQuote = """".*"( --- ".*" --> ".*")""".r
-    source.toString + (for (m <- morphisms; s = m.toString) yield afterFirstQuote.unapplySeq(s).get.head).mkString
+    def generatorToString(g: G): String = {
+      g match {
+        case g: net.categoricaldata.ontology.Arrow => " --- \"" + g.name + "\" --> " + g.target.toString
+        case _ => "(" + g.toString() + ")"
+      }
+    }
+    
+    source.toString + morphisms.map(generatorToString(_)).mkString
   }
 }
 
