@@ -165,19 +165,20 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
 
     lazy val grothendieck: Ontology = new Ontology {
-      val unboxMap = scala.collection.mutable.Map[Box, (Box, Any)]()
+      case class GrothendieckBox(box: Box, element: Any) extends Box {
+        def name = "(" + box.name + ": " + element.toString + ")"
+      }
+      
       override def objectsAtLevel(k: Int) = {
         for (o <- dataset.source.objectsAtLevel(k); x <- dataset(o).toIterable) yield {
-          val newBox = Box("(" + o.name + ": " + x.toString + ")")
-          unboxMap += newBox -> (o, x)
-          newBox
+          GrothendieckBox(o, x)
         }
       }
       override val minimumLevel = dataset.source.minimumLevel
       override val maximumLevel = dataset.source.maximumLevel
       override def generators(s: Box, t: Box) = {
-        (unboxMap(s), unboxMap(t)) match {
-          case ((so, sx), (to, tx)) => {
+        (s, t) match {
+          case (GrothendieckBox(so, sx), GrothendieckBox(to, tx)) => {
             for (g <- dataset.source.generators(so, to); if dataset.onGenerators(g).toFunction(sx) == tx) yield Arrow(s, t, g.name)
           }
         }
