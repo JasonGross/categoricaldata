@@ -19,7 +19,8 @@ trait ParametrizedFunctor[SC <: Category, TC <: Category] extends Functor {
 
 object Functor {
     def compose(f: Functor, g: Functor): ParametrizedFunctor[f.source.type, g.target.type] = new ParametrizedFunctor[f.source.type, g.target.type] {
-      require(f.target == g.source)
+//		It seems not a good idea to require f.target == g.source. Often we want to allow f.target < g.source, but that's very hard to check.      
+//      require(f.target == g.source)
       override val source: f.source.type = f.source
       override val target: g.target.type = g.target
       override def onObjects(o: f.source.O): g.target.O = g(f(o).asInstanceOf[g.source.O])
