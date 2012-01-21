@@ -3,7 +3,7 @@ import net.categoricaldata.category._
 import net.categoricaldata.sets._
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 
-case class Box(name: String) {
+case class Box(name: String, data: Map[String, String] = Map()) {
   override def toString = "\"" + name + "\""
 }
 
