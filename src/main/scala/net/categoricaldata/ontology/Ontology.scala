@@ -77,16 +77,15 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
       require(other.source == ontology)
 
-              sealed trait cBox extends Box
-        case class bBox(b: Box) extends cBox {
-          def name = b.name
-        }
-        case class aBox(a: Arrow) extends cBox {
-          def name = a.toString
-        }
+      sealed trait cBox extends Box
+      case class bBox(b: Box) extends cBox {
+        def name = b.name
+      }
+      case class aBox(a: Arrow) extends cBox {
+        def name = a.toString
+      }
 
-      
-      val compositionDiagram = new Ontology with Ontology.FreeAcyclic {        
+      val compositionDiagram = new Ontology with Ontology.FreeAcyclic {
         override val minimumLevel = 0
         override val maximumLevel = 1
         override def objectsAtLevel(k: Int) = {
@@ -163,7 +162,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       private case class GrothendieckBox(box: Box, element: Any) extends Box {
         def name = "(" + box.name + ": " + element.toString + ")"
       }
-      
+
       override def objectsAtLevel(k: Int) = {
         for (o <- dataset.source.objectsAtLevel(k); x <- dataset(o).toIterable) yield {
           GrothendieckBox(o, x)
@@ -337,7 +336,7 @@ object Ontology {
 
   import net.categoricaldata.dsl.Sentences
 
-  def construct(boxes: List[Box], arrows: List[Arrow], relations: List[(Path[Box, Arrow], Path[Box, Arrow])] = Nil, json: Option[String] = None): Ontology = {  
+  def construct(boxes: List[Box], arrows: List[Arrow], relations: List[(Path[Box, Arrow], Path[Box, Arrow])] = Nil, json: Option[String] = None): Ontology = {
     class ConcreteOntology(_boxes: List[Box], _arrows: List[Arrow], _relations: List[(net.categoricaldata.category.Path[Box, Arrow], net.categoricaldata.category.Path[Box, Arrow])], _json: Option[String]) extends Ontology {
       private val arrowMap = _arrows.groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
 
@@ -352,27 +351,27 @@ object Ontology {
       override def pathEquality(p1: Path, p2: Path) = ???
 
       override def toJSON = super.toJSON.copy(json = _json)
-    }  
+    }
     // Construct a new ontology object
     new ConcreteOntology(boxes, arrows, relations, json)
   }
   def apply(objects: Traversable[String], arrows: Traversable[Sentences.StringArrow], relations: Traversable[Sentences.StringRelation] = Nil, json: Option[String] = None): Ontology = {
-       val allBoxes = objects.toList map { Box(_) }
-      implicit def stringArrow2Arrow(sa: Sentences.StringArrow) = Arrow(stringToBox(sa.source), stringToBox(sa.target), sa.label)
-       implicit def stringToBox(s: String) = allBoxes.find(_.name == s).get
-       
-       
-       val allArrows: List[Arrow] = for (sa <- arrows.toList) yield stringArrow2Arrow(sa)
+    val allBoxes = objects.toList map { Box(_) }
+    
+     def stringArrowToArrow(sa: Sentences.StringArrow) = Arrow(stringToBox(sa.source), stringToBox(sa.target), sa.label)
+     def stringToBox(s: String) = allBoxes.find(_.name == s).get
 
-       val allRelations: List[(Path[Box, Arrow], Path[Box, Arrow])] = (for (Sentences.StringRelation(lhs, rhs) <- relations.toList) yield {
-        val source: Box = lhs.source
-        val target: Box = lhs.target
-        val leftMorphisms = lhs.arrows.map(stringArrow2Arrow(_))
-        val rightMorphisms = rhs.arrows.map(stringArrow2Arrow(_))
-        (Path(source, target, leftMorphisms), Path(source, target, rightMorphisms))
-      })
+    val allArrows: List[Arrow] = for (sa <- arrows.toList) yield stringArrowToArrow(sa)
 
-      construct(allBoxes, allArrows, allRelations, json)      
+    val allRelations: List[(Path[Box, Arrow], Path[Box, Arrow])] = (for (Sentences.StringRelation(lhs, rhs) <- relations.toList) yield {
+      val source: Box = stringToBox(lhs.source)
+      val target: Box = stringToBox(lhs.target)
+      val leftMorphisms = lhs.arrows.map(stringArrowToArrow(_))
+      val rightMorphisms = rhs.arrows.map(stringArrowToArrow(_))
+      (Path(source, target, leftMorphisms), Path(source, target, rightMorphisms))
+    })
+
+    construct(allBoxes, allArrows, allRelations, json)
   }
 
 }
