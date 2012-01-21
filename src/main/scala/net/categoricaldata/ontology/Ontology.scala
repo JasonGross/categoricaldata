@@ -87,11 +87,6 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
       
       val compositionDiagram = new Ontology with Ontology.FreeAcyclic {        
-//        lazy val unbox: Map[Box, Either[Box, Arrow]] = {
-//          ((for (b <- ontology.objects) yield b -> Left(b)) :::
-//            (for (a <- ontology.allGenerators) yield Box(a.toString) -> Right(a))).toMap
-//        }
-
         override val minimumLevel = 0
         override val maximumLevel = 1
         override def objectsAtLevel(k: Int) = {
@@ -165,7 +160,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
 
     lazy val grothendieck: Ontology = new Ontology {
-      case class GrothendieckBox(box: Box, element: Any) extends Box {
+      private case class GrothendieckBox(box: Box, element: Any) extends Box {
         def name = "(" + box.name + ": " + element.toString + ")"
       }
       
