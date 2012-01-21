@@ -20,7 +20,7 @@ resolvers ++= Seq(
 
 // Project dependencies
 libraryDependencies ++= Seq(
-	"net.tqft.toolkit" %% "toolkit" % "0.1.1",
+	"net.tqft.toolkit" %% "toolkit" % "0.1.2",
 	"org.bowlerframework" % "core_2.9.1" % "0.5.1"
 )
 
