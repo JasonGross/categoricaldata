@@ -337,24 +337,11 @@ object Ontology {
 
   import net.categoricaldata.dsl.Sentences
 
-  def apply(objects: Traversable[String], arrows: Traversable[Sentences.StringArrow], relations: Traversable[Sentences.StringRelation] = Nil, json: Option[String] = None): Ontology = {
-    class ConcreteOntology(_objects: Traversable[String], _arrows: Traversable[Sentences.StringArrow], _relations: Traversable[Sentences.StringRelation], _json: Option[String]) extends Ontology {
-      private val boxes = _objects.toList map { Box(_) }
+  def construct(boxes: List[Box], arrows: List[Arrow], relations: List[(Path[Box, Arrow], Path[Box, Arrow])] = Nil, json: Option[String] = None): Ontology = {  
+    class ConcreteOntology(_boxes: List[Box], _arrows: List[Arrow], _relations: List[(net.categoricaldata.category.Path[Box, Arrow], net.categoricaldata.category.Path[Box, Arrow])], _json: Option[String]) extends Ontology {
+      private val arrowMap = _arrows.groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
 
-      private implicit def stringToBox(s: String) = boxes.find(_.name == s).get
-      private implicit def stringArrow2Arrow(sa: Sentences.StringArrow) = Arrow(sa.source, sa.target, sa.label)
-
-      private val allArrows: List[Arrow] = for (sa <- _arrows.toList) yield stringArrow2Arrow(sa)
-      private val arrowMap = allArrows.groupBy(a => (a.source, a.target)).withDefaultValue(Nil)
-
-      private val _allRelations: List[(Path, Path)] = (for (Sentences.StringRelation(lhs, rhs) <- _relations.toList) yield {
-        val source: Box = lhs.source
-        val target: Box = lhs.target
-        val leftMorphisms = lhs.arrows.map(stringArrow2Arrow(_))
-        val rightMorphisms = rhs.arrows.map(stringArrow2Arrow(_))
-        (Path(source, target, leftMorphisms), Path(source, target, rightMorphisms))
-      })
-      private val relationsMap = _allRelations.groupBy(a => (a._1.source, a._1.target)).withDefaultValue(Nil)
+      private val relationsMap = _relations.groupBy(a => (a._1.source, a._1.target)).withDefaultValue(Nil)
 
       val minimumLevel = 0
       val maximumLevel = 0
@@ -365,10 +352,27 @@ object Ontology {
       override def pathEquality(p1: Path, p2: Path) = ???
 
       override def toJSON = super.toJSON.copy(json = _json)
-    }
-
+    }  
     // Construct a new ontology object
-    new ConcreteOntology(objects, arrows, relations, json)
+    new ConcreteOntology(boxes, arrows, relations, json)
+  }
+  def apply(objects: Traversable[String], arrows: Traversable[Sentences.StringArrow], relations: Traversable[Sentences.StringRelation] = Nil, json: Option[String] = None): Ontology = {
+       val allBoxes = objects.toList map { Box(_) }
+      implicit def stringArrow2Arrow(sa: Sentences.StringArrow) = Arrow(stringToBox(sa.source), stringToBox(sa.target), sa.label)
+       implicit def stringToBox(s: String) = allBoxes.find(_.name == s).get
+       
+       
+       val allArrows: List[Arrow] = for (sa <- arrows.toList) yield stringArrow2Arrow(sa)
+
+       val allRelations: List[(Path[Box, Arrow], Path[Box, Arrow])] = (for (Sentences.StringRelation(lhs, rhs) <- relations.toList) yield {
+        val source: Box = lhs.source
+        val target: Box = lhs.target
+        val leftMorphisms = lhs.arrows.map(stringArrow2Arrow(_))
+        val rightMorphisms = rhs.arrows.map(stringArrow2Arrow(_))
+        (Path(source, target, leftMorphisms), Path(source, target, rightMorphisms))
+      })
+
+      construct(allBoxes, allArrows, allRelations, json)      
   }
 
 }
