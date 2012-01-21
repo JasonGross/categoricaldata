@@ -239,7 +239,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     lazy val leftUnit = new NaturalTransformation { leftUnit =>
       override val source = pullback.source.identityFunctor
       override val target = Functor.compose(pullback, leftPushforward)
-      override def apply(L: sourceCategory.O): translation.target.T = {
+      override def apply(L: sourceCategory.O /* this is just translation.target.Dataset, but the compiler is recalcitrant */ ): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = leftUnit.source(L)
           override val target = leftUnit.target(L)
@@ -250,7 +250,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     lazy val rightCounit = new NaturalTransformation { rightCounit =>
       override val source = Functor.compose(pullback, rightPushforward)
       override val target = pullback.source.identityFunctor
-      override def apply(L: sourceCategory.O /* this is just translation.target.FunctorToSet, but the compiler is recalcitrant */ ): translation.target.T = {
+      override def apply(L: sourceCategory.O /* this is just translation.target.Dataset, but the compiler is recalcitrant */): translation.target.T = {
         translation.target.internalize(new NaturalTransformationToSet {
           override val source = rightCounit.source(L)
           override val target = rightCounit.target(translation.target.internalize(L))

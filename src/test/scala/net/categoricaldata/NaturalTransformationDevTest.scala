@@ -29,91 +29,88 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 
   "leftCounit" should "be an isomorphism for translations that are isomorphisms" in {
     val F = Examples.ReverseGraph
-    val X = GraphDataset120114
-//    F.pullback.leftCounit(X) should be('isomorphism_?)
+    val X = F.source.internalize(GraphDataset120114)
+    F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 
   "rightUnit" should "be an isomorphism for translations that are isomorphisms" in {
-    val X = GraphDataset120114
     val F = Examples.ReverseGraph
-//    F.pullback.rightUnit(X) should be('isomorphism_?)
+    val X = F.source.internalize(GraphDataset120114)
+    F.pullback.rightUnit(X) should be('isomorphism_?)
   }
 
   "rightCounit" should "be an isomorphism for translations that are isomorphisms" in {
-    val X = GraphDataset120114
     val F = Examples.ReverseGraph
-//    F.pullback.rightCounit(X) should be('isomorphism_?)
+    val X = F.target.internalize(GraphDataset120114)
+    F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
   "leftUnit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
-    val X = GraphDataset120114
     val F = Ontologies.morphismToTerminalObject(C)
-//    F.pullback.leftUnit(X) should be('isomorphism_?)
+    val X = F.target.internalize(GraphDataset120114)
+    F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
-    val X = Indiscrete3Dataset120113
     val F = Ontologies.morphismToTerminalObject(C)
-//    F.pullback.leftCounit(X) should be('isomorphism_?)
+    val X = F.source.internalize(Indiscrete3Dataset120113)
+    F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 
   "rightUnit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
-    val X = Indiscrete3Dataset120113
     val F = Ontologies.morphismToTerminalObject(C)
-//    F.pullback.rightUnit(X) should be('isomorphism_?)
+    val X = F.source.internalize(Indiscrete3Dataset120113)
+    F.pullback.rightUnit(X) should be('isomorphism_?)
   }
 
   "rightCounit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
-    val X = Indiscrete3Dataset120113
     val F = Ontologies.morphismToTerminalObject(C)
-//    F.pullback.rightCounit(X) should be('isomorphism_?)
+    val X = F.target.internalize(Indiscrete3Dataset120113)
+    F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
   "leftUnit" should "be an isomorphism for fully faithful transformations" in {
-    val X = Chain3Dataset120114
     val F = Examples.Skip(3, 2)
-//    F.pullback.leftUnit(X) should be('isomorphism_?)
+    val X = F.target.internalize(Chain3Dataset120114)
+    F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an isomorphism for fully faithful transformations" in {
-    val X = Chain3Dataset120114
     val F = Examples.Skip(3, 2)
-//    F.pullback.leftCounit(X) should be('isomorphism_?)
+    val X = F.source.internalize(Chain3Dataset120114)
+    F.pullback.leftCounit(X) should be('isomorphism_?)
   }
-  
+
   "leftCounit" should "be an injection for functor from Graph to Chain(1)" in {
-    val X=GraphDataset120114
     val F = Examples.GraphToFunction
-//    F.pullback.leftCounit(X) should be ('injection_?)
+    val X = F.source.internalize(GraphDataset120114)
+    F.pullback.leftCounit(X) should be('injection_?)
   }
-  
+
   "leftUnit" should "be a surjection for functor from Graph to Chain(1)" in {
-    val X=GraphDataset120114
     val F = Examples.GraphToFunction
-//    F.pullback.leftUnit(X) should be ('surjection_?)
+    val X = F.target.internalize(GraphDataset120114)
+    F.pullback.leftUnit(X) should be('surjection_?)
   }
- 
+
   "rightUnit" should "be an isomorphism for epi-like functors (?)" in {
     //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
+    val F = Examples.GraphToFunction
     val X = DavidsFunkyFunction
-    val F= Examples.GraphToFunction
-    F.pullback.rightUnit should be ('isomorphism_?)
+    F.pullback.rightUnit should be('isomorphism_?)
   }
- 
-   "rightCounit" should "be an isomorphism for epi-like functors (?)" in {
-    //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
-    val X = DavidsFunkyFunction
-    val F= Examples.GraphToFunction
-    F.pullback.rightCounit should be ('isomorphism_?)
-  }
-   
-  
 
- 
+  "rightCounit" should "be an isomorphism for epi-like functors (?)" in {
+    //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
+    val F = Examples.GraphToFunction
+    val X = DavidsFunkyFunction
+    F.pullback.rightCounit should be('isomorphism_?)
+  }
+
   val GraphDataset120114 = Dataset(source = Examples.Graph,
     onObjects = Map(
       "an edge" -> List("f", "g", "h", "i", "j"),
@@ -219,11 +216,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
       ("V2" --- "E23" --> "V3") -> Map(
         "2f" -> "3i",
         "2g" -> "3k",
-        "2h" -> "3l")
-    )
-  )
-  
-  
+        "2h" -> "3l")))
 
   val DavidsFunkyFunction = Dataset(source = Examples.Chain(1),
     onObjects = Map(
