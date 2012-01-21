@@ -97,18 +97,18 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     F.pullback.leftUnit(X) should be('surjection_?)
   }
 
-  "rightUnit" should "be an isomorphism for epi-like functors (?)" in {
+  "leftUnit" should "be an isomorphism for epi-like functors (?)" in {
     //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
     val F = Examples.GraphToFunction
     val X = DavidsFunkyFunction
-    F.pullback.rightUnit should be('isomorphism_?)
+    F.pullback.leftUnit should be('isomorphism_?) //TODO (Scott) this line should be replaced by F.pullback.leftUnit(X) should be('isomorphism_?), but this causes a compiler crash. Mimicking your fix with internalize doesn't seem to help.
   }
 
   "rightCounit" should "be an isomorphism for epi-like functors (?)" in {
     //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
     val F = Examples.GraphToFunction
     val X = DavidsFunkyFunction
-    F.pullback.rightCounit should be('isomorphism_?)
+    F.pullback.rightCounit should be('isomorphism_?) //TODO (Scott) this line should be replaced by F.pullback.rightCounit(X) should be('isomorphism_?), but this causes a compiler crash. Mimicking your fix with internalize doesn't seem to help.
   }
 
   val GraphDataset120114 = Dataset(source = Examples.Graph,
