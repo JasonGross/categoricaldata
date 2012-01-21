@@ -13,10 +13,6 @@ object Box {
   def apply(name: String): Box = i(name)
 }
 
-//case class Box(name: String, data: Map[String, String] = Map()) {
-//  override def toString = "\"" + name + "\""
-//}
-
 case class Arrow(source: Box, target: Box, name: String) {
   override def toString = source.toString + " --- \"" + name + "\" --> " + target.toString
 }
@@ -81,36 +77,45 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {
       require(other.source == ontology)
 
-      val compositionDiagram = new Ontology with Ontology.FreeAcyclic {
-        lazy val unbox: Map[Box, Either[Box, Arrow]] = {
-          ((for (b <- ontology.objects) yield b -> Left(b)) :::
-            (for (a <- ontology.allGenerators) yield Box(a.toString) -> Right(a))).toMap
+              sealed trait cBox extends Box
+        case class bBox(b: Box) extends cBox {
+          def name = b.name
         }
+        case class aBox(a: Arrow) extends cBox {
+          def name = a.toString
+        }
+
+      
+      val compositionDiagram = new Ontology with Ontology.FreeAcyclic {        
+//        lazy val unbox: Map[Box, Either[Box, Arrow]] = {
+//          ((for (b <- ontology.objects) yield b -> Left(b)) :::
+//            (for (a <- ontology.allGenerators) yield Box(a.toString) -> Right(a))).toMap
+//        }
 
         override val minimumLevel = 0
         override val maximumLevel = 1
         override def objectsAtLevel(k: Int) = {
           k match {
             case 0 => {
-              ontology.objects
+              ontology.objects.map { box => bBox(box) }
             }
             case 1 => {
-              ontology.allGenerators.map { a => Box(a.toString) }
+              ontology.allGenerators.map { arrow => aBox(arrow) }
             }
             case _ => Nil
           }
         }
         def generators(source: Box, target: Box) = {
-          unbox(source) match {
-            case Left(a) => {
-              unbox(target) match {
-                case Right(arrow) => {
-                  (if (arrow.source == a) List(Arrow(source, target, "left")) else Nil) ::: (if (arrow.target == a) List(Arrow(source, target, "right")) else Nil)
+          source match {
+            case bBox(box) => {
+              target match {
+                case aBox(arrow) => {
+                  (if (arrow.source == box) List(Arrow(source, target, "left")) else Nil) ::: (if (arrow.target == box) List(Arrow(source, target, "right")) else Nil)
                 }
-                case Left(_) => Nil
+                case bBox(_) => Nil
               }
             }
-            case Right(_) => Nil // no arrows out of arrows!
+            case aBox(_) => Nil // no arrows out of arrows!
           }
         }
         def relations(source: Box, target: Box) = Nil
@@ -118,11 +123,11 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
       val noninvariantBijections = (new compositionDiagram.Dataset {
         def onObjects(o: Box) = {
-          compositionDiagram.unbox(o) match {
-            case Left(box) => {
+          o match {
+            case bBox(box) => {
               Sets.bijections(dataset(box), other(box))
             }
-            case Right(Arrow(a, b, _)) => {
+            case aBox(Arrow(a, b, _)) => {
               Sets.functions(dataset(a), other(b))
             }
           }
@@ -130,13 +135,13 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         def onGenerators(g: Arrow) = {
           g match {
             case Arrow(s, t, direction) => {
-              (compositionDiagram.unbox(t), direction) match {
-                case (Right(arrow), "left") => {
+              (t, direction) match {
+                case (aBox(arrow), "left") => {
                   new DatasetFunction(g) {
                     def toFunction = { f => f.asInstanceOf[FFunction] andThen other.onGenerators(arrow) }
                   }
                 }
-                case (Right(arrow), "right") => {
+                case (aBox(arrow), "right") => {
                   new DatasetFunction(g) {
                     def toFunction = { f => dataset.onGenerators(arrow) andThen f.asInstanceOf[FFunction] }
                   }
