@@ -333,6 +333,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def apply(t: lfgCategory.O) = FFunction(source(t), target(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
   }
 
+  // FIXME changing this to 'object yoneda extends' results in IllegalAccessErrors at runtime.
   lazy val yoneda = new Functor.withLocallyFinitelyGeneratedSource {
     override val source: lfgCategory.opposite.type = lfgCategory.opposite
     override val target = functorsToSet

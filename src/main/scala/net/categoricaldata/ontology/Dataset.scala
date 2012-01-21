@@ -3,7 +3,7 @@ import net.categoricaldata.sets.FFunction
 import net.categoricaldata.dsl.Sentences
 
 trait Dataset extends net.categoricaldata.category.FunctorToSet {
-
+  def grothendieck: Ontology
 }
 
 object Dataset {

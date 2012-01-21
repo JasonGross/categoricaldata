@@ -7,6 +7,7 @@ import net.categoricaldata.examples.Examples
 import net.categoricaldata.ontology.Ontology
 import net.categoricaldata.ontology.Dataset
 import net.categoricaldata.ontology.Translation
+import net.categoricaldata.ontology.Box
 
 class MetaphorController extends Controller with FunctionNameConventionRoutes {
 
@@ -30,6 +31,7 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   def `GET /metaphor/examples/datasets/TerminalBigraph`: Dataset = Examples.TerminalBigraph
   def `GET /metaphor/examples/translations/ReverseGraph`: Translation = Examples.ReverseGraph
 
+  
   def `GET /metaphor/compute/leftPushforward`(translation: Translation, dataset: Dataset): Dataset = {
     translation.__!(dataset)
   }
@@ -38,5 +40,15 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   }
   def `GET /metaphor/compute/pullback`(translation: Translation, dataset: Dataset): Dataset = {
     translation.^*(dataset)
+  }
+  
+  def `GET /metaphor/compute/grothendieck`(dataset: Dataset): Ontology = {
+    dataset.grothendieck
+  }
+  def `GET /metaphor/compute/yoneda`(ontology: Ontology, box: String): Dataset = {
+    ontology.yoneda(Box(box))
+  }
+  def `GET /metaphor/compute/translationToDataset`(translation: Translation): Dataset = {
+    translation.asPartialDataset.toDataset
   }
 }
