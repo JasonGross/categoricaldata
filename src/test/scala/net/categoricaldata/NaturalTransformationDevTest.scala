@@ -48,7 +48,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   "leftUnit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val F = Ontologies.morphismToTerminalObject(C)
-    val X = F.target.internalize(GraphDataset120114)
+    val X = F.target.internalize(Set120121)
     F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
@@ -69,13 +69,13 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   "rightCounit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val F = Ontologies.morphismToTerminalObject(C)
-    val X = F.target.internalize(Indiscrete3Dataset120113)
+    val X = F.target.internalize(Set120121)
     F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
-  "leftUnit" should "be an isomorphism for fully faithful transformations" in {
+  "rightUnit" should "be an isomorphism for fully faithful transformations" in {//I changed this from leftUnit to rightUnit
     val F = Examples.Skip(3, 2)
-    val X = F.target.internalize(Chain3Dataset120114)
+    val X = F.target.internalize(Chain3Dataset120114) //TODO (Scott) I think this should be F.source.internalize, but that fails the compile.
     F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
@@ -85,15 +85,15 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 
-  "leftCounit" should "be an injection for functor from Graph to Chain(1)" in {
+  "leftCounit" should "be an injection for functor from Graph to Chain1" in {
     val F = Examples.GraphToFunction
     val X = F.source.internalize(GraphDataset120114)
     F.pullback.leftCounit(X) should be('injection_?)
   }
 
-  "leftUnit" should "be a surjection for functor from Graph to Chain(1)" in {
+  "leftUnit" should "be a surjection for functor from Graph to Chain1" in {
     val F = Examples.GraphToFunction
-    val X = F.target.internalize(GraphDataset120114)
+    val X = F.target.internalize(DavidsFunkyFunction)
     F.pullback.leftUnit(X) should be('surjection_?)
   }
 
@@ -130,68 +130,69 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
         "j" -> "C")))
 
   val Indiscrete3Dataset120113 = Dataset(
-    source = Examples.Isomorphism,
+    source = Examples.IndiscreteCategory(3),
     onObjects = Map(
-      "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
-      "1" -> List("A1", "B1", "B2", "C1", "C2", "C3"),
-      "2" -> List("u", "v", "w", "x", "y", "z")),
+      "V1" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+      "V2" -> List("A1", "B1", "B2", "C1", "C2", "C3"),
+      "V3" -> List("u", "v", "w", "x", "y", "z")),
     onMorphisms = Map(
-      ("0" --- "E00" --> "0") -> Map(
+      ("V1" --- "E11" --> "V1") -> Map(
         "a1" -> "a1",
         "b1" -> "b1",
         "b2" -> "b2",
         "c1" -> "c1",
         "c2" -> "c2",
-        "c3" -> "c3"), ("0" --- "E01" --> "1") -> Map(
+        "c3" -> "c3"), 
+      ("V1" --- "E12" --> "V2") -> Map(
         "a1" -> "A1",
         "b1" -> "B1",
         "b2" -> "B2",
         "c1" -> "C1",
         "c2" -> "C2",
         "c3" -> "C3"),
-      ("0" --- "E02" --> "2") -> Map(
+      ("V1" --- "E13" --> "V3") -> Map(
         "a1" -> "u",
         "b1" -> "v",
         "b2" -> "w",
         "c1" -> "x",
         "c2" -> "y",
         "c3" -> "z"),
-      ("1" --- "E10" --> "0") -> Map(
+      ("V2" --- "E21" --> "V1") -> Map(
         "A1" -> "a1",
         "B1" -> "b1",
         "B2" -> "b2",
         "C1" -> "c1",
         "C2" -> "c2",
         "C3" -> "c3"),
-      ("1" --- "E11" --> "1") -> Map(
+      ("V2" --- "E22" --> "V2") -> Map(
         "A1" -> "A1",
         "B1" -> "B1",
         "B2" -> "B2",
         "C1" -> "C1",
         "C2" -> "C2",
         "C3" -> "C3"),
-      ("1" --- "E12" --> "2") -> Map(
+      ("V2" --- "E23" --> "V3") -> Map(
         "A1" -> "u",
         "B1" -> "v",
         "B2" -> "w",
         "C1" -> "x",
         "C2" -> "y",
         "C3" -> "z"),
-      ("2" --- "E20" --> "0") -> Map(
+      ("V3" --- "E31" --> "V1") -> Map(
         "u" -> "a1",
         "v" -> "b1",
         "w" -> "b2",
         "x" -> "c1",
         "y" -> "c2",
         "z" -> "c3"),
-      ("2" --- "E21" --> "1") -> Map(
+      ("V3" --- "E32" --> "V2") -> Map(
         "u" -> "A1",
         "v" -> "B1",
         "w" -> "B2",
         "x" -> "C1",
         "y" -> "C2",
         "z" -> "C3"),
-      ("2" --- "E10" --> "2") -> Map(
+      ("V3" --- "E33" --> "V3") -> Map(
         "u" -> "u",
         "v" -> "v",
         "w" -> "w",
@@ -228,5 +229,9 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
         "Scott" -> "Scott's birthyear",
         "UC Berkeley" -> "1868",
         "MIT" -> "1861")))
-
+  
+   val Set120121 = Dataset(source = Examples.Chain(0),
+       onObjects = Map ("V0" -> List("a","b","c","d")),
+       onMorphisms = Map()
+   )
 }
