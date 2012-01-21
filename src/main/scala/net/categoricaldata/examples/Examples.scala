@@ -38,7 +38,7 @@ object Examples {
     ).assertAcyclic.assertFree
       
       
-  val Span = RelationArity(2)
+  lazy val Span = RelationArity(2)
 
   val Graph = Ontology(
     objects = List("an edge", "a vertex"),
@@ -84,7 +84,7 @@ object Examples {
       ("an edge" --- "has as source" --> "a vertex") -> Map(),
       ("an edge" --- "has as target" --> "a vertex") -> Map()))
 
-  val SpanToGraph = Translation(
+  lazy val SpanToGraph = Translation(
       source = Span,
       target = Graph,
       onObjects = Map(
