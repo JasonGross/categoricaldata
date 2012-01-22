@@ -308,12 +308,18 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
   def toJSON = net.categoricaldata.server.json.Pack.packOntology(this)
 
-  trait PartialDataset extends FinitelyGeneratedCategoryOver with Translation {
+  trait PartialDataset extends FinitelyGeneratedCategoryOver with Translation { partialDataset =>
     def complete_? : Boolean = ???
     def valid_? : Boolean = ???
     def wellDefined_? : Boolean = ???
 
-    def toDataset: ontology.Dataset = ???
+    def toDataset: ontology.Dataset = new ontology.Dataset {
+      val boxMap = partialDataset.source.objects.groupBy(partialDataset.onObjects(_))
+      val arrowMap = partialDataset.source.allGenerators.groupBy(partialDataset.onGenerators(_))
+      
+      override def onObjects(o: Box) = boxMap(o)
+      override def onGenerators(g: Arrow) = FFunction(onObjects(g.source), onObjects(g.target), arrowMap(generatorAsMorphism(g)).map({ case Arrow(s, t, _) => s-> t}))
+    }
   }
 }
 
