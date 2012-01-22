@@ -9,14 +9,14 @@ case class DataTables(tables: List[DataTable]) { dataTables =>
         import net.categoricaldata.dsl.Sentences._
         p --- "has foreign key" --> f
       },
-      relations = Nil)
+      relations = Nil).assertFree
   }
 
   private def tableWithPrimaryKey(key: String): DataTable = tables.find(_.primaryKey == key).get
 
   def toPartialDataset: source.PartialDataset = new source.PartialDataset { partialDataset =>
     case class PartialDatasetBox(value: String, over: Box) extends Box {
-      def name = over.name + ":= " + value
+      def name = over.name + " := " + value
     }
 
     override val source = {

@@ -12,15 +12,24 @@ import net.categoricaldata.util.CustomMatchers
 @RunWith(classOf[JUnitRunner])
 class CSVLoaderTest extends FlatSpec with ShouldMatchers with CustomMatchers {
 
-  "CSVLoader" should "work!" in {
-    val d = CSVLoader.fromStrings(
+  val table1 = 
 """
 *,*
 a,b
 b,a
+c,c
 """
-    ).toDataset
+val table2=
+"""
+*,*
+zz,zz
+xx,yy
+yy,xx
+"""   
     
-    println(d)
+  "CSVLoader" should "work!" in {
+    val d1 = CSVLoader.fromStrings(table1).toDataset
+    val d2 = CSVLoader.fromStrings(table2).toDataset
+    d1 should beIsomorphicTo(d2)
   }
 }

@@ -318,7 +318,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       val arrowMap = partialDataset.source.allGenerators.groupBy(partialDataset.onGenerators(_))
       
       override def onObjects(o: Box) = boxMap(o)
-      override def onGenerators(g: Arrow) = FFunction(onObjects(g.source), onObjects(g.target), arrowMap(generatorAsMorphism(g)).map({ case Arrow(s, t, _) => s-> t}))
+      override def onGenerators(g: Arrow) = FFunction(onObjects(g.source), onObjects(g.target), arrowMap(generatorAsMorphism(g)).map({ case Arrow(s, t, _) => s-> t}).toMap)
     }
   }
 }
