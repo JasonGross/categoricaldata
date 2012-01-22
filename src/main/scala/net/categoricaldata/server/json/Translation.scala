@@ -2,7 +2,13 @@ package net.categoricaldata.server.json
 
 case class TranslationOnArrow(arrow: Arrow, path: List[Arrow])
 
-case class Translation(source: Ontology, target: Ontology, onObjects: Map[String, String], onGenerators: List[TranslationOnArrow], json: Option[String] = None) {
+case class Translation(
+  source: Ontology,
+  target: Ontology,
+  onObjects: Map[String, String],
+  onGenerators: List[TranslationOnArrow],
+  provenance: Option[Provenance] = None,
+  json: Option[String] = None) extends JSONPacket {
   require(source != null)
   require(target != null)
   require(onObjects != null)
@@ -22,4 +28,6 @@ case class Translation(source: Ontology, target: Ontology, onObjects: Map[String
       }).toMap,
       json)
   }
+  
+  override def updateProvenance(_provenance: Provenance) = copy(provenance = Some(_provenance))
 }

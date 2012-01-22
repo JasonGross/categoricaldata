@@ -18,12 +18,17 @@ class ModelViewRenderer(jsonFormats: Formats = net.liftweb.json.DefaultFormats) 
   }
 
   def renderView(request: Request, response: Response, models: Seq[Any]) = {
+    import net.categoricaldata.server.json._
+    
     val parameters = extractParameters(request)
     prettyJsonViewRenderer.renderView(request, response,
       models collect {
-        case ontology: net.categoricaldata.ontology.Ontology => net.categoricaldata.server.json.Pack.packOntology(ontology)
-        case dataset: net.categoricaldata.ontology.Ontology#Dataset => net.categoricaldata.server.json.Pack.packDataset(dataset)
-        case translation: net.categoricaldata.ontology.Translation => net.categoricaldata.server.json.Pack.packTranslation(translation)
+        case ontology: net.categoricaldata.ontology.Ontology => Pack.packOntology(ontology)
+        case dataset: net.categoricaldata.ontology.Ontology#Dataset => Pack.packDataset(dataset)
+        case translation: net.categoricaldata.ontology.Translation => Pack.packTranslation(translation)
+      } map {
+        case packet: JSONPacket => packet.updateProvenance(Provenance(url = Some(request.getPath)))
+        case other => other
       })
   }
 }

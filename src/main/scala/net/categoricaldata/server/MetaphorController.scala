@@ -30,7 +30,6 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   def `GET /metaphor/examples/ontologies/FiniteCyclicMonoid` (n: Int, k:Int): Ontology = Examples.FiniteCyclicMonoid (n,k)
   def `GET /metaphor/examples/datasets/TerminalBigraph`: Dataset = Examples.TerminalBigraph
   def `GET /metaphor/examples/translations/ReverseGraph`: Translation = Examples.ReverseGraph
-
   
   def `GET /metaphor/compute/leftPushforward`(translation: Translation, dataset: Dataset): Dataset = {
     translation.__!(dataset)
@@ -51,4 +50,8 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes {
   def `GET /metaphor/compute/translationToDataset`(translation: Translation): Dataset = {
     translation.asPartialDataset.toDataset
   }
+  
+  def `GET /metaphor/passthru/ontology`(ontology: Ontology): Ontology = ontology
+  def `GET /metaphor/passthru/translation`(translation: Translation): Translation = translation
+  def `GET /metaphor/passthru/dataset`(dataset: Dataset): Dataset = dataset
 }
