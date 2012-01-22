@@ -21,7 +21,8 @@ resolvers ++= Seq(
 // Project dependencies
 libraryDependencies ++= Seq(
 	"net.tqft.toolkit" %% "toolkit" % "0.1.3",
-	"org.bowlerframework" % "core_2.9.1" % "0.5.1"
+	"org.bowlerframework" % "core_2.9.1" % "0.5.1",
+	"org.apache.httpcomponents" % "httpclient" % "4.1.1"
 )
 
 // lift-json
@@ -43,7 +44,8 @@ libraryDependencies ++= Seq(
 
 // Dependencies for jetty
 libraryDependencies ++= Seq(
-	"org.mortbay.jetty" % "jetty" % "6.1.22" % "container"
+	"org.mortbay.jetty" % "jetty" % "6.1.22" % "container",
+	"javax.servlet" % "servlet-api" % "2.5" % "provided" 
 )
 
 // Sometimes it's useful to see debugging out from the typer (e.g. to resolve slow compiles)

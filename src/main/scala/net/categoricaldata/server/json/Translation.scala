@@ -30,4 +30,5 @@ case class Translation(
   }
   
   override def updateProvenance(_provenance: Provenance) = copy(provenance = Some(_provenance))
+  override def fillEmptyJSON = copy(json = Some(json.getOrElse(PrettyPrinter(this))))
 }

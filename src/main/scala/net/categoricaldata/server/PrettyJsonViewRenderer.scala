@@ -16,12 +16,17 @@ import net.liftweb.json.Printer
 class PrettyJsonViewRenderer(jsonFormats: Formats = (net.liftweb.json.DefaultFormats + new BigDecimalSerializer)) extends ViewRenderer {
   implicit val formats = jsonFormats
 
+  // TODO this doesn't actually do what I want:
   def onError(request: Request, response: Response, exception: Exception) = {
     exception match {
-      case exception: HttpException => response.sendError(exception.code)
-      case _ => response.sendError(500)
+      case exception: HttpException => response.setStatus(exception.code)
+      case _ => {
+        response.setStatus(500)
+      }
     }
-    throw exception
+    response.setContentType("text/plain")
+    exception.printStackTrace(response.getWriter)
+    exception.printStackTrace(System.err)
   }
 
   def renderView(request: Request, response: Response, models: Seq[Any]) = {

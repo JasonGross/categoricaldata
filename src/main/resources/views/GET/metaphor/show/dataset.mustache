@@ -1,0 +1,12 @@
+<html>
+<head>
+	<title>Metaphor</title>
+</head>
+<body>
+    {{#dataset}}
+      <b>Dataset:</b><br/>
+      <textarea rows=20 cols=80>{{json}}</textarea><br/>
+      Provenance: {{#provenance}}<a href={{{url}}}>{{url}}</a>{{/provenance}}
+    {{/dataset}}
+</body>
+</html>

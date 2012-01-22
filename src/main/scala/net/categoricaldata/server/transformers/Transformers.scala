@@ -1,13 +1,25 @@
 package net.categoricaldata.server.transformers
 import com.recursivity.commons.bean.StringValueTransformer
 import scala.io.Source
+import org.apache.http.util.EntityUtils
+import org.apache.http.impl.client.ContentEncodingHttpClient
+import org.apache.http.client.methods.HttpGet
 
 trait StringOrURLTransformer[A] extends StringValueTransformer[A] {
   def stringToValue(from: String): Option[A]
- 
+
+  private def slurp(url: String): (Int, String) = {
+    val get = new HttpGet(url)
+    get.setHeader("Accept", "application/json")
+    val response = new ContentEncodingHttpClient().execute(get)
+    val entity = response.getEntity();
+    val status = response.getStatusLine().getStatusCode()
+    (status, EntityUtils.toString(entity))
+  }
+
   def toValue(from: String) = {
     stringToValue(if (from.startsWith("http")) {
-      Source.fromURL(from).mkString
+      slurp(from)._2
     } else {
       from
     })

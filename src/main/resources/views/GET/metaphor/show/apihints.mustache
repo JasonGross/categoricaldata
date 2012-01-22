@@ -1,0 +1,31 @@
+<html>
+<head>
+	<title>Metaphor</title>
+</head>
+<body>
+    {{#apiHints}}
+    	<b>Available request URLs:</b><br/>
+   		<ul>
+		{{#hints}}
+			<li>
+			{{^hasParameters}}
+				<a href={{{path}}}>
+			{{/hasParameters}}
+			{{path}}
+			{{^hasParameters}}
+				</a>
+			{{/hasParameters}}
+			{{#hasParameters}}
+				<form action={{{path}}} method="get">
+					{{#parameters}}
+						{{name}}=<input type="text" name="{{{name}}}"/>
+					{{/parameters}}
+					<input type="submit"/>
+				</form>
+			{{/hasParameters}}	
+			</li>
+		{{/hints}}
+		</ul>
+    {{/apiHints}}
+</body>
+</html>
