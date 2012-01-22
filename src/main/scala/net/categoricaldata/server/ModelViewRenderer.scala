@@ -41,7 +41,7 @@ class ModelViewRenderer(jsonFormats: Formats = net.liftweb.json.DefaultFormats) 
       case translation: net.categoricaldata.ontology.Translation => Pack.packTranslation(translation)
       case other => other
     } map {
-      case packet: JSONPacket => packet.updateProvenance(Provenance(url = Some(completeURL)))
+      case packet: JSONPacket => packet.updateProvenanceIfEmpty(Provenance(url = Some(completeURL)))
       case other => other
     }
 
@@ -53,6 +53,12 @@ class ModelViewRenderer(jsonFormats: Formats = net.liftweb.json.DefaultFormats) 
       }
     }
 
+    val locationString = request.getPath + (request.getParameterMap match {
+      case m if m.isEmpty => ""
+      case m => "?" + m.collect({case (name, value: String) => name + "=" + value}).mkString("&")
+    })
+    response.addHeader("Location", locationString)
+    
     if (renderJSON) {
       prettyJsonViewRenderer.renderView(request, response, processedModels)
     } else {

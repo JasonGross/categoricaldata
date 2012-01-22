@@ -12,7 +12,7 @@ object Pack {
     arrows = ontology.allGenerators.map(packArrow _),
     relations = ontology.allRelations.map(packRelation _))
 
-  implicit def packDataset(dataset: net.categoricaldata.ontology.Ontology#Dataset) = Dataset(
+  implicit def packDataset(dataset: net.categoricaldata.ontology.Dataset) = Dataset(
     ontology = packOntology(dataset.source),
     onObjects = dataset.source.objects.map(o => o.name -> dataset(o).toStringList).toMap,
     onMorphisms = dataset.source.allGenerators.map(a => DatasetOnArrow(packArrow(a), dataset.onGenerators(a).toStringMap)))

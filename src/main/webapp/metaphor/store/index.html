@@ -1,0 +1,42 @@
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="/js/metaphor.js"></script>
+</head>
+<body>
+You can use this page to write an ontology into the store, or retrieve one by its hash value.
+<hr/>
+To store an ontology, enter its URL or JSON representation below.
+<form action="/metaphor/store/ontology" method="POST">
+	<textarea rows=20 cols=90 name="ontology"></textarea><br/>
+	<input type="submit"/>
+</form> 
+<hr/>
+To store an ontology via AJAX, enter its URL or JSON representation below.
+<textarea rows=20 cols=90 id="ontology-ajax"></textarea><br/>
+<button type="button" onclick="storeOntology()">Store via AJAX</button> <span id="ontology-url"></span>
+<script>
+function storeOntology() {
+$.ajax({
+        beforeSend: function(req) {
+                req.setRequestHeader("Accept", "application/json");
+            },
+        type:"POST",
+        url: "/metaphor/store/ontology",
+		data: { "ontology": $("#ontology-ajax").val() },
+        success: function(data,status,jqXHR){
+        	var loc = jqXHR.getResponseHeader('Location');
+			$("#ontology-url").html("Successfully stored Ontology at: <a href='" + encodeURI(loc) + "'>" + loc + "</a>");
+        }
+        });
+}
+</script>
+<hr/>
+To retrieve an ontology, enter its hash value below.
+<form action="/metaphor/store/ontology" method="GET">
+	<input name="hash"/>
+	<input type="submit"/>
+</form>
+<hr/>
+</body>
+</html>

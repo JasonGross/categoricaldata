@@ -2,7 +2,8 @@ package net.categoricaldata.ontology
 import net.categoricaldata.sets.FFunction
 import net.categoricaldata.dsl.Sentences
 
-trait Dataset extends net.categoricaldata.category.FunctorToSet {
+trait Dataset extends net.categoricaldata.category.FunctorToSet with net.categoricaldata.category.Functor.withFinitelyPresentedSource {
+  override val source: Ontology
   def grothendieck: Ontology
 }
 

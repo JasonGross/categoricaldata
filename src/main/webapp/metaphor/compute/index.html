@@ -3,35 +3,46 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 </head>
 <body>
+Using this page, you can compute data migration functors.
 
 <hr>
 First, you'll need to load a dataset.
 <br/>
 
-<input id="dataset" value="TerminalBigraph"/>
-<button type="button" onclick="loadDataset()">Load dataset</button>
+URL: <input id="dataset" value="/metaphor/examples/datasets/TerminalBigraph" style="width:320px"/>
+<button type="button" onclick="loadDataset()">Load dataset</button><img src="/img/ajax-loader.gif" id="dataset-load-progress" style="display: none"/>
 <br/>
-
-<textarea id="dataset-display" rows="12" cols="60"></textarea>
+<span id="dataset-load-error" style="color:red"></span>
+<textarea id="dataset-display" rows="12" cols="60" onkeyup="$('#dataset-save').show('fast');"></textarea><br/>
+<span id="dataset-save-error" style="color:red"></span>
+<button type="button" id="dataset-save" onclick="saveDataset();" style="display: none">Save changes</button><img src="/img/ajax-loader.gif" id="dataset-save-progress" style="display: none"/>
 
 <hr>
-Next, specify a translation. (If you're going to compute a pushforward, the dataset above should live on the source; if you're going to compute a pullback, the dataset above should live on the target.)
+Next, load a translation.
+<br/>
+(If you're going to compute a pushforward, the dataset above should live on the source; if you're going to compute a pullback, the dataset above should live on the target.)
 <br/>
 
-<input id="translation" value="ReverseGraph"/> 
-<button type="button" onclick="loadTranslation()">Load translation</button>
+URL: <input id="translation" value="/metaphor/examples/translations/ReverseGraph" style="width:320px"/> 
+<button type="button" onclick="loadTranslation()">Load translation</button><img src="/img/ajax-loader.gif" id="translation-load-progress" style="display: none"/>
 <br/>
 
-<textarea id="translation-display" rows="12" cols="60"></textarea>
+<span id="translation-load-error" style="color:red"></span>
+<textarea id="translation-display" rows="12" cols="60" onkeyup="$('#translation-save').show('fast');"></textarea><br/>
+<span id="translation-save-error" style="color:red"></span>
+<button type="button" id="translation-save" onclick="saveTranslation();" style="display: none">Save changes</button><img src="/img/ajax-loader.gif" id="translation-save-progress" style="display: none"/>
 
 <hr>
 Finally, you can ask the server to compute any of the following data migration functors:<br/>
 <button type="button" onclick="compute('pullback')">the pullback</button>
 <button type="button" onclick="compute('leftPushforward')">the left pushforward</button>
 <button type="button" onclick="compute('rightPushforward')">the right pushforward</button>
+<img src="/img/ajax-loader.gif" id="compute-progress" style="display: none"/>
 <br/>
 
-<textarea id="result" rows="30" cols="120"></textarea>
+<div id="compute-error" style="color:red"></div>
+
+<textarea id="compute-result" rows="30" cols="120" readonly="readonly"></textarea>
 
 <script>
 function prettyPrint(json) {
@@ -40,53 +51,119 @@ function prettyPrint(json) {
 </script>
 
 <script>
-var translation;
-var dataset;
-</script>
-
-<script>
 function loadDataset() {
+$('#dataset-load-progress').show('fast');
+$("#dataset-load-error").text('');
+$("#dataset-display").val("");
 $.ajax({
         beforeSend: function(req) {
                 req.setRequestHeader("Accept", "application/json");
             },
         type:"GET",
-        url: "/metaphor/examples/datasets/" + $("#dataset").val(),
+        url: $("#dataset").val(),
         success: function(data){
-	   dataset = data;
             $("#dataset-display").val(prettyPrint(data)); 
-        }
+			$('#dataset-load-progress').hide('fast');
+        },
+   		error:function (xhr, ajaxOptions, thrownError){
+                    $('#dataset-load-progress').hide();
+                    $("#dataset-load-error").text(thrownError);
+        }        
         });
 }
 </script>
 
 <script>
 function loadTranslation() {
+$('#translation-load-progress').show('fast');
+$("#translation-load-error").text('');
+$("#translation-display").val("");
 $.ajax({
         beforeSend: function(req) {
                 req.setRequestHeader("Accept", "application/json");
             },
         type:"GET",
-        url: "/metaphor/examples/translations/" + $("#translation").val(),
+        url: $("#translation").val(),
         success: function(data){
-	    translation = data
             $("#translation-display").val(prettyPrint(data));  
-        }
+			$('#translation-load-progress').hide();
+        },
+   		error:function (xhr, ajaxOptions, thrownError){
+                    $('#translation-load-progress').hide();
+                    $("#translation-load-error").text(thrownError);
+        }    
+        });
+}
+</script>
+
+<script>
+function saveDataset() {
+$('#dataset-save-progress').show('fast');
+$("#dataset-save-error").text('');
+$.ajax({
+        beforeSend: function(req) {
+                req.setRequestHeader("Accept", "application/json");
+            },
+        type:"POST",
+        url: "/metaphor/store/dataset",
+		data: { "dataset": $("#dataset-display").val() },
+        success: function(data,status,jqXHR){
+        	var loc = jqXHR.getResponseHeader('Location');
+			$("#dataset").val(loc);
+			$('#dataset-save-progress').hide();
+			$("#dataset-save").hide('slow');
+        },
+ 		error:function (xhr, ajaxOptions, thrownError){
+                    $('#dataset-save-progress').hide();
+                    $("#dataset-save-error").text(thrownError);
+        }    
+        });
+}
+</script>
+<script>
+function saveTranslation() {
+$('#translation-save-progress').show('fast');
+$("#translation-save-error").text('');
+$.ajax({
+        beforeSend: function(req) {
+                req.setRequestHeader("Accept", "application/json");
+            },
+        type:"POST",
+        url: "/metaphor/store/translation",
+		data: { "translation": $("#translation-display").val() },
+        success: function(data,status,jqXHR){
+        	var loc = jqXHR.getResponseHeader('Location');
+			$("#translation").val(loc);
+			$('#translation-save-progress').hide();
+			$("#translation-save").hide('slow');
+        },
+ 		error:function (xhr, ajaxOptions, thrownError){
+                    $('#translation-save-progress').hide();
+                    $("#translation-save-error").text(thrownError);
+        }    
         });
 }
 </script>
 
 <script>
 function compute(datafunctor) {
+$('#compute-progress').show('fast');
+$("#compute-error").text('');
+$("#compute-result").val("");
 $.ajax({
+    beforeSend: function(req) {
+        req.setRequestHeader("Accept", "application/json");
+    },
 	type: "GET",
 	url: "/metaphor/compute/" + datafunctor,
-	data: { "translation": $("#translation-display").val(), "dataset": $("#dataset-display").val() },
+	data: { "translation": $("#translation").val(), "dataset": $("#dataset").val() },
 	success: function(data){
-		$("#result").val(prettyPrint(data));
+	    $('#compute-progress').hide();
+		$("#compute-result").val(prettyPrint(data));
 	},
 	error:function (xhr, ajaxOptions, thrownError){
-                    alert("An error occurred on the server. Response code " + xhr.status + ". " + thrownError);
+                    $('#compute-progress').hide();
+                    $("#compute-error").text(thrownError);
         }    
 	});
 }

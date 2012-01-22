@@ -11,6 +11,7 @@ import net.categoricaldata.ontology.Box
 import com.thoughtworks.paranamer.CachingParanamer
 import com.thoughtworks.paranamer.BytecodeReadingParanamer
 import org.bowlerframework.view.Renderable
+import org.bowlerframework.RequestScope
 
 case class apiParameter(name: String, `type`: String)
 case class apiHint(path: String, hasParameters: Boolean, parameters: List[apiParameter])
@@ -60,6 +61,13 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes { 
   def `GET /metaphor/passthru/translation`(translation: Translation): Translation = translation
   def `GET /metaphor/passthru/dataset`(dataset: Dataset): Dataset = dataset
 
+  def `POST /metaphor/store/ontology`(ontology: Ontology) = RequestScope.response.sendRedirect("/metaphor/store/ontology?hash=" + MetaphorStore.add(ontology))
+  def `GET /metaphor/store/ontology`(hash: String): Ontology = MetaphorStore.lookupOntology(hash)
+  def `POST /metaphor/store/translation`(translation: Translation) = RequestScope.response.sendRedirect("/metaphor/store/translation?hash=" + MetaphorStore.add(translation))
+  def `GET /metaphor/store/translation`(hash: String): Translation = MetaphorStore.lookupTranslation(hash)
+  def `POST /metaphor/store/dataset`(dataset: Dataset) = RequestScope.response.sendRedirect("/metaphor/store/dataset?hash=" + MetaphorStore.add(dataset))
+  def `GET /metaphor/store/dataset`(hash: String): Dataset = MetaphorStore.lookupDataset(hash)
+  
   lazy val allHints = {
     val paranamer = new BytecodeReadingParanamer();
     apiHints(metaphorController.getClass().getDeclaredMethods().toList.filter({

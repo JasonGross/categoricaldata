@@ -4,6 +4,9 @@ import scala.io.Source
 import org.apache.http.util.EntityUtils
 import org.apache.http.impl.client.ContentEncodingHttpClient
 import org.apache.http.client.methods.HttpGet
+import org.bowlerframework.RequestScope
+import java.net.URL
+import org.bowlerframework.http.BowlerHttpRequest
 
 trait StringOrURLTransformer[A] extends StringValueTransformer[A] {
   def stringToValue(from: String): Option[A]
@@ -17,11 +20,19 @@ trait StringOrURLTransformer[A] extends StringValueTransformer[A] {
     (status, EntityUtils.toString(entity))
   }
 
+  private def serverURL = new URL(RequestScope.request.asInstanceOf[BowlerHttpRequest].getHttpServletRequest.getRequestURL.toString) match {
+      case url => url.getProtocol() + "://" + url.getHost() + ((url.getProtocol(), url.getPort()) match {
+        case ("http", p) if p == 80 => ""
+        case ("https", p) if p == 443 => ""
+        case (_, p) => ":" + p.toString
+      })
+    }
+  
   def toValue(from: String) = {
-    stringToValue(if (from.startsWith("http")) {
-      slurp(from)._2
-    } else {
-      from
+    stringToValue(from match {
+      case from if from.startsWith("http") => slurp(from)._2
+      case from if from.startsWith("/") => slurp(serverURL + from)._2
+      case _ => from
     })
   }
 }
