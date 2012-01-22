@@ -30,6 +30,7 @@ class ModelViewRenderer(jsonFormats: Formats = net.liftweb.json.DefaultFormats) 
       case url => url.getProtocol() + "://" + url.getHost() + ((url.getProtocol(), url.getPort()) match {
         case ("http", p) if p == 80 => ""
         case ("https", p) if p == 443 => ""
+        case (_, -1) => ""
         case (_, p) => ":" + p.toString
       })
     }
