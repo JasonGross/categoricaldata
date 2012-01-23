@@ -12,6 +12,7 @@ import com.thoughtworks.paranamer.CachingParanamer
 import com.thoughtworks.paranamer.BytecodeReadingParanamer
 import org.bowlerframework.view.Renderable
 import org.bowlerframework.RequestScope
+import net.categoricaldata.load.CSVLoader
 
 case class apiParameter(name: String, `type`: String)
 case class apiHint(path: String, hasParameters: Boolean, parameters: List[apiParameter])
@@ -50,6 +51,12 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes { 
   def `GET /metaphor/compute/translationToDataset`(translation: Translation): Dataset = {
     translation.asPartialDataset.toDataset
   }
+  
+  def `GET /metaphor/dataset/source`(dataset: Dataset): Ontology = dataset.source
+  def `GET /metaphor/translation/source`(translation: Translation): Ontology = translation.source
+  def `GET /metaphor/translation/target`(translation: Translation): Ontology = translation.target
+  
+  def `GET /metaphor/load/dataset/CSV`(url: String): Dataset = CSVLoader(url)
   
   def `GET /metaphor/help` = hints("")
   def `GET /metaphor/examples` = hints("/metaphor/examples")
