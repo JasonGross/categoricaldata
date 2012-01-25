@@ -41,6 +41,7 @@ class OntologyTransformer extends StringOrURLTransformer[net.categoricaldata.ont
   implicit val formats = net.liftweb.json.DefaultFormats
   import net.liftweb.json.JsonParser.parse
 
+  // TODO factor some of this out
   def stringToValue(from: String): Option[net.categoricaldata.ontology.Ontology] = Some(parse(from).extract[net.categoricaldata.server.json.Ontology].copy(json = Some(from))).map(_.unpack)
 }
 class TranslationTransformer extends StringOrURLTransformer[net.categoricaldata.ontology.Translation] {

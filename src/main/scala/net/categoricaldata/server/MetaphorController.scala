@@ -20,10 +20,7 @@ case class apiHints(hints: List[apiHint])
 
 class MetaphorController extends Controller with FunctionNameConventionRoutes { metaphorController =>
 
-  // TODO use reflection to look up methods on Examples (also, to generate lists)
-
-  // TODO toJSON should embed the request URL
-  // TODO when extracting from JSON, should store the original representation (in progress)
+  // TODO when extracting from JSON, should store the original representation (partially implemented, c.f. OntologyTransformer et al.)
 
   def `GET /metaphor/examples/ontologies/Chain`(n: Int): Ontology = Examples.Chain(n)
   def `GET /metaphor/examples/ontologies/Isomorphism`: Ontology = Examples.Isomorphism
