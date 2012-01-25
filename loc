@@ -1,1 +1,1 @@
-for file in `find . | grep \\.scala$`; do wc -l $file; done 2> /dev/null 
+for file in `find . | grep \\.scala$`; do wc -l $file; done 2> /dev/null  | awk '{ print $1 }' | awk '{s+=$1} END {print s}' 
