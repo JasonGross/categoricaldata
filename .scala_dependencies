@@ -37,6 +37,10 @@
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/category/RightPushforwardDevTest.scala -> /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/category/RightPushforwardDevTest.scala
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/category/RightPushforwardDevTest.scala -> /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/ontology/Translation.scala
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/category/RightPushforwardDevTest.scala -> /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/examples/Examples.scala
+/Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Limits.scala -> /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/category/Category.scala
+/Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Limits.scala -> /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Products.scala
+/Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Limits.scala -> /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Equalizers.scala
+/Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Limits.scala -> /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Limits.scala
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/NaturalTransformationDevTest.scala -> /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/category/NaturalTransformation.scala
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/NaturalTransformationDevTest.scala -> /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/NaturalTransformationDevTest.scala
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/NaturalTransformationDevTest.scala -> /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/util/CustomMatchers.scala
@@ -553,6 +557,9 @@
 /Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/server/json/Pack.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/classes/net/categoricaldata/server/json/Pack$$anonfun$packTranslation$2.class
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/category/RightPushforwardDevTest.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/test-classes/net/categoricaldata/category/RightPushforwardDevTest.class
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/category/RightPushforwardDevTest.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/test-classes/net/categoricaldata/category/RightPushforwardDevTest$$anonfun$1.class
+/Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Limits.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/classes/net/categoricaldata/universalalgebra/Limits$usingProductsAndEqualizers.class
+/Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Limits.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/classes/net/categoricaldata/universalalgebra/Limits.class
+/Users/scott/projects/metaphor/src/main/scala/net/categoricaldata/universalalgebra/Limits.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/classes/net/categoricaldata/universalalgebra/Limits$.class
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/NaturalTransformationDevTest.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/test-classes/net/categoricaldata/NaturalTransformationDevTest$$anonfun$10.class
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/NaturalTransformationDevTest.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/test-classes/net/categoricaldata/NaturalTransformationDevTest$$anonfun$12.class
 /Users/scott/projects/metaphor/src/test/scala/net/categoricaldata/NaturalTransformationDevTest.scala -> /Users/scott/projects/metaphor/target/scala-2.9.1/test-classes/net/categoricaldata/NaturalTransformationDevTest$$anonfun$2.class
