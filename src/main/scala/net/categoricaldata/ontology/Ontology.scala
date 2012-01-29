@@ -195,7 +195,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     def toJSON = net.categoricaldata.server.json.Pack.packDataset(this)
   }
-  trait Datamap extends NaturalTransformationToSet { datamap =>
+  trait Datamap extends NaturalTransformationToSet with net.categoricaldata.ontology.Datamap { datamap =>
     override def toString = "Datamap(\n  onObjects = Map(\n" + (for (o <- ontology.objects) yield "    " + o.toString + " -> " + datamap(o).toString).mkString(",\n    ") + "))"
   }
 
