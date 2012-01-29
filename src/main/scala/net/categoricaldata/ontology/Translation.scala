@@ -182,16 +182,16 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   lazy val rightPushforward: RightPushforward = new MemoRightPushforward {}
 
   def __! = new Functor {
-    override val source = FunctorsToSet
+    override val source = Datasets
     override val target = translation.target.functorsToSet
-    def onObjects(i: FunctorToSet) = leftPushforward.apply(translation.source.internalize(i))
-    def onMorphisms(t: NaturalTransformationToSet) = leftPushforward.apply(translation.source.internalize(t))
+    def onObjects(i: Dataset) = leftPushforward.apply(translation.source.internalize(i))
+    def onMorphisms(t: Datamap) = leftPushforward.apply(translation.source.internalize(t))
   }
   def __* = new Functor {
-    override val source = FunctorsToSet
+    override val source = Datasets
     override val target = translation.target.functorsToSet
-    def onObjects(i: FunctorToSet) = rightPushforward.apply(translation.source.internalize(i))
-    def onMorphisms(t: NaturalTransformationToSet) = rightPushforward.apply(translation.source.internalize(t))
+    def onObjects(i: Dataset) = rightPushforward.apply(translation.source.internalize(i))
+    def onMorphisms(t: Datamap) = rightPushforward.apply(translation.source.internalize(t))
   }
 
   trait Pullback extends super.Pullback with LeftAdjoint with RightAdjoint {

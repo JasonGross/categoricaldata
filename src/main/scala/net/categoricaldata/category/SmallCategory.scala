@@ -69,7 +69,7 @@ trait SmallCategory extends Category { smallCategory =>
 
   }
 
-  class SpecializedFunctorsToSet extends FunctorsToSet { functorsToSet =>
+  protected[category] class SpecializedFunctorsToSet extends FunctorsToSet { functorsToSet =>
     override type O = smallCategory.F
     override type M = smallCategory.T
   }
@@ -81,7 +81,7 @@ trait SmallCategory extends Category { smallCategory =>
 
   def functorsToSet: SpecializedFunctorsToSet
 
-  trait CategoryOver extends functor.withSmallSource.withSmallTarget { categoryOver =>
+  protected trait CategoryOver extends functor.withSmallSource.withSmallTarget { categoryOver =>
     override val target: smallCategory.type = smallCategory
     trait Identity extends FunctorOver {
       override val source: categoryOver.type = categoryOver
@@ -92,12 +92,12 @@ trait SmallCategory extends Category { smallCategory =>
       }
     }
   }
-  trait NaturalTransformationOver extends NaturalTransformation {
+  protected trait NaturalTransformationOver extends NaturalTransformation {
     override val source: CategoryOver
     override val target: CategoryOver
   }
 
-  trait FunctorOver { functorOver =>
+  protected trait FunctorOver { functorOver =>
     val source: CategoryOver
     val target: CategoryOver
     trait F extends Functor {
@@ -107,7 +107,7 @@ trait SmallCategory extends Category { smallCategory =>
     def functor: F
   }
 
-  trait CategoriesOver extends Category { categoriesOver =>
+  protected trait CategoriesOver extends Category { categoriesOver =>
     override type O = CategoryOver
     override type M = FunctorOver
     override def identity(f: O) = new f.Identity {}
@@ -122,7 +122,7 @@ trait SmallCategory extends Category { smallCategory =>
 
   def categoriesOver: CategoriesOver = new CategoriesOver {}
 
-  trait Opposite extends Category {
+  protected trait Opposite extends Category {
     type O = smallCategory.O
     type M = smallCategory.M
     override def identity(o: smallCategory.O) = smallCategory.identity(o)
@@ -134,24 +134,3 @@ trait SmallCategory extends Category { smallCategory =>
   val opposite: SmallCategory
 
 }
-
-//object SmallCategory {
-//  trait StandardFunctorsToSet { C: SmallCategory =>
-//    val functorsToSet = new SpecializedFunctorsToSet
-//
-//    override type F = FunctorToSet
-//    override type T = NaturalTransformationToSet
-//
-//    def internalize(f: net.categoricaldata.category.FunctorToSet): F = new FunctorToSet {
-//      require(f.source == source)
-//      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
-//      def onMorphisms(m: M) = f(m.asInstanceOf[f.source.M])
-//    }
-//    def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): T = new NaturalTransformationToSet {
-//      require(t.sourceCategory == source)
-//      val source = internalize(t.source)
-//      val target = internalize(t.target)
-//      def apply(o: O) = t(o.asInstanceOf[t.sourceCategory.O])
-//    }
-//  }
-//}

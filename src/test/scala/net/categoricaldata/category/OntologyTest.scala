@@ -40,9 +40,9 @@ class OntologyTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     val g = C.generatorAsMorphism(C.generators(e, e).head)
 
     "FiniteCyclicMonoid.compose" should "reflect the relations correctly" in {
-      C.power(g, 5) should equal(C.power(g, 3))
-      C.power(g, 6) should equal(C.power(g, 4))
-      C.power(g, 10) should equal(C.power(g, 4))
+      C.exponentiate(g, 5) should equal(C.exponentiate(g, 3))
+      C.exponentiate(g, 6) should equal(C.exponentiate(g, 4))
+      C.exponentiate(g, 10) should equal(C.exponentiate(g, 4))
     }
 
     "FiniteCyclicMonoid.morphismsOfLength" should "have the right sizes" in {

@@ -33,7 +33,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     override val maximumLevel = -fgCategory.minimumLevel
   }
 
-  class ConcreteOpposite extends OppositeFinitelyGeneratedCategory with FinitelyGeneratedCategory.StandardFunctorsToSet {
+  private class ConcreteOpposite extends OppositeFinitelyGeneratedCategory with FinitelyGeneratedCategory.StandardFunctorsToSet {
     override type G = OppositeGenerator
     case class OppositeGenerator(g: fgCategory.G)
     override def reverseGenerator(g: fgCategory.G) = OppositeGenerator(g)
@@ -90,7 +90,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     //    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
     override val source: fgCategory.type = fgCategory
 
-    
     //        def verify: this.type = {
     //          for(g <- allGenerators; f = functorToSet.onGenerators(g)) f.verify
     //          this
@@ -339,10 +338,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
   trait NaturalTransformationToSet extends super.NaturalTransformationToSet { t =>
     override def isomorphism_? = {
-      (for(o <- objects) yield t(o).isomorphism_?).reduceOption(_ && _).getOrElse(true)
+      (for (o <- objects) yield t(o).isomorphism_?).reduceOption(_ && _).getOrElse(true)
     }
   }
-  
+
   protected trait Wrapper extends super.Wrapper with FinitelyGeneratedCategory {
     override val maximumLevel = fgCategory.maximumLevel
   }

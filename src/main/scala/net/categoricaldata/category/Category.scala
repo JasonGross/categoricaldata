@@ -17,7 +17,7 @@ trait Category { category =>
       case h :: t => compose(h, t: _*)
     }
   }
-  def power(m: M, k: Int): M = {
+  def exponentiate(m: M, k: Int): M = {
     require(source(m) == target(m))
     k match {
       case 0 => identity(source(m))
@@ -27,21 +27,21 @@ trait Category { category =>
     }
   }
 
-  trait FunctorFrom extends Functor {
+  protected trait FunctorFrom extends Functor {
     override val source: category.type = category
   }
-  trait NaturalTransformationFrom extends NaturalTransformation {
+  protected trait NaturalTransformationFrom extends NaturalTransformation {
     override val source: FunctorFrom
     override val target: FunctorFrom
   }
-  trait FunctorTo extends Functor {
+  protected trait FunctorTo extends Functor {
     override val target: category.type = category
   }
-  trait NaturalTransformationTo extends NaturalTransformation {
+  protected trait NaturalTransformationTo extends NaturalTransformation {
     override val source: FunctorTo
     override val target: FunctorTo
   }
-  trait EndoFunctor extends FunctorFrom with FunctorTo
+  protected trait EndoFunctor extends FunctorFrom with FunctorTo
   
   trait Identity extends EndoFunctor {
     override def onObjects(o: O) = o
