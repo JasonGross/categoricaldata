@@ -2,30 +2,6 @@ package net.categoricaldata.category
 import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 import net.categoricaldata.sets._
 
-case class Path[O, G](source: O, target: O, morphisms: List[G]) {
-  if (morphisms.isEmpty) require(source == target)
-
-  def length = morphisms.size
-  def andThen(path: Path[O, G]) = {
-    require(target == path.source)
-    Path(source, path.target, morphisms ::: path.morphisms)
-  }
-
-  // This is purely a micro-optimization.
-  override lazy val hashCode = morphisms.hashCode
-
-  override def toString = {
-    def generatorToString(g: G): String = {
-      g match {
-        case g: net.categoricaldata.ontology.Arrow => " --- \"" + g.name + "\" --> " + g.target.toString
-        case _ => "(" + g.toString() + ")"
-      }
-    }
-    
-    source.toString + morphisms.map(generatorToString(_)).mkString
-  }
-}
-
 /**
  * A LocallyFinitelyGeneratedCategory may have infinitely many objects, but each object sits at some integer level,
  * and there are only finitely many objects at each level.  Otherwise, the levels are completely ignored; in particular,
@@ -192,8 +168,8 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(p1, p2)
   }
-
-  abstract class FullSubcategory(val spannedBy: List[O]) extends Wrapper with FinitelyGeneratedCategory {
+  
+  protected abstract class FullSubcategory(val spannedBy: List[O]) extends Wrapper with FinitelyGeneratedCategory {
     private val objectsAtLevelMap: Map[Int, List[O]] = {
       case class Accumulator(k: Int, map: Map[Int, List[O]], remaining: List[O]) {
         def next = remaining.partition(lfgCategory.objectsAtLevel(k).contains(_)) match {
@@ -212,19 +188,19 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override val maximumLevel = (objectsAtLevelMap.keySet + minimumLevel).max
   }
 
-  class ConcreteFullCategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategory.StandardFunctorsToSet
+  private class ConcreteFullCategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategory.StandardFunctorsToSet
 
-  class FullSubcategoryInclusion(spannedBy: List[O]) extends functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
+  protected class FullSubcategoryInclusion(spannedBy: List[O]) extends functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
     override val source: FullSubcategory = new ConcreteFullCategory(spannedBy)
     override val target: lfgCategory.type = lfgCategory
     override def onObjects(o: source.O) = o
     override def onGenerators(g: source.G) = g
   }
 
-  def fullSubcategoryInclusion(spannedBy: List[O]) = new FullSubcategoryInclusion(spannedBy)
-  def fullSubcategory(spannedBy: List[O]) = fullSubcategoryInclusion(spannedBy).source
+  def fullSubcategoryInclusion(spannedBy: List[O]): functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget = new FullSubcategoryInclusion(spannedBy)
+  def fullSubcategory(spannedBy: List[O]): FinitelyGeneratedCategory = fullSubcategoryInclusion(spannedBy).source
 
-  trait Truncation extends Wrapper with FinitelyGeneratedCategory {
+  private trait Truncation extends Wrapper with FinitelyGeneratedCategory {
     override def objectsAtLevel(k: Int) = {
       if (k <= maximumLevel) {
         lfgCategory.objectsAtLevel(k)
@@ -236,27 +212,26 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
   private class ConcreteTruncation(override val maximumLevel: Int) extends Truncation with FinitelyGeneratedCategory.StandardFunctorsToSet
 
-  class TruncationFunctor(maximumLevel: Int) extends functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
+  private class TruncationFunctor(maximumLevel: Int) extends functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget {
     override val source: Truncation = new ConcreteTruncation(maximumLevel)
     override val target: lfgCategory.type = lfgCategory
     override def onObjects(o: source.O) = o
     override def onGenerators(g: source.G) = g
   }
 
-  def truncationFunctorAtLevel(maximumLevel: Int): TruncationFunctor = new TruncationFunctor(maximumLevel)
+  def truncationFunctorAtLevel(maximumLevel: Int): functor.withFinitelyGeneratedSource.withLocallyFinitelyGeneratedTarget = new TruncationFunctor(maximumLevel)
   def truncateAtLevel(maximumLevel: Int): FinitelyGeneratedCategory = truncationFunctorAtLevel(maximumLevel).source
 
   trait FunctorToSet extends super.FunctorToSet with Functor.withLocallyFinitelyGeneratedSource { functorToSet =>
     //    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
     override val source: lfgCategory.type = lfgCategory
-    
-    
-//    def onGenerators(g: G): FFunction
-//    override def onMorphisms(m: M) = {
-//      val start = onObjects(source.source(m))
-//      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
-//      target.compose(start, morphisms)
-//    }
+
+    //    def onGenerators(g: G): FFunction
+    //    override def onMorphisms(m: M) = {
+    //      val start = onObjects(source.source(m))
+    //      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
+    //      target.compose(start, morphisms)
+    //    }
 
     trait CoCone {
       val terminalSet: FSet
@@ -328,18 +303,18 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     //    def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
   }
 
-  class YonedaFunctor(s: lfgCategory.O) extends FunctorToSet {
-    override def onObjects(t: lfgCategory.O): FSet = morphisms(s, t)
-    override def onGenerators(g: lfgCategory.G) = FFunction(onObjects(generatorSource(g)), onObjects(generatorTarget(g)), { m: lfgCategory.M => compose(m, generatorAsMorphism(g)) })
-  }
-  class YonedaNaturalTransformation(g: lfgCategory.opposite.G) extends NaturalTransformationToSet {
-    override val source = internalize(new YonedaFunctor(opposite.generatorSource(g)))
-    override val target = internalize(new YonedaFunctor(opposite.generatorTarget(g)))
-    override def apply(t: lfgCategory.O) = FFunction(source(t), target(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
-  }
-
   // FIXME changing this to 'object yoneda extends' results in IllegalAccessErrors at runtime.
   lazy val yoneda = new Functor.withLocallyFinitelyGeneratedSource {
+    class YonedaFunctor(s: lfgCategory.O) extends FunctorToSet {
+      override def onObjects(t: lfgCategory.O): FSet = morphisms(s, t)
+      override def onGenerators(g: lfgCategory.G) = FFunction(onObjects(generatorSource(g)), onObjects(generatorTarget(g)), { m: lfgCategory.M => compose(m, generatorAsMorphism(g)) })
+    }
+    class YonedaNaturalTransformation(g: lfgCategory.opposite.G) extends NaturalTransformationToSet {
+      override val source = internalize(new YonedaFunctor(opposite.generatorSource(g)))
+      override val target = internalize(new YonedaFunctor(opposite.generatorTarget(g)))
+      override def apply(t: lfgCategory.O) = FFunction(source(t), target(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
+    }
+
     override val source: lfgCategory.opposite.type = lfgCategory.opposite
     override val target = functorsToSet
     override def onObjects(o: source.O) = internalize(new YonedaFunctor(o))
