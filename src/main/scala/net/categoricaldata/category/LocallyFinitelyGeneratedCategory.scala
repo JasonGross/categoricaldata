@@ -128,9 +128,16 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     }).takeWhile(_.nonEmpty).flatten.filter(lfgCategory.target(_) == target)
   }
 
-  trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory {
+  trait SameObjects { self: LocallyFinitelyGeneratedCategory =>
     override type O = lfgCategory.O
-
+  }
+  
+  trait ReversedGenerators { self: LocallyFinitelyGeneratedCategory =>
+    case class Reverse(g: lfgCategory.G)
+    override type G = Reverse
+  }
+  
+  trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory with SameObjects {
     def reverseGenerator(g: lfgCategory.G): G
     def unreverseGenerator(g: G): lfgCategory.G
 
@@ -153,6 +160,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(unreverse(p1).representative, unreverse(p2).representative)
   }
 
+  // TODO ideally, the return value would just be 'LocallyFinitelyGeneratedCategory with SameObjects with ReversedGenerators'
   override val opposite: OppositeLocallyFinitelyGeneratedCategory
 
   protected trait Wrapper extends LocallyFinitelyGeneratedCategory {
@@ -225,13 +233,6 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   trait FunctorToSet extends super.FunctorToSet with Functor.withLocallyFinitelyGeneratedSource { functorToSet =>
     //    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
     override val source: lfgCategory.type = lfgCategory
-
-    //    def onGenerators(g: G): FFunction
-    //    override def onMorphisms(m: M) = {
-    //      val start = onObjects(source.source(m))
-    //      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
-    //      target.compose(start, morphisms)
-    //    }
 
     trait CoCone {
       val terminalSet: FSet

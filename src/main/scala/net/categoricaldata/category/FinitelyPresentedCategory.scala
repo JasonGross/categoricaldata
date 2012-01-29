@@ -34,17 +34,17 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =
     }
   }
 
-  trait Wrapper extends super.Wrapper with FinitelyPresentedCategory {
+  protected trait Wrapper extends super.Wrapper with FinitelyPresentedCategory {
     override def relations(s: O, t: O) = fpCategory.relations(s, t)
   }
 
-  abstract class FullSubcategory(spannedBy: List[O]) extends super.FullSubcategory(spannedBy) with FinitelyPresentedCategory {
+  abstract protected class FullSubcategory(spannedBy: List[O]) extends super.FullSubcategory(spannedBy) with FinitelyPresentedCategory {
     override def relations(s: O, t: O) = fpCategory.relations(s, t)
   }
 
-  class ConcreteFullSubcategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategory.StandardFunctorsToSet
+  private class ConcreteFullSubcategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategory.StandardFunctorsToSet
 
-  class FullSubcategoryInclusion(spannedBy: List[O]) extends super.FullSubcategoryInclusion(spannedBy) with functor.withFinitelyPresentedSource.withFinitelyPresentedTarget {
+  protected class FullSubcategoryInclusion(spannedBy: List[O]) extends super.FullSubcategoryInclusion(spannedBy) with functor.withFinitelyPresentedSource.withFinitelyPresentedTarget {
     override val source: FullSubcategory = new ConcreteFullSubcategory(spannedBy)
   }
 
