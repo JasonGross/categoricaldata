@@ -214,7 +214,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     lazy val leftCounit = new NaturalTransformation { leftCounit =>
       override val source = Functor.compose(leftPushforward, pullback)
       override val target = pullback.target.identityFunctor
-      override def apply(L: translation.source.F /* e.g. Dataset */ ): translation.source.T /* e.g. Datamap */ = {
+      override def apply(L: sourceCategory.O /* e.g. translation.source.Dataset */ ): sourceCategory.M /* e.g. Datamap */ = {
         translation.source.internalize(new NaturalTransformationToSet {
           override val source = leftCounit.source(L)
           override val target = leftCounit.target(L)
