@@ -42,7 +42,7 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =
     override def relations(s: O, t: O) = fpCategory.relations(s, t)
   }
 
-  private class ConcreteFullSubcategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyGeneratedCategory.StandardFunctorsToSet
+  private class ConcreteFullSubcategory(spannedBy: List[O]) extends FullSubcategory(spannedBy) with FinitelyPresentedCategory.StandardFunctorsToSet
 
   protected class FullSubcategoryInclusion(spannedBy: List[O]) extends super.FullSubcategoryInclusion(spannedBy) with functor.withFinitelyPresentedSource.withFinitelyPresentedTarget {
     override val source: FullSubcategory = new ConcreteFullSubcategory(spannedBy)
@@ -61,6 +61,13 @@ trait FinitelyPresentedCategory extends FinitelyGeneratedCategory { fpCategory =
     //      }
     //    }
   }
+
+  trait FunctorsToSet extends super.FunctorsToSet {
+    override type O <: fpCategory.FunctorToSet
+    override type M <: fpCategory.NaturalTransformationToSet
+  }
+  override type D <: FunctorsToSet
+
 }
 
 object FinitelyPresentedCategory {
@@ -172,4 +179,27 @@ object FinitelyPresentedCategory {
     override def normalForm(p: Path) = p
   }
 
+  // FIXME ugly duplication of code from FiniteGeneratedCategory
+    trait StandardFunctorsToSet { C: FinitelyPresentedCategory =>
+    override type D = FunctorsToSet
+    val functorsToSet = new FunctorsToSet {
+      override type O = FunctorToSet
+      override type M = NaturalTransformationToSet
+      def internalize(f: net.categoricaldata.category.FunctorToSet) = new FunctorToSet {
+        require(f.source == C)
+        def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
+        def onGenerators(g: source.G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
+      }
+      def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = new NaturalTransformationToSet {
+        require(t.sourceCategory == C)
+        val source = internalize(t.source)
+        val target = internalize(t.target)
+        def apply(o: sourceCategory.O) = t(o.asInstanceOf[t.sourceCategory.O])
+      }
+
+    }
+
+  }
+
+  
 }

@@ -4,12 +4,12 @@ import net.categoricaldata.category._
 trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarget { smallFunctor =>
   trait ContravariantDataFunctor extends Functor {
     override val source = smallFunctor.target.AllFunctorsToSet
-    override val target: smallFunctor.source.SpecializedFunctorsToSet = smallFunctor.source.functorsToSet
+    override val target: smallFunctor.source.FunctorsToSet = smallFunctor.source.functorsToSet
     def andThen(g: CovariantDataFunctor) = DataFunctors.compose(this, g)
   }
   trait CovariantDataFunctor extends Functor {
     override val source = smallFunctor.source.AllFunctorsToSet
-    override val target: smallFunctor.target.SpecializedFunctorsToSet = smallFunctor.target.functorsToSet
+    override val target: smallFunctor.target.FunctorsToSet = smallFunctor.target.functorsToSet
     def andThen(g: ContravariantDataFunctor) = DataFunctors.compose(this, g)
   }
 
@@ -31,12 +31,12 @@ trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarg
     def compose(f: CovariantDataFunctor, g: ContravariantDataFunctor) = new SourceComposition(f, g)
   }
 
-  trait Pullback extends ContravariantDataFunctor {
-    override def onObjects(i: smallFunctor.target.FunctorToSet) = smallFunctor.source.internalize(new smallFunctor.source.FunctorToSet {
+  trait Pullback extends ContravariantDataFunctor { pullback =>
+    override def onObjects(i: smallFunctor.target.FunctorToSet) = pullback.target.internalize(new smallFunctor.source.FunctorToSet {
       def onObjects(o: smallFunctor.source.O) = i(smallFunctor.apply(o))
       def onMorphisms(m: smallFunctor.source.M) = i(smallFunctor.apply(m))
     })
-    override def onMorphisms(m: smallFunctor.target.NaturalTransformationToSet) = smallFunctor.source.internalize(new smallFunctor.source.NaturalTransformationToSet {
+    override def onMorphisms(m: smallFunctor.target.NaturalTransformationToSet) = pullback.target.internalize(new smallFunctor.source.NaturalTransformationToSet {
       val source = onObjects(m.target)
       val target = onObjects(m.source)
       def apply(o: smallFunctor.source.O) = m(smallFunctor.apply(o))
@@ -46,12 +46,5 @@ trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarg
   }
 
   lazy val pullback = new Pullback {}
-
-  lazy val ^* = new Functor {
-    override val source = FunctorsToSet
-    override val target = smallFunctor.source.functorsToSet
-    def onObjects(i: FunctorToSet) = pullback.apply(smallFunctor.target.internalize(i))
-    def onMorphisms(t: NaturalTransformationToSet) = pullback.apply(smallFunctor.target.internalize(t))
-  }
 
 }

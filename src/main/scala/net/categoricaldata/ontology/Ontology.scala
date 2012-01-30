@@ -149,7 +149,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
       for (bijection <- noninvariantBijections.limitSet.toIterable) yield {
         new Datamap {
           override val source = dataset
-          override val target = internalize(other)
+          override val target = Datasets.internalize(other)
           // ACHTUNG --- this relies on the inner implementation of limit; in particular that the set it produces is a set of FFunctions, each sending Boxes to FFunctions
           override def apply(o: Box) = bijection.asInstanceOf[FFunction].toFunction.asInstanceOf[Box => FFunction](o)
         }
@@ -199,44 +199,46 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     override def toString = "Datamap(\n  onObjects = Map(\n" + (for (o <- ontology.objects) yield "    " + o.toString + " -> " + datamap(o).toString).mkString(",\n    ") + "))"
   }
 
-  override type F = Dataset
-  override type T = Datamap
+  //  override type F = Dataset
+  //  override type T = Datamap
 
-  override def internalize(f: net.categoricaldata.category.FunctorToSet) = {
-    f match {
-      case f: Dataset => f
-      case _ => {
-        require(f.source == this)
-        new Dataset {
-          override def onObjects(o: Box) = f(o.asInstanceOf[f.source.O])
-          // and yet another weird one: replacing this with Arrow causes an AbstractMethodError
-          override def onGenerators(a: source.G) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
+  trait FunctorsToSet extends super.FunctorsToSet {
+    override type O = Dataset
+    override type M = Datamap
+    
+    override def internalize(f: net.categoricaldata.category.FunctorToSet) = {
+      f match {
+        case f: Dataset => f
+        case _ => {
+          require(f.source == ontology)
+          new Dataset {
+            override def onObjects(o: Box) = f(o.asInstanceOf[f.source.O])
+            // and yet another weird one: replacing this with Arrow causes an AbstractMethodError
+            override def onGenerators(a: source.G) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
+          }
+        }
+      }
+    }
+
+    override def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = {
+      t match {
+        case t: Datamap => t
+        case _ => {
+          require(t.sourceCategory == ontology)
+          new Datamap {
+            override val source = internalize(t.source)
+            override val target = internalize(t.target)
+            override def apply(o: Box) = t(o.asInstanceOf[t.sourceCategory.O])
+          }
         }
       }
     }
   }
 
-  override def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = {
-    t match {
-      case t: Datamap => t
-      case _ => {
-        require(t.sourceCategory == this)
-        new Datamap {
-          override val source = internalize(t.source)
-          override val target = internalize(t.target)
-          override def apply(o: Box) = t(o.asInstanceOf[t.sourceCategory.O])
-        }
-      }
-    }
-  }
-
-  trait SpecializedFunctorsToSet extends super.SpecializedFunctorsToSet {
-    override type O = ontology.F
-    override type M = ontology.T
-  }
+    override type D = Datasets
 
   override val functorsToSet = Datasets
-  sealed trait Datasets extends SpecializedFunctorsToSet
+  sealed trait Datasets extends FunctorsToSet
 
   object Datasets extends Datasets
 
@@ -316,9 +318,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     def toDataset: ontology.Dataset = new ontology.Dataset {
       val boxMap = partialDataset.source.objects.groupBy(partialDataset.onObjects(_))
       val arrowMap = partialDataset.source.allGenerators.groupBy(partialDataset.onGenerators(_))
-      
+
       override def onObjects(o: Box) = boxMap(o).map(_.name)
-      override def onGenerators(g: Arrow) = FFunction(onObjects(g.source), onObjects(g.target), arrowMap(generatorAsMorphism(g)).map({ case Arrow(s, t, _) => s.name -> t.name}).toMap)
+      override def onGenerators(g: Arrow) = FFunction(onObjects(g.source), onObjects(g.target), arrowMap(generatorAsMorphism(g)).map({ case Arrow(s, t, _) => s.name -> t.name }).toMap)
     }
   }
 }
@@ -363,9 +365,9 @@ object Ontology {
   }
   def apply(objects: Traversable[String], arrows: Traversable[Sentences.StringArrow], relations: Traversable[Sentences.StringRelation] = Nil, json: Option[String] = None): Ontology = {
     val allBoxes = objects.toList map { Box(_) }
-    
-     def stringArrowToArrow(sa: Sentences.StringArrow) = Arrow(stringToBox(sa.source), stringToBox(sa.target), sa.label)
-     def stringToBox(s: String) = allBoxes.find(_.name == s).get
+
+    def stringArrowToArrow(sa: Sentences.StringArrow) = Arrow(stringToBox(sa.source), stringToBox(sa.target), sa.label)
+    def stringToBox(s: String) = allBoxes.find(_.name == s).get
 
     val allArrows: List[Arrow] = for (sa <- arrows.toList) yield stringArrowToArrow(sa)
 

@@ -83,9 +83,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
   def finitelyGeneratedCategoriesOver: FinitelyGeneratedCategoriesOver = new FinitelyGeneratedCategoriesOver {}
 
-  override type F <: FunctorToSet
-  override type T <: NaturalTransformationToSet
-
   trait FunctorToSet extends super.FunctorToSet with Functor.withFinitelyGeneratedSource { functorToSet =>
     //    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
     override val source: fgCategory.type = fgCategory
@@ -342,6 +339,13 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     }
   }
 
+    trait FunctorsToSet extends super.FunctorsToSet {
+    override type O <: fgCategory.FunctorToSet
+    override type M <: fgCategory.NaturalTransformationToSet
+  }
+  override type D <: FunctorsToSet
+
+  
   protected trait Wrapper extends super.Wrapper with FinitelyGeneratedCategory {
     override val maximumLevel = fgCategory.maximumLevel
   }
@@ -350,22 +354,24 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
 object FinitelyGeneratedCategory {
   trait StandardFunctorsToSet { C: FinitelyGeneratedCategory =>
-    val functorsToSet = new SpecializedFunctorsToSet
+    override type D = FunctorsToSet
+    val functorsToSet = new FunctorsToSet {
+      override type O = FunctorToSet
+      override type M = NaturalTransformationToSet
+      def internalize(f: net.categoricaldata.category.FunctorToSet) = new FunctorToSet {
+        require(f.source == C)
+        def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
+        def onGenerators(g: source.G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
+      }
+      def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = new NaturalTransformationToSet {
+        require(t.sourceCategory == C)
+        val source = internalize(t.source)
+        val target = internalize(t.target)
+        def apply(o: sourceCategory.O) = t(o.asInstanceOf[t.sourceCategory.O])
+      }
 
-    override type F = FunctorToSet
-    override type T = NaturalTransformationToSet
+    }
 
-    def internalize(f: net.categoricaldata.category.FunctorToSet): F = new FunctorToSet {
-      require(f.source == C)
-      def onObjects(o: O) = f(o.asInstanceOf[f.source.O])
-      def onGenerators(g: G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
-    }
-    def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): T = new NaturalTransformationToSet {
-      require(t.sourceCategory == C)
-      val source = internalize(t.source)
-      val target = internalize(t.target)
-      def apply(o: O) = t(o.asInstanceOf[t.sourceCategory.O])
-    }
   }
 }
 

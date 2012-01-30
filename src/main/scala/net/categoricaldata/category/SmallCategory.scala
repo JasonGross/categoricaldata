@@ -4,29 +4,29 @@ import net.categoricaldata.sets._
 import net.categoricaldata.universalalgebra._
 
 trait SmallCategory extends Category { smallCategory =>
-  
+
   trait FunctorToSet extends FunctorFrom with net.categoricaldata.category.FunctorToSet with Functor.withSmallSource {
-//    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
+    //    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
     override val source: smallCategory.type = smallCategory
   }
 
-  protected type F <: FunctorToSet
-  protected type T <: NaturalTransformationToSet
+  //  protected type F <: FunctorToSet
+  //  protected type T <: NaturalTransformationToSet
 
   trait NaturalTransformationToSet extends NaturalTransformationFrom with net.categoricaldata.category.NaturalTransformationToSet {
-    override val source: F
-    override val target: F
+    override val source: FunctorToSet
+    override val target: FunctorToSet
   }
 
-  def internalize(f: net.categoricaldata.category.FunctorToSet): F
-  def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): T
+  //  def internalize(f: net.categoricaldata.category.FunctorToSet): F
+  //  def internalize(t: net.categoricaldata.category.NaturalTransformationToSet): T
 
   trait FunctorsToSet extends net.categoricaldata.category.FunctorsToSet with InitialObject with TerminalObject with Products with Coproducts {
-    override type O >: F <: smallCategory.FunctorToSet
-    override type M >: T <: smallCategory.NaturalTransformationToSet
+    override type O /* >: F */ <: smallCategory.FunctorToSet
+    override type M /* >: T */ <: smallCategory.NaturalTransformationToSet
 
-    override def internalize(f: net.categoricaldata.category.FunctorToSet) = smallCategory.internalize(f)
-    override def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = smallCategory.internalize(t)
+    //    override def internalize(f: net.categoricaldata.category.FunctorToSet) = smallCategory.internalize(f)
+    //    override def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = smallCategory.internalize(t)
 
     override def terminalObject = internalize(new FunctorToSet {
       override def onObjects(o: smallCategory.O) = Sets.terminalObject
@@ -48,12 +48,12 @@ trait SmallCategory extends Category { smallCategory =>
     })
 
     override def product(xs: O*) = internalize(new FunctorToSet {
-      override def onObjects(o: smallCategory.O) = Sets.product(xs.map(_(o)):_*)
-      override def onMorphisms(m: smallCategory.M) = Sets.product(xs.map(_(m)):_*)
+      override def onObjects(o: smallCategory.O) = Sets.product(xs.map(_(o)): _*)
+      override def onMorphisms(m: smallCategory.M) = Sets.product(xs.map(_(m)): _*)
     })
     override def productProjections(xs: O*) = xs.toList.zipWithIndex map {
       case (x, i) => internalize(new net.categoricaldata.category.NaturalTransformationToSet { t =>
-        override val source = product(xs:_*)
+        override val source = product(xs: _*)
         override val target = x
         override def apply(o: t.sourceCategory.O) = Sets.productProjections(xs.map(_(o)))(i)
       })
@@ -61,25 +61,26 @@ trait SmallCategory extends Category { smallCategory =>
     override def productUniversality(o: O, ms: List[M]) = ???
 
     override def coproduct(xs: O*) = internalize(new FunctorToSet {
-      override def onObjects(o: smallCategory.O) = Sets.coproduct(xs.map(_(o)):_*)
-      override def onMorphisms(m: smallCategory.M) = Sets.coproduct(xs.map(_(m)):_*)
+      override def onObjects(o: smallCategory.O) = Sets.coproduct(xs.map(_(o)): _*)
+      override def onMorphisms(m: smallCategory.M) = Sets.coproduct(xs.map(_(m)): _*)
     })
     override def coproductInjections(xs: O*) = ???
     override def coproductUniversality(o: O, ms: List[M]) = ???
 
   }
 
-  protected[category] class SpecializedFunctorsToSet extends FunctorsToSet { functorsToSet =>
-    override type O = smallCategory.F
-    override type M = smallCategory.T
-  }
-
+  // FIXME would be nice to get rid of this!!
   object AllFunctorsToSet extends FunctorsToSet {
     override type O = smallCategory.FunctorToSet
     override type M = smallCategory.NaturalTransformationToSet
+    override def internalize(f: net.categoricaldata.category.FunctorToSet) = functorsToSet.internalize(f)
+    override def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = functorsToSet.internalize(t)
   }
 
-  def functorsToSet: SpecializedFunctorsToSet
+  type D <: FunctorsToSet
+  def functorsToSet: D
+  def internalize(f: net.categoricaldata.category.FunctorToSet) = functorsToSet.internalize(f)
+  def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = functorsToSet.internalize(t)
 
   protected trait CategoryOver extends functor.withSmallSource.withSmallTarget { categoryOver =>
     override val target: smallCategory.type = smallCategory

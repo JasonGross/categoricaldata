@@ -16,7 +16,7 @@ object Datasets extends FunctorsToSet {
   
   def internalize(f: net.categoricaldata.category.FunctorToSet) = {
     f.source match {
-      case s: Ontology => s.internalize(f)
+      case s: Ontology => s.functorsToSet.internalize(f)
     }
   }
   def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = {

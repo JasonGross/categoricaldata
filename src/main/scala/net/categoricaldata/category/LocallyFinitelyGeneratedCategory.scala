@@ -304,23 +304,31 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     //    def colimitApproximation(n: Int) = truncationFunctorAtLevel(n).pullback(functorToSet).colimit
   }
 
-  // FIXME changing this to 'object yoneda extends' results in IllegalAccessErrors at runtime.
-  lazy val yoneda = new Functor.withLocallyFinitelyGeneratedSource {
+  trait FunctorsToSet extends super.FunctorsToSet {
+    override type O <: lfgCategory.FunctorToSet
+    override type M <: lfgCategory.NaturalTransformationToSet
+  }
+  override type D <: FunctorsToSet
+  
+  class Yoneda extends Functor.withLocallyFinitelyGeneratedSource {
     class YonedaFunctor(s: lfgCategory.O) extends FunctorToSet {
       override def onObjects(t: lfgCategory.O): FSet = morphisms(s, t)
       override def onGenerators(g: lfgCategory.G) = FFunction(onObjects(generatorSource(g)), onObjects(generatorTarget(g)), { m: lfgCategory.M => compose(m, generatorAsMorphism(g)) })
     }
     class YonedaNaturalTransformation(g: lfgCategory.opposite.G) extends NaturalTransformationToSet {
-      override val source = internalize(new YonedaFunctor(opposite.generatorSource(g)))
-      override val target = internalize(new YonedaFunctor(opposite.generatorTarget(g)))
+      override val source = functorsToSet.internalize(new YonedaFunctor(opposite.generatorSource(g)))
+      override val target = functorsToSet.internalize(new YonedaFunctor(opposite.generatorTarget(g)))
       override def apply(t: lfgCategory.O) = FFunction(source(t), target(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
     }
 
     override val source: lfgCategory.opposite.type = lfgCategory.opposite
     override val target = functorsToSet
-    override def onObjects(o: source.O) = internalize(new YonedaFunctor(o))
-    override def onGenerators(g: source.G) = internalize(new YonedaNaturalTransformation(g))
+    override def onObjects(o: source.O) = target.internalize(new YonedaFunctor(o))
+    override def onGenerators(g: source.G) = target.internalize(new YonedaNaturalTransformation(g))
   }
+  
+  // FIXME changing this to 'object yoneda extends' results in IllegalAccessErrors at runtime.
+  lazy val yoneda = new Yoneda {}
 }
 
 object LocallyFinitelyGeneratedCategory {

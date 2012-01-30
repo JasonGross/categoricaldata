@@ -114,4 +114,9 @@ trait withSmallTarget extends functor.withSmallSource.withSmallTarget with Funct
     }
   }
 
+  trait ContravariantDataFunctor extends super.ContravariantDataFunctor {
+    override val target: functor.source.FunctorsToSet = functor.source.functorsToSet
+  }
+  trait Pullback extends super.Pullback with ContravariantDataFunctor
+  
 }
