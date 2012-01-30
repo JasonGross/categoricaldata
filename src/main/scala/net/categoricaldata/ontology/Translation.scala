@@ -175,8 +175,8 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     }
   }
 
-  trait MemoLeftPushforward extends LeftPushforward with MemoFunctor
-  trait MemoRightPushforward extends RightPushforward with MemoFunctor
+  trait MemoLeftPushforward extends LeftPushforward with Functor.MemoFunctor
+  trait MemoRightPushforward extends RightPushforward with Functor.MemoFunctor
 
   lazy val leftPushforward: LeftPushforward = new MemoLeftPushforward {}
   lazy val rightPushforward: RightPushforward = new MemoRightPushforward {}

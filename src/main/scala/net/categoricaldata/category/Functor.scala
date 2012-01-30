@@ -18,15 +18,15 @@ trait ParametrizedFunctor[SC <: Category, TC <: Category] extends Functor {
 }
 
 object Functor {
-    def compose(f: Functor, g: Functor): ParametrizedFunctor[f.source.type, g.target.type] = new ParametrizedFunctor[f.source.type, g.target.type] {
-//		It seems not a good idea to require f.target == g.source. Often we want to allow f.target < g.source, but that's very hard to check.      
-//      require(f.target == g.source)
-      override val source: f.source.type = f.source
-      override val target: g.target.type = g.target
-      override def onObjects(o: f.source.O): g.target.O = g(f(o).asInstanceOf[g.source.O])
-      override def onMorphisms(m: f.source.M): g.target.M = g(f(m).asInstanceOf[g.source.M])
-    }  
-  
+  def compose(f: Functor, g: Functor): ParametrizedFunctor[f.source.type, g.target.type] = new ParametrizedFunctor[f.source.type, g.target.type] {
+    //		It seems not a good idea to require f.target == g.source. Often we want to allow f.target < g.source, but that's very hard to check.      
+    //      require(f.target == g.source)
+    override val source: f.source.type = f.source
+    override val target: g.target.type = g.target
+    override def onObjects(o: f.source.O): g.target.O = g(f(o).asInstanceOf[g.source.O])
+    override def onMorphisms(m: f.source.M): g.target.M = g(f(m).asInstanceOf[g.source.M])
+  }
+
   trait withFinitelyGeneratedSource extends withLocallyFinitelyGeneratedSource {
     override val source: FinitelyGeneratedCategory
   }
@@ -63,12 +63,12 @@ object Functor {
     override val target: SmallCategory
   }
 
-}
+  trait MemoFunctor extends Functor {
+    import net.tqft.toolkit.functions.Memo
+    private[this] val memoOnObjects = Memo(super.onObjects _)
+    private[this] val memoOnMorphisms = Memo(super.onMorphisms _)
+    abstract override def onObjects(o: source.O) = memoOnObjects(o)
+    abstract override def onMorphisms(o: source.M) = memoOnMorphisms(o)
+  }
 
-trait MemoFunctor extends Functor {
-  import net.tqft.toolkit.functions.Memo
-  val memoOnObjects = Memo(super.onObjects _)
-  val memoOnMorphisms = Memo(super.onMorphisms _)
-  abstract override def onObjects(o: source.O) = memoOnObjects(o)
-  abstract override def onMorphisms(o: source.M) = memoOnMorphisms(o)
 }

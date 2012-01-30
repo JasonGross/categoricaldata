@@ -10,8 +10,8 @@ trait SmallCategory extends Category { smallCategory =>
     override val source: smallCategory.type = smallCategory
   }
 
-  type F <: FunctorToSet
-  type T <: NaturalTransformationToSet
+  protected type F <: FunctorToSet
+  protected type T <: NaturalTransformationToSet
 
   trait NaturalTransformationToSet extends NaturalTransformationFrom with net.categoricaldata.category.NaturalTransformationToSet {
     override val source: F
