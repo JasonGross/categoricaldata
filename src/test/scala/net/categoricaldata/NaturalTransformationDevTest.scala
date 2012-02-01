@@ -73,10 +73,10 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
-  "rightUnit" should "be an isomorphism for fully faithful transformations" in {//I changed this from leftUnit to rightUnit // TODO (David) but you didn't actually change the code, below.
+  "rightUnit" should "be an isomorphism for fully faithful transformations" in {
     val F = Examples.Skip(3, 2)
-    val X = F.target.internalize(Chain3Dataset120114) //TODO (David) Change to F.source.internalize
-    F.pullback.leftUnit(X) should be('isomorphism_?) // TODO (David) Change to rightUnit
+    val X = F.source.internalize(Chain3Dataset120114) 
+    F.pullback.rightUnit(X) should be('isomorphism_?) 
   }
 
   "leftCounit" should "be an isomorphism for fully faithful transformations" in {
@@ -97,22 +97,17 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
     F.pullback.leftUnit(X) should be('surjection_?)
   }
 
-  "leftUnit" should "be an isomorphism for epi-like functors (?)" in {
-    //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
+  "leftUnit" should "be an isomorphism for epi-like functors" in {
     val F = Examples.GraphToFunction
     val X = DavidsFunkyFunction
-    //TODO (Scott) this line should be replaced by F.pullback.leftUnit(X) should be('isomorphism_?), but this causes a compiler crash. Mimicking your fix with internalize doesn't seem to help.
-    //TODO (David) It seems to work fine for me. Can you show me the code that doesn't compile?
-    // aside --- a compiler crash is very different than the compiler telling you the code is invalid. The compiler *does* crash sometimes, so it's worth knowing the difference.
+    //TODO (Scott)  The compiler says that this code is invalid: F.pullback.leftUnit(X) should be('isomorphism_?)
     F.pullback.leftUnit should be('isomorphism_?)
   }
 
-  "rightCounit" should "be an isomorphism for epi-like functors (?)" in {
-    //I don't have the internet, and I don't recall the name for this type of functor, but Graph-->Chain(1) would be sone.
+  "rightCounit" should "be an isomorphism for epi-like functors" in {
     val F = Examples.GraphToFunction
     val X = DavidsFunkyFunction
-    //TODO (Scott) this line should be replaced by F.pullback.rightCounit(X) should be('isomorphism_?), but this causes a compiler crash. Mimicking your fix with internalize doesn't seem to help.
-    //TODO (David) Seems to work fine for me, again, can you show me the code?
+    //TODO (Scott)   The compiler says that this code is invalid: F.pullback.rightCounit should be('isomorphism_?) 
     F.pullback.rightCounit should be('isomorphism_?) 
   }
 
@@ -235,6 +230,7 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
         "UC Berkeley" -> "1868",
         "MIT" -> "1861")))
   
+        
    val Set120121 = Dataset(source = Examples.Chain(0),
        onObjects = Map ("V0" -> List("a","b","c","d")),
        onMorphisms = Map()
