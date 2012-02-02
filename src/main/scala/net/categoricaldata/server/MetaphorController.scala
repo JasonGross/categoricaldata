@@ -39,7 +39,7 @@ class MetaphorController extends Controller with FunctionNameConventionRoutes { 
     translation.^*(dataset)
   }
 
-  def `GET /metaphor/compute/grothendieck`(dataset: Dataset): Ontology = {
+  def `GET /metaphor/compute/grothendieck`(dataset: Dataset): Translation = {
     dataset.grothendieck
   }
   def `GET /metaphor/compute/yoneda`(ontology: Ontology, box: String): Dataset = {

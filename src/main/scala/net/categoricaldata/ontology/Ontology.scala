@@ -158,29 +158,43 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     def isIsomorphicTo(other: Ontology#Dataset) = findIsomorphismsTo(other).nonEmpty
 
-    lazy val grothendieck: Ontology = new Ontology {
-      private case class GrothendieckBox(box: Box, element: Any) extends Box {
-        def name = "(" + box.name + ": " + element.toString + ")"
-      }
-
-      override def objectsAtLevel(k: Int) = {
-        for (o <- dataset.source.objectsAtLevel(k); x <- dataset(o).toIterable) yield {
-          GrothendieckBox(o, x)
+    lazy val grothendieck: Translation = {
+        case class GrothendieckBox(box: Box, element: Any) extends Box {
+          def name = "(" + box.name + ": " + element.toString + ")"
         }
-      }
-      override val minimumLevel = dataset.source.minimumLevel
-      override val maximumLevel = dataset.source.maximumLevel
-      override def generators(s: Box, t: Box) = {
-        (s, t) match {
-          case (GrothendieckBox(so, sx), GrothendieckBox(to, tx)) => {
-            for (g <- dataset.source.generators(so, to); if dataset.onGenerators(g).toFunction(sx) == tx) yield Arrow(s, t, g.name)
+      
+      object grothendieckOntology extends Ontology {
+        override def objectsAtLevel(k: Int) = {
+          for (o <- dataset.source.objectsAtLevel(k); x <- dataset(o).toIterable) yield {
+            GrothendieckBox(o, x)
           }
         }
+        override val minimumLevel = dataset.source.minimumLevel
+        override val maximumLevel = dataset.source.maximumLevel
+        override def generators(s: Box, t: Box) = {
+          (s, t) match {
+            case (GrothendieckBox(so, sx), GrothendieckBox(to, tx)) => {
+              for (g <- dataset.source.generators(so, to); if dataset.onGenerators(g).toFunction(sx) == tx) yield Arrow(s, t, g.name)
+            }
+          }
+        }
+        override def relations(s: Box, t: Box) = {
+          ??? // MATH what are the relations in the grothendieck construction
+        }
+        override def pathEquality(p1: Path, p2: Path) = ???
       }
-      override def relations(s: Box, t: Box) = {
-        ??? // MATH what are the relations in the grothendieck construction
+
+      new Translation {
+        override val source = grothendieckOntology
+        override val target: ontology.type = ontology
+        
+        override def onObjects(o: Box) = o match {
+          case GrothendieckBox(box, element) => box
+        }
+        override def onGenerators(g: Arrow) = g match {
+          case Arrow(GrothendieckBox(so, _), GrothendieckBox(to, _), name) => ontology.generatorAsMorphism(Arrow(so, to, name))
+        }
       }
-      override def pathEquality(p1: Path, p2: Path) = ???
     }
 
     class DatasetMemo extends Dataset {
@@ -205,7 +219,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
   trait FunctorsToSet extends super.FunctorsToSet {
     override type O = Dataset
     override type M = Datamap
-    
+
     override def internalize(f: net.categoricaldata.category.FunctorToSet) = {
       f match {
         case f: Dataset => f
@@ -235,7 +249,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     }
   }
 
-    override type D = Datasets
+  override type D = Datasets
 
   override val functorsToSet = Datasets
   sealed trait Datasets extends FunctorsToSet

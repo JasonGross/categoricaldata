@@ -19,7 +19,7 @@ class GrothendieckDevTest extends FlatSpec with ShouldMatchers with CustomMatche
 
 "grothendieck of dataset X" should "have left pushforward of terminal dataset isomorphic to X" in {
    val X=GraphDataset120114
-   val pi: Translation = ??? // =X.grothendieck //TODO (Scott) the grothendieck construction on X should yield a functor with target ontology Graph
+   val pi: Translation = X.grothendieck
    val E=pi.source  
    val t=Examples.TerminalDataset(E)//I think Scott may have told me not to use this, but I can't recall or find what I should be using.
    val LHS=X

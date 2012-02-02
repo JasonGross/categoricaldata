@@ -5,7 +5,7 @@ import net.categoricaldata.category.FunctorsToSet
 
 trait Dataset extends net.categoricaldata.category.FunctorToSet with net.categoricaldata.category.Functor.withFinitelyPresentedSource {
   override val source: Ontology
-  def grothendieck: Ontology
+  def grothendieck: Translation
 }
 
 trait Datamap extends net.categoricaldata.category.NaturalTransformationToSet
