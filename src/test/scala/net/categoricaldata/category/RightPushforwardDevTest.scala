@@ -15,8 +15,6 @@ class RightPushforwardDevTest extends FlatSpec with ShouldMatchers with CustomMa
   // NOTE to use the DSL, you need this line:
   import net.categoricaldata.dsl.Sentences._
 
-  // Scott: This is the wrong test, per my email 2012-01-09.
-  // FIXME (David) 
   "__* along PointedSetsToIsomorphism" should "take a retraction and return two sets isomorphic to its base." in {
 
     val OneTwoThreePointed = Dataset(
@@ -36,33 +34,28 @@ class RightPushforwardDevTest extends FlatSpec with ShouldMatchers with CustomMa
           "a" -> "a1",
           "b" -> "b1",
           "c" -> "c1")))
+          
+  val ThreeElementsIso = Dataset(
+    source = Examples.Isomorphism,
+    onObjects = Map(
+      "0" -> List("a", "b", "c"),
+      "1" -> List("a", "b", "c")),
+    onMorphisms = Map(
+      ("0" --- "E01" --> "1") -> Map(
+        "a" -> "a",
+        "b" -> "b",
+        "c" -> "c"),
+      ("1" --- "E10" --> "0") -> Map(
+        "a" -> "a",
+        "b" -> "b",
+        "c" -> "c")))       
 
-    val SixElementsIso = Dataset(
-      source = Examples.Isomorphism,
-      onObjects = Map(
-        "0" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
-        "1" -> List("a1", "b1", "b2", "c1", "c2", "c3")),
-      onMorphisms = Map(
-        ("0" --- "E01" --> "1") -> Map(
-          "a1" -> "a1",
-          "b1" -> "b1",
-          "b2" -> "b2",
-          "c1" -> "c1",
-          "c2" -> "c2",
-          "c3" -> "c3"),
-        ("1" --- "E10" --> "0") -> Map(
-          "a1" -> "a1",
-          "b1" -> "b1",
-          "b2" -> "b2",
-          "c1" -> "c1",
-          "c2" -> "c2",
-          "c3" -> "c3")))
-
+   
     println
     println("Output from \"__* along PointedSetsToIsomorphism should take a retraction and return two sets isomorphic to its base.\":")
     println
     val X = OneTwoThreePointed
-    val LHS = SixElementsIso
+    val LHS = ThreeElementsIso
     val RHS = Examples.PointedSetsToIsomorphism.__*(X)
     println("Original retraction: "); println(X); println
     println("Expected isomorphism: "); println(LHS); println
