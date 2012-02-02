@@ -23,89 +23,89 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
   "leftUnit" should "be an isomorphism for translations that are isomorphisms" in {
     val F = Examples.ReverseGraph
     // Apologies for this circumlocution. The compiler can't deduce by itself that F.target and GraphDataset120114 are both 'Graph'.
-    val X = F.target.internalize(GraphDataset120114)
+    val X = F.source.internalize(GraphDataset120114)
     F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an isomorphism for translations that are isomorphisms" in {
     val F = Examples.ReverseGraph
-    val X = F.source.internalize(GraphDataset120114)
+    val X = F.target.internalize(GraphDataset120114)
     F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 
   "rightUnit" should "be an isomorphism for translations that are isomorphisms" in {
     val F = Examples.ReverseGraph
-    val X = F.source.internalize(GraphDataset120114)
+    val X = F.target.internalize(GraphDataset120114)
     F.pullback.rightUnit(X) should be('isomorphism_?)
   }
 
   "rightCounit" should "be an isomorphism for translations that are isomorphisms" in {
     val F = Examples.ReverseGraph
-    val X = F.target.internalize(GraphDataset120114)
+    val X = F.source.internalize(GraphDataset120114)
     F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
   "leftUnit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val F = Ontologies.morphismToTerminalObject(C)
-    val X = F.target.internalize(Set120121)
+    val X = F.source.internalize(Set120121)
     F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val F = Ontologies.morphismToTerminalObject(C)
-    val X = F.source.internalize(Indiscrete3Dataset120113)
+    val X = F.target.internalize(Indiscrete3Dataset120113)
     F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 
   "rightUnit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val F = Ontologies.morphismToTerminalObject(C)
-    val X = F.source.internalize(Indiscrete3Dataset120113)
+    val X = F.target.internalize(Indiscrete3Dataset120113)
     F.pullback.rightUnit(X) should be('isomorphism_?)
   }
 
   "rightCounit" should "be an isomorphism for translations that are equivalences" in {
     val C = Examples.IndiscreteCategory(3)
     val F = Ontologies.morphismToTerminalObject(C)
-    val X = F.target.internalize(Set120121)
+    val X = F.source.internalize(Set120121)
     F.pullback.rightCounit(X) should be('isomorphism_?)
   }
 
   "rightUnit" should "be an isomorphism for fully faithful transformations" in {
     val F = Examples.Skip(3, 2)
-    val X = F.source.internalize(Chain3Dataset120114) 
+    val X = F.target.internalize(Chain3Dataset120114) 
     F.pullback.rightUnit(X) should be('isomorphism_?) 
   }
 
   "leftCounit" should "be an isomorphism for fully faithful transformations" in {
     val F = Examples.Skip(3, 2)
-    val X = F.source.internalize(Chain3Dataset120114)
+    val X = F.target.internalize(Chain3Dataset120114)
     F.pullback.leftCounit(X) should be('isomorphism_?)
   }
 
   "leftCounit" should "be an injection for functor from Graph to Chain1" in {
     val F = Examples.GraphToFunction
-    val X = F.source.internalize(GraphDataset120114)
+    val X = F.target.internalize(GraphDataset120114)
     F.pullback.leftCounit(X) should be('injection_?)
   }
 
   "leftUnit" should "be a surjection for functor from Graph to Chain1" in {
     val F = Examples.GraphToFunction
-    val X = F.target.internalize(DavidsFunkyFunction)
+    val X = F.source.internalize(DavidsFunkyFunction)
     F.pullback.leftUnit(X) should be('surjection_?)
   }
 
   "leftUnit" should "be an isomorphism for epi-like functors" in {
     val F = Examples.GraphToFunction
-    val X = F.target.internalize(DavidsFunkyFunction)
+    val X = F.source.internalize(DavidsFunkyFunction)
     F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "rightCounit" should "be an isomorphism for epi-like functors" in {
     val F = Examples.GraphToFunction
-    val X = F.target.internalize(DavidsFunkyFunction)
+    val X = F.source.internalize(DavidsFunkyFunction)
     F.pullback.rightCounit(X) should be('isomorphism_?) 
   }
 

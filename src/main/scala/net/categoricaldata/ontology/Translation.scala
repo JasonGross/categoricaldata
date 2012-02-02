@@ -220,13 +220,18 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     lazy val rightAdjoint = rightPushforward
 
     lazy val leftCounit = new NaturalTransformation { leftCounit =>
-      override val source = Functor.compose(leftPushforward, pullback)
-      override val target = pullback.target.identityFunctor
+      override val source = Functor.compose(pullback, leftPushforward)
+      override val target = pullback.source.identityFunctor
       override def apply(L: sourceCategory.O /* e.g. translation.source.Dataset */ ): targetCategory.M /* e.g. Datamap */ = {
         targetCategory.internalize(new NaturalTransformationToSet {
           override val source = leftCounit.source(L)
           override val target = leftCounit.target(L)
-          override def apply(d: translation.source.O): FFunction = ??? // MATH what is the left counit for pullback?
+          override def apply(d: translation.source.O): FFunction = {
+            val sourceSet = ???
+            val targetSet = ???
+            val map = ???
+            FFunction(sourceSet, targetSet, map) // MATH what is the left counit for pullback?
+          }
           /* 
     * Given a functor F: C-->D. 
     * Given a dataset L: D-->Set
@@ -245,8 +250,8 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       }
     }
     lazy val leftUnit = new NaturalTransformation { leftUnit =>
-      override val source = pullback.source.identityFunctor
-      override val target = Functor.compose(pullback, leftPushforward)
+      override val source = leftPushforward.source.identityFunctor
+      override val target = Functor.compose(leftPushforward, pullback)
       override def apply(L: sourceCategory.O /* this is just translation.target.Dataset, but the compiler is recalcitrant */ ): targetCategory.M = {
         targetCategory.internalize(new NaturalTransformationToSet {
           override val source = leftUnit.source(L)
@@ -256,19 +261,19 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       }
     }
     lazy val rightCounit = new NaturalTransformation { rightCounit =>
-      override val source = Functor.compose(pullback, rightPushforward)
-      override val target = pullback.source.identityFunctor
+      override val source = Functor.compose(rightPushforward, pullback)
+      override val target = rightPushforward.source.identityFunctor
       override def apply(L: sourceCategory.O /* this is just translation.target.Dataset, but the compiler is recalcitrant */ ): targetCategory.M = {
         targetCategory.internalize(new NaturalTransformationToSet {
           override val source = rightCounit.source(L)
-          override val target = rightCounit.target(translation.target.functorsToSet.internalize(L))
+          override val target = rightCounit.target(L)
           override def apply(d: translation.target.O): FFunction = ??? // MATH what is the right counit for pullback?
         })
       }
     }
     lazy val rightUnit = new NaturalTransformation { rightUnit =>
-      override val source = translation.source.AllFunctorsToSet.identityFunctor
-      override val target = Functor.compose(rightPushforward, pullback)
+      override val source = pullback.source.identityFunctor
+      override val target = Functor.compose(pullback, rightPushforward)
       override def apply(L: sourceCategory.O /* this is just translation.source.FunctorToSet, but the compiler is recalcitrant */ ): targetCategory.M = {
         targetCategory.internalize(new NaturalTransformationToSet {
           override val source = rightUnit.source(L)
