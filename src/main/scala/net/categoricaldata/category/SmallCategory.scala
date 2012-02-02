@@ -79,6 +79,8 @@ trait SmallCategory extends Category { smallCategory =>
 
   type D <: FunctorsToSet
   def functorsToSet: D
+  
+  // these are convenience methods. TODO handle these better...
   def internalize(f: net.categoricaldata.category.FunctorToSet) = functorsToSet.internalize(f)
   def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = functorsToSet.internalize(t)
 
