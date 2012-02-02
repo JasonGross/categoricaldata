@@ -61,7 +61,7 @@ class OntologyTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     val X = Examples.IndiscreteCategory(7)
     val LHS = X.fullSubcategory("V1","V2","V3","V4")
     val RHS = Examples.IndiscreteCategory(4)
-    LHS should equal(RHS)
+    LHS should beIsomorphicTo(RHS)
   }
 
 }
