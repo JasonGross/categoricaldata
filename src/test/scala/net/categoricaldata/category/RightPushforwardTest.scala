@@ -167,4 +167,31 @@ class RightPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatch
 
   }
 
+    val FCM4_3 = Dataset(source = Examples.FiniteCyclicMonoid(4, 3),
+    onObjects = Map(
+      "an element" -> List("a", "b")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "a" -> "b",
+        "b" -> "b")))
+
+  
+    val FCM4_3Times2RToFCM5_3 = Dataset(source = Examples.FiniteCyclicMonoid(5, 3),
+    onObjects = Map(
+      "an element" -> List("aa", "ab", "ba", "bb")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "aa" -> "ab",
+        "ab" -> "bb",
+        "ba" -> "ab",
+        "bb" -> "bb")))
+
+    "__*" should "provide a 'half-speed' FCM-thing" in {
+       val X = FCM4_3
+        val LHS = Examples.TranslationFiniteCyclicMonoids(4,3,5,3,2)__*(X)
+        val RHS = FCM4_3Times2RToFCM5_3
+      LHS should beIsomorphicTo(RHS)
+     }      
+
+  
 }

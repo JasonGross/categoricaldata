@@ -85,7 +85,7 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
     val RHS = DavidsFunkyGraphReversed
     LHS should beIsomorphicTo(RHS)
   }
-  
+
   val DavidsFunkyFiniteCyclicMonoid = Dataset(
     source = Examples.FiniteCyclicMonoid(2, 1),
     onObjects = Map("an element" -> List("David", "Scott", "UC Berkeley", "MIT", "succDavid", "succScott", "succUC Berkeley", "succMIT")),
@@ -104,11 +104,73 @@ class LeftPushforwardTest extends FlatSpec with ShouldMatchers with CustomMatche
       "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
     onMorphisms = Map())
 
-
-  
   "__!" should "properly convert a set to a step-and-hold FCM2_1" in {
     val F = Ontologies.terminalObject.findAllTranslationsTo(Examples.FiniteCyclicMonoid(2, 1)).head
     F.__!(DavidsFunkySet1) should beIsomorphicTo(DavidsFunkyFiniteCyclicMonoid)
+  }
+
+  val OneTwoThreePointed = Dataset(
+    source = Examples.PointedSets,
+    onObjects = Map(
+      "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+      "a pointed set" -> List("a", "b", "c")),
+    onMorphisms = Map(
+      ("an element" --- "is in" --> "a pointed set") -> Map(
+        "a1" -> "a",
+        "b1" -> "b",
+        "b2" -> "b",
+        "c1" -> "c",
+        "c2" -> "c",
+        "c3" -> "c"),
+      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+        "a" -> "a1",
+        "b" -> "b1",
+        "c" -> "c1")))
+  val ThreeElementsIso = Dataset(
+    source = Examples.Isomorphism,
+    onObjects = Map(
+      "0" -> List("a", "b", "c"),
+      "1" -> List("a", "b", "c")),
+    onMorphisms = Map(
+      ("0" --- "E01" --> "1") -> Map(
+        "a" -> "a",
+        "b" -> "b",
+        "c" -> "c"),
+      ("1" --- "E10" --> "0") -> Map(
+        "a" -> "a",
+        "b" -> "b",
+        "c" -> "c")))
+
+  "__!" should "work with PointedSetsToIsomorphism" in {
+    val X = OneTwoThreePointed
+    val LHS = ThreeElementsIso
+    val RHS = Examples.PointedSetsToIsomorphism.__!(X)
+    LHS should beIsomorphicTo(RHS)
+  }
+
+  val FCM4_3 = Dataset(source = Examples.FiniteCyclicMonoid(4, 3),
+    onObjects = Map(
+      "an element" -> List("a", "b")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "a" -> "b",
+        "b" -> "b")))
+
+  val FCM4_3Times2LToFCM5_3 = Dataset(source = Examples.FiniteCyclicMonoid(5, 3),
+    onObjects = Map(
+      "an element" -> List("a1", "b1", "a2", "b2")),
+    onMorphisms = Map(
+      "an element" --- "has as successor" --> "an element" -> Map(
+        "a1" -> "a2",
+        "b1" -> "b2",
+        "a2" -> "b1",
+        "b2" -> "b1")))
+
+  "__!" should "provide a 'half-speed' FCM-thing" in {
+    val X = FCM4_3
+    val LHS = Examples.TranslationFiniteCyclicMonoids(4, 3, 5, 3, 2).__!(X)
+    val RHS = FCM4_3Times2LToFCM5_3
+    LHS should beIsomorphicTo(RHS)
   }
 
 }

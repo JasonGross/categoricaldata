@@ -8,6 +8,7 @@ import scala.math._
 import net.categoricaldata.examples.Examples
 import net.tqft.toolkit.arithmetic.Factorial
 import net.categoricaldata.util.CustomMatchers
+import net.categoricaldata.sets.Sets
 
 @RunWith(classOf[JUnitRunner])
 class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
@@ -103,8 +104,6 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
      *  Test is a class, not an object, so you can't refer to its members (e.g. DavidsFunkyGraph) without creating an instance.
      *  Either write new Test.DavidsFunkyGraph, or, better, move DavidsFunkyGraph to a companion object.
      *  You'll also need to import Test, as it lives in a different package.
-     *  
-     *  To make matters worse, I've just moved Test.scala to /src/dev/, so you shouldn't refer to it from stuff in /src/test/. Ask me. :-)
      */
     //    Examples.ReverseGraph.__*(Test.DavidsFunkyGraph) should beIsomorphicTo(Examples.ReverseGraph.__*(Test.DavidsFunkyGraph))
   }
@@ -123,4 +122,45 @@ class DatasetTest extends FlatSpec with ShouldMatchers with CustomMatchers {
     evaluating { badData } should produce[IllegalArgumentException]
   }
 
+  {
+    val OneTwoThreePointed = Dataset(
+      source = Examples.PointedSets,
+      onObjects = Map(
+        "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
+        "a pointed set" -> List("a", "b", "c")),
+      onMorphisms = Map(
+        ("an element" --- "is in" --> "a pointed set") -> Map(
+          "a1" -> "a",
+          "b1" -> "b",
+          "b2" -> "b",
+          "c1" -> "c",
+          "c2" -> "c",
+          "c3" -> "c"),
+        ("a pointed set" --- "has as chosen" --> "an element") -> Map(
+          "a" -> "a1",
+          "b" -> "b1",
+          "c" -> "c1")))
+
+    "Product of datasets" should "be taken pointwise on PointedSets" in {
+      val PS: Examples.PointedSets.type = Examples.PointedSets
+      val X = OneTwoThreePointed
+      val XX = PS.Datasets.product(X, X)
+      val E = X(Box("an element"))
+      val EE = Sets.product(E, E)
+      val LHS = XX(Box("an element"))
+      val RHS = EE
+      LHS should have size (RHS.size)
+    }
+
+    "Coproduct of datasets" should "be taken pointwise on PointedSets" in {
+      val PS: Examples.PointedSets.type = Examples.PointedSets
+      val X = OneTwoThreePointed
+      val XX = PS.Datasets.coproduct(X, X)
+      val E = X(Box("an element"))
+      val EE = Sets.coproduct(E, E)
+      val LHS = XX(Box("an element"))
+      val RHS = EE
+      LHS should have size (RHS.size)
+    }
+  }
 }

@@ -78,23 +78,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "a1" -> "a1a",
         "d3" -> "d3d")))
 
-  val OneTwoThreePointed = Dataset(
-    source = Examples.PointedSets,
-    onObjects = Map(
-      "an element" -> List("a1", "b1", "b2", "c1", "c2", "c3"),
-      "a pointed set" -> List("a", "b", "c")),
-    onMorphisms = Map(
-      ("an element" --- "is in" --> "a pointed set") -> Map(
-        "a1" -> "a",
-        "b1" -> "b",
-        "b2" -> "b",
-        "c1" -> "c",
-        "c2" -> "c",
-        "c3" -> "c"),
-      ("a pointed set" --- "has as chosen" --> "an element") -> Map(
-        "a" -> "a1",
-        "b" -> "b1",
-        "c" -> "c1")))
 
   val SixElementsIso = Dataset(
     source = Examples.Isomorphism,
@@ -116,21 +99,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "c1" -> "c1",
         "c2" -> "c2",
         "c3" -> "c3")))
-
-  val ThreeElementsIso = Dataset(
-    source = Examples.Isomorphism,
-    onObjects = Map(
-      "0" -> List("a", "b", "c"),
-      "1" -> List("a", "b", "c")),
-    onMorphisms = Map(
-      ("0" --- "E01" --> "1") -> Map(
-        "a" -> "a",
-        "b" -> "b",
-        "c" -> "c"),
-      ("1" --- "E10" --> "0") -> Map(
-        "a" -> "a",
-        "b" -> "b",
-        "c" -> "c")))
 
   val DavidsFunkyFiniteCyclicMonoid = Dataset(
     source = Examples.FiniteCyclicMonoid(2, 1),
@@ -165,15 +133,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
   //   }
 
-  // TODO (Scott): Can the following two tests be made "generic" in the way I want them to? See comments.
-  // Scott: sure, if you have some supply of datasets, you could write
-  /*
-   * for(dataset <- dataset; C = dataset.source) {
-   *    val T = TerminalFunctor(C)
-   *    val x = T.target.allObjects.head 									// the target only has one object, so this hack to get it is okay.
-   * 	dataset.colimitSet should equal(TerminalFunctor(C).__!(dataset)(x))
-   * }
-   */
   "colimit and __!" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have colim(D)=TerminalFunctor(C).__!(D)
     for (
@@ -187,19 +146,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   }
   "limit and __*" should "agree for terminal functors" in {
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
-  }
-
-  "__!" should "work with PointedSetsToIsomorphism" in {
-    //    println
-    //    println("Output from \"__! should take this retraction and return two sets isomorphic to its total space.\":")
-    //    println
-    val X = OneTwoThreePointed
-    val LHS = ThreeElementsIso
-    val RHS = Examples.PointedSetsToIsomorphism.__!(X)
-    //    println("Original retraction: "); println(X);println
-    //    println("Expected isomorphism: "); println (LHS);println
-    //    println("Left pushforward of original retraction: ");println (RHS)
-    LHS should beIsomorphicTo(RHS)
   }
 
   val SaturatedCommutativeTriangle = {
@@ -368,49 +314,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
 //        "dc" -> "dd",
 //        "dd" -> "dd")))
         
-  val FCM4_3 = Dataset(source = Examples.FiniteCyclicMonoid(4, 3),
-    onObjects = Map(
-      "an element" -> List("a", "b")),
-    onMorphisms = Map(
-      "an element" --- "has as successor" --> "an element" -> Map(
-        "a" -> "b",
-        "b" -> "b")))
-
-  
-  val FCM4_3Times2LToFCM5_3 = Dataset(source = Examples.FiniteCyclicMonoid(5, 3),
-    onObjects = Map(
-      "an element" -> List("a1", "b1", "a2", "b2")),
-    onMorphisms = Map(
-      "an element" --- "has as successor" --> "an element" -> Map(
-        "a1" -> "a2",
-        "b1" -> "b2",
-        "a2" -> "b1",
-        "b2" -> "b1")))
-
-  val FCM4_3Times2RToFCM5_3 = Dataset(source = Examples.FiniteCyclicMonoid(5, 3),
-    onObjects = Map(
-      "an element" -> List("aa", "ab", "ba", "bb")),
-    onMorphisms = Map(
-      "an element" --- "has as successor" --> "an element" -> Map(
-        "aa" -> "ab",
-        "ab" -> "bb",
-        "ba" -> "ab",
-        "bb" -> "bb")))
-
-    "__*" should "provide a 'half-speed' FCM-thing" in {
-       val X = FCM4_3
-        val LHS = Examples.TranslationFiniteCyclicMonoids(4,3,5,3,2)__*(X)
-        val RHS = FCM4_3Times2RToFCM5_3
-      LHS should beIsomorphicTo(RHS)
-     }      
-      
-      "__!" should "provide a 'half-speed' FCM-thing" in {
-       val X = FCM4_3
-        val LHS = Examples.TranslationFiniteCyclicMonoids(4,3,5,3,2).__!(X)
-        val RHS = FCM4_3Times2LToFCM5_3
-        LHS should beIsomorphicTo(RHS)
-     }      
-      
 
  
       //TODO (David): Make a test for commutative diagram of ontologies. 
