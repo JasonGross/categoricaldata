@@ -99,16 +99,14 @@ class NaturalTransformationDevTest extends FlatSpec with ShouldMatchers with Cus
 
   "leftUnit" should "be an isomorphism for epi-like functors" in {
     val F = Examples.GraphToFunction
-    val X = DavidsFunkyFunction
-    //TODO (Scott)  The compiler says that this code is invalid: F.pullback.leftUnit(X) should be('isomorphism_?)
-    F.pullback.leftUnit should be('isomorphism_?)
+    val X = F.target.internalize(DavidsFunkyFunction)
+    F.pullback.leftUnit(X) should be('isomorphism_?)
   }
 
   "rightCounit" should "be an isomorphism for epi-like functors" in {
     val F = Examples.GraphToFunction
-    val X = DavidsFunkyFunction
-    //TODO (Scott)   The compiler says that this code is invalid: F.pullback.rightCounit should be('isomorphism_?) 
-    F.pullback.rightCounit should be('isomorphism_?) 
+    val X = F.target.internalize(DavidsFunkyFunction)
+    F.pullback.rightCounit(X) should be('isomorphism_?) 
   }
 
   val GraphDataset120114 = Dataset(source = Examples.Graph,
