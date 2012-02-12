@@ -21,6 +21,8 @@ class ColimitTest extends FlatSpec with ShouldMatchers {
 
     colimit.toIterable.size should equal(2)
   }
+  
+  
 
 }
 

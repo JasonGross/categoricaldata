@@ -78,7 +78,6 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
         "a1" -> "a1a",
         "d3" -> "d3d")))
 
-
   val SixElementsIso = Dataset(
     source = Examples.Isomorphism,
     onObjects = Map(
@@ -113,27 +112,51 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       "succUC Berkeley" -> "succUC Berkeley",
       "succMIT" -> "succMIT")))
 
-  //   "__!" should "work (1)" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(2,1).__!(DavidsFunkySet1) should equal (DavidsFunkyFiniteCyclicMonoid)
-  //   }
-  //
-  //  "__*" should "work (2)" in {
-  //    GraphToDiscreteDynamicalSystem1.__*(DavidsFunkyGraph).isIsomorphicTo(DavidsFunkyDiscreteDynamicalSystem) should equal(true)
-  //  }
+  val DavidsFunkySet1 = Dataset(source = Examples.Chain(0),
+    onObjects = Map(
+      "V0" -> List("David", "Scott", "UC Berkeley", "MIT")),
+    onMorphisms = Map())
 
-  //   "__*" should "preserve the terminal dataset" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__*(TerminalDataset(TerminalCategory)) 
-  //	   should equal 
-  //	   (TerminalDataset(FiniteCyclicMonoid(10,7)))
-  //   }
-  //   
-  //   "__!" should "preserve the initialdataset" in {
-  //	   TerminalCategoryToFiniteCyclicMonoid(10,7).__!(InitialDataset(TerminalCategory)) 
-  //	   should equal 
-  //	   (InitialDataset(FiniteCyclicMonoid(10,7)))
-  //   }
+  val DavidsFunkyGraph = Dataset(source = Examples.Graph,
+    onObjects = Map(
+      "an edge" -> List("f", "g", "h", "i", "j"),
+      "a vertex" -> List("A", "B", "C", "D")),
+    onMorphisms = Map(
+      ("an edge" --- "has as source" --> "a vertex") -> Map(
+        "f" -> "A",
+        "g" -> "A",
+        "h" -> "B",
+        "i" -> "A",
+        "j" -> "C"),
+      ("an edge" --- "has as target" --> "a vertex") -> Map(
+        "f" -> "B",
+        "g" -> "B",
+        "h" -> "C",
+        "i" -> "C",
+        "j" -> "C")))
 
-  "colimit and __!" should "agree for terminal functors" in {
+  "__!" should "take a set to the correct FCM2_1-set" in {
+    val F = Examples.TerminalCategoryToFiniteCyclicMonoid(2, 1)
+    val X = DavidsFunkySet1
+    val Y = DavidsFunkyFiniteCyclicMonoid
+    F.__!(X) should beIsomorphicTo(Y)
+  }
+
+  "__*" should "preserve the terminal dataset in FCM10_7" in {
+    val F = Examples.TerminalCategoryToFiniteCyclicMonoid(10, 7)
+    val T1 = Examples.TerminalDataset(Examples.TerminalCategory)
+    val T2 = Examples.TerminalDataset(Examples.FiniteCyclicMonoid(10, 7))
+    F.__*(T1) should beIsomorphicTo(T2)
+  }
+
+  "__!" should "preserve the initial dataset in FCM10_7" in {
+    val F = Examples.TerminalCategoryToFiniteCyclicMonoid(10, 7)
+    val I1 = Examples.InitialDataset(Examples.TerminalCategory)
+    val I2 = Examples.InitialDataset(Examples.FiniteCyclicMonoid(10, 7))
+    F.__!(I1) should beIsomorphicTo(I2)
+  }
+
+  "colimit and __!" should "agree for terminal functors" in { //FIXME (Scott) This test doesn't seem to be doing anything, but it should. The only thing I can think of is that there is nothing in Ontology#Dataset.
     //For any category C, and any dataset D:C-->Set, we should have colim(D)=TerminalFunctor(C).__!(D)
     for (
       dataset <- List[Ontology#Dataset]()
@@ -144,8 +167,16 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       dataset.colimitSet should equal(T.__!(dataset)(x))
     }
   }
-  "limit and __*" should "agree for terminal functors" in {
+  "limit and __*" should "agree for terminal functors" in { //FIXME (Scott) This test doesn't seem to be doing anything, but it should. The only thing I can think of is that there is nothing in Ontology#Dataset.
     //For any category C, and any dataset D:C-->Set, we should have lim(D)=TerminalFunctor(C).__*(D)
+    for (
+      dataset <- List[Ontology#Dataset]()
+    ) {
+      val C = dataset.source
+      val T = Ontologies.morphismToTerminalObject(C)
+      val x = T.target.objects.head // the target only has one object, so this hack to get it is okay.
+      dataset.limitSet should equal(T.__*(dataset)(x))
+    }
   }
 
   val SaturatedCommutativeTriangle = {
@@ -177,8 +208,8 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
       relations = List.concat(RelationsId0, RelationsId1, RelationsId2, Comp012))
   }
 
-  //  "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO (Scott) Is this test in the right place? Do we have BeIsomorphicAsCategoriesTo?
-  //    Examples.Chain(2) should BeIsomorphicAsCategoriesTo(SaturatedCommutativeTriangle)
+  //  "BeIsomorphicAsCategoriesTo" should "see the iso between saturated commutative triangle and Chain2" in { //TODO (Scott) Do we have BeIsomorphicAsCategoriesTo?
+  //    Examples.Chain(2).isIsomorphicAsCategoriesTo(SaturatedCommutativeTriangle) should equal(true)
   //  }
 
   val DDS1 = Dataset(source = Examples.DiscreteDynamicalSystem,
@@ -262,61 +293,56 @@ class Test extends FlatSpec with ShouldMatchers with CustomMatchers {
   //      LHS should beIsomorphicTo(RHS)
   //   }      
 
-        
- 
-        
-//The following was commented out because it doesn't work, and I can find a simpler example. I'll put it back in when FCM4_2 works, as an example of a "Big computation".        
-        
-//  val FCM20_18 = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
-//    onObjects = Map(
-//      "an element" -> List("a", "b", "c", "d")),
-//    onMorphisms = Map(
-//      "an element" --- "has as successor" --> "an element" -> Map(
-//        "a" -> "c",
-//        "b" -> "c",
-//        "c" -> "d",
-//        "d" -> "d")))
-//
-//  
-//  val FCM20_18Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
-//    onObjects = Map(
-//      "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
-//    onMorphisms = Map(
-//      "an element" --- "has as successor" --> "an element" -> Map(
-//        "a1" -> "a2",
-//        "b1" -> "b2",
-//        "c1" -> "c2",
-//        "d1" -> "d2",
-//        "a2" -> "c1",
-//        "b2" -> "c1",
-//        "c2" -> "d1",
-//        "d2" -> "d1")))
-//
-//  val FCM20_18Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
-//    onObjects = Map(
-//      "an element" -> List("aa", "ab", "ac", "ad", "ba", "bb", "bc", "bd", "ca", "cb", "cc", "cd", "da", "db", "dc", "dd")),
-//    onMorphisms = Map(
-//      "an element" --- "has as successor" --> "an element" -> Map(
-//        "aa" -> "ca",
-//        "ab" -> "ca",
-//        "ac" -> "da",
-//        "ad" -> "da",
-//        "ba" -> "cb",
-//        "bb" -> "cb",
-//        "bc" -> "db",
-//        "bd" -> "db",
-//        "ca" -> "cc",
-//        "cb" -> "cc",
-//        "cc" -> "dc",
-//        "cd" -> "dc",
-//        "da" -> "cd",
-//        "db" -> "cd",
-//        "dc" -> "dd",
-//        "dd" -> "dd")))
-        
+  //The following was commented out because it doesn't work, and I can find a simpler example. I'll put it back in when FCM4_2 works, as an example of a "Big computation".        
 
- 
-      //TODO (David): Make a test for commutative diagram of ontologies. 
+  //  val FCM20_18 = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+  //    onObjects = Map(
+  //      "an element" -> List("a", "b", "c", "d")),
+  //    onMorphisms = Map(
+  //      "an element" --- "has as successor" --> "an element" -> Map(
+  //        "a" -> "c",
+  //        "b" -> "c",
+  //        "c" -> "d",
+  //        "d" -> "d")))
+  //
+  //  
+  //  val FCM20_18Times2L = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+  //    onObjects = Map(
+  //      "an element" -> List("a1", "b1", "c1", "d1", "a2", "b2", "c2", "d2")),
+  //    onMorphisms = Map(
+  //      "an element" --- "has as successor" --> "an element" -> Map(
+  //        "a1" -> "a2",
+  //        "b1" -> "b2",
+  //        "c1" -> "c2",
+  //        "d1" -> "d2",
+  //        "a2" -> "c1",
+  //        "b2" -> "c1",
+  //        "c2" -> "d1",
+  //        "d2" -> "d1")))
+  //
+  //  val FCM20_18Times2R = Dataset(source = Examples.FiniteCyclicMonoid(20, 18),
+  //    onObjects = Map(
+  //      "an element" -> List("aa", "ab", "ac", "ad", "ba", "bb", "bc", "bd", "ca", "cb", "cc", "cd", "da", "db", "dc", "dd")),
+  //    onMorphisms = Map(
+  //      "an element" --- "has as successor" --> "an element" -> Map(
+  //        "aa" -> "ca",
+  //        "ab" -> "ca",
+  //        "ac" -> "da",
+  //        "ad" -> "da",
+  //        "ba" -> "cb",
+  //        "bb" -> "cb",
+  //        "bc" -> "db",
+  //        "bd" -> "db",
+  //        "ca" -> "cc",
+  //        "cb" -> "cc",
+  //        "cc" -> "dc",
+  //        "cd" -> "dc",
+  //        "da" -> "cd",
+  //        "db" -> "cd",
+  //        "dc" -> "dd",
+  //        "dd" -> "dd")))
+
+  //TODO (David): Make a test for commutative diagram of ontologies. 
   //Let A=Span, B=non-commuting triangle, C=Chain(1), and D=commuting triangle. 
   //A-->B gives two paths start to end, A-->C is obvious, B-->D is obvious, C-->D is hypotenuse. 
   //Check that this diagram commutes.
