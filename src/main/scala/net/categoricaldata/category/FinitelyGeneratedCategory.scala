@@ -10,7 +10,7 @@ import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCategory =>
   val maximumLevel: Int
 
-  lazy val objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
+  lazy val objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o 
   override def objectSet: FSet = new FSet {
     def toIterable = objects
     lazy val sizeIfFinite = Some(toIterable.size)

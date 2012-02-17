@@ -58,7 +58,7 @@ object Examples {
     arrows = List(
       "an edge" --- "has as source" --> "a vertex",
       "an edge" --- "has as target" --> "a vertex")).assertAcyclic.assertFree
-      
+        
   val GraphToFunction = Translation(
     source = Examples.Graph,
     target = Examples.Chain(1),

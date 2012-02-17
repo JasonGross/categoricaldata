@@ -1,9 +1,9 @@
 package net.categoricaldata.category
 
 trait Category { category =>
-  type O
+  type O    
   type M
-  def identity(o: O): M
+  def identity(o: O): M  
   def source(m: M): O
   def target(m: M): O
   def compose(m1: M, m2: M): M
@@ -27,8 +27,8 @@ trait Category { category =>
     }
   }
 
-  protected trait FunctorFrom extends Functor {
-    override val source: category.type = category
+  protected trait FunctorFrom extends Functor {  //Trait inside a trait. 
+    override val source: category.type = category   // The source of a functor is generally a def, but here it's a val, namely "this".
   }
   protected trait NaturalTransformationFrom extends NaturalTransformation {
     override val source: FunctorFrom
@@ -41,7 +41,7 @@ trait Category { category =>
     override val source: FunctorTo
     override val target: FunctorTo
   }
-  protected trait EndoFunctor extends FunctorFrom with FunctorTo
+  protected trait EndoFunctor extends FunctorFrom with FunctorTo  //This composes traits together: an endofunctor is a functorFrom that's also a functorTo.
   
   trait Identity extends EndoFunctor {
     override def onObjects(o: O) = o
