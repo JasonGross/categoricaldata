@@ -110,7 +110,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       override val source = pushforward.onObjects(m.source)
       override val target = pushforward.onObjects(m.target)
       override def apply(o: Box) = ??? // MATH what is the Rightpushforward of a Datamap?
-      /* 
+    /* 
     * Given a functor F: C-->D. 
     * Given datasets I,J: C-->Set
     * Given a natural transformation m:I-->J
@@ -122,23 +122,32 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     */
 
     }
-  }
+  }   
 
-  trait LeftPushforward extends CovariantDataFunctor with PullbackLeftAdjoint { shriek =>
-    override def onObjects(i: source.O): target.O = (new translation.target.Dataset {
-      override def onObjects(o: Box) = {
-        val F = coslice(o) // Weird, why on earth do we need this intermediate val?
-        F.pullback(i).colimitSet
+  //Call the translation F:C-->D
+  
+  trait LeftPushforward extends CovariantDataFunctor with PullbackLeftAdjoint { shriek => //left pushforward of F is a functor from C-sets to D-sets
+    val CSet=source
+    val DSet=target
+    override def onObjects(i: CSet.O): DSet.O = (new translation.target.Dataset { //i is a dataset on C, we're getting a dataset on D.
+      val D=source
+      type DObject=Box
+      type DArrow=Arrow
+      override def onObjects(o: DObject) = {
+        val cs = coslice(o) // Weird, why on earth do we need this intermediate val?
+        cs.pullback(i).colimitSet //We have now defined F_!(i)(o)
       }
-      override def onGenerators(g: translation.target.G) = {
-        val sg = coslice(translation.target.generatorAsMorphism(g))
-        val Fg = sg.functor
-        val Ft = sg.target
-        val Fs = sg.source
+      override def onGenerators(g: DArrow) = {
+        val o = g.source
+        val p = g.target
+        val sg = coslice(translation.target.generatorAsMorphism(g)) // a commutative triangle (F|o) --> (F|p) --> C
+        val Fg = sg.functor  
+        val Ft = sg.target   
+        val Fs = sg.source   
 
-        // First, construct the colimit (that is, the initial cocone) on the coslice category over the target of g.
-        // Ft is the functor from the comma category of objects left of the target of g, back to the source of the the functor.
-        val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject
+        // First, construct the colimit (that is, the initial cocone) on the coslice category over p.
+        // Ft is the functor from the comma category of objects left of p, back to the source of the functor.
+        val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject //
 
         // Second, construct the dataset over the slice category over the target of g.
         val sourceData = Fs.pullback(i)
