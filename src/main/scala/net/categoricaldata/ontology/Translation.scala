@@ -129,7 +129,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   trait LeftPushforward extends CovariantDataFunctor with PullbackLeftAdjoint { shriek => //left pushforward of F is a functor from C-sets to D-sets
     val CSet=source
     val DSet=target
-    override def onObjects(i: CSet.O): DSet.O = (new translation.target.Dataset { //i is a dataset on C, we're getting a dataset on D.
+    override def onObjects(i: CSet.O): DSet.O = (new translation.target.Dataset { //i is a dataset on C, we're going to define a dataset on D.
       val D=source
       type DObject=Box
       type DArrow=Arrow
@@ -141,29 +141,30 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         val o = g.source
         val p = g.target
         val sg = coslice(translation.target.generatorAsMorphism(g)) // a commutative triangle (F|o) --> (F|p) --> C
-        val Fg = sg.functor  
-        val Ft = sg.target   
-        val Fs = sg.source   
+        val Fg = sg.functor  // (F|o) --> (F|p)
+        val Fs = sg.source   // (F|o) --> C
+        val Ft = sg.target   // (F|p) --> C
+        val sliceo = Fs.source
+        val slicep = Ft.source
+        
+        // First, construct the colimit (that is, the initial cocone) on (F|p).
+        val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject 
 
-        // First, construct the colimit (that is, the initial cocone) on the coslice category over p.
-        // Ft is the functor from the comma category of objects left of p, back to the source of the functor.
-        val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject //
-
-        // Second, construct the dataset over the slice category over the target of g.
+        // Second, construct the dataset on (F|o).
         val sourceData = Fs.pullback(i)
 
-        // Third, we need to build a cone for sourceData 
+        // Third, we need to build a cocone for sourceData 
         val cocone: sourceData.CoCone = new sourceData.CoCone {
           override val terminalSet = targetColimitInitialCoCone.terminalSet
-          override def functionToTerminalSet(o: Fs.source.O) = {
-            val f = targetColimitInitialCoCone.functionToTerminalSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
-            new coConeFunction(o) {
+          override def functionToTerminalSet(Fa2o: Fs.source.O) = {  //Fa2o : Fa --> o
+            val f = targetColimitInitialCoCone.functionToTerminalSet(Fg(Fa2o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
+            new coConeFunction(Fa2o) {
               override def toFunction = f.toFunction
             }
           }
         }
 
-        // Now, the source limit provides us with the desired map.
+        // Now, the source colimit provides us with the desired map.
         val sourceColimit = sourceData.colimit
         val coconeMap = sourceColimit.morphismFromInitialObject(cocone)
 
