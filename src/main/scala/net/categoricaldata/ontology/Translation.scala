@@ -126,10 +126,13 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
 
   //Call the translation F:C-->D
   
-  trait LeftPushforward extends CovariantDataFunctor with PullbackLeftAdjoint { shriek => //left pushforward of F is a functor from C-sets to D-sets
+  trait LeftPushforward extends CovariantDataFunctor with PullbackLeftAdjoint { shriek => //left pushforward of translation is a functor from C-sets to D-sets
     val CSet=source
     val DSet=target
-    override def onObjects(i: CSet.O): DSet.O = (new translation.target.Dataset { //i is a dataset on C, we're going to define a dataset on D.
+    val F:translation.type = translation //we need to be extra careful here, not just writing val F=translation, because we need to tell the type system exactly what's going on.
+    val C:F.source.type=F.source
+    val D:F.target.type=F.target
+    override def onObjects(i: CSet.O): DSet.O = (new D.Dataset { //i is a dataset on C, we're going to define a dataset on D.
       val D=source
       type DObject=Box
       type DArrow=Arrow
@@ -140,7 +143,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       override def onGenerators(g: DArrow) = {
         val o = g.source
         val p = g.target
-        val sg = coslice(translation.target.generatorAsMorphism(g)) // a commutative triangle (F|o) --> (F|p) --> C
+        val sg = coslice(D.generatorAsMorphism(g)) // a commutative triangle (F|o) --> (F|p) --> C
         val Fg = sg.functor  // (F|o) --> (F|p)
         val Fs = sg.source   // (F|o) --> C
         val Ft = sg.target   // (F|p) --> C
@@ -153,10 +156,10 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         // Second, construct the dataset on (F|o).
         val sourceData = Fs.pullback(i)
 
-        // Third, we need to build a cocone for sourceData 
-        val cocone: sourceData.CoCone = new sourceData.CoCone {
+        // Third, we need to build a cocone for sourceData, by pulling back the cocone on Ft.pullback(i) via Fg.
+        val cocone: sourceData.CoCone = new sourceData.CoCone { //the pullback of targetColimitInitialCocone along Fg.
           override val terminalSet = targetColimitInitialCoCone.terminalSet
-          override def functionToTerminalSet(Fa2o: Fs.source.O) = {  //Fa2o : Fa --> o, for some a in Ob(C)
+          override def functionToTerminalSet(Fa2o: Fs.source.O) = {  //Fa2o : Fa --> o, for some a in Ob(C). We cheat, never needing to do anything on morphisms in Fs.source
             val f = targetColimitInitialCoCone.functionToTerminalSet(Fg(Fa2o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
             new coConeFunction(Fa2o) {
               override def toFunction = f.toFunction
@@ -171,19 +174,22 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         coconeMap.terminalFunction
       }
 
-    }).memo
-    override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
-      override val source = onObjects(m.source)
-      override val target = onObjects(m.target)
-      override def apply(o: Box) = ??? // MATH what is the Leftpushforward of a Datamap?
+    }).memo  //memo on a dataset makes sure that we never have to do the same computation twice.
+    override def onMorphisms(m: CSet.M): DSet.M = new D.Datamap {
+      val i=m.source
+      val j=m.target
+      override val source = onObjects(i) 
+      override val target = onObjects(j)
+      override def apply(d: Box) = ??? // MATH what is the Leftpushforward of a Datamap?
       /* 
     * Given a functor F: C-->D. 
-    * Given datasets I,J: C-->Set
-    * Given a natural transformation m:I-->J
-    * Want: n:= F_!(m): F_!(I) --> F_!(J).
-    * Want: for each object d in D, a function n(d): F_!(I)(d)-->F_!(J)(d)
-    * Let pi: (F | d)-->C.
-    * Want: a function n(d): colim_{F | d} pi^*(I) --> colim_{d|F} pi^*(J) 
+    * Given datasets i,j: C-->Set
+    * Given a natural transformation m:i-->j
+    * Want: n:= F_!(m): F_!(i) --> F_!(j).
+    * Want: for each object d in D, a function n(d): F_!(i)(d)-->F_!(j)(d)
+    * Let pi=coslice (d)                  // pi: (F | d)-->C.
+    * 
+    * Want: a function n(d): colim_{F | d} pi^*(i) --> colim_{F | d} pi^*(j) 
     * Provide: colim_{F | d} pi^*(m).  
     */
     }
