@@ -144,11 +144,11 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         val Fg = sg.functor  // (F|o) --> (F|p)
         val Fs = sg.source   // (F|o) --> C
         val Ft = sg.target   // (F|p) --> C
-        val sliceo = Fs.source
-        val slicep = Ft.source
+        val cosliceo = Fs.source
+        val coslicep = Ft.source
         
         // First, construct the colimit (that is, the initial cocone) on (F|p).
-        val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject 
+        val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject // initial object in (F|p)*-Set over Ft.pullback(i) (which is an (F|p)-set).
 
         // Second, construct the dataset on (F|o).
         val sourceData = Fs.pullback(i)
@@ -156,7 +156,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         // Third, we need to build a cocone for sourceData 
         val cocone: sourceData.CoCone = new sourceData.CoCone {
           override val terminalSet = targetColimitInitialCoCone.terminalSet
-          override def functionToTerminalSet(Fa2o: Fs.source.O) = {  //Fa2o : Fa --> o
+          override def functionToTerminalSet(Fa2o: Fs.source.O) = {  //Fa2o : Fa --> o, for some a in Ob(C)
             val f = targetColimitInitialCoCone.functionToTerminalSet(Fg(Fa2o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
             new coConeFunction(Fa2o) {
               override def toFunction = f.toFunction
