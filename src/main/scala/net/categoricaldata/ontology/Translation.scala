@@ -175,20 +175,31 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       }
 
     }).memo  //memo on a dataset makes sure that we never have to do the same computation twice.
-    override def onMorphisms(m: CSet.M): DSet.M = new D.Datamap {
-      val i=m.source
-      val j=m.target
-      override val source = onObjects(i) 
-      override val target = onObjects(j)
-      override def apply(d: Box) = ??? // MATH what is the Leftpushforward of a Datamap?
+    override def onMorphisms(m: CSet.M): DSet.M = new D.Datamap {datamap => // m: i-->j
+      val i=m.source    // i:C-->Set
+      val j=m.target    // j:C-->Set
+      override val source = onObjects(i)  // F_!(i)
+      override val target = onObjects(j)  // F_!(j)
+      override def apply(d: Box):FFunction = new FFunction {
+        override def source = datamap.source(d)
+        override def target = datamap.target(d)
+        override def toFunction = {
+          val pi=coslice(d) // pi: (F|d)-->C
+          val piPullm=pi.pullback(m)  //pi^*(m): pi^*(i)-->pi^*(j)
+          ???
+          
+        }
+     
+        
+      } // MATH what is the Leftpushforward of a Datamap?
       /* 
     * Given a functor F: C-->D. 
-    * Given datasets i,j: C-->Set
+    * Given datasets i,j: C-->Set    (datasets)
     * Given a natural transformation m:i-->j
     * Want: n:= F_!(m): F_!(i) --> F_!(j).
     * Want: for each object d in D, a function n(d): F_!(i)(d)-->F_!(j)(d)
     * Let pi=coslice (d)                  // pi: (F | d)-->C.
-    * 
+    * Have pi^*(m): pi^*(i)-->pi^*(j)
     * Want: a function n(d): colim_{F | d} pi^*(i) --> colim_{F | d} pi^*(j) 
     * Provide: colim_{F | d} pi^*(m).  
     */
