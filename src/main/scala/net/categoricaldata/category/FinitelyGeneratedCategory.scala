@@ -10,7 +10,7 @@ import net.tqft.toolkit.collections.NonStrictNaturalNumbers
 trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCategory =>
   val maximumLevel: Int
 
-  lazy val objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o 
+  lazy val objects: List[O] = for (k <- (minimumLevel to maximumLevel).toList; o <- objectsAtLevel(k)) yield o
   override def objectSet: FSet = new FSet {
     def toIterable = objects
     lazy val sizeIfFinite = Some(toIterable.size)
@@ -334,18 +334,50 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   }
 
   trait NaturalTransformationToSet extends super.NaturalTransformationToSet { t =>
+    override val source: FunctorToSet
+    override val target: FunctorToSet
+
+    private def composeWithCone(c: t.source.Cone): t.target.Cone = {
+      new t.target.Cone {
+        override val initialSet = c.initialSet
+        override def functionFromInitialSet(o: O) = new coneFunction(o) {
+          override def toFunction = (c.functionFromInitialSet(o) andThen t(o)).toFunction
+        }
+      }
+    }
+
+    private def composeWithCoCone(c: t.target.CoCone): t.source.CoCone = {
+      new t.source.CoCone {
+        override val terminalSet = c.terminalSet
+        override def functionToTerminalSet(o: O) = new coConeFunction(o) {
+          override def toFunction = (t(o) andThen c.functionToTerminalSet(o)).toFunction
+        }
+      }
+    }
+
+    lazy val limitFunction: FFunction = {
+      val composite: t.target.Cone = t.composeWithCone(t.source.limitCone)
+      val cm: t.target.ConeMap = t.target.limit.morphismToTerminalObject(composite)
+      cm.initialFunction
+    }
+
+    lazy val colimitFunction: FFunction = {
+      val composite: t.source.CoCone = t.composeWithCoCone(t.target.colimitCoCone)
+      val cm: t.source.CoConeMap = t.source.colimit.morphismFromInitialObject(composite)
+      cm.terminalFunction
+    }
+
     override def isomorphism_? = {
       (for (o <- objects) yield t(o).isomorphism_?).reduceOption(_ && _).getOrElse(true)
     }
   }
 
-    trait FunctorsToSet extends super.FunctorsToSet {
+  trait FunctorsToSet extends super.FunctorsToSet {
     override type O <: fgCategory.FunctorToSet
     override type M <: fgCategory.NaturalTransformationToSet
   }
   override type D <: FunctorsToSet
 
-  
   protected trait Wrapper extends super.Wrapper with FinitelyGeneratedCategory {
     override val maximumLevel = fgCategory.maximumLevel
   }
