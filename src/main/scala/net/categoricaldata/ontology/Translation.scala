@@ -132,7 +132,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     val F:translation.type = translation //we need to be extra careful here, not just writing val F=translation, because we need to tell the type system exactly what's going on.
     val C:F.source.type=F.source
     val D:F.target.type=F.target
-    override def onObjects(i: CSet.O): DSet.O = (new D.Dataset { //i is a dataset on C, we're going to define a dataset on D.
+    override def onObjects(i: CSet.O): DSet.O = (new D.Dataset { //i is a dataset on C, we're going to define a dataset F_!(i) on D.
       val D=source
       type DObject=Box
       type DArrow=Arrow
@@ -185,8 +185,8 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         override def target = datamap.target(d)
         override def toFunction = {
           val pi=coslice(d) // pi: (F|d)-->C
-          val piPullm=pi.pullback(m)  //pi^*(m): pi^*(i)-->pi^*(j)
-          ???
+          val piPullm:NaturalTransformationToSet=pi.pullback(m)  //pi^*(m): pi^*(i)-->pi^*(j)
+          ???//piPullm.colimitFunction
           
         }
      
