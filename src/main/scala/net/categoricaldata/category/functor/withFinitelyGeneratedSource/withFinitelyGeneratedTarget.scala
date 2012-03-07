@@ -65,10 +65,18 @@ trait withFinitelyGeneratedTarget extends functor.withLocallyFinitelyGeneratedSo
   }
 
   trait Pullback extends super.Pullback {
-    def limitMorphism(i: fgFunctor.target.FunctorToSet) = FFunction(
+    def limitMorphism(i: fgFunctor.target.FunctorToSet) = {
+      FFunction(
       source = onObjects(i).limitSet,
       target = i.limitSet,
       function = { x: Map[fgFunctor.source.O, Any] => ??? /* TODO build something, via the universal property */ })
+    }
+    def colimitMorphism(i: fgFunctor.target.FunctorToSet) = {
+      FFunction(
+      source = i.colimitSet,
+      target = onObjects(i).colimitSet,
+      function = { x: Set[(fgFunctor.source.O, Any)] => ??? /* TODO build something, via the universal property */ })
+    }
   }
 
   override lazy val pullback = new Pullback {}
