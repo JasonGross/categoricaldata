@@ -185,7 +185,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         override def target = datamap.target(d)
         override def toFunction = {
           val pi=coslice(d) // pi: (F|d)-->C
-          val piPullm:NaturalTransformationToSet=pi.pullback(m)  //pi^*(m): pi^*(i)-->pi^*(j)
+          val piPullm=pi.pullback(m)  //pi^*(m): pi^*(i)-->pi^*(j)
           ???//piPullm.colimitFunction
           
         }
