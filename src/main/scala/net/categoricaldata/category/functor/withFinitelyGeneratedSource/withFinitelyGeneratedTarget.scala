@@ -71,11 +71,30 @@ trait withFinitelyGeneratedTarget extends functor.withLocallyFinitelyGeneratedSo
       target = i.limitSet,
       function = { x: Map[fgFunctor.source.O, Any] => ??? /* TODO build something, via the universal property */ })
     }
-    def colimitMorphism(i: fgFunctor.target.FunctorToSet) = {
-      FFunction(
-      source = i.colimitSet,
-      target = onObjects(i).colimitSet,
-      function = { x: Set[(fgFunctor.source.O, Any)] => ??? /* TODO build something, via the universal property */ })
+    def colimitMorphism(i: fgFunctor.target.FunctorToSet): FFunction = {
+        // First, construct the colimit (that is, the initial cocone) on (F|p).
+        val targetColimitInitialCoCone = i.colimit.initialObject // initial object in (F|p)*-Set over Ft.pullback(i) (which is an (F|p)-set).
+
+        // Second, construct the dataset on (F|o).
+        val sourceData = fgFunctor.pullback(i)
+        val sourceColimit = sourceData.colimit
+
+        // Third, we need to build a cocone for sourceData, by pulling back the cocone on Ft.pullback(i) via Fg.
+        val cocone: sourceData.CoCone = new sourceData.CoCone { //the pullback of targetColimitInitialCocone along Fg.
+          override val terminalSet = targetColimitInitialCoCone.terminalSet
+          override def functionToTerminalSet(Fa2o: sourceData.source.O) = { //Fa2o : Fa --> o, for some a in Ob(C). We cheat, never needing to do anything on morphisms in Fs.source
+            /* Changing onObjects below to apply causes AbstractMethodError at runtime; someone should tell the scala folks. */
+            val f = targetColimitInitialCoCone.functionToTerminalSet(fgFunctor.onObjects(Fa2o.asInstanceOf[fgFunctor.source.O]).asInstanceOf[i.source.O])
+            new coConeFunction(Fa2o) {
+              override def toFunction = f.toFunction
+            }
+          }
+        }
+
+        // Now, the source colimit provides us with the desired map.
+        val coconeMap = sourceColimit.morphismFromInitialObject(cocone)
+
+        coconeMap.terminalFunction
     }
   }
 

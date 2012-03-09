@@ -56,7 +56,7 @@ object FFunction {
   def apply[A](source: FSet, target: FSet, function: A => Any) = construct(source, target, function)
   def bijection[A](source: FSet, target: FSet, function: A => Any) = construct(source, target, function, Some(true))
 
-  def construct[A](source: FSet, target: FSet, function: A => Any, bijection: Option[Boolean] = None) = {
+  private def construct[A](source: FSet, target: FSet, function: A => Any, bijection: Option[Boolean] = None): FFunction = {
     val source_ = source
     val target_ = target
     val result = new FFunction {
