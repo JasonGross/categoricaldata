@@ -53,5 +53,29 @@ class PullbackDevTest extends FlatSpec with ShouldMatchers with CustomMatchers {
   //  F.pullback(G.pullback(Drawers).asInstanceOf[F.target.FunctorToSet]) should beIsomorphicTo(H.pullback(Drawers))
   }
   
+  "pullback" should "turn commutative diagrams into equality" in {
+	val F = Examples.ReverseGraph
+	val G = Examples.GraphToFunction
+	val H = Examples.GraphToFunction
+    val A = F.source
+    val B = G.source
+    val C = G.target
+    require(C == H.target)
+    require(A == H.source)
+    require(B == F.target)
+    val Drawers = Dataset(C,
+    onObjects = Map(
+      "V0" -> List("Item 1", "Item 2", "Item 3", "Item 4"),
+      "V1" -> List("Top Drawer", "Bottom Drawer")),
+    onMorphisms = Map(
+      "V0" --- "E01" --> "V1" -> Map(
+        "Item 1" -> "Top Drawer",
+        "Item 2" -> "Bottom Drawer",
+        "Item 3" -> "Top Drawer",
+        "Item 4" -> "Top Drawer")))
+    
+  //  F.pullback(G.pullback(Drawers).asInstanceOf[F.target.FunctorToSet]) should equal(H.pullback(Drawers))
+  }
+  
   
 }
