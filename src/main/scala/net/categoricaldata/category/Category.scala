@@ -27,7 +27,7 @@ trait Category { category =>
     }
   }
 
-  protected trait FunctorFrom extends Functor {  //Trait inside a trait.
+  protected trait FunctorFrom extends Functor {  
     override val source: category.type = category   // The source of a functor is generally a def, but here it's a val, namely "this".
   }
   protected trait NaturalTransformationFrom extends NaturalTransformation {

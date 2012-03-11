@@ -26,7 +26,7 @@ class ColimitDevTest extends FlatSpec with ShouldMatchers {
     colimit.toIterable.size should equal(2)
   }
 
- "pullback" should "turn commutative diagrams into isomorphisms" in {
+ "colimitMorphism" should "do something" in {
 	val F = Examples.ReverseGraph
 	val G = Examples.GraphToFunction
 	val H = Examples.GraphToFunction
@@ -47,9 +47,8 @@ class ColimitDevTest extends FlatSpec with ShouldMatchers {
         "Item 3" -> "Top Drawer",
         "Item 4" -> "Top Drawer")))
     
-   F.pullback.colimitMorphism(G.pullback(Drawers).asInstanceOf[F.target.FunctorToSet])
+   println(F.pullback.colimitMorphism(G.pullback(Drawers).asInstanceOf[F.target.FunctorToSet]))
  }      
   
-
 }
 
