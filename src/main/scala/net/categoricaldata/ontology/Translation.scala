@@ -148,7 +148,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         val coslicep = Ft.source
         
         // this is just a test:
-//        require(Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]) == Fs.pullback(i))
+//        require(Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]) == Fs.pullback(i.asInstanceOf[Fs.target.FunctorToSet]))
 //        Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]).colimit
 //        
 //        // FIXME the asInstanceOf here is a hack, I wish we didn't need it!
