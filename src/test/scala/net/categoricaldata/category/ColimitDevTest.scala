@@ -28,11 +28,11 @@ class ColimitDevTest extends FlatSpec with ShouldMatchers {
 
  "colimitMorphism" should "do something" in {
 	val F = Examples.ReverseGraph
-	val G = Examples.GraphToFunction
-	val H = Examples.GraphToFunction
+	val G = Examples.ReverseGraph
     val A = F.source
     val B = G.source
     val C : G.target.type= G.target
+    val H = Ontologies.identity(A)
     require(C == H.target)
     require(A == H.source)
     require(B == F.target)
@@ -47,32 +47,13 @@ class ColimitDevTest extends FlatSpec with ShouldMatchers {
         "Item 3" -> "Top Drawer",
         "Item 4" -> "Top Drawer")))
     
+   println("colimit on G", G.pullback(Drawers).colimit.initialObject)
+   println("colimit on H", H.pullback(Drawers.asInstanceOf[H.target.FunctorToSet]).colimit.initialObject)
+   println()
    println(F.pullback.colimitMorphism(G.pullback(Drawers).asInstanceOf[F.target.FunctorToSet]))
  }      
   
- "colimitMorphism" should "do something else" in {
-	val G = Examples.GraphToFunction
-	val H = Examples.GraphToFunction
-    val A = H.source
-    val B = G.source
-    val F : Translation = Ontologies.identity(A)
-    val C : G.target.type= G.target
-    require(C == H.target)
-    require(A == H.source)
-    require(B == F.target)
-    val Drawers = Dataset(C,
-    onObjects = Map(
-      "V0" -> List("Item 1", "Item 2", "Item 3", "Item 4"),
-      "V1" -> List("Top Drawer", "Bottom Drawer")),
-    onMorphisms = Map(
-      "V0" --- "E01" --> "V1" -> Map(
-        "Item 1" -> "Top Drawer",
-        "Item 2" -> "Bottom Drawer",
-        "Item 3" -> "Top Drawer",
-        "Item 4" -> "Top Drawer")))
-    
-   println(F.pullback.colimitMorphism(G.pullback(Drawers).asInstanceOf[F.target.FunctorToSet]))
- }      
+       
   
 }
 
