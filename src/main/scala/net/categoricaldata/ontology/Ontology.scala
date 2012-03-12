@@ -30,7 +30,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     "Ontology(objects = " + (for (o <- objects) yield "\"" + o.name + "\"") + ", arrows = " + allGenerators + ", relations = " + allRelations.map(p => p._1 + " === " + p._2) + ")"
   }
   
-//  object identityTranslation extends Category.identityFunctor
+  object identityTranslation extends Identity with Translation
   
   trait Dataset extends FunctorToSet with net.categoricaldata.ontology.Dataset { dataset =>
     abstract class DatasetFunction(g: G) extends net.categoricaldata.sets.FFunction {

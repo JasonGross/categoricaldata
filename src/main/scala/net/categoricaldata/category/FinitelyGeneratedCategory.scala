@@ -42,6 +42,10 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
   override lazy val opposite: OppositeFinitelyGeneratedCategory = new ConcreteOpposite
 
+  trait Identity extends super.Identity with functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget {
+    override def onGenerators(g: G) = generatorAsMorphism(g)
+  }
+  
   trait FinitelyGeneratedCategoryOver extends CategoryOver with functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget { categoryOver =>
     override val source: FinitelyGeneratedCategory
     def onGenerators(g: source.G): target.M

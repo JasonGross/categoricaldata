@@ -21,7 +21,7 @@ object Ontologies extends Category with InitialObject with TerminalObject {
     override def onGenerators(g: Arrow) = throw new IllegalArgumentException
   }
 
-  override def identity(o: Ontology) = ???
+  override def identity(o: Ontology) = o.identityTranslation
   override def source(m: Translation) = m.source
   override def target(m: Translation) = m.target
   override def compose(m1: Translation, m2: Translation): Translation = new Translation {
