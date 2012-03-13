@@ -141,22 +141,21 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         val o = g.source
         val p = g.target
         val sg = coslice(D.generatorAsMorphism(g)) // a commutative triangle (F|o) --> (F|p) --> C
-        val Fg = sg.functor// (F|o) --> (F|p)
+        val Fg = sg.functor // (F|o) --> (F|p)
         val Fs = sg.source // (F|o) --> C
         val Ft = sg.target // (F|p) --> C
         val cosliceo = Fs.source
         val coslicep = Ft.source
-        
+
         // this is just a test:
-//        require(Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]) == Fs.pullback(i.asInstanceOf[Fs.target.FunctorToSet]))
-//        Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]).colimit
-//        
-//        // FIXME the asInstanceOf here is a hack, I wish we didn't need it!
-//      //Eventually we want the next line (Fg.pullback.co.. to replace everything else down to the brace}  
-//        Fg.pullback.colimitMorphism(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
-        
-                
-//         First, construct the colimit (that is, the initial cocone) on (F|p).
+        //        require(Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]) == Fs.pullback(i.asInstanceOf[Fs.target.FunctorToSet]))
+        //        Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]).colimit
+        //        
+        //        // FIXME the asInstanceOf here is a hack, I wish we didn't need it!
+        //      //Eventually we want the next line (Fg.pullback.co.. to replace everything else down to the brace}  
+        //        Fg.pullback.colimitMorphism(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
+
+        //         First, construct the colimit (that is, the initial cocone) on (F|p).
         val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject // initial object in (F|p)*-Set over Ft.pullback(i) (which is an (F|p)-set).
 
         // Second, construct the dataset on (F|o).
@@ -178,7 +177,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         val coconeMap = sourceColimit.morphismFromInitialObject(cocone)
 
         coconeMap.terminalFunction
-     }
+      }
 
     }).memo //memo on a dataset makes sure that we never have to do the same computation twice.
     override def onMorphisms(m: CSet.M): DSet.M = new D.Datamap { datamap => // m: i-->j
@@ -186,28 +185,11 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
       val j = m.target // j:C-->Set
       override val source = onObjects(i) // F_!(i)
       override val target = onObjects(j) // F_!(j)
-      override def apply(d: Box): FFunction = new FFunction {
-        override def source = datamap.source(d)
-        override def target = datamap.target(d)
-        override def toFunction = {
-          val pi = coslice(d) // pi: (F|d)-->C
-          val piPullm = pi.pullback(m) //pi^*(m): pi^*(i)-->pi^*(j)
-          ??? //piPullm.colimitFunction
-
-        }
-
-      } // MATH what is the Leftpushforward of a Datamap?
-      /* 
-    * Given a functor F: C-->D. 
-    * Given datasets i,j: C-->Set    (datasets)
-    * Given a natural transformation m:i-->j
-    * Want: n:= F_!(m): F_!(i) --> F_!(j).
-    * Want: for each object d in D, a function n(d): F_!(i)(d)-->F_!(j)(d)
-    * Let pi=coslice (d)                  // pi: (F | d)-->C.
-    * Have pi^*(m): pi^*(i)-->pi^*(j)
-    * Want: a function n(d): colim_{F | d} pi^*(i) --> colim_{F | d} pi^*(j) 
-    * Provide: colim_{F | d} pi^*(m).  
-    */
+      override def apply(d: Box): FFunction = {
+        val pi = coslice(d) // pi: (F|d)-->C
+        val piPullm = pi.pullback(m) //pi^*(m): pi^*(i)-->pi^*(j)
+        piPullm.colimitFunction // colim_{F|d} pi^*(m)
+      }
     }
   }
 
