@@ -70,17 +70,31 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   }
 
   trait RightPushforward extends CovariantDataFunctor with PullbackRightAdjoint { pushforward =>
-    override def onObjects(i: source.O): target.O = (new translation.target.Dataset {
+    val CSet = source
+    val DSet = target
+    val F: translation.type = translation
+    val C: F.source.type = F.source
+    val D: F.target.type = F.target
+    override def onObjects(i: source.O): target.O = (new D.Dataset { //i is a dataset on C, we're going to define a dataset F_*(i) on D.
+      type DObject = Box
+      type DArrow = Arrow
       override def onObjects(o: Box) = {
         val F = slice(o)
-        F.pullback(i).limitSet
+        F.pullback(i).limitSet//We have now defined F_*(i)(o)
       }
       override def onGenerators(g: translation.target.G) = {
-        val sg = slice(translation.target.opposite.generatorAsMorphism(translation.target.opposite.reverseGenerator(g)))
+        val o = g.source
+        val p = g.target
+        val Dop:D.opposite.type = D.opposite
+        val gop=Dop.reverseGenerator(g)
+        val sg = slice(Dop.generatorAsMorphism(gop))
         val Fg = sg.functor
         val Ft = sg.target
         val Fs = sg.source
+        val sliceo = Fs.source
+        val slicep = Ft.source
 
+        //FIXME (Scott) Just like in leftPushforward, we want to replace the rest of onGenerators with a single line.
         // First, construct the limit (that is, the terminal cone) on the slice category over the target of g.
         // Ft is the functor from the comma category of objects left of the target of g, back to the source of the the functor.
         val targetLimitTerminalCone = Ft.pullback(i).limit.terminalObject
@@ -106,21 +120,16 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         coneMap.initialFunction
       }
     }).memo
-    override def onMorphisms(m: source.M): target.M = new translation.target.Datamap {
-      override val source = pushforward.onObjects(m.source)
-      override val target = pushforward.onObjects(m.target)
-      override def apply(o: Box) = ??? // MATH what is the Rightpushforward of a Datamap?
-      /* 
-    * Given a functor F: C-->D. 
-    * Given datasets I,J: C-->Set
-    * Given a natural transformation m:I-->J
-    * Want: n:= F_*(m): F_*(I) --> F_*(J).
-    * Want: for each object d in D, a function n(d): F_*(I)(d)-->F_*(J)(d)
-    * Let pi: (d | F)-->C.
-    * Want: a function n(d): lim_{d | F} pi^*(I) --> lim_{d|F} pi^*(J) 
-    * Provide: lim_{d | F} pi^*(m).  
-    */
-
+    override def onMorphisms(m: CSet.M): DSet.M = new D.Datamap { datamap=> //m: i-->j
+      val i = m.source // i:C-->Set
+      val j = m.target // j:C-->Set      
+      override val source = pushforward.onObjects(i) //F_*(i)
+      override val target = pushforward.onObjects(j) //F_*(j)
+      override def apply(d: Box) : FFunction = {
+        val pi=slice(d) //pi: (d|F)-->C
+        val piPullm=pi.pullback(m) //pi^*(m): pi^*(i)-->pi^*(j)
+        piPullm.limitFunction //lim_{d|F}pi^*(m)
+      }
     }
   }
 

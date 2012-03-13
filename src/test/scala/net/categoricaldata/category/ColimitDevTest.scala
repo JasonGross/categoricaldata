@@ -36,21 +36,31 @@ class ColimitDevTest extends FlatSpec with ShouldMatchers {
     require(C == H.target)
     require(A == H.source)
     require(B == F.target)
-    val Drawers = Dataset(C,
+    val FunkyGraph = Dataset(source = Examples.Graph,
     onObjects = Map(
-      "V0" -> List("Item 1", "Item 2", "Item 3", "Item 4"),
-      "V1" -> List("Top Drawer", "Bottom Drawer")),
+      "an edge" -> List("f", "g", "h", "i", "j"),
+      "a vertex" -> List("A", "B", "C", "D")),
     onMorphisms = Map(
-      "V0" --- "E01" --> "V1" -> Map(
-        "Item 1" -> "Top Drawer",
-        "Item 2" -> "Bottom Drawer",
-        "Item 3" -> "Top Drawer",
-        "Item 4" -> "Top Drawer")))
+      ("an edge" --- "has as source" --> "a vertex") -> Map(
+        "f" -> "A",
+        "g" -> "A",
+        "h" -> "B",
+        "i" -> "A",
+        "j" -> "C"),
+      ("an edge" --- "has as target" --> "a vertex") -> Map(
+        "f" -> "B",
+        "g" -> "B",
+        "h" -> "C",
+        "i" -> "C",
+        "j" -> "C")
+      )
+    )
+        
     
-   println("colimit on G", G.pullback(Drawers).colimit.initialObject)
-   println("colimit on H", H.pullback(Drawers.asInstanceOf[H.target.FunctorToSet]).colimit.initialObject)
+   println("colimit on G", G.pullback(FunkyGraph.asInstanceOf[G.target.FunctorToSet]).colimitSet)
+   println("colimit on H", H.pullback(FunkyGraph.asInstanceOf[H.target.FunctorToSet]).colimitSet)
    println()
-   println(F.pullback.colimitMorphism(G.pullback(Drawers).asInstanceOf[F.target.FunctorToSet]))
+   println(F.pullback.colimitMorphism(G.pullback(FunkyGraph.asInstanceOf[G.target.FunctorToSet]).asInstanceOf[F.target.FunctorToSet]))
  }      
   
        
