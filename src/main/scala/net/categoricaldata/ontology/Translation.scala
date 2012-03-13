@@ -229,7 +229,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     /*
      *	F: C --> D
      *
-     * 	F^*: D-Sets --> C-Sets, has
+     * 	F^*: DSet --> CSet, has
      * 		left adjoint F_!: C-Sets --> D-Sets
      * 		right adjoint F_*: C-Sets --> D-Sets
      * 
@@ -243,6 +243,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     lazy val rightAdjoint = rightPushforward
 
     lazy val leftCounit = new NaturalTransformation { leftCounit =>
+      
       override val source = Functor.compose(pullback, leftPushforward)
       override val target = pullback.source.identityFunctor
       override def apply(L: sourceCategory.O /* e.g. translation.source.Dataset */ ): targetCategory.M /* e.g. Datamap */ = {
