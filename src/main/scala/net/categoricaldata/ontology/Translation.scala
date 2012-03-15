@@ -254,38 +254,29 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     val DSet = pullback.source
     override val source = Functor.compose(pullback, leftPushforward) //F_!F^* : D-Set-->D-Set
     override val target = DSet.identityFunctor                       //Id_{D-Set}: D-Set-->D-Set
-    override def apply(L: DSet.O): DSet.M = {                        //L is a D-Set
+    override def apply(i: DSet.O): DSet.M = {                        //i is a D-Set
       DSet.internalize(new NaturalTransformationToSet {
-        override val source = leftCounit.source(L)                   //F_!F^*(L)  
-        override val target = leftCounit.target(L)                   //L
+        override val source = leftCounit.source(i)                   //F_!F^*(i)  
+        override val target = i                                      //i
+        val LRi=source
         override def apply(d: D.O): FFunction = {                    //d in D
-          val sourceSet : FSet = source(d)
-          val targetSet : FSet = target(d)
+          val LRid : FSet = source(d)                                //F_!F^*i(d)
+          val id : FSet = target(d)                                  //i(d)
           val pi = coslice(d)                                        //pi: (F|d)-->C
-          val cocone: source.CoCone = new source.CoCone { //the pullback of targetColimitInitialCocone along Fg.
-          override val terminalSet = ??? //targetColimitInitialCoCone.terminalSet
-          override def functionToTerminalSet(Fa2o: D.O) = ???//{ //Fa2o : Fa --> o, for some a in Ob(C). We cheat, never needing to do anything on morphisms in Fs.source
-//            val f = targetColimitInitialCoCone.functionToTerminalSet(Fg(Fa2o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
-//            new coConeFunction(Fa2o) {
-//              override def toFunction = f.toFunction
-//            }
-          }
+          val FDwnd = pi.source                                      //(F|d)
+ //       val A = pi.pullback(F.pullback(i)) //I think this doesn't work because of the dummy-implicit hack.
           val map = ???
-          FFunction(sourceSet, targetSet, map) // MATH what is the left counit for pullback?
+          FFunction(LRid, id, map) // MATH what is the left counit for pullback?
         }
         /* 
     * Given a functor F: C-->D. 
-    * Given a dataset L: D-->Set
-    * Want: epsilon: F_!F^*(L) --> L.
-    * Want: for each object d in D, a function epsilon(d): F_!F^*(L)(d) --> L(d)
+    * Given a dataset i: D-->Set
+    * Want: epsilon: F_!F^*(i) --> i.
+    * Want: for each object d in D, a function epsilon(d): F_!F^*(i)(d) --> L(d)
     * Let pi: (F | d)-->C.
-    * Want: a function n(d): colim_{F | d} pi^*F^*(L) --> L(d) 
-    * Given b:F(c)-->d in (F | d)
-    * Want: function epsilon(d): pi^*F^*L(b)-->L(d).
-    * Lemma: we have function L(a): L(F(c)) --> L(d).
-    * Want: function ep: pi^*F^*L(b)-->L(F(c)); composing with L(a) will give the desired epsilon(d).
-    * Compute: pi^*F^*L(b) = L(F(c)), where = means "canonically isomorphic to". 
-    * Provide ep:= canonical isomorphism. QED
+    * Want: a function n(d): colim_{Fc-->d in (F|d)} i(F(c)) --> i(d) 
+    * Have a natural transformation m(d):pi^*F^*i-->{i(d)} of functors (F|d)-->Set, where {i(d)} is the constant functor.
+    * Set n(d) = colim {F|d} m(d).
     */
       })
     }
