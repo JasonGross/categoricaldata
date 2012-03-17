@@ -251,7 +251,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     val F=translation
     val C=F.source
     val D=F.target
-    val DSet = pullback.source
+    val DSet: pullback.source.type = pullback.source
     override val source = Functor.compose(pullback, leftPushforward) //F_!F^* : D-Set-->D-Set
     override val target = DSet.identityFunctor                       //Id_{D-Set}: D-Set-->D-Set
     override def apply(i: DSet.O): DSet.M = {                        //i is a D-Set
@@ -263,21 +263,28 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
           val LRid : FSet = source(d)                                //F_!F^*i(d)
           val id : FSet = target(d)                                  //i(d)
           val pi = coslice(d)                                        //pi: (F|d)-->C
-          val FDwnd = pi.source                                      //(F|d)
- //       val A = pi.pullback(F.pullback(i)) //I think this doesn't work because of the dummy-implicit hack.
-          val map = ???
+          val FDownd = pi.source                                      //(F|d)
+          val Aaa = pi.pullback.onObjects(F.pullback.onObjects(i.asInstanceOf[F.target.FunctorToSet]).asInstanceOf[pi.target.FunctorToSet]).asInstanceOf[FDownd.FunctorToSet] 
+          
+          val coCone: Aaa.CoCone = ???
+          
+          val map = ???  //  (F|d) ---pi--->C ---F--->D ---i --->Set
+                         //   (Fc-->d)
+                        //    (iFc --> i(d))
           FFunction(LRid, id, map) // MATH what is the left counit for pullback?
         }
         /* 
     * Given a functor F: C-->D. 
     * Given a dataset i: D-->Set
     * Want: epsilon: F_!F^*(i) --> i.
-    * Want: for each object d in D, a function epsilon(d): F_!F^*(i)(d) --> L(d)
+    * Want: for each object d in D, a function epsilon(d): F_!F^*(i)(d) --> i(d)
     * Let pi: (F | d)-->C.
     * Want: a function n(d): colim_{Fc-->d in (F|d)} i(F(c)) --> i(d) 
     * Have a natural transformation m(d):pi^*F^*i-->{i(d)} of functors (F|d)-->Set, where {i(d)} is the constant functor.
     * Set n(d) = colim {F|d} m(d).
     */
+        // i:D-->Set
+        // colim_{Fc-->d in (F|d)} i(F(c))      ----> i(F(d))
       })
     }
   }

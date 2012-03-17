@@ -47,6 +47,17 @@ trait SmallCategory extends Category { smallCategory =>
       override def apply(o: t.sourceCategory.O) = Sets.morphismFromInitialObject(f(o))
     })
 
+    def constant(toSet: FSet): O = internalize(new FunctorToSet {
+      override def onObjects(o: smallCategory.O) = toSet
+      override def onMorphisms(m: smallCategory.M) = toSet.identity
+    })
+    
+    def morphismOfConstants(toFunction : FFunction) : M = internalize(new NaturalTransformationToSet {
+      override val source = constant(toFunction.source)
+      override val target = constant(toFunction.target)
+      override def apply (o:smallCategory.O) = toFunction
+    })
+
     override def product(xs: O*) = internalize(new FunctorToSet {
       override def onObjects(o: smallCategory.O) = Sets.product(xs.map(_(o)): _*)
       override def onMorphisms(m: smallCategory.M) = Sets.product(xs.map(_(m)): _*)
@@ -79,7 +90,7 @@ trait SmallCategory extends Category { smallCategory =>
 
   type D <: FunctorsToSet
   def functorsToSet: D
-  
+
   // these are convenience methods. TODO handle these better...
   def internalize(f: net.categoricaldata.category.FunctorToSet) = functorsToSet.internalize(f)
   def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = functorsToSet.internalize(t)
