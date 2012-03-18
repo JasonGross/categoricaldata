@@ -180,26 +180,35 @@ object FinitelyPresentedCategory {
   }
 
   // FIXME ugly duplication of code from FiniteGeneratedCategory
-    trait StandardFunctorsToSet { C: FinitelyPresentedCategory =>
+  trait StandardFunctorsToSet { C: FinitelyPresentedCategory =>
     override type D = FunctorsToSet
     val functorsToSet = new FunctorsToSet {
       override type O = FunctorToSet
       override type M = NaturalTransformationToSet
-      def internalize(f: net.categoricaldata.category.FunctorToSet) = new FunctorToSet {
-        require(f.source == C)
-        def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
-        def onGenerators(g: source.G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
+      def internalize(f: net.categoricaldata.category.FunctorToSet) = {
+        f match {
+          case f: FunctorToSet => f
+          case _ => new FunctorToSet {
+            require(f.source == C)
+            def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
+            def onGenerators(g: source.G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
+          }
+        }
       }
-      def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = new NaturalTransformationToSet {
-        require(t.sourceCategory == C)
-        val source = internalize(t.source)
-        val target = internalize(t.target)
-        def apply(o: sourceCategory.O) = t(o.asInstanceOf[t.sourceCategory.O])
+      def internalize(t: net.categoricaldata.category.NaturalTransformationToSet) = {
+        t match {
+          case t: NaturalTransformationToSet => t
+          case _ => new NaturalTransformationToSet {
+            require(t.sourceCategory == C)
+            val source = internalize(t.source)
+            val target = internalize(t.target)
+            def apply(o: sourceCategory.O) = t(o.asInstanceOf[t.sourceCategory.O])
+          }
+        }
       }
 
     }
 
   }
 
-  
 }
