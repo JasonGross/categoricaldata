@@ -248,10 +248,10 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   override lazy val pullback = new Pullback {}
 
   lazy val leftCounit = new NaturalTransformation { leftCounit =>
-    val F=translation
-    val C=F.source
-    val D=F.target
-    val DSet: pullback.source.type = pullback.source
+    val F:translation.type=translation
+    val C:F.source.type=F.source
+    val D:F.target.type=F.target
+    val DSet: D.AllFunctorsToSet.type = pullback.source
     override val source = Functor.compose(pullback, leftPushforward) //F_!F^* : D-Set-->D-Set
     override val target = DSet.identityFunctor                       //Id_{D-Set}: D-Set-->D-Set
     override def apply(i: DSet.O): DSet.M = {                        //i is a D-Set
@@ -264,7 +264,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
           val id : FSet = target(d)                                  //i(d)
           val pi = coslice(d)                                        //pi: (F|d)-->C
           val FDownd = pi.source                                      //(F|d)
-          val Aaa = pi.pullback.onObjects(F.pullback.onObjects(i.asInstanceOf[F.target.FunctorToSet]).asInstanceOf[pi.target.FunctorToSet]).asInstanceOf[FDownd.FunctorToSet] 
+          val Aaa = pi.pullback.onObjects(F.pullback.onObjects(i).asInstanceOf[pi.target.FunctorToSet]).asInstanceOf[FDownd.FunctorToSet] 
           
           val coCone: Aaa.CoCone = ???
           
