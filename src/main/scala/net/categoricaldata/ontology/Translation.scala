@@ -263,8 +263,8 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
           val LRid : FSet = source(d)                                //F_!F^*i(d)
           val id : FSet = target(d)                                  //i(d)
           val pi = coslice(d)                                        //pi: (F|d)-->C
-          val FDownd = pi.source                                      //(F|d)
-          val Aaa = pi.pullback.onObjects(F.pullback.onObjects(i).asInstanceOf[pi.target.FunctorToSet]).asInstanceOf[FDownd.FunctorToSet] 
+          val FDownd: pi.source.type = pi.source                                      //(F|d)
+          val Aaa: FDownd.FunctorToSet = pi.pullback.onObjects(F.pullback.onObjects(i))
           
           val coCone: Aaa.CoCone = ???
           
