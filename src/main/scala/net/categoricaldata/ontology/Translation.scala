@@ -159,10 +159,18 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         val coslicep = Ft.source
 
         // this is just a test:
-        //        require(Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]) == Fs.pullback(i.asInstanceOf[Fs.target.FunctorToSet]))
-        //        Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]).colimit
+                
+//        val LHS = Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
+//        val RHS = Fs.pullback(i.asInstanceOf[Fs.target.FunctorToSet])
+//        if (LHS != RHS) {
+//         println(LHS.toString.hashCode)
+//         println(RHS.toString.hashCode)
+//         println(LHS,RHS)
+//        }
+//        require(LHS==RHS)
+//                Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]).colimit
         //        
-        //        // FIXME the asInstanceOf here is a hack, I wish we didn't need it!
+        //      // FIXME the asInstanceOf here is a hack, I wish we didn't need it!
         //      //Eventually we want the next line (Fg.pullback.co.. to replace everything else down to the brace}  
         //        Fg.pullback.colimitMorphism(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
 

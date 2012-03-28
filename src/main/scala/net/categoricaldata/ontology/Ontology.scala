@@ -61,19 +61,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
 
     override def hashCode = toString.hashCode
 
-    override lazy val toString = {
-      "Dataset(\n" +
-        "  source = " + source + ", \n" +
-        "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
-        "  onMorphisms = Map(" + (if (source.allGenerators.nonEmpty) "\n" else "") +
-        (for (
-          g <- source.allGenerators;
-          m = source.generatorAsMorphism(g);
-          g1 = this(m).toFunction
-        ) yield {
-          "    (" + g.toString + ") -> " + ((for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
-        }).mkString("\n") + "))"
-    }
+    override lazy val toString = toStringHelper("Dataset")
 
     // TODO provide some way to let the user help out. 
     def findIsomorphismsTo(other: Ontology#Dataset): Iterable[Datamap] = {

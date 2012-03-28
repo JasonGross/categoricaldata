@@ -100,6 +100,22 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
 
+    protected def toStringHelper(prefix: String) = {
+      prefix + "(\n" +
+        "  source = " + source + ", \n" +
+        "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
+        "  onMorphisms = Map(" + (if (source.allGenerators.nonEmpty) "\n" else "") +
+        (for (
+          g <- source.allGenerators;
+          m = source.generatorAsMorphism(g);
+          g1 = this(m).toFunction
+        ) yield {
+          "    (" + g.toString + ") -> " + ((for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
+        }).mkString("\n") + "))"
+    }
+    
+    override def toString = toStringHelper("FunctorToSet")
+    
     class Section(m: O => Any) extends FFunction {
       override val source = fgCategory.objectSet
       override val target = totalSet
