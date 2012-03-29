@@ -45,7 +45,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
   trait Identity extends super.Identity with functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget {
     override def onGenerators(g: G) = generatorAsMorphism(g)
   }
-  
+
   trait FinitelyGeneratedCategoryOver extends CategoryOver with functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget { categoryOver =>
     override val source: FinitelyGeneratedCategory
     def onGenerators(g: source.G): target.M
@@ -100,27 +100,31 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
 
-   override def equals(other: Any): Boolean = {
-      other match {
-        case other: FinitelyGeneratedCategory#FunctorToSet => {
-          if (functorToSet.source != other.source) return false
-          for (o <- source.objects) if (this(o) != other(o.asInstanceOf[other.source.O])) return false
-          for (
-            g <- source.allGenerators;
-            m1 = source.generatorAsMorphism(g);
-            m2 = other.source.generatorAsMorphism(g.asInstanceOf[other.source.G]);
-            g1 = this(m1).toFunction;
-            g2 = other(m2).toFunction;
-            x <- this(source.source(g)).toIterable
-          ) {
-            if (g1(x) != g2(x)) return false
+    override def equals(other: Any): Boolean = {
+      if (this eq other.asInstanceOf[AnyRef]) {
+        true
+      } else {
+        other match {
+          case other: FinitelyGeneratedCategory#FunctorToSet => {
+            if (functorToSet.source != other.source) return false
+            for (o <- source.objects) if (this(o) != other(o.asInstanceOf[other.source.O])) return false
+            for (
+              g <- source.allGenerators;
+              m1 = source.generatorAsMorphism(g);
+              m2 = other.source.generatorAsMorphism(g.asInstanceOf[other.source.G]);
+              g1 = this(m1).toFunction;
+              g2 = other(m2).toFunction;
+              x <- this(source.source(g)).toIterable
+            ) {
+              if (g1(x) != g2(x)) return false
+            }
+            true
           }
-          true
+          case _ => false
         }
-        case _ => false
       }
     }
-    
+
     protected def toStringHelper(prefix: String) = {
       prefix + "(\n" +
         "  source = " + source + ", \n" +
@@ -134,9 +138,9 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
           "    (" + g.toString + ") -> " + ((for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
         }).mkString("\n") + "))"
     }
-    
+
     override def toString = toStringHelper("FunctorToSet")
-    
+
     class Section(m: O => Any) extends FFunction {
       override val source = fgCategory.objectSet
       override val target = totalSet

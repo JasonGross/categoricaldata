@@ -131,12 +131,12 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
   trait SameObjects { self: LocallyFinitelyGeneratedCategory =>
     override type O = lfgCategory.O
   }
-  
+
   trait ReversedGenerators { self: LocallyFinitelyGeneratedCategory =>
     case class Reverse(g: lfgCategory.G)
     override type G = Reverse
   }
-  
+
   trait OppositeLocallyFinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory with SameObjects {
     def reverseGenerator(g: lfgCategory.G): G
     def unreverseGenerator(g: G): lfgCategory.G
@@ -176,7 +176,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
 
     override def pathEquality(p1: Path, p2: Path) = lfgCategory.pathEquality(p1, p2)
   }
-  
+
   protected abstract class FullSubcategory(val spannedBy: List[O]) extends Wrapper with FinitelyGeneratedCategory {
     private val objectsAtLevelMap: Map[Int, List[O]] = {
       case class Accumulator(k: Int, map: Map[Int, List[O]], remaining: List[O]) {
@@ -234,6 +234,20 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     //    Commenting out the following line, things still compile, but we get AbstractMethodError everywhere:
     override val source: lfgCategory.type = lfgCategory
 
+    override def equals(other: Any): Boolean = {
+      if (this eq other.asInstanceOf[AnyRef]) {
+        true
+      } else {
+        other match {
+          case other: LocallyFinitelyGeneratedCategory#FunctorToSet => {
+            if (functorToSet.source != other.source) return false
+            throw new UnsupportedOperationException
+          }
+          case _ => false
+        }
+      }
+
+    }
     trait CoCone {
       val terminalSet: FSet
       abstract class coConeFunction(o: O) extends FFunction {
@@ -309,7 +323,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override type M <: lfgCategory.NaturalTransformationToSet
   }
   override type D <: FunctorsToSet
-  
+
   class Yoneda extends Functor.withLocallyFinitelyGeneratedSource {
     class YonedaFunctor(s: lfgCategory.O) extends FunctorToSet {
       override def onObjects(t: lfgCategory.O): FSet = morphisms(s, t)
@@ -326,7 +340,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     override def onObjects(o: source.O) = target.internalize(new YonedaFunctor(o))
     override def onGenerators(g: source.G) = target.internalize(new YonedaNaturalTransformation(g))
   }
-  
+
   // FIXME changing this to 'object yoneda extends' results in IllegalAccessErrors at runtime.
   lazy val yoneda = new Yoneda {}
 }
