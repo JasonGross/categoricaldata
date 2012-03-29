@@ -41,19 +41,7 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
     override def equals(other: Any): Boolean = {
       other match {
         case other: Ontology#Dataset => {
-          if (dataset.source != other.source) return false
-          for (o <- source.objects) if (this(o) != other(o)) return false
-          for (
-            g <- source.allGenerators;
-            m1 = source.generatorAsMorphism(g);
-            m2 = other.source.generatorAsMorphism(g);
-            g1 = this(m1).toFunction;
-            g2 = other(m2).toFunction;
-            x <- this(source.source(g)).toIterable
-          ) {
-            if (g1(x) != g2(x)) return false
-          }
-          true
+          super.equals(other)
         }
         case _ => false
       }

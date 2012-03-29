@@ -100,6 +100,27 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
     }
 
+   override def equals(other: Any): Boolean = {
+      other match {
+        case other: FinitelyGeneratedCategory#FunctorToSet => {
+          if (functorToSet.source != other.source) return false
+          for (o <- source.objects) if (this(o) != other(o.asInstanceOf[other.source.O])) return false
+          for (
+            g <- source.allGenerators;
+            m1 = source.generatorAsMorphism(g);
+            m2 = other.source.generatorAsMorphism(g.asInstanceOf[other.source.G]);
+            g1 = this(m1).toFunction;
+            g2 = other(m2).toFunction;
+            x <- this(source.source(g)).toIterable
+          ) {
+            if (g1(x) != g2(x)) return false
+          }
+          true
+        }
+        case _ => false
+      }
+    }
+    
     protected def toStringHelper(prefix: String) = {
       prefix + "(\n" +
         "  source = " + source + ", \n" +
