@@ -204,9 +204,9 @@ trait Ontology extends FinitelyPresentedCategory { ontology =>
         case _ => {
           require(f.source == ontology)
           new Dataset {
-            override def onObjects(o: Box) = f(o.asInstanceOf[f.source.O])
+            override def onObjects(o: Box) = f.onObjects(o.asInstanceOf[f.source.O])
             // and yet another weird one: replacing this with Arrow causes an AbstractMethodError
-            override def onGenerators(a: source.G) = f(generatorAsMorphism(a).asInstanceOf[f.source.M])
+            override def onGenerators(a: source.G) = f.onMorphisms(generatorAsMorphism(a).asInstanceOf[f.source.M])
           }
         }
       }

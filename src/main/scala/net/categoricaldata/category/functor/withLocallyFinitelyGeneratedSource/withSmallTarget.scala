@@ -25,7 +25,7 @@ trait withSmallTarget extends functor.withSmallSource.withSmallTarget with Funct
         }
       }
       override def hashCode = (right, morphism).hashCode
-      require(functor.target.target(morphism) == functor.apply(right))
+      require(functor.target.target(morphism) == functor.onObjects(right))
       require(functor.target.source(morphism) == onLeft)
     }
     case class ObjectRightOfMap(source: ObjectRightOf, target: ObjectRightOf, generator: functor.source.G) {
@@ -48,7 +48,7 @@ trait withSmallTarget extends functor.withSmallSource.withSmallTarget with Funct
 
     override def generators(source: ObjectRightOf, target: ObjectRightOf): List[ObjectRightOfMap] = {
       import functor.source.generatorAsMorphism
-      for (g <- functor.source.generators(source.right, target.right); if functor.target.compose(source.morphism, functor.apply(g)) == target.morphism) yield {
+      for (g <- functor.source.generators(source.right, target.right); if functor.target.compose(source.morphism, functor.onMorphisms(g)) == target.morphism) yield {
         ObjectRightOfMap(source, target, g)
       }
     }
@@ -79,7 +79,7 @@ trait withSmallTarget extends functor.withSmallSource.withSmallTarget with Funct
         }
       }
       override def hashCode = (left, morphism).hashCode
-      require(functor.target.source(morphism) == functor.apply(left))
+      require(functor.target.source(morphism) == functor.onObjects(left))
       require(functor.target.target(morphism) == onRight)
     }
     case class ObjectLeftOfMap(source: ObjectLeftOf, target: ObjectLeftOf, generator: functor.source.G) {
@@ -102,7 +102,7 @@ trait withSmallTarget extends functor.withSmallSource.withSmallTarget with Funct
 
     override def generators(source: ObjectLeftOf, target: ObjectLeftOf): List[ObjectLeftOfMap] = {
       import functor.source.generatorAsMorphism
-      for (g <- functor.source.generators(source.left, target.left); if functor.target.compose(functor.apply(g), target.morphism) == source.morphism) yield {
+      for (g <- functor.source.generators(source.left, target.left); if functor.target.compose(functor.onMorphisms(g), target.morphism) == source.morphism) yield {
         ObjectLeftOfMap(source, target, g)
       }
     }

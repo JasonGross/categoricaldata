@@ -251,7 +251,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     trait CoCone {
       val terminalSet: FSet
       abstract class coConeFunction(o: O) extends FFunction {
-        override val source = functorToSet(o)
+        override val source = functorToSet.onObjects(o)
         override val target = terminalSet
       }
       def functionToTerminalSet(o: O): coConeFunction
@@ -269,7 +269,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
       val initialSet: FSet
       abstract class coneFunction(o: O) extends FFunction {
         override val source = initialSet
-        override val target = functorToSet(o)
+        override val target = functorToSet.onObjects(o)
       }
       def functionFromInitialSet(o: O): coneFunction
     }
@@ -332,7 +332,7 @@ trait LocallyFinitelyGeneratedCategory extends SmallCategory { lfgCategory =>
     class YonedaNaturalTransformation(g: lfgCategory.opposite.G) extends NaturalTransformationToSet {
       override val source = functorsToSet.internalize(new YonedaFunctor(opposite.generatorSource(g)))
       override val target = functorsToSet.internalize(new YonedaFunctor(opposite.generatorTarget(g)))
-      override def apply(t: lfgCategory.O) = FFunction(source(t), target(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
+      override def apply(t: lfgCategory.O) = FFunction(source.onObjects(t), target.onObjects(t), { m: lfgCategory.M => compose(generatorAsMorphism(opposite.unreverseGenerator(g)), m) })
     }
 
     override val source: lfgCategory.opposite.type = lfgCategory.opposite

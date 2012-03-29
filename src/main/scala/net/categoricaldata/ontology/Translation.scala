@@ -15,7 +15,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         if (source != other.source) return false
         if (target != other.target) return false
         for (o <- source.objects) {
-          if (this(o) != other(o)) return false
+          if (this.onObjects(o) != other.onObjects(o)) return false
         }
         for (g <- source.allGenerators) {
           if (this.onGenerators(g) != other.onGenerators(g)) return false
@@ -30,7 +30,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     "Translation(\n" +
       "  source = " + source.toString + ",\n" +
       "  target = " + target.toString + ",\n" +
-      "  onObjects = " + source.objects.map(o => o -> this(o)).toMap.toString + ",\n" +
+      "  onObjects = " + source.objects.map(o => o -> this.onObjects(o)).toMap.toString + ",\n" +
       "  onMorphisms = " + source.allGenerators.map(g => g -> this.onGenerators(g)).toMap.toString + ")"
   }
 
@@ -168,7 +168,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
 //         println(RHS.toString.hashCode)
 //         println(LHS,RHS)
 //        }
- //       require(LHS==RHS)
+//        require(LHS==RHS)
 //                Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]).colimit
         //        
         //      // FIXME the asInstanceOf here is a hack, I wish we didn't need it!
@@ -222,14 +222,14 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   def __! = new Functor {
     override val source = Datasets
     override val target = translation.target.functorsToSet
-    def onObjects(i: Dataset) = target.internalize(leftPushforward.apply(leftPushforward.source.internalize(i)))
-    def onMorphisms(t: Datamap) = target.internalize(leftPushforward.apply(leftPushforward.source.internalize(t)))
+    def onObjects(i: Dataset) = target.internalize(leftPushforward.onObjects(leftPushforward.source.internalize(i)))
+    def onMorphisms(t: Datamap) = target.internalize(leftPushforward.onMorphisms(leftPushforward.source.internalize(t)))
   }
   def __* = new Functor {
     override val source = Datasets
     override val target = translation.target.functorsToSet
-    def onObjects(i: Dataset) = target.internalize(rightPushforward.apply(rightPushforward.source.internalize(i)))
-    def onMorphisms(t: Datamap) = target.internalize(rightPushforward.apply(rightPushforward.source.internalize(t)))
+    def onObjects(i: Dataset) = target.internalize(rightPushforward.onObjects(rightPushforward.source.internalize(i)))
+    def onMorphisms(t: Datamap) = target.internalize(rightPushforward.onMorphisms(rightPushforward.source.internalize(t)))
   }
 
   trait ContravariantDataFunctor extends super.ContravariantDataFunctor {
@@ -335,8 +335,8 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   lazy val ^* = new Functor {
     override val source = FunctorsToSet
     override val target = translation.source.functorsToSet
-    def onObjects(i: FunctorToSet) = target.internalize(pullback.apply(pullback.source.internalize(i)))
-    def onMorphisms(t: NaturalTransformationToSet) = target.internalize(pullback.apply(pullback.source.internalize(t)))
+    def onObjects(i: FunctorToSet) = target.internalize(pullback.onObjects(pullback.source.internalize(i)))
+    def onMorphisms(t: NaturalTransformationToSet) = target.internalize(pullback.onMorphisms(pullback.source.internalize(t)))
   }
 
   def opposite = new Translation {

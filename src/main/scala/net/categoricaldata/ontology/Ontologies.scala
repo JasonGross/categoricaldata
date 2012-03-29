@@ -27,8 +27,8 @@ object Ontologies extends Category with InitialObject with TerminalObject {
   override def compose(m1: Translation, m2: Translation): Translation = new Translation {
     override val source: m1.source.type = m1.source
     override val target: m2.target.type = m2.target
-    override def onObjects(o: source.O) = m2(m1(o).asInstanceOf[m2.source.O])
-    override def onGenerators(g: source.G) = m2(m1.onGenerators(g).asInstanceOf[m2.source.M])
+    override def onObjects(o: source.O) = m2.onObjects(m1.onObjects(o).asInstanceOf[m2.source.O])
+    override def onGenerators(g: source.G) = m2.onMorphisms(m1.onGenerators(g).asInstanceOf[m2.source.M])
   }
 }
 
