@@ -162,13 +162,12 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
                 
         val LHS = Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
         val RHS = Fs.pullback(i.asInstanceOf[Fs.target.FunctorToSet])
-        
-//        if (LHS != RHS) {
-//         println(LHS.toString.hashCode)
-//         println(RHS.toString.hashCode)
-//         println(LHS,RHS)
-//        }
- //       require(LHS==RHS)
+        if (LHS != RHS) {
+         println(LHS.toString.hashCode)
+         println(RHS.toString.hashCode)
+         println(LHS,RHS)
+        }
+        require(LHS==RHS)
 //                Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]).colimit
         //        
         //      // FIXME the asInstanceOf here is a hack, I wish we didn't need it!
