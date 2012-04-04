@@ -48,12 +48,6 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
   trait FinitelyGeneratedCategoryOver extends CategoryOver with functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget { categoryOver =>
     override val source: FinitelyGeneratedCategory
-    def onGenerators(g: source.G): target.M
-    override def onMorphisms(m: source.M) = {
-      val start = onObjects(source.source(m))
-      val morphisms = for (g <- m.representative.morphisms) yield onGenerators(g)
-      target.compose(start, morphisms)
-    }
     trait Identity extends FinitelyGeneratedFunctorOver {
       override val source: categoryOver.type = categoryOver
       override val target: categoryOver.type = categoryOver
