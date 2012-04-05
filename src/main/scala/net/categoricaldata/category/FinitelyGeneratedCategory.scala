@@ -91,7 +91,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     //        }
 
     lazy val totalSet = new FiniteFSet {
-      def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet(o2).toIterable) yield (o, x)
+      def toIterable = for (o <- objectSet.toIterable; o2 = o.asInstanceOf[O]; x <- functorToSet.onObjects(o2).toIterable) yield (o, x)
     }
 
     override def equals(other: Any): Boolean = {
@@ -101,14 +101,14 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
         other match {
           case other: FinitelyGeneratedCategory#FunctorToSet => {
             if (functorToSet.source != other.source) return false
-            for (o <- source.objects) if (this(o) != other(o.asInstanceOf[other.source.O])) return false
+            for (o <- source.objects) if (this.onObjects(o) != other.onObjects(o.asInstanceOf[other.source.O])) return false
             for (
               g <- source.allGenerators;
               m1 = source.generatorAsMorphism(g);
               m2 = other.source.generatorAsMorphism(g.asInstanceOf[other.source.G]);
-              g1 = this(m1).toFunction;
-              g2 = other(m2).toFunction;
-              x <- this(source.source(g)).toIterable
+              g1 = this.onMorphisms(m1).toFunction;
+              g2 = other.onMorphisms(m2).toFunction;
+              x <- this.onObjects(source.source(g)).toIterable
             ) {
               if (g1(x) != g2(x)) return false
             }
@@ -122,14 +122,14 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     protected def toStringHelper(prefix: String) = {
       prefix + "(\n" +
         "  source = " + source + ", \n" +
-        "  onObjects = " + (for (o <- source.objects) yield o -> this(o).toIterable.toList).toMap + ", \n" +
+        "  onObjects = " + (for (o <- source.objects) yield o -> this.onObjects(o).toIterable.toList).toMap + ", \n" +
         "  onMorphisms = Map(" + (if (source.allGenerators.nonEmpty) "\n" else "") +
         (for (
           g <- source.allGenerators;
           m = source.generatorAsMorphism(g);
-          g1 = this(m).toFunction
+          g1 = this.onMorphisms(m).toFunction
         ) yield {
-          "    (" + g.toString + ") -> " + ((for (x <- this(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
+          "    (" + g.toString + ") -> " + ((for (x <- this.onObjects(source.source(m)).toIterable) yield x -> g1(x)).toMap.toString)
         }).mkString("\n") + "))"
     }
 
@@ -254,7 +254,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
       }
 
       val (maps, functions) = {
-        val sets = { o: fgCategory.O => functorToSet(o).toIterable }
+        val sets = { o: fgCategory.O => functorToSet.onObjects(o).toIterable }
         import net.tqft.toolkit.functions.Memo
         val functions = { s: fgCategory.O =>
           { t: fgCategory.O =>
@@ -343,7 +343,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
 
       val (clumps, functions) = concreteColimit[Any](
         objects,
-        { o: fgCategory.O => functorToSet(o).toIterable },
+        { o: fgCategory.O => functorToSet.onObjects(o).toIterable },
         { s: fgCategory.O => { t: fgCategory.O => { a: Any => (for (g <- generators(s, t)) yield functorToSet(g).toFunction(a)).toSet } } })
 
       val resultSet = new FSet {
@@ -434,8 +434,8 @@ object FinitelyGeneratedCategory {
           case f: FunctorToSet => f
           case _ => new FunctorToSet {
             require(f.source == C)
-            def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
-            def onGenerators(g: source.G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
+            def onObjects(o: source.O) = f.onObjects(o.asInstanceOf[f.source.O])
+            def onGenerators(g: source.G) = f.onMorphisms(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
           }
         }
       }

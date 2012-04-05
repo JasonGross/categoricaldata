@@ -23,8 +23,8 @@ object Functor {
     //      require(f.target == g.source)
     override val source: f.source.type = f.source
     override val target: g.target.type = g.target
-    override def onObjects(o: f.source.O): g.target.O = g(f(o).asInstanceOf[g.source.O])
-    override def onMorphisms(m: f.source.M): g.target.M = g(f(m).asInstanceOf[g.source.M])
+    override def onObjects(o: f.source.O): g.target.O = g.onObjects(f.onObjects(o).asInstanceOf[g.source.O])
+    override def onMorphisms(m: f.source.M): g.target.M = g.onMorphisms(f.onMorphisms(m).asInstanceOf[g.source.M])
   }
 
   trait withFinitelyGeneratedSource extends withLocallyFinitelyGeneratedSource {

@@ -190,8 +190,8 @@ object FinitelyPresentedCategory {
           case f: FunctorToSet => f
           case _ => new FunctorToSet {
             require(f.source == C)
-            def onObjects(o: source.O) = f(o.asInstanceOf[f.source.O])
-            def onGenerators(g: source.G) = f(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
+            def onObjects(o: source.O) = f.onObjects(o.asInstanceOf[f.source.O])
+            def onGenerators(g: source.G) = f.onMorphisms(C.generatorAsMorphism(g).asInstanceOf[f.source.M])
           }
         }
       }

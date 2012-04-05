@@ -7,7 +7,7 @@ trait withLocallyFinitelyGeneratedTarget extends functor.withSmallSource.withLoc
       for (
         l <- (lfgFunctor.source.minimumLevel to k).toList;
         right <- lfgFunctor.source.objectsAtLevel(l);
-        path <- lfgFunctor.target.wordsOfLength(k - l)(onLeft, lfgFunctor.apply(right))
+        path <- lfgFunctor.target.wordsOfLength(k - l)(onLeft, lfgFunctor.onObjects(right))
       ) yield ObjectRightOf(right, lfgFunctor.target.pathAsMorphism(path))
     }
   }
@@ -16,7 +16,7 @@ trait withLocallyFinitelyGeneratedTarget extends functor.withSmallSource.withLoc
       for (
         l <- (lfgFunctor.source.minimumLevel to k).toList;
         left <- lfgFunctor.source.objectsAtLevel(l);
-        path <- lfgFunctor.target.wordsOfLength(k - l)(lfgFunctor.apply(left), onRight)
+        path <- lfgFunctor.target.wordsOfLength(k - l)(lfgFunctor.onObjects(left), onRight)
       ) yield ObjectLeftOf(left, lfgFunctor.target.pathAsMorphism(path))
     }
   }

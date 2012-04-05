@@ -17,14 +17,14 @@ trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarg
     class TargetComposition(f: ContravariantDataFunctor, g: CovariantDataFunctor) extends Functor {
       override val source: f.source.type = f.source
       override val target: g.target.type = g.target
-      override def onObjects(o: source.O): target.O = g(f(o))
-      override def onMorphisms(m: source.M): target.M = g(f(m))
+      override def onObjects(o: source.O): target.O = g.onObjects(f.onObjects(o))
+      override def onMorphisms(m: source.M): target.M = g.onMorphisms(f.onMorphisms(m))
     }
     class SourceComposition(f: CovariantDataFunctor, g: ContravariantDataFunctor) extends Functor {
       override val source: f.source.type = f.source
       override val target: g.target.type = g.target
-      override def onObjects(o: source.O): target.O = g(f(o))
-      override def onMorphisms(m: source.M): target.M = g(f(m))
+      override def onObjects(o: source.O): target.O = g.onObjects(f.onObjects(o))
+      override def onMorphisms(m: source.M): target.M = g.onMorphisms(f.onMorphisms(m))
     }
 
     def compose(f: ContravariantDataFunctor, g: CovariantDataFunctor) = new TargetComposition(f, g)
@@ -33,13 +33,13 @@ trait withSmallTarget extends Functor.withSmallSource with Functor.withSmallTarg
 
   trait Pullback extends ContravariantDataFunctor { pullback =>
     override def onObjects(i: smallFunctor.target.FunctorToSet) = pullback.target.internalize(new smallFunctor.source.FunctorToSet {
-      def onObjects(o: smallFunctor.source.O) = i(smallFunctor.apply(o))
-      def onMorphisms(m: smallFunctor.source.M) = i(smallFunctor.apply(m))
+      def onObjects(o: smallFunctor.source.O) = i(smallFunctor.onObjects(o))
+      def onMorphisms(m: smallFunctor.source.M) = i(smallFunctor.onMorphisms(m))
     })
     override def onMorphisms(m: smallFunctor.target.NaturalTransformationToSet) = pullback.target.internalize(new smallFunctor.source.NaturalTransformationToSet {
       val source = onObjects(m.target)
       val target = onObjects(m.source)
-      def apply(o: smallFunctor.source.O) = m(smallFunctor.apply(o))
+      def apply(o: smallFunctor.source.O) = m(smallFunctor.onObjects(o))
     })
 
     // c.f. functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget.Pullback, which adds limitMorphism
