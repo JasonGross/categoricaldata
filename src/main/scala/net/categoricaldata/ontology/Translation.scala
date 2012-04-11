@@ -54,16 +54,16 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   lazy val slice: SliceFunctor = new SliceFunctor
   lazy val coslice: CosliceFunctor = new CosliceFunctor
 
-//  trait PullbackLeftAdjoint extends LeftAdjoint { self: Functor =>
-//    lazy val rightAdjoint = pullback
-//    lazy val rightUnit = rightAdjoint.leftUnit
-//    lazy val rightCounit = rightAdjoint.leftCounit
-//  }
-//  trait PullbackRightAdjoint extends RightAdjoint { self: Functor =>
-//    lazy val leftAdjoint = pullback
-//    lazy val leftUnit = leftAdjoint.rightUnit
-//    lazy val leftCounit = leftAdjoint.rightCounit
-//  }
+  //  trait PullbackLeftAdjoint extends LeftAdjoint { self: Functor =>
+  //    lazy val rightAdjoint = pullback
+  //    lazy val rightUnit = rightAdjoint.leftUnit
+  //    lazy val rightCounit = rightAdjoint.leftCounit
+  //  }
+  //  trait PullbackRightAdjoint extends RightAdjoint { self: Functor =>
+  //    lazy val leftAdjoint = pullback
+  //    lazy val leftUnit = leftAdjoint.rightUnit
+  //    lazy val leftCounit = leftAdjoint.rightCounit
+  //  }
 
   trait CovariantDataFunctor extends super.CovariantDataFunctor {
     override val target: translation.target.FunctorsToSet = translation.target.functorsToSet
@@ -84,41 +84,14 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         F.pullback(i).limitSet //We have now defined F_*(i)(o)
       }
       override def onGenerators(g: translation.target.G) = {
-        val o = g.source
-        val p = g.target
         val Dop: D.opposite.type = D.opposite
         val gop = Dop.reverseGenerator(g)
         val sg = slice(Dop.generatorAsMorphism(gop))
         val Fg = sg.functor
         val Ft = sg.target
-        val Fs = sg.source
-        val sliceo = Fs.source
-        val slicep = Ft.source
 
-        //FIXME (Scott) Just like in leftPushforward, we want to replace the rest of onGenerators with a single line.
-        // First, construct the limit (that is, the terminal cone) on the slice category over the target of g.
-        // Ft is the functor from the comma category of objects left of the target of g, back to the source of the the functor.
-        val targetLimitTerminalCone = Ft.pullback(i).limit.terminalObject
+        Fg.pullback.limitMorphism(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
 
-        // Second, construct the dataset over the slice category over the target of g.
-        val sourceData = Fs.pullback(i)
-
-        // Third, we need to build a cone for sourceData 
-        val cone: sourceData.Cone = new sourceData.Cone {
-          override val initialSet = targetLimitTerminalCone.initialSet
-          override def functionFromInitialSet(o: Fs.source.O) = {
-            val f = targetLimitTerminalCone.functionFromInitialSet(Fg(o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
-            new coneFunction(o) {
-              override def toFunction = f.toFunction
-            }
-          }
-        }
-
-        // Now, the source limit provides us with the desired map.
-        val sourceLimit = sourceData.limit
-        val coneMap = sourceLimit.morphismToTerminalObject(cone)
-
-        coneMap.initialFunction
       }
     }).memo
     override def onMorphisms(m: CSet.M): DSet.M = new D.Datamap { datamap => //m: i-->j
@@ -134,8 +107,7 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
     }
   }
 
-  trait LeftPushforward extends CovariantDataFunctor //with PullbackLeftAdjoint
-  { shriek => //left pushforward of translation is a functor from C-sets to D-sets
+  trait LeftPushforward extends CovariantDataFunctor /* with PullbackLeftAdjoint */ { shriek => // left pushforward of translation is a functor from C-sets to D-sets
     val CSet = source
     val DSet = target
     val F: translation.type = translation //we need to be extra careful here, not just writing val F=translation, because we need to tell the type system exactly what's going on.
@@ -149,56 +121,13 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
         cs.pullback(i).colimitSet //We have now defined F_!(i)(o)
       }
       override def onGenerators(g: DArrow) = {
-        val o = g.source
-        val p = g.target
         val sg = coslice(D.generatorAsMorphism(g)) // a commutative triangle (F|o) --> (F|p) --> C
         val Fg = sg.functor // (F|o) --> (F|p)
-        val Fs = sg.source // (F|o) --> C
         val Ft = sg.target // (F|p) --> C
-        val cosliceo = Fs.source
-        val coslicep = Ft.source
-
-        // this is just a test:
-                
-        val LHS = Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
-        val RHS = Fs.pullback(i.asInstanceOf[Fs.target.FunctorToSet])
-        if (LHS != RHS) {
-         println(LHS.toString.hashCode)
-         println(RHS.toString.hashCode)
-         println(LHS,RHS)
-        }
-        require(LHS==RHS)
-//                Fg.pullback(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet]).colimit
-        //        
-        //      // FIXME the asInstanceOf here is a hack, I wish we didn't need it!
-        //      //Eventually we want the next line (Fg.pullback.co.. to replace everything else down to the brace}  
-        //        Fg.pullback.colimitMorphism(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
-
-        //         First, construct the colimit (that is, the initial cocone) on (F|p).
-        val targetColimitInitialCoCone = Ft.pullback(i).colimit.initialObject // initial object in (F|p)*-Set over Ft.pullback(i) (which is an (F|p)-set).
-
-        // Second, construct the dataset on (F|o).
-        val sourceData = Fs.pullback(i)
-
-        // Third, we need to build a cocone for sourceData, by pulling back the cocone on Ft.pullback(i) via Fg.
-        val cocone: sourceData.CoCone = new sourceData.CoCone { //the pullback of targetColimitInitialCocone along Fg.
-          override val terminalSet = targetColimitInitialCoCone.terminalSet
-          override def functionToTerminalSet(Fa2o: Fs.source.O) = { //Fa2o : Fa --> o, for some a in Ob(C). We cheat, never needing to do anything on morphisms in Fs.source
-            val f = targetColimitInitialCoCone.functionToTerminalSet(Fg(Fa2o.asInstanceOf[Fg.source.O]).asInstanceOf[Ft.source.O])
-            new coConeFunction(Fa2o) {
-              override def toFunction = f.toFunction
-            }
-          }
-        }
-
-        // Now, the source colimit provides us with the desired map.
-        val sourceColimit = sourceData.colimit
-        val coconeMap = sourceColimit.morphismFromInitialObject(cocone)
-
-        coconeMap.terminalFunction
+        Fg.pullback.colimitMorphism(Ft.pullback(i).asInstanceOf[Fg.target.FunctorToSet])
       }
 
-    }).memo //memo on a dataset makes sure that we never have to do the same computation twice.
+    }).memo // memo on a dataset makes sure that we never have to do the same computation twice.
     override def onMorphisms(m: CSet.M): DSet.M = new D.Datamap { datamap => // m: i-->j
       val i = m.source // i:C-->Set
       val j = m.target // j:C-->Set
@@ -256,29 +185,29 @@ trait Translation extends functor.withFinitelyPresentedSource.withFinitelyPresen
   override lazy val pullback = new Pullback {}
 
   lazy val leftCounit = new NaturalTransformation { leftCounit =>
-    val F:translation.type=translation
-    val C:F.source.type=F.source
-    val D:F.target.type=F.target
+    val F: translation.type = translation
+    val C: F.source.type = F.source
+    val D: F.target.type = F.target
     val DSet: D.AllFunctorsToSet.type = pullback.source
     override val source = Functor.compose(pullback, leftPushforward) //F_!F^* : D-Set-->D-Set
-    override val target = DSet.identityFunctor                       //Id_{D-Set}: D-Set-->D-Set
-    override def apply(i: DSet.O): DSet.M = {                        //i is a D-Set
+    override val target = DSet.identityFunctor //Id_{D-Set}: D-Set-->D-Set
+    override def apply(i: DSet.O): DSet.M = { //i is a D-Set
       DSet.internalize(new NaturalTransformationToSet {
-        override val source = leftCounit.source(i)                   //F_!F^*(i)  
-        override val target = i                                      //i
-        val LRi=source
-        override def apply(d: D.O): FFunction = {                    //d in D
-          val LRid : FSet = source(d)                                //F_!F^*i(d)
-          val id : FSet = target(d)                                  //i(d)
-          val pi = coslice(d)                                        //pi: (F|d)-->C
-          val FDownd: pi.source.type = pi.source                                      //(F|d)
+        override val source = leftCounit.source(i) //F_!F^*(i)  
+        override val target = i //i
+        val LRi = source
+        override def apply(d: D.O): FFunction = { //d in D
+          val LRid: FSet = source(d) //F_!F^*i(d)
+          val id: FSet = target(d) //i(d)
+          val pi = coslice(d) //pi: (F|d)-->C
+          val FDownd: pi.source.type = pi.source //(F|d)
           val Aaa: FDownd.FunctorToSet = pi.pullback.onObjects(F.pullback.onObjects(i))
-          
+
           val coCone: Aaa.CoCone = ???
-          
-          val map = ???  //  (F|d) ---pi--->C ---F--->D ---i --->Set
-                         //   (Fc-->d)
-                        //    (iFc --> i(d))
+
+          val map = ??? //  (F|d) ---pi--->C ---F--->D ---i --->Set
+          //   (Fc-->d)
+          //    (iFc --> i(d))
           FFunction(LRid, id, map) // MATH what is the left counit for pullback?
         }
         /* 

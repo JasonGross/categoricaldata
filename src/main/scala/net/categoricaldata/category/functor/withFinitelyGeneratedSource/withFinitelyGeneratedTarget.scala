@@ -67,10 +67,28 @@ trait withFinitelyGeneratedTarget extends functor.withLocallyFinitelyGeneratedSo
 
   trait Pullback extends super.Pullback {
     def limitMorphism(i: fgFunctor.target.FunctorToSet) = {
-      FFunction(
-      source = onObjects(i).limitSet,
-      target = i.limitSet,
-      function = { x: Map[fgFunctor.source.O, Any] => ??? /* TODO build something, via the universal property */ })
+        // First, construct the limit (that is, the terminal cone) on the slice category over the target of g.
+        val targetLimitTerminalCone = i.limit.terminalObject
+
+        // Second, construct the dataset over the slice category over the target of g.
+        val sourceData = fgFunctor.pullback(i)
+        val sourceLimit = sourceData.limit
+
+        // Third, we need to build a cone for sourceData 
+        val cone: sourceData.Cone = new sourceData.Cone {
+          override val initialSet = targetLimitTerminalCone.initialSet
+          override def functionFromInitialSet(o: sourceData.source.O) = {
+            val f = targetLimitTerminalCone.functionFromInitialSet(fgFunctor.onObjects(o.asInstanceOf[fgFunctor.source.O]).asInstanceOf[i.source.O])
+            new coneFunction(o) {
+              override def toFunction = f.toFunction
+            }
+          }
+        }
+
+        // Now, the source limit provides us with the desired map.
+        val coneMap = sourceLimit.morphismToTerminalObject(cone)
+
+        coneMap.initialFunction
     }
     def colimitMorphism(i: fgFunctor.target.FunctorToSet): FFunction = {
         // First, construct the colimit (that is, the initial cocone) on (F|p).
@@ -101,5 +119,13 @@ trait withFinitelyGeneratedTarget extends functor.withLocallyFinitelyGeneratedSo
 
   override lazy val pullback = new Pullback {}
 }
+
+
+
+
+
+
+
+
 
 
