@@ -48,15 +48,15 @@ trait withFinitelyGeneratedTarget extends functor.withLocallyFinitelyGeneratedSo
       }
     }
 
-    class CosliceFunctorOver(m: fgFunctor.target.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver { // d --> d' ~> (F | d) --> (F | d')
+    class CosliceFunctorOver(m: fgFunctor.target.M) extends fgFunctor.source.FinitelyGeneratedFunctorOver { // m: d --> d' ~> (F | d) --> (F | d')
       override val source = cosliceFunctor.onObjects(fgFunctor.target.source(m))
       override val target = cosliceFunctor.onObjects(fgFunctor.target.target(m))
       class F extends super.F {
          override def onObjects(o: source.O): target.O = {
           target.ObjectLeftOf(left = o.left, morphism = fgFunctor.target.compose(o.morphism, m))
         }
-        override def onGenerators(g: source.G  ): target.M  = {
-          target.generatorAsMorphism(target.ObjectLeftOfMap(onObjects(g.target), onObjects(g.source), g.generator))
+        override def onGenerators(g: source.G): target.M  = { // g: o --> p (o and p are objects over d)
+          target.generatorAsMorphism(target.ObjectLeftOfMap(onObjects(g.source), onObjects(g.target), g.generator))
         }
       }
       override val functor = new F
@@ -101,4 +101,5 @@ trait withFinitelyGeneratedTarget extends functor.withLocallyFinitelyGeneratedSo
 
   override lazy val pullback = new Pullback {}
 }
+
 

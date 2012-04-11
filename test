@@ -1,0 +1,3 @@
+./sbt compile
+echo >> src/main/scala/net/categoricaldata/category/functor/withFinitelyGeneratedSource/withFinitelyGeneratedTarget.scala 
+./sbt test
