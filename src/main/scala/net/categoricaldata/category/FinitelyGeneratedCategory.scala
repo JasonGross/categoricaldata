@@ -63,6 +63,7 @@ trait FinitelyGeneratedCategory extends LocallyFinitelyGeneratedCategory { fgCat
     override val source: FinitelyGeneratedCategoryOver
     override val target: FinitelyGeneratedCategoryOver
     trait F extends super.F with net.categoricaldata.category.functor.withFinitelyGeneratedSource.withFinitelyGeneratedTarget {
+      // removing the next two lines causes the hideous AbstractMethodError that held us up for so long...
       override val source: functorOver.source.source.type = functorOver.source.source
       override val target: functorOver.target.source.type = functorOver.target.source
     }
